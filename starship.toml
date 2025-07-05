@@ -1,0 +1,43 @@
+format = """
+$git_branch\
+$git_status\
+$time\
+$line_break\
+$character\
+$directory\
+"""
+
+
+[directory]
+truncation_length = 10
+truncate_to_repo = false
+style = "#ededed" # vercel-darkの明るい文字色
+
+
+[character]
+success_symbol = "△"
+error_symbol = "△"
+vimcmd_symbol = "▲"
+vimcmd_replace_one_symbol = "▽"
+vimcmd_replace_symbol = "▼"
+vimcmd_visual_symbol = "▽"
+
+
+[time]
+disabled = false
+format = "[$time]($style) "
+time_format = "%H:%M"
+style = "#a1a1a1" # サブ文字色
+
+
+[git_branch]
+format = "[$symbol$branch]($style) "
+style = "#62a6ff" # ブルー
+symbol = " "
+
+
+[git_status]
+style = "#f99902" # イエロー
+
+[shell]
+disabled = true
