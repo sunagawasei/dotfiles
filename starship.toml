@@ -11,7 +11,7 @@ $directory\
 [directory]
 truncation_length = 10
 truncate_to_repo = false
-style = "#ededed" # vercel-darkの明るい文字色
+style = "#fafafa" # Geist background - primary text
 
 
 [character]
@@ -27,17 +27,17 @@ vimcmd_visual_symbol = "▽"
 disabled = false
 format = "[$time]($style) "
 time_format = "%H:%M"
-style = "#a1a1a1" # サブ文字色
+style = "#888888" # Geist secondary text
 
 
 [git_branch]
 format = "[$symbol$branch]($style) "
-style = "#62a6ff" # ブルー
+style = "#0070f3" # Geist blue
 symbol = " "
 
 
 [git_status]
-style = "#f99902" # イエロー
+style = "#f5a623" # Geist amber
 
 [shell]
 disabled = true
