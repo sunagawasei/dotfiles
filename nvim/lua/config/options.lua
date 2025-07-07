@@ -5,4 +5,4 @@
 -- スペルチェックを無効化
 local opt = vim.opt
 opt.spell = false
-opt.spelllang = { "en"}
+opt.spelllang = {"en"}
