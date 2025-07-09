@@ -29,3 +29,11 @@ if vim.fn.has("mac") == 1 then
     end,
   })
 end
+
+-- スペルチェックを常に無効化
+vim.opt.spell = false
+vim.api.nvim_create_autocmd("VimEnter", {
+  callback = function()
+    vim.opt.spell = false
+  end,
+})
