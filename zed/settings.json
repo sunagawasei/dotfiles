@@ -14,7 +14,7 @@
     "edit_prediction_provider": "copilot"
   },
   "agent": {
-    "default_profile": "write",
+    "default_profile": "ask",
     "model_parameters": [],
     "default_model": {
       "provider": "copilot_chat",
@@ -29,7 +29,7 @@
   "buffer_font_size": 16,
   "theme": {
     "mode": "system",
-    "light": "Vercel Dark",
+    "light": "One Dark",
     "dark": "Vercel Dark"
   }
 }
