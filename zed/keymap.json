@@ -23,5 +23,12 @@
     "bindings": {
       // "j k": ["workspace::SendKeystrokes", "escape"]
     }
+  },
+  {
+    "context": "Pane",
+    "bindings": {
+      "ctrl-w s": "pane::SplitRight",
+      "ctrl-w v": "pane::SplitLeft"
+    }
   }
 ]
