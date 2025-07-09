@@ -15,3 +15,18 @@ vim.api.nvim_create_autocmd("FileType", {
     vim.wo.conceallevel = 0
   end,
 })
+
+-- Fix wavy lines issue in VSCode by disabling spell check
+vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("lazyvim_wrap_spell", { clear = true }),
+  pattern = "*",
+  callback = function()
+    if vim.g.vscode then
+      vim.opt_local.wrap = false
+      vim.opt_local.spell = false
+    else
+      vim.opt_local.wrap = true
+      vim.opt_local.spell = true
+    end
+  end,
+})
