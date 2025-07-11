@@ -4,6 +4,7 @@ window-padding-balance = true
 window-theme = dark
 background-opacity = 0.75
 background-blur-radius = 15
+theme = Mathias
 
 # Vercel Theme (based on vercel-dark.json)
 background = #0a0a0a
@@ -42,4 +43,3 @@ cursor-style-blink = false
 shell-integration-features = no-cursor
 
 font-feature = -dlig
-
