@@ -2,22 +2,46 @@ window-padding-x = 20
 window-padding-y = 5
 window-padding-balance = true
 window-theme = ghostty
-background-opacity = 0.85
-background-blur-radius = 20
+background-opacity = 0.95
+background-blur-radius = 15
 macos-titlebar-style = transparent
 macos-titlebar-proxy-icon = hidden
 
 
-theme = Mathias
+# Vercel Theme (based on vercel-dark.json)
+background = #0a0a0a
+foreground = #ededed
+cursor-color = #ededed
+cursor-text = #0a0a0a
+selection-background = #333333
+selection-foreground = #ededed
+
+# ANSI Colors (0-15) - Exact Vercel theme colors
+palette = 0=#000000
+palette = 1=#f56464
+palette = 2=#58c760
+palette = 3=#f99902
+palette = 4=#62a6ff
+palette = 5=#b675f1
+palette = 6=#14cbb7
+palette = 7=#a1a1a1
+palette = 8=#676767
+palette = 9=#f56464
+palette = 10=#58c760
+palette = 11=#f99902
+palette = 12=#62a6ff
+palette = 13=#b675f1
+palette = 14=#14cbb7
+palette = 15=#ededed
+
 font-family = GeistMono NF
 font-size = 16
 macos-titlebar-style = tabs
 macos-titlebar-proxy-icon = hidden
-split-divider-color = #222
+split-divider-color = #242424
 unfocused-split-opacity = 1
 cursor-style = block
 cursor-style-blink = false
-cursor-color = #B62EB2
 shell-integration-features = no-cursor
 
 font-feature = -dlig
