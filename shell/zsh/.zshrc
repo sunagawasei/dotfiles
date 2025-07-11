@@ -73,11 +73,11 @@ fi
 # AWSコマンド補完機能の有効化
 complete -C '/opt/homebrew/opt/awscli@1/bin/aws_completer' aws
 
+
 # ----------------------
 # キーバインド設定
 # ----------------------
-# キーバインドをviモードに設定
-bindkey -v
+# viモードを解除（デフォルトのemacsモードを使用）
 
 # Amazon Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
