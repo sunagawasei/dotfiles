@@ -42,6 +42,7 @@ eval "$(starship init zsh)"
 # 基本エイリアス
 alias ll='ls -l'
 alias k='kubectl'
+alias ssh='TERM=xterm-256color \ssh'
 
 # ----------------------
 # 環境変数と PATH
