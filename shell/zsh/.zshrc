@@ -27,8 +27,6 @@ antigen bundles <<EOBUNDLES
     rupa/z z.sh
 EOBUNDLES
 
-# # テーマの設定
-# antigen theme robbyrussell
 
 # Antigenの設定を適用
 antigen apply
