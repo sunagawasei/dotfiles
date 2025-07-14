@@ -3,8 +3,8 @@ $git_branch\
 $git_status\
 $time\
 $line_break\
-$character\
 $directory\
+$character\
 """
 
 
