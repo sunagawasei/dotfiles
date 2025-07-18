@@ -27,6 +27,7 @@ antigen bundles <<EOBUNDLES
     rupa/z z.sh
 EOBUNDLES
 
+bindkey "^w" edit-command-line
 
 # Antigenの設定を適用
 antigen apply
