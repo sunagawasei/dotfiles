@@ -1,8 +1,17 @@
-tt.*
-.tests
-doc/tags
-debug
-.repro
-foo.*
-*.log
-data
+# Local secrets and API keys
+secrets.lua
+local.lua
+.env
+*.local.lua
+
+# LazyVim specific
+lazy-lock.json
+.lazy.lua
+
+# IDE and editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
