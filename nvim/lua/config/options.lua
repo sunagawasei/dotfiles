@@ -1,8 +1,10 @@
 -- Options are automatically loaded before lazy.nvim startup
 -- Default options that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/options.lua
--- Add any additional options here
 
+-- Add any additional options here
 -- スペルチェックを無効化
 local opt = vim.opt
 opt.spell = false
-opt.spelllang = {"en"}
+
+-- 診断機能（赤い波線）を無効化
+vim.diagnostic.disable()
