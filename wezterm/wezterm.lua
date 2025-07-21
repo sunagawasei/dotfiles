@@ -14,11 +14,22 @@ config.leader = { key = "q", mods = "CTRL", timeout_milliseconds = 2000 }
 -- ==========================================
 config.automatically_reload_config = true
 config.use_ime = true
+config.ime_preedit_rendering = "System"
+
+-- macOSのIME関連設定
+config.macos_forward_to_ime_modifier_mask = "SHIFT|CTRL"
+config.send_composed_key_when_left_alt_is_pressed = false
+config.send_composed_key_when_right_alt_is_pressed = false
 
 -- ==========================================
 -- フォント設定
 -- ==========================================
-config.font_size = 16
+config.font = wezterm.font_with_fallback({
+  "Geist Mono",
+  "Hiragino Kaku Gothic ProN",
+  "Noto Sans CJK JP",
+})
+config.font_size = 16.0
 
 -- ==========================================
 -- ウィンドウ設定
@@ -38,12 +49,22 @@ config.window_frame = {
 config.window_background_gradient = {
   colors = { "#111111" },  -- Geist Accent 8 for consistency
 }
+config.window_padding = {
+  left = 20,
+  right = 20,
+  top = 5,
+  bottom = 5,
+}
 
 -- ==========================================
 -- タブバー設定
 -- ==========================================
 config.show_new_tab_button_in_tab_bar = false
 config.show_close_tab_button_in_tabs = false
+config.hide_tab_bar_if_only_one_tab = true
+config.tab_bar_at_bottom = false
+config.use_fancy_tab_bar = true
+
 -- ==========================================
 -- カラーテーマ設定 (Geist Design System)
 -- ==========================================
@@ -64,6 +85,9 @@ config.colors = {
   -- スクロールバー・分割線
   scrollbar_thumb = "#444444", -- Accent 6 for dark theme
   split = "#333333",           -- Accent 7 for dark theme
+  
+  -- IMEの変換候補ウィンドウ用の設定
+  compose_cursor = '#ededed',
   
   -- ANSI色
   ansi = {
