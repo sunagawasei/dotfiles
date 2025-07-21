@@ -6,5 +6,13 @@
 local opt = vim.opt
 opt.spell = false
 
--- 診断機能（赤い波線）を無効化
-vim.diagnostic.disable()
+-- IME関連の設定
+opt.iminsert = 0  -- 挿入モードでIMEをオフ
+opt.imsearch = -1  -- 検索時のIME設定（iminsertの値に従う）
+
+-- ポップアップメニューの透明度を無効化
+opt.pumblend = 0  -- ポップアップメニューの透明度を0に（完全に不透明）
+opt.winblend = 0  -- ウィンドウの透明度を0に
+
+-- TUI（Terminal UI）でRGBカラーを有効化
+opt.termguicolors = true
