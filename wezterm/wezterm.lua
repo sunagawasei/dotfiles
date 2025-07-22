@@ -87,7 +87,7 @@ config.colors = {
 	split = "#333333", -- Accent 7 for dark theme
 
 	-- IMEの変換候補ウィンドウ用の設定
-	compose_cursor = "#ededed",
+	compose_cursor = "#FF6B6B",
 
 	-- ANSI色
 	ansi = {
