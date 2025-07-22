@@ -13,7 +13,7 @@ vim.opt.clipboard = "unnamedplus"
 --[[ エンコーディング設定 ]]--
 vim.scriptencoding = "utf-8"
 vim.opt.encoding = "utf-8" -- Neovimのデフォルト文字コード
-vim.opt.fileencoding = "utf-8" -- ファイルの保存時
+-- vim.opt.fileencoding = "utf-8" -- ファイルの保存時（バッファ単位の設定のためここでは設定しない）
 vim.opt.fileencodings = "utf-8,utf-16,sjis," -- ファイル読み込み時推定
 
 -- IME設定（エラーハンドリング付き）
