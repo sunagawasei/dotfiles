@@ -14,7 +14,7 @@ config.leader = { key = "q", mods = "CTRL", timeout_milliseconds = 2000 }
 -- ==========================================
 config.automatically_reload_config = true
 config.use_ime = true
-config.ime_preedit_rendering = "System"
+config.ime_preedit_rendering = "Builtin"
 
 -- macOSのIME関連設定
 config.macos_forward_to_ime_modifier_mask = "SHIFT|CTRL"
@@ -63,7 +63,8 @@ config.show_new_tab_button_in_tab_bar = false
 config.show_close_tab_button_in_tabs = false
 config.hide_tab_bar_if_only_one_tab = true
 config.tab_bar_at_bottom = false
-config.use_fancy_tab_bar = true
+config.use_fancy_tab_bar = false
+config.tab_max_width = 100
 
 -- ==========================================
 -- カラーテーマ設定 (Geist Design System)
@@ -146,7 +147,7 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 	end
 
 	local edge_foreground = background
-	local title = "   " .. wezterm.truncate_right(tab.active_pane.title, max_width - 1) .. "   "
+	local title = "     " .. wezterm.truncate_right(tab.active_pane.title, max_width - 1) .. "     "
 
 	return {
 		{ Background = { Color = edge_background } },
@@ -161,4 +162,3 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_wid
 	}
 end)
 return config
-
