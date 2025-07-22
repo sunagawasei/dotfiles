@@ -3,6 +3,7 @@ gui:
   showBranchCommitGraph: true
   language: "ja"
   showIcons: true
+  nerdFontsVersion: "3"
 
 git:
   log:
@@ -15,4 +16,3 @@ git:
   mainBranches:
     - main
     - master
-
