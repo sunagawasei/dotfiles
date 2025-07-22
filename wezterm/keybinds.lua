@@ -50,6 +50,8 @@ return {
     },
     -- コマンドパレット表示
     { key = "p", mods = "SUPER", action = act.ActivateCommandPalette },
+    -- 新しいウィンドウを開く
+    { key = "n", mods = "SUPER", action = act.SpawnWindow },
     -- Tab移動
     { key = "Tab", mods = "CTRL", action = act.ActivateTabRelative(1) },
     { key = "Tab", mods = "SHIFT|CTRL", action = act.ActivateTabRelative(-1) },
