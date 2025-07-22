@@ -54,7 +54,7 @@ vim.api.nvim_create_autocmd({ "VimEnter", "LspAttach", "BufEnter", "BufWinEnter"
       severity_sort = true,
       update_in_insert = false,
     })
-    
+
     -- 遅延して再適用（他のプラグインによる上書きを防ぐ）
     vim.defer_fn(function()
       vim.diagnostic.config({
