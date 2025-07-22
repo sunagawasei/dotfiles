@@ -1,15 +1,18 @@
 gui:
-  showGraph: 'always'
+  showGraph: "always"
   showBranchCommitGraph: true
-  
+  language: "ja"
+  showIcons: true
+
 git:
   log:
-    showGraph: 'always'
-    order: 'topo-order'
-    
+    showGraph: "always"
+    order: "topo-order"
+
   paging:
     colorArg: always
-    
+
   mainBranches:
     - main
     - master
+
