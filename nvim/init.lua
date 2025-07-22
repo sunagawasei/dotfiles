@@ -37,3 +37,23 @@ vim.api.nvim_create_autocmd("VimEnter", {
     vim.opt.spell = false
   end,
 })
+
+-- 診断の赤い波線を無効化（最優先で適用）
+vim.diagnostic.config({
+  underline = false,
+  virtual_text = false,
+  signs = true,
+  float = {
+    border = "rounded",
+    source = "always",
+  },
+  severity_sort = true,
+  update_in_insert = false,
+})
+
+-- スペルチェックの波線も無効化（念のため）
+vim.o.spell = false
+vim.cmd([[highlight clear SpellBad]])
+vim.cmd([[highlight clear SpellCap]])
+vim.cmd([[highlight clear SpellRare]])
+vim.cmd([[highlight clear SpellLocal]])

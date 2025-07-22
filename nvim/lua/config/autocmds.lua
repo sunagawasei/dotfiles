@@ -38,3 +38,36 @@ vim.api.nvim_create_autocmd("BufWritePre", {
     require("conform").format({ bufnr = args.buf })
   end,
 })
+
+-- 診断の赤い波線を確実に無効化
+vim.api.nvim_create_autocmd({ "VimEnter", "LspAttach", "BufEnter", "BufWinEnter", "FileType" }, {
+  callback = function()
+    -- 即座に適用
+    vim.diagnostic.config({
+      underline = false, -- 赤い波線を無効化
+      virtual_text = false, -- インライン診断テキストも無効化
+      signs = true, -- 左側のサインカラムは表示
+      float = {
+        border = "rounded",
+        source = "always",
+      },
+      severity_sort = true,
+      update_in_insert = false,
+    })
+    
+    -- 遅延して再適用（他のプラグインによる上書きを防ぐ）
+    vim.defer_fn(function()
+      vim.diagnostic.config({
+        underline = false,
+        virtual_text = false,
+        signs = true,
+        float = {
+          border = "rounded",
+          source = "always",
+        },
+        severity_sort = true,
+        update_in_insert = false,
+      })
+    end, 100)
+  end,
+})
