@@ -4,8 +4,8 @@ return {
     dependencies = { "sindrets/diffview.nvim" },
     opts = {
       symbols = {
-        merge_commit = "M",
-        commit = "*",
+        merge_commit = "◉",
+        commit = "●",
       },
       format = {
         timestamp = "%H:%M:%S %d-%m-%Y",
