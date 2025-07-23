@@ -2,8 +2,7 @@
 require("config.lazy")
 
 -- パフォーマンス設定の読み込み
-local performance = require("config.performance")
-performance.optimize_avante()
+-- local performance = require("config.performance")
 -- performance.measure_startup_time() -- 必要時にコメントアウト
 
 vim.opt.ignorecase = true
