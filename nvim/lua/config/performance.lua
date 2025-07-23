@@ -20,18 +20,5 @@ function M.profile_plugins()
   vim.cmd("profile file *")
 end
 
--- avante.nvim専用のパフォーマンス設定
-function M.optimize_avante()
-  -- バッファサイズ制限
-  vim.api.nvim_create_autocmd("FileType", {
-    pattern = "Avante",
-    callback = function()
-      -- ローカルオプションでパフォーマンス向上
-      vim.opt_local.syntax = "off" -- シンタックスハイライトを無効
-      vim.opt_local.spell = false -- スペルチェックを無効
-      vim.opt_local.wrap = false -- 折り返しを無効
-    end,
-  })
-end
 
 return M
