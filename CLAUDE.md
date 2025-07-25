@@ -13,7 +13,13 @@ macOS上の開発ツール設定を管理する個人用dotfiles設定リポジ�
 - フレームワーク: LazyVim（事前設定済みのNeovimセットアップ）
 - Luaフォーマット: `nvim/stylua.toml`でstyluaを使用
 
-### Ghosttyターミナル
+### Weztermターミナル（メイン）
+- 場所: `wezterm/`
+- 主要設定ファイル: `wezterm/wezterm.lua`
+- キーバインド設定: `wezterm/keybinds.lua`
+- テーマ: カスタムVercelダークカラー
+
+### Ghosttyターミナル（サブ使用）
 - 場所: `ghostty/`
 - 主要設定ファイル: `ghostty/config`
 - キーバインドリファレンス: `ghostty/command.md`
@@ -63,6 +69,7 @@ npm run fix-lint  # または ray lint --fix
 
 ## 重要なパス
 - Neovim設定: `nvim/init.lua`および`nvim/lua/`
+- Wezterm設定: `wezterm/wezterm.lua`および`wezterm/keybinds.lua`
 - Ghostty設定: `ghostty/config`
 - ターミナルテーマ: Vercel Geistカラーベース
 - Raycast拡張機能: `raycast/extensions/*/`
