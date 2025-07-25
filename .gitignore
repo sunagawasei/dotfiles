@@ -1,0 +1,73 @@
+# 認証情報・機密データ
+gcloud/
+gh/
+gh-copilot/
+cycloud/
+github-copilot/
+
+# アプリケーション設定ストア
+configstore/
+
+# キャッシュ・一時ファイル
+*.zwc
+.zsh_history
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+.cache/
+*.log
+
+# OS固有ファイル
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# バックアップファイル
+*.bak
+*.backup
+*.old
+*.orig
+*.swp
+*.swo
+*~
+karabiner/automatic_backups/
+
+# 個人環境固有ファイル
+.metricsUUID
+.last_*
+.uuid
+
+# エディタ固有
+*.sublime-*
+.vscode/
+.idea/
+zed/conversations/*
+zed/prompts/*
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 環境変数
+.env
+.env.local
+.env.*.local
+
+# その他の機密情報
+*credentials*
+*secret*
+*private*
+*.key
+*.pem
+
