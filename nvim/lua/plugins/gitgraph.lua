@@ -4,7 +4,7 @@ return {
     dependencies = { "sindrets/diffview.nvim" },
     config = function(_, opts)
       -- Set up GitGraph highlights with Vercel Geist colors
-      require("plugins.gitgraph-highlights").setup()
+      require("utils.gitgraph-highlights").setup()
       
       -- Set up GitGraph with options
       require("gitgraph").setup(opts)
