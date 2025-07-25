@@ -69,6 +69,12 @@ config.tab_max_width = 100
 -- ==========================================
 -- カラーテーマ設定 (Geist Design System)
 -- ==========================================
+-- 非アクティブペインを暗くする設定
+config.inactive_pane_hsb = {
+	saturation = 0.6, -- 彩度を40%下げる
+	brightness = 0.5, -- 明度を半分にして暗くする
+}
+
 config.colors = {
 	-- 基本色
 	foreground = "#FFFFFF",
