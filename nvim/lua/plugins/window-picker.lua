@@ -21,7 +21,7 @@ return {
       autoselect_one = true,
       include_current = false,
       bo = {
-        filetype = { "neo-tree", "neo-tree-popup", "notify" },
+        filetype = { "notify" },
         buftype = { "terminal", "quickfix" },
       },
     },
