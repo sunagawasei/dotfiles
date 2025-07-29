@@ -20,8 +20,25 @@ return {
         explorer = {
           hidden = true,
           ignored = true, -- git除外ファイルを表示（.git/info/excludeを含む）
+          exclude = { ".git", ".DS_Store" }, -- .gitディレクトリ自体を除外
+        },
+        files = {
+          hidden = true, -- 隠しファイルを表示
+          ignored = true, -- gitignoreされたファイルも表示
+          exclude = {}, -- 除外パターンを空にして.gitも検索対象にする
+        },
+      },
+      -- スマートピッカーの設定
+      smart = {
+        sources = {
+          files = {
+            hidden = true,
+            ignored = true,
+            exclude = {}, -- .gitディレクトリも検索対象にする
+          },
         },
       },
     },
   },
 }
+
