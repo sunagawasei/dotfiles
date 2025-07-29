@@ -71,3 +71,34 @@ vim.api.nvim_create_autocmd({ "VimEnter", "LspAttach", "BufEnter", "BufWinEnter"
     end, 100)
   end,
 })
+
+-- 外部でファイルが変更されたときに自動的にバッファを更新
+vim.api.nvim_create_augroup("auto_read", { clear = true })
+
+-- フォーカスを得たとき、バッファに入ったときにファイルの変更をチェック
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "TermClose", "TermLeave" }, {
+  group = "auto_read",
+  callback = function()
+    if vim.o.buftype ~= "nofile" then
+      vim.cmd("checktime")
+    end
+  end,
+})
+
+-- カーソルが停止したときもチェック（通常モードと挿入モード両方）
+vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+  group = "auto_read",
+  callback = function()
+    if vim.o.buftype ~= "nofile" then
+      vim.cmd("checktime")
+    end
+  end,
+})
+
+-- ファイルが外部で変更されたときの通知（オプション）
+vim.api.nvim_create_autocmd("FileChangedShellPost", {
+  group = "auto_read",
+  callback = function()
+    vim.notify("File changed on disk. Buffer reloaded.", vim.log.levels.INFO)
+  end,
+})

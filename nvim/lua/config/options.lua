@@ -16,3 +16,10 @@ opt.winblend = 0  -- ウィンドウの透明度を0に
 
 -- TUI（Terminal UI）でRGBカラーを有効化
 opt.termguicolors = true
+
+-- 外部でファイルが変更されたときに自動的に再読み込み
+opt.autoread = true
+
+-- CursorHoldイベントのトリガー時間（ミリ秒）
+-- デフォルトは4000ms、短くすることで外部変更をより早く検出
+opt.updatetime = 1000
