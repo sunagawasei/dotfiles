@@ -13,7 +13,7 @@ config.leader = { key = "q", mods = "CTRL", timeout_milliseconds = 2000 }
 -- 基本設定
 -- ==========================================
 config.automatically_reload_config = true
-config.use_ime = true
+config.use_ime = false
 config.ime_preedit_rendering = "Builtin"
 
 -- macOSのIME関連設定
