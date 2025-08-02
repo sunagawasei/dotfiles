@@ -31,11 +31,17 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- Auto format on save
+-- 自動フォーマット設定（Conform.nvimを直接使用）
 vim.api.nvim_create_autocmd("BufWritePre", {
-  pattern = "*",
+  group = vim.api.nvim_create_augroup("FormatOnSave", { clear = true }),
   callback = function(args)
-    require("conform").format({ bufnr = args.buf })
+    if vim.g.autoformat then
+      require("conform").format({
+        bufnr = args.buf,
+        timeout_ms = 500,
+        lsp_fallback = true,
+      })
+    end
   end,
 })
 
@@ -102,3 +108,29 @@ vim.api.nvim_create_autocmd("FileChangedShellPost", {
     vim.notify("File changed on disk. Buffer reloaded.", vim.log.levels.INFO)
   end,
 })
+
+-- Formatコマンドを作成
+vim.api.nvim_create_user_command("Format", function(args)
+  local range = nil
+  if args.count ~= -1 then
+    local end_line = vim.api.nvim_buf_get_lines(0, args.line2 - 1, args.line2, true)[1]
+    range = {
+      start = { args.line1, 0 },
+      ["end"] = { args.line2, end_line:len() },
+    }
+  end
+  require("conform").format({ async = true, lsp_fallback = true, range = range })
+end, { range = true })
+
+-- FormatToggleコマンドを作成（自動フォーマットの切り替え）
+vim.api.nvim_create_user_command("FormatToggle", function(args)
+  if args.bang then
+    -- FormatToggle! でグローバル設定を切り替え
+    vim.g.autoformat = not vim.g.autoformat
+    vim.notify("Autoformat " .. (vim.g.autoformat and "enabled" or "disabled") .. " globally")
+  else
+    -- FormatToggle でバッファローカル設定を切り替え
+    vim.b.autoformat = not vim.b.autoformat
+    vim.notify("Autoformat " .. (vim.b.autoformat and "enabled" or "disabled") .. " for this buffer")
+  end
+end, { bang = true })

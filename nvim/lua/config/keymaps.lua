@@ -39,3 +39,25 @@ vim.keymap.set("n", "<leader>E", function()
   smart_explorer_focus({ cwd = vim.fn.getcwd() })
 end, { desc = "Explorer Snacks (cwd)" })
 
+-- フォーマット用のキーマップ
+vim.keymap.set({ "n", "v" }, "<leader>fm", function()
+  require("conform").format({
+    async = true,
+    lsp_fallback = true,
+  })
+end, { desc = "Format file or range" })
+
+-- 診断表示用のキーマップ
+vim.keymap.set("n", "gl", vim.diagnostic.open_float, { desc = "Line diagnostics" })
+vim.keymap.set("n", "<leader>ld", vim.diagnostic.open_float, { desc = "Line diagnostics" })
+
+-- 診断間の移動
+vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
+vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
+vim.keymap.set("n", "[e", function() vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.ERROR }) end, { desc = "Previous error" })
+vim.keymap.set("n", "]e", function() vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.ERROR }) end, { desc = "Next error" })
+
+-- 診断リスト
+vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "Diagnostic location list" })
+vim.keymap.set("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "Diagnostic quickfix list" })
+
