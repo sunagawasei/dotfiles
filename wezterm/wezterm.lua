@@ -1,4 +1,5 @@
 local wezterm = require("wezterm")
+local mux = wezterm.mux
 local config = wezterm.config_builder()
 
 -- ==========================================
@@ -22,6 +23,32 @@ config.send_composed_key_when_left_alt_is_pressed = false
 config.send_composed_key_when_right_alt_is_pressed = false
 
 -- ==========================================
+-- 起動時のウィンドウ配置設定
+-- ==========================================
+wezterm.on('gui-startup', function(cmd)
+	local screens = wezterm.gui.screens()
+	local active_screen = screens.active
+	
+	-- アクティブスクリーンの65%の幅、80%の高さで設定
+	local ratio_width = 0.65
+	local ratio_height = 0.80
+	local width = active_screen.width * ratio_width
+	local height = active_screen.height * ratio_height
+	
+	-- ウィンドウをアクティブスクリーンの中央に配置
+	local tab, pane, window = mux.spawn_window(cmd or {
+		position = {
+			x = active_screen.x + (active_screen.width - width) / 2,
+			y = active_screen.y + (active_screen.height - height) / 2,
+			origin = 'ActiveScreen'
+		}
+	})
+	
+	-- ウィンドウサイズを設定
+	window:gui_window():set_inner_size(width, height)
+end)
+
+-- ==========================================
 -- フォント設定
 -- ==========================================
 config.font = wezterm.font_with_fallback({
@@ -34,9 +61,9 @@ config.font_size = 16.0
 -- ==========================================
 -- ウィンドウ設定
 -- ==========================================
--- ウィンドウサイズ
-config.initial_cols = 41
-config.initial_rows = 111
+-- ウィンドウサイズ（gui-startupイベントで動的に設定するためコメントアウト）
+-- config.initial_cols = 41
+-- config.initial_rows = 111
 
 -- ウィンドウの外観
 config.window_background_opacity = 0.85
