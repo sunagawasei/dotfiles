@@ -1,2 +1,14 @@
 [core]
     excludesfile = ~/.config/git/gitignore
+
+[merge]
+    conflictstyle = zdiff3
+
+[alias]
+    # 空白の違いを無視するdiff
+    dw = diff --ignore-all-space
+    # 空白の違いを無視するshow
+    sw = show --ignore-all-space
+    # ステージング済みの変更を空白無視で表示
+    dcw = diff --cached --ignore-all-space
+

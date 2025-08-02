@@ -6,14 +6,16 @@ gui:
   nerdFontsVersion: "3"
 
 git:
+  ignoreWhitespaceInDiffView: true
   log:
     showGraph: "always"
     order: "topo-order"
 
   paging:
     colorArg: always
-    pager: delta --dark --paging=never --line-numbers
+    pager: delta --dark --paging=never  --line-numbers --side-by-side
 
   mainBranches:
     - main
     - master
+
