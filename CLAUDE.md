@@ -29,6 +29,7 @@ macOS上の開発ツール設定を管理する個人用dotfiles設定リポジ�
 - ドキュメント: `vercel-geist-colors.md`
 - アプリケーション間で一貫したVercel Geistカラースキーム
 - 10色のカラースケール（Gray、Blue、Red、Amber、Green、Teal、Purple、Pink）
+- 色を決める場合は @vercel-geist-colors.md に基づいたカラーを選択してください。
 
 ### シェル設定
 - Starshipプロンプト: `starship.toml`
