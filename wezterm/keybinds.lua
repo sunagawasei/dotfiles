@@ -128,6 +128,9 @@ return {
 		-- バックスラッシュ入力用 (¥の代わりに\を入力)
 		{ key = "¥", mods = "NONE", action = act.SendString("\\") },
 		{ key = "¥", mods = "SHIFT", action = act.SendString("|") },
+
+		-- Shift+Enterで改行を挿入
+		{ key = "Enter", mods = "SHIFT", action = wezterm.action.SendString("\n") },
 	},
 	-- キーテーブル
 	-- https://wezfurlong.org/wezterm/config/key-tables.html
