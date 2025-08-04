@@ -61,3 +61,9 @@ vim.keymap.set("n", "]e", function() vim.diagnostic.goto_next({ severity = vim.d
 vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "Diagnostic location list" })
 vim.keymap.set("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "Diagnostic quickfix list" })
 
+-- ファイル保存（Normal、Insert、Visual モード）
+vim.keymap.set({ "n", "i", "v" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save file" })
+
+-- ファイル全体をコピー（Normal モード）
+vim.keymap.set("n", "<C-c>", "<cmd>%y+<cr>", { desc = "Copy entire file" })
+
