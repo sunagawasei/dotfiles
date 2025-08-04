@@ -1,4 +1,4 @@
-window-padding-x = 20
+window-padding-x = 10
 window-padding-y = 5
 window-padding-balance = true
 window-theme = dark
@@ -43,3 +43,60 @@ cursor-style-blink = false
 shell-integration-features = no-cursor
 
 font-feature = -dlig
+
+keybind = shift+enter=text:\n
+
+# Weztermと同じキーバインド設定
+# ==========================================
+# 日本語キーボード対応 - ¥を\に変換
+# ==========================================
+keybind = yen=text:\\
+keybind = shift+yen=text:|
+
+# ==========================================
+# フォントサイズ調整（Weztermと同様）
+# ==========================================
+keybind = ctrl+plus=increase_font_size:1
+keybind = ctrl+equal=increase_font_size:1
+keybind = ctrl+minus=decrease_font_size:1
+keybind = ctrl+zero=reset_font_size
+
+# ==========================================
+# タブ移動（Weztermと同様）
+# ==========================================
+# タブの入れ替え機能（Ghosttyには直接的な機能がないため、タブ移動で代用）
+keybind = ctrl+shift+left_bracket=previous_tab
+keybind = ctrl+shift+right_bracket=next_tab
+
+# ==========================================
+# ペイン（分割）操作の追加設定
+# ==========================================
+# ペインサイズ調整（細かい調整用）
+keybind = ctrl+shift+h=resize_split:left,5
+keybind = ctrl+shift+l=resize_split:right,5
+keybind = ctrl+shift+k=resize_split:up,5
+keybind = ctrl+shift+j=resize_split:down,5
+
+# ペイン移動（Vim風）
+keybind = ctrl+alt+h=goto_split:left
+keybind = ctrl+alt+l=goto_split:right
+keybind = ctrl+alt+k=goto_split:up
+keybind = ctrl+alt+j=goto_split:down
+
+# ==========================================
+# コマンドパレット風の機能
+# ==========================================
+# インスペクターをコマンドパレットの代替として使用
+keybind = ctrl+shift+p=inspector:toggle
+
+# ==========================================
+# その他の便利な機能
+# ==========================================
+# 画面クリア（Weztermと同様）
+keybind = cmd+k=clear_screen
+
+# 設定ファイルを編集（Weztermのleader+$の代替）
+keybind = cmd+shift+comma=reload_config
+
+# ワークスペース切り替えの代替（新しいウィンドウ）
+keybind = ctrl+shift+n=new_window
