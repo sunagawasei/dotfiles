@@ -1,10 +1,9 @@
 format = """
 $git_branch\
 $git_status\
-$time\
 $line_break\
-$directory\
 $character\
+$directory\
 """
 
 
