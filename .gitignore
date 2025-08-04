@@ -11,6 +11,7 @@ configstore/
 # キャッシュ・一時ファイル
 *.zwc
 .zsh_history
+.zcompdump
 __pycache__/
 *.py[cod]
 *$py.class
