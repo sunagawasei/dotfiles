@@ -96,9 +96,9 @@ config.colors = {
 	background = "#0a0a0a", -- Ghostty background color
 
 	-- カーソル色
-	cursor_bg = "#0070F3", -- Success default (Geist blue)
-	cursor_fg = "#FFFFFF", -- White text on blue cursor
-	cursor_border = "#0070F3", -- Success default
+	cursor_bg = "#F8F8F8", -- オフホワイト
+	cursor_fg = "#1A1A1A", -- ダークグレー
+	cursor_border = "#666666", -- ミディアムグレー
 
 	-- 選択色
 	selection_fg = "#FFFFFF", -- White text on dark background
