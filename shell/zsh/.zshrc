@@ -6,6 +6,10 @@
 # コアダンプを残さない
 limit coredumpsize 0
 
+# oh-my-zshの自動タイトル設定を無効化
+# これによりターミナルのタイトルバーにユーザー名@ホスト名が表示されなくなる
+# DISABLE_AUTO_TITLE="true"
+
 
 # ----------------------
 # パッケージ管理
@@ -27,13 +31,24 @@ antigen bundles <<EOBUNDLES
     rupa/z z.sh
 EOBUNDLES
 
-bindkey "^w" edit-command-line
-
 # Antigenの設定を適用
 antigen apply
 
 # Starship (プロンプトのカスタマイズ)
 eval "$(starship init zsh)"
+
+# ----------------------
+# 補完機能の強化
+# ----------------------
+# 補完機能を有効化
+autoload -U compinit && compinit
+
+# 補完のスタイル設定
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'  # 大文字小文字を区別しない
+zstyle ':completion:*' list-colors ''                 # 補完候補に色を付ける
+zstyle ':completion:*' menu select                    # 補完候補をメニュー形式で表示
+zstyle ':completion:*' completer _complete _match _approximate  # 補完方法の設定
+zstyle ':completion:*:approximate:*' max-errors 1    # 曖昧補完で許容するエラー数
 
 # ----------------------
 # エイリアスと関数
@@ -60,13 +75,13 @@ export PATH="$PATH:$(go env GOPATH)/bin"
 # ----------------------
 # Google Cloud SDK - PATH
 # GCPコマンドラインツールのPATHを設定
-if [ -f '/opt/homebrew/share/google-cloud-sdk/path.zsh.inc' ]; then 
+if [ -f '/opt/homebrew/share/google-cloud-sdk/path.zsh.inc' ]; then
   . '/opt/homebrew/share/google-cloud-sdk/path.zsh.inc'
 fi
 
 # Google Cloud SDK - 補完
 # GCPコマンド補完機能の有効化
-if [ -f '/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc' ]; then 
+if [ -f '/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc' ]; then
   . '/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc'
 fi
 
@@ -74,10 +89,6 @@ fi
 complete -C '/opt/homebrew/opt/awscli@1/bin/aws_completer' aws
 
 
-# ----------------------
-# キーバインド設定
-# ----------------------
-# viモードを解除（デフォルトのemacsモードを使用）
-
 # Amazon Q post block. Keep at the bottom of this file.
 [[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
+
