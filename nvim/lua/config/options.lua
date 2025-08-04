@@ -22,7 +22,7 @@ opt.autoread = true
 
 -- CursorHoldイベントのトリガー時間（ミリ秒）
 -- デフォルトは4000ms、短くすることで外部変更をより早く検出
-opt.updatetime = 1000
+opt.updatetime = 300
 
 -- LazyVimのformat_on_saveを有効化
 vim.g.autoformat = true
