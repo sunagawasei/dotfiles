@@ -17,16 +17,22 @@ vim.opt.fileencodings = "utf-8,utf-16,sjis," -- ファイル読み込み時推�
 
 -- IME設定（エラーハンドリング付き）
 if vim.fn.has("mac") == 1 then
-  vim.opt.ttimeoutlen = 1
-  local ime_group = vim.api.nvim_create_augroup("MyIMEGroup", { clear = true })
-  vim.api.nvim_create_autocmd("InsertLeave", {
-    group = ime_group,
-    callback = function()
-      pcall(function()
-        vim.fn.system('osascript -e "tell application \\"System Events\\" to key code 102"')
-      end)
-    end,
-  })
+  vim.opt.ttimeoutlen = 0  -- ESCキーの応答を即座に（デフォルト: 50ms）
+  vim.opt.timeoutlen = 300  -- キーマッピングのタイムアウト時間を短縮（デフォルト: 1000ms）
+  
+  -- IME切り替えを一時的にコメントアウト（遅延の原因を特定するため）
+  -- local ime_group = vim.api.nvim_create_augroup("MyIMEGroup", { clear = true })
+  -- vim.api.nvim_create_autocmd("InsertLeave", {
+  --   group = ime_group,
+  --   callback = function()
+  --     -- 非同期でIMEを切り替える
+  --     vim.schedule(function()
+  --       pcall(function()
+  --         vim.fn.system('osascript -e "tell application \\"System Events\\" to key code 102"')
+  --       end)
+  --     end)
+  --   end,
+  -- })
 end
 
 -- スペルチェックを常に無効化
