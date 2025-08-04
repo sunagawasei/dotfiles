@@ -131,6 +131,9 @@ return {
 
 		-- Shift+Enterで改行を挿入
 		{ key = "Enter", mods = "SHIFT", action = wezterm.action.SendString("\n") },
+
+		-- Quick Select mode
+		{ key = "Space", mods = "CTRL|SHIFT", action = act.QuickSelect },
 	},
 	-- キーテーブル
 	-- https://wezfurlong.org/wezterm/config/key-tables.html
