@@ -143,10 +143,39 @@ config.colors = {
 	quick_select_match_fg = { Color = "#FFFFFF" },
 
 	-- タブバー
-	-- tab_bar = {
-	-- 	inactive_tab_edge = "none",
-	-- },
+	tab_bar = {
+		inactive_tab_edge = "none",
+	},
 }
+
+-- ==========================================
+-- タブのカスタマイズ
+-- ==========================================
+wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
+	local is_active = tab.is_active
+	local title = tab.active_pane.title
+	
+	-- タイトルが長すぎる場合は省略
+	if #title > max_width - 3 then
+		title = title:sub(1, max_width - 3) .. "..."
+	end
+	
+	-- タブ番号を追加
+	local index = tab.tab_index + 1
+	title = string.format("%d: %s", index, title)
+	
+	-- アクティブタブの色設定
+	if is_active then
+		return {
+			{ Foreground = { Color = "#0070F3" } }, -- Vercel Geist Success Blue
+			{ Text = title },
+		}
+	else
+		return {
+			{ Text = title },
+		}
+	end
+end)
 
 return config
 
