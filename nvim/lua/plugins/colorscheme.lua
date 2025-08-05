@@ -6,7 +6,7 @@ return {
     config = function()
       require("vercel").setup({
         theme = "dark", -- dark テーマを設定
-        transparent = false,
+        transparent = true,
         italics = {
           comments = false,
           keywords = false,
@@ -53,10 +53,70 @@ return {
           CmpItemKindReference = { bg = "#1a1a1a", fg = "#D4D4D4" },
           CmpItemKindOperator = { bg = "#1a1a1a", fg = "#D4D4D4" },
           CmpItemKindTypeParameter = { bg = "#1a1a1a", fg = "#D4D4D4" },
-        }
+          -- Snacks.nvim Picker/Explorer の透明化
+          SnacksPickerNormal = { bg = "none" },
+          SnacksPickerBorder = { bg = "none" },
+          SnacksPickerNormalFloat = { bg = "none" },
+          SnacksPickerFile = { bg = "none" },
+          SnacksPickerDir = { bg = "none" },
+          SnacksPickerPathHidden = { bg = "none" },
+          SnacksPickerBox = { bg = "none" },
+          SnacksPickerPrompt = { bg = "none" },
+          SnacksPickerMatch = { bg = "none" },
+          SnacksPickerList = { bg = "none" },
+          SnacksPickerListCursorLine = { bg = "none" },
+          SnacksPickerPathIgnored = { bg = "none" },
+          -- 一般的なサイドバー関連のハイライトグループ
+          NeoTreeNormal = { bg = "none" },
+          NeoTreeNormalNC = { bg = "none" },
+          NvimTreeNormal = { bg = "none" },
+          NvimTreeNormalNC = { bg = "none" },
+          
+          -- SnacksPickerTreeがLineNrにリンクされているため
+          SnacksPickerTree = { bg = "none" },
+          LineNr = { bg = "none" },
+        },
       })
       -- setup()の後にcolorschemeを設定する必要がある
       vim.cmd.colorscheme("vercel")
+      
+      -- 包括的な透明化設定
+      local function set_transparent_bg()
+        -- 基本的な背景
+        vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+        vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
+        vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+        vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
+        vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
+        vim.api.nvim_set_hl(0, "VertSplit", { bg = "none" })
+        vim.api.nvim_set_hl(0, "WinSeparator", { bg = "none" })
+        
+        -- ステータスライン・タブライン
+        vim.api.nvim_set_hl(0, "StatusLine", { bg = "none" })
+        vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "none" })
+        vim.api.nvim_set_hl(0, "TabLine", { bg = "none" })
+        vim.api.nvim_set_hl(0, "TabLineFill", { bg = "none" })
+        
+        -- 行番号
+        vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
+        vim.api.nvim_set_hl(0, "CursorLineNr", { bg = "none" })
+        
+        -- Snacks関連のすべて
+        local snacks_groups = vim.fn.getcompletion("Snacks", "highlight")
+        for _, group in ipairs(snacks_groups) do
+          vim.api.nvim_set_hl(0, group, { bg = "none" })
+        end
+      end
+      
+      -- 初回実行
+      set_transparent_bg()
+      
+      -- ColorSchemeイベントでも実行
+      vim.api.nvim_create_autocmd("ColorScheme", {
+        pattern = "*",
+        callback = set_transparent_bg,
+      })
     end,
   },
 }
+
