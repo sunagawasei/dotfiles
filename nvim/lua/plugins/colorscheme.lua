@@ -16,8 +16,8 @@ return {
         },
         overrides = {
           -- IMEやフローティングウィンドウの設定
-          NormalFloat = { bg = "#0a0a0a", fg = "#ededed" }, -- フローティングウィンドウの背景と文字色
-          FloatBorder = { bg = "#0a0a0a", fg = "#444444" }, -- フローティングウィンドウの境界線
+          NormalFloat = { bg = "#1a1a1a", fg = "#ededed" }, -- フローティングウィンドウの背景と文字色（視認性向上）
+          FloatBorder = { bg = "#1a1a1a", fg = "#0070f3" }, -- フローティングウィンドウの境界線（Vercel Blue）
           Pmenu = { bg = "#1a1a1a", fg = "#ededed" }, -- ポップアップメニューの背景と文字色
           PmenuSel = { bg = "#2a2a2a", fg = "#ffffff" }, -- ポップアップメニューの選択項目
           PmenuSbar = { bg = "#1a1a1a" }, -- スクロールバーの背景
@@ -85,7 +85,8 @@ return {
         -- 基本的な背景
         vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
         vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
-        vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+        -- NormalFloatは透明化しない（ホバーウィンドウの視認性のため）
+        -- vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
         vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
         vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
         vim.api.nvim_set_hl(0, "VertSplit", { bg = "none" })
