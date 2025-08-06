@@ -40,7 +40,7 @@ This repository contains my personal dotfiles for macOS development tools. The c
 - **Config**: `fish/conf.d/`
 
 #### Zsh
-- **Config**: `shell/zsh/.zshrc`
+- **Config**: `zsh/.zshrc`
 - **Abbreviations**: `zsh-abbr/user-abbreviations`
 - **Plugin manager**: Antigen
 
