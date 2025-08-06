@@ -8,6 +8,9 @@ github-copilot/
 # アプリケーション設定ストア
 configstore/
 
+# シェル環境設定（個人環境依存）
+shell/zsh/.zshenv
+
 # キャッシュ・一時ファイル
 *.zwc
 .zsh_history
