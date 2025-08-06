@@ -1,9 +1,24 @@
 return {
   {
     "neovim/nvim-lspconfig",
-    opts = {
+    opts = function(_, opts)
+      -- LSPフローティングウィンドウのボーダー設定
+      local border = "rounded"
+      
+      -- ホバーウィンドウにボーダーを追加
+      vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(
+        vim.lsp.handlers.hover,
+        { border = border }
+      )
+      
+      -- シグネチャヘルプにボーダーを追加
+      vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(
+        vim.lsp.handlers.signature_help,
+        { border = border }
+      )
+      
       -- LazyVimの診断設定
-      diagnostics = {
+      opts.diagnostics = {
         underline = false, -- 赤い波線を完全に無効化
         virtual_text = false, -- インライン診断テキストも無効化
         signs = true, -- 左側のサインカラムは表示
@@ -13,9 +28,10 @@ return {
         },
         severity_sort = true,
         update_in_insert = false,
-      },
+      }
+      
       -- LSPサーバーの設定
-      servers = {
+      opts.servers = {
         -- Go言語用のLSPサーバー
         gopls = {
           settings = {
@@ -55,7 +71,9 @@ return {
             },
           },
         },
-      },
-    },
+      }
+      
+      return opts
+    end,
   },
 }
