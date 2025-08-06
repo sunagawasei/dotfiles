@@ -144,7 +144,7 @@ config.colors = {
 	},
 	-- 明るいANSI色（太字や高輝度表示用）
 	brights = {
-		"#666666", -- 明るい黒：Accent 5
+		"#A3A3A3", -- 明るい黒：Color 6（zsh-autosuggestions用に明るく調整）
 		"#B91C1C", -- 明るい赤：Red 8（より暗い赤）
 		"#15803D", -- 明るい緑：Green 8（より暗い緑）
 		"#B45309", -- 明るい黄：Amber 8（より暗い琥珀）
