@@ -14,7 +14,7 @@ eval "$(starship init zsh)"
 # 履歴設定
 # ----------------------
 # 履歴ファイルの保存先
-export HISTFILE=${HOME}/.config/shell/zsh/.zsh_history
+export HISTFILE=${HOME}/.config/zsh/.zsh_history
 # メモリに保存される履歴の件数
 export HISTSIZE=1000
 # 履歴ファイルに保存される履歴の件数
