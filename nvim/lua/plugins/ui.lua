@@ -7,4 +7,13 @@ return {
       },
     },
   },
+  {
+    "folke/noice.nvim",
+    opts = {
+      presets = {
+        -- LSPドキュメントにボーダーを追加
+        lsp_doc_border = true,
+      },
+    },
+  },
 }
