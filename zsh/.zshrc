@@ -1,25 +1,45 @@
-# Amazon Q pre block. Keep at the top of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.pre.zsh"
 # ----------------------
 # 基本設定
 # ----------------------
 # コアダンプを残さない
 limit coredumpsize 0
 
+# ----------------------
+# Zinit (プラグインマネージャー)
+# ----------------------
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+
+if [ ! -d "$ZINIT_HOME" ]; then
+  mkdir -p "$(dirname $ZINIT_HOME)"
+  git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+fi
+
+source "$ZINIT_HOME/zinit.zsh"
+
+# Zinitプラグイン
+zinit light zsh-users/zsh-syntax-highlighting
+zinit light zsh-users/zsh-completions
+zinit light zsh-users/zsh-autosuggestions
+zinit light Aloxaf/fzf-tab
 
 # Starship (プロンプトのカスタマイズ)
 eval "$(starship init zsh)"
 
+eval "$(zoxide init --cmd cd zsh)"
 # ----------------------
 # 履歴設定
 # ----------------------
 # 履歴ファイルの保存先
 export HISTFILE=${HOME}/.config/zsh/.zsh_history
 # メモリに保存される履歴の件数
-export HISTSIZE=1000
+export HISTSIZE=5000
 # 履歴ファイルに保存される履歴の件数
-export SAVEHIST=100000
+export SAVEHIST=$HISTSIZE
 export HISTFILESIZE=100000
+export HISTDUP=erase
+setopt hist_ignore_dups
+setopt hist_find_no_dups
+setopt appendhistory
 # 重複を記録しない
 setopt hist_ignore_dups
 # 開始と終了を記録
@@ -55,6 +75,9 @@ setopt no_beep
 # ファイル種別起動を補完候補の末尾に表示しない
 unsetopt list_types
 
+bindkey '^p' history-search-backward  # Ctrl+pで履歴検索
+bindkey '^n' history-search-forward   # Ctrl+nで履歴検索
+
 # ----------------------
 # 補完機能の強化
 # ----------------------
@@ -63,15 +86,17 @@ autoload -U compinit && compinit
 
 # 補完のスタイル設定
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'  # 大文字小文字を区別しない
-zstyle ':completion:*' list-colors ''                 # 補完候補に色を付ける
+zstyle ':completion:*' list-colors '${(s.:.)LS_COLORS}'  #補完候補に色を付ける
 zstyle ':completion:*' menu select                    # 補完候補をメニュー形式で表示
 zstyle ':completion:*' completer _complete _match _approximate  # 補完方法の設定
 zstyle ':completion:*:approximate:*' max-errors 1    # 曖昧補完で許容するエラー数
+zstyle ':completion:*' menu no
 
 # ----------------------
 # エイリアスと関数
 # ----------------------
 # 基本エイリアス
+alias ls='ls --color=auto'  # lsコマンドに色を付ける
 alias ll='ls -l'
 alias k='kubectl'
 alias ssh='TERM=xterm-256color \ssh'
@@ -93,8 +118,4 @@ fi
 
 # AWSコマンド補完機能の有効化
 complete -C '/opt/homebrew/opt/awscli@1/bin/aws_completer' aws
-
-
-# Amazon Q post block. Keep at the bottom of this file.
-[[ -f "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh" ]] && builtin source "${HOME}/Library/Application Support/amazon-q/shell/zshrc.post.zsh"
 
