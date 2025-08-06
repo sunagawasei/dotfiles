@@ -15,8 +15,8 @@ return {
       })
       vim.g.copilot_tab_fallback = ""
       
-      -- Ctrl+L で次の単語を受け入れる
-      vim.api.nvim_set_keymap("i", "<C-L>", "<Plug>(copilot-accept-word)", {
+      -- Ctrl+; で次の単語を受け入れる
+      vim.api.nvim_set_keymap("i", "<C-;>", "<Plug>(copilot-accept-word)", {
         silent = true,
       })
       
