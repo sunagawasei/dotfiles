@@ -60,8 +60,8 @@ end)
 -- フォントの設定（フォールバック機能付き）
 config.font = wezterm.font_with_fallback({
 	"Geist Mono", -- メインフォント（Vercelのモノスペースフォント）
-	"Hiragino Kaku Gothic ProN", -- 日本語フォント（macOS標準）
-	"Noto Sans CJK JP", -- 日本語フォント（フォールバック）
+	"IBM Plex Sans JP", -- 日本語フォント（メイン）
+	"Hiragino Kaku Gothic ProN", -- 日本語フォント（フォールバック）
 })
 -- フォントサイズを16ポイントに設定
 config.font_size = 16.0
