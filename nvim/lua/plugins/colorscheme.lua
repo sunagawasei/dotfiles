@@ -75,6 +75,15 @@ return {
           -- SnacksPickerTreeがLineNrにリンクされているため
           SnacksPickerTree = { bg = "none" },
           LineNr = { bg = "none" },
+          
+          -- ClaudeCode関連のハイライトグループ
+          ClaudeCodeNormal = { bg = "none" },
+          ClaudeCodeNormalFloat = { bg = "none" },
+          ClaudeCodeFloatBorder = { bg = "none" },
+          ClaudeCodeWinBar = { bg = "none" },
+          ClaudeCodeWinBarNC = { bg = "none" },
+          ClaudeCodeStatusLine = { bg = "none" },
+          ClaudeCodeStatusLineNC = { bg = "none" },
         },
       })
       -- setup()の後にcolorschemeを設定する必要がある
@@ -107,15 +116,44 @@ return {
         for _, group in ipairs(snacks_groups) do
           vim.api.nvim_set_hl(0, group, { bg = "none" })
         end
+        
+        -- ClaudeCode関連のハイライトグループ
+        local claudecode_groups = vim.fn.getcompletion("ClaudeCode", "highlight")
+        for _, group in ipairs(claudecode_groups) do
+          vim.api.nvim_set_hl(0, group, { bg = "none" })
+        end
+        
+        -- 追加の可能性があるClaudeCode関連グループ
+        vim.api.nvim_set_hl(0, "ClaudeCodeNormal", { bg = "none" })
+        vim.api.nvim_set_hl(0, "ClaudeCodeNormalFloat", { bg = "none" })
+        vim.api.nvim_set_hl(0, "ClaudeCodeFloatBorder", { bg = "none" })
+        vim.api.nvim_set_hl(0, "ClaudeCodeWinBar", { bg = "none" })
+        vim.api.nvim_set_hl(0, "ClaudeCodeWinBarNC", { bg = "none" })
       end
       
       -- 初回実行
       set_transparent_bg()
       
-      -- ColorSchemeイベントでも実行
-      vim.api.nvim_create_autocmd("ColorScheme", {
+      -- 複数のイベントで透明化を実行
+      vim.api.nvim_create_autocmd({
+        "ColorScheme",
+        "VimEnter",
+        "UIEnter",
+        "BufWinEnter",
+      }, {
         pattern = "*",
-        callback = set_transparent_bg,
+        callback = function()
+          -- 少し遅延させて確実に適用
+          vim.defer_fn(set_transparent_bg, 10)
+        end,
+      })
+      
+      -- ClaudeCodeウィンドウが開いた時にも適用
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "ClaudeCode*",
+        callback = function()
+          vim.defer_fn(set_transparent_bg, 50)
+        end,
       })
     end,
   },
