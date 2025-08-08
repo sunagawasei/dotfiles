@@ -5,9 +5,35 @@ local act = wezterm.action
 wezterm.on("update-right-status", function(window, pane)
 	local name = window:active_key_table()
 	if name then
-		name = "TABLE: " .. name
+		local elements = {}
+		
+		-- モードごとに異なる色とアイコンを設定
+		if name == "copy_mode" then
+			-- Copy mode: 青背景に白文字（Blue 6）
+			table.insert(elements, { Background = { Color = "#3B82F6" } })
+			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
+			table.insert(elements, { Text = " 󰆏 COPY MODE " }) -- NerdFont copy icon
+		elseif name == "resize_pane" then
+			-- Resize mode: 緑背景に白文字（Green 6）
+			table.insert(elements, { Background = { Color = "#22C55E" } })
+			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
+			table.insert(elements, { Text = "  RESIZE " }) -- NerdFont resize icon
+		elseif name == "search_mode" then
+			-- Search mode: 紫背景に白文字（Purple 6）
+			table.insert(elements, { Background = { Color = "#A855F7" } })
+			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
+			table.insert(elements, { Text = "  SEARCH " }) -- NerdFont search icon
+		else
+			-- その他のモード: グレー背景に白文字（Gray 6）
+			table.insert(elements, { Background = { Color = "#64748B" } })
+			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
+			table.insert(elements, { Text = " TABLE: " .. name .. " " })
+		end
+		
+		window:set_right_status(wezterm.format(elements))
+	else
+		window:set_right_status("")
 	end
-	window:set_right_status(name or "")
 end)
 
 return {
@@ -196,8 +222,11 @@ return {
 			{ key = "v", mods = "NONE", action = act.CopyMode({ SetSelectionMode = "Cell" }) },
 			{ key = "v", mods = "CTRL", action = act.CopyMode({ SetSelectionMode = "Block" }) },
 			{ key = "V", mods = "NONE", action = act.CopyMode({ SetSelectionMode = "Line" }) },
-			-- コピー
+			-- コピー（copy modeは継続）
 			{ key = "y", mods = "NONE", action = act.CopyTo("Clipboard") },
+			
+			-- [ キーでcopy modeを終了（vimライク）
+			{ key = "[", mods = "NONE", action = act.CopyMode("Close") },
 
 			-- コピーモードを終了
 			{
@@ -205,7 +234,7 @@ return {
 				mods = "NONE",
 				action = act.Multiple({ { CopyTo = "ClipboardAndPrimarySelection" }, { CopyMode = "Close" } }),
 			},
-			{ key = "Escape", mods = "NONE", action = act.CopyMode("Close") },
+			{ key = "Escape", mods = "NONE", action = act.CopyMode("ClearSelectionMode") },
 			{ key = "c", mods = "CTRL", action = act.CopyMode("Close") },
 			{ key = "q", mods = "NONE", action = act.CopyMode("Close") },
 		},
