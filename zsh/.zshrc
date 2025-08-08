@@ -138,6 +138,7 @@ alias ls='ls --color=auto'           # lsに色を付ける
 alias ll='ls -l'                     # 詳細表示
 alias la='ls -la'                    # 隠しファイルも含めて詳細表示
 alias l='ls -CF'                     # ファイル種別記号付き表示
+alias vi='nvim'
 
 # Kubernetesショートカット
 alias k='kubectl'
@@ -169,3 +170,4 @@ complete -C '/opt/homebrew/opt/awscli@1/bin/aws_completer' aws
 # ----------------------
 # マシン固有の設定があれば読み込む
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
