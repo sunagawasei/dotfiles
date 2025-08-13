@@ -129,6 +129,17 @@ Snacks.nvimベース：
   - `<leader>cc`: チャットを開く
   - `<leader>cE`: コード説明（選択モード）
   - `<leader>cR`: コードレビュー（選択モード）
+  - **選択範囲の渡し方**:
+    - ビジュアルモード（`v`/`V`/`<C-v>`）で選択 → キーマップ実行
+    - 選択がない場合は自動的にバッファ全体が対象
+  - **ファイル・コンテキストの渡し方**（チャット内で使用）:
+    - `#file:path/to/file` - 特定ファイルを追加
+    - `#buffer:current` - 現在のバッファ
+    - `#buffers:visible` - 表示中の全バッファ
+    - `#gitdiff` - Git差分
+    - `#diagnostics:current` - 診断情報
+    - `#glob:*.lua` - パターンマッチするファイル一覧
+    - `#grep:TODO` - ワークスペース内検索
 - **claudecode.nvim**: Claude Code統合
   - `<leader>ac`: Claude Codeトグル
   - `<leader>ar`: 前回のセッションを再開
