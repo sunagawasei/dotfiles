@@ -24,6 +24,10 @@ config.leader = { key = "q", mods = "CTRL", timeout_milliseconds = 2000 }
 config.automatically_reload_config = true
 -- IME（日本語入力）を無効化
 config.use_ime = false
+-- WebGPUレンダリングエンジンを使用（最高のパフォーマンス）
+config.front_end = "WebGpu"
+-- スクロールバックバッファを3500行に設定
+config.scrollback_lines = 3500
 
 -- ==========================================
 -- 起動時のウィンドウ配置設定
