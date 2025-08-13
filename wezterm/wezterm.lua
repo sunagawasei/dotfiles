@@ -75,8 +75,10 @@ config.font_size = 16.0
 -- ==========================================
 
 -- ウィンドウの外観
--- タイトルバーを非表示にしてリサイズ機能のみ有効化
-config.window_decorations = "RESIZE"
+-- macOSネイティブボタン付きのタイトルバー（最小化・最大化・閉じる）
+config.window_decorations = "INTEGRATED_BUTTONS|RESIZE|MACOS_FORCE_ENABLE_SHADOW"
+-- 統合タイトルボタンのスタイルをmacOSネイティブに設定
+config.integrated_title_button_style = "MacOsNative"
 -- ウィンドウ背景の不透明度（75%）
 config.window_background_opacity = 0.85
 -- macOSのぼかし効果の強度
@@ -103,8 +105,14 @@ config.window_padding = {
 	top = 0, -- 上余白（タブバーに密着）
 	bottom = 5, -- 下余白
 }
+-- タブバーを有効化
+config.enable_tab_bar = true
 -- タブバーの新規タブボタンを非表示
 config.show_new_tab_button_in_tab_bar = false
+-- タブインデックス番号を非表示
+config.show_tab_index_in_tab_bar = false
+-- タブの最大幅を20文字に設定
+config.tab_max_width = 20
 -- タブの閉じるボタンを非表示
 config.show_close_tab_button_in_tabs = false
 
@@ -172,6 +180,34 @@ config.colors = {
 
 	-- タブバー設定
 	tab_bar = {
+		-- タブバーの背景色
+		background = "#0a0a0a",
+		-- アクティブタブのスタイル
+		active_tab = {
+			bg_color = "#1A1A1A", -- 少し明るい背景
+			fg_color = "#FFFFFF", -- 白いテキスト
+			intensity = "Bold", -- 太字
+		},
+		-- 非アクティブタブのスタイル
+		inactive_tab = {
+			bg_color = "#0a0a0a", -- 暗い背景
+			fg_color = "#666666", -- グレーのテキスト
+		},
+		-- 非アクティブタブのホバー時スタイル
+		inactive_tab_hover = {
+			bg_color = "#111111", -- 少し明るい背景
+			fg_color = "#A3A3A3", -- 明るいグレー
+		},
+		-- 新規タブボタンのスタイル
+		new_tab = {
+			bg_color = "#0a0a0a",
+			fg_color = "#666666",
+		},
+		-- 新規タブボタンのホバー時スタイル
+		new_tab_hover = {
+			bg_color = "#111111",
+			fg_color = "#A3A3A3",
+		},
 		-- 非アクティブタブの境界線を非表示
 		inactive_tab_edge = "none",
 	},
