@@ -216,32 +216,27 @@ config.colors = {
 -- ==========================================
 -- タブのカスタマイズ
 -- ==========================================
--- タブタイトルのカスタマイズ処理
-wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover, max_width)
-	-- タブのアクティブ状態を取得
-	local is_active = tab.is_active
-	-- アクティブペインのタイトルを取得
-	local title = tab.active_pane.title
-
-	-- タイトルが長すぎる場合は省略
-	if #title > max_width - 3 then
-		title = title:sub(1, max_width - 3) .. "..."
+-- タブタイトルのカスタマイズ処理（現在のディレクトリ名を表示）
+wezterm.on("format-tab-title", function(tab)
+	-- 現在の作業ディレクトリのURIを取得
+	local cwd_uri = tab.active_pane.current_working_dir
+	-- URIから最後のディレクトリ名を抽出（末尾のディレクトリ名のみ）
+	local cwd = cwd_uri and string.match(cwd_uri.file_path or tostring(cwd_uri), "[^/]+$") or ""
+	-- タイトルを決定（ディレクトリ名があればそれを、なければペインのタイトル）
+	local title = cwd ~= "" and cwd or tab.active_pane.title
+	
+	-- タイトルの長さを制限
+	if #title > 16 then
+		title = title:sub(1, 16) .. "…"
 	end
-
-	-- タブ番号を追加（1から開始）
-	local index = tab.tab_index + 1
-	title = string.format("%d: %s", index, title)
-
-	-- アクティブタブの色設定
-	if is_active then
-		return {
-			{ Foreground = { Color = "#0070F3" } }, -- Vercel Geist Success Blue
-			{ Text = title },
-		}
+	
+	-- アクティブタブかどうかで表示を分ける
+	if tab.is_active then
+		-- アクティブタブ: 明るくて目立つ表示
+		return "  " .. title .. "  "
 	else
-		return {
-			{ Text = title },
-		}
+		-- 非アクティブタブ: 控えめな表示
+		return "  " .. title .. "  "
 	end
 end)
 
