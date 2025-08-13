@@ -49,6 +49,19 @@ eval "$(starship init zsh)"
 eval "$(zoxide init --cmd cd zsh)"
 
 # ----------------------
+# WezTerm用のOSC 7対応
+# ----------------------
+# WezTermに現在のディレクトリ情報を送信（タブタイトルに表示）
+# OSC 7エスケープシーケンスを使用してターミナルに現在のパスを通知
+if [ "$TERM_PROGRAM" = "WezTerm" ] || [ -n "$WEZTERM_PANE" ]; then
+  # プロンプトが表示される前に実行される関数
+  precmd() {
+    # OSC 7 - 現在のディレクトリをターミナルに通知
+    printf '\e]7;file://%s%s\e\\' "$HOST" "$PWD"
+  }
+fi
+
+# ----------------------
 # 履歴設定
 # ----------------------
 # 履歴ファイルの保存先
