@@ -87,6 +87,13 @@ setopt appendhistory             # 履歴を上書きではなく追加
 bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 
+# 補完用のキーバインド（WezTermと競合しない代替キー）
+# Ctrl+Y - 現在の単語だけを適用して次の補完位置へ（Alt+Enterの代替）
+bindkey '^y' accept-and-menu-complete
+
+# Ctrl+] - 現在の補完を確定して続けて入力可能に（Ctrl+Qの代替）
+bindkey '^]' accept-and-hold
+
 # ----------------------
 # インタラクティブシェル設定
 # ----------------------
