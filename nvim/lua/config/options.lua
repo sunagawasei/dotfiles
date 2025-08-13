@@ -27,6 +27,9 @@ opt.updatetime = 300
 -- LazyVimのformat_on_saveを有効化
 vim.g.autoformat = true
 
+-- list表示を無効化（タブ文字の>表示を消す）
+opt.list = false
+
 -- フローティングウィンドウのボーダー設定（Neovim 0.10以降）
 -- すべてのフローティングウィンドウに角丸ボーダーを追加
 if vim.fn.has("nvim-0.10") == 1 then
