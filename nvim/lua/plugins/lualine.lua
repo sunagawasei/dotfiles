@@ -49,7 +49,7 @@ return {
             "mode",
             fmt = function(str)
               if str == "NORMAL" then
-                return "✝"
+                return "N"
               end
               return str:sub(1, 1)
             end,

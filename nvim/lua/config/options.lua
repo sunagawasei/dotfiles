@@ -30,6 +30,9 @@ vim.g.autoformat = true
 -- list表示を無効化（タブ文字の>表示を消す）
 opt.list = false
 
+-- ステータスラインを画面全体で1つだけ表示（複数ウィンドウでの切り替えを防ぐ）
+opt.laststatus = 3
+
 -- フローティングウィンドウのボーダー設定（Neovim 0.10以降）
 -- すべてのフローティングウィンドウに角丸ボーダーを追加
 if vim.fn.has("nvim-0.10") == 1 then
