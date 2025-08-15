@@ -62,9 +62,10 @@ return {
           SnacksPickerPathHidden = { bg = "none" },
           SnacksPickerBox = { bg = "none" },
           SnacksPickerPrompt = { bg = "none" },
-          SnacksPickerMatch = { bg = "none" },
+          SnacksPickerMatch = { bg = "none", fg = "#0070f3" },
           SnacksPickerList = { bg = "none" },
-          SnacksPickerListCursorLine = { bg = "none" },
+          SnacksPickerListCursorLine = { bg = "#1E40AF", fg = "#ffffff" },
+          SnacksPickerSelection = { bg = "#1E40AF", fg = "#ffffff", bold = true },
           SnacksPickerPathIgnored = { bg = "none" },
           -- 一般的なサイドバー関連のハイライトグループ
           NeoTreeNormal = { bg = "none" },
@@ -111,11 +112,22 @@ return {
         vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
         vim.api.nvim_set_hl(0, "CursorLineNr", { bg = "none" })
         
-        -- Snacks関連のすべて
+        -- Snacks関連のハイライトグループ（選択項目は除外）
         local snacks_groups = vim.fn.getcompletion("Snacks", "highlight")
         for _, group in ipairs(snacks_groups) do
-          vim.api.nvim_set_hl(0, group, { bg = "none" })
+          -- 選択項目関連のハイライトは透明化しない
+          if not string.match(group, "CursorLine") and 
+             not string.match(group, "Selection") and 
+             not string.match(group, "Cursor") then
+            vim.api.nvim_set_hl(0, group, { bg = "none" })
+          end
         end
+        
+        -- Snacks Picker選択項目のハイライトを明示的に設定
+        vim.api.nvim_set_hl(0, "SnacksPickerListCursorLine", { bg = "#1E40AF", fg = "#ffffff" })
+        vim.api.nvim_set_hl(0, "SnacksPickerSelection", { bg = "#1E40AF", fg = "#ffffff", bold = true })
+        vim.api.nvim_set_hl(0, "SnacksPickerCursor", { bg = "#1E40AF", fg = "#ffffff" })
+        vim.api.nvim_set_hl(0, "SnacksPickerCursorLine", { bg = "#1E40AF", fg = "#ffffff" })
         
         -- ClaudeCode関連のハイライトグループ
         local claudecode_groups = vim.fn.getcompletion("ClaudeCode", "highlight")
