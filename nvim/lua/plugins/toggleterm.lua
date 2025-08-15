@@ -18,7 +18,7 @@ return {
       hide_numbers = true, -- ターミナルでの行番号を非表示
       shade_filetypes = {},
       shade_terminals = true,
-      shading_factor = 2, -- ターミナルの背景を暗くする
+      shading_factor = 0, -- ターミナルの背景を暗くしない（補完メニューの視認性向上）
       start_in_insert = true,
       insert_mappings = true, -- インサートモードでもマッピングを有効化
       terminal_mappings = true, -- ターミナルモードでもマッピングを有効化
@@ -37,7 +37,7 @@ return {
         height = function()
           return math.floor(vim.o.lines * 0.8)
         end,
-        winblend = 0,
+        winblend = 3,
         highlights = {
           border = "Normal",
           background = "Normal",

@@ -53,6 +53,17 @@ return {
           CmpItemKindReference = { bg = "#1a1a1a", fg = "#D4D4D4" },
           CmpItemKindOperator = { bg = "#1a1a1a", fg = "#D4D4D4" },
           CmpItemKindTypeParameter = { bg = "#1a1a1a", fg = "#D4D4D4" },
+          
+          -- Blink.cmp 用のハイライトグループ
+          BlinkCmpMenu = { bg = "#1a1a1a", fg = "#ededed" },
+          BlinkCmpMenuBorder = { bg = "#1a1a1a", fg = "#0070f3" },
+          BlinkCmpMenuSelection = { bg = "#1E40AF", fg = "#ffffff" },
+          BlinkCmpDoc = { bg = "#1a1a1a", fg = "#ededed" },
+          BlinkCmpDocBorder = { bg = "#1a1a1a", fg = "#0070f3" },
+          BlinkCmpLabel = { bg = "#1a1a1a", fg = "#ededed" },
+          BlinkCmpLabelMatch = { bg = "#1a1a1a", fg = "#0070f3" },
+          BlinkCmpKind = { bg = "#1a1a1a", fg = "#C586C0" },
+          BlinkCmpSource = { bg = "#1a1a1a", fg = "#C792EA" },
           -- Snacks.nvim Picker/Explorer の透明化
           SnacksPickerNormal = { bg = "none" },
           SnacksPickerBorder = { bg = "none" },
@@ -100,6 +111,24 @@ return {
       })
       -- setup()の後にcolorschemeを設定する必要がある
       vim.cmd.colorscheme("vercel")
+      
+      -- ターミナルカラー設定（Vercel Geistカラーシステム準拠）
+      vim.g.terminal_color_0 = "#0F172A"   -- Gray 10 (黒系)
+      vim.g.terminal_color_1 = "#EF4444"   -- Red 6 (赤)
+      vim.g.terminal_color_2 = "#22C55E"   -- Green 6 (緑)
+      vim.g.terminal_color_3 = "#F59E0B"   -- Amber 6 (黄)
+      vim.g.terminal_color_4 = "#3B82F6"   -- Blue 6 (青)
+      vim.g.terminal_color_5 = "#A855F7"   -- Purple 6 (マゼンタ)
+      vim.g.terminal_color_6 = "#14B8A6"   -- Teal 6 (シアン)
+      vim.g.terminal_color_7 = "#E2E8F0"   -- Gray 3 (明るいグレー - 補完メニューの文字色)
+      vim.g.terminal_color_8 = "#64748B"   -- Gray 6 (暗いグレー)
+      vim.g.terminal_color_9 = "#DC2626"   -- Red 7 (明るい赤)
+      vim.g.terminal_color_10 = "#16A34A"  -- Green 7 (明るい緑)
+      vim.g.terminal_color_11 = "#D97706"  -- Amber 7 (明るい黄)
+      vim.g.terminal_color_12 = "#2563EB"  -- Blue 7 (明るい青)
+      vim.g.terminal_color_13 = "#9333EA"  -- Purple 7 (明るいマゼンタ)
+      vim.g.terminal_color_14 = "#0D9488"  -- Teal 7 (明るいシアン)
+      vim.g.terminal_color_15 = "#F8FAFC"  -- Gray 1 (白系)
       
       -- 包括的な透明化設定
       local function set_transparent_bg()
