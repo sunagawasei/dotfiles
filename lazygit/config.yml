@@ -4,6 +4,31 @@ gui:
   language: "ja"
   showIcons: true
   nerdFontsVersion: "3"
+  theme:
+    # ボーダー色 - 視認性を改善
+    activeBorderColor:
+      - '#60A5FA'  # Blue 5 - より明るいブルーでコントラスト向上
+      - bold
+    inactiveBorderColor:
+      - '#666666'  # Color 6 (Dark) - より明るいグレーで視認性向上
+    
+    # テキスト色
+    optionsTextColor:
+      - '#D4D4D4'  # Color 5 (Dark) - より明るくして視認性向上
+    defaultFgColor:
+      - '#FFFFFF'  # Color 10 (Dark) - デフォルトのテキスト色
+    
+    # 選択行の背景
+    selectedLineBgColor:
+      - '#334155'  # Gray 8 - より濃い背景でコントラスト向上
+    
+    # Git関連の色
+    unstagedChangesColor:
+      - '#FBBF24'  # Amber 5 - より明るいアンバーで視認性向上
+    cherryPickedCommitFgColor:
+      - '#60A5FA'  # Blue 5 - ボーダーと統一
+    cherryPickedCommitBgColor:
+      - '#1E293B'  # Gray 9 - より濃い背景
 
 git:
   ignoreWhitespaceInDiffView: true
@@ -18,4 +43,9 @@ git:
   mainBranches:
     - main
     - master
+
+keybinding:
+  commits:
+    moveDownCommit: 'J'
+    moveUpCommit: 'K'
 
