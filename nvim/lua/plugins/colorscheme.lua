@@ -97,16 +97,16 @@ return {
           ClaudeCodeStatusLine = { bg = "none" },
           ClaudeCodeStatusLineNC = { bg = "none" },
           
-          -- MiniIcons ハイライトグループ - Vercel Geist カラー
-          MiniIconsAzure = { fg = "#3B82F6" },   -- Blue 6 - 関数、メソッド
-          MiniIconsBlue = { fg = "#2563EB" },    -- Blue 7 - Lua、設定ファイル
-          MiniIconsCyan = { fg = "#14B8A6" },    -- Teal 6 - ライセンス、特殊ファイル
-          MiniIconsGreen = { fg = "#22C55E" },   -- Green 6 - 成功、初期化ファイル
-          MiniIconsGrey = { fg = "#64748B" },    -- Gray 6 - システムファイル、Ansible
-          MiniIconsOrange = { fg = "#F59E0B" },  -- Amber 6 - 警告、変更ログ
-          MiniIconsPurple = { fg = "#A855F7" },  -- Purple 6 - Git設定、YAML
-          MiniIconsRed = { fg = "#EF4444" },     -- Red 6 - エラー、重要な設定
-          MiniIconsYellow = { fg = "#FBBF24" },  -- Amber 5 - README、Docker
+          -- MiniIcons ハイライトグループ - 白色統一表示
+          MiniIconsAzure = { fg = "#EDEDED" },   -- 白色統一
+          MiniIconsBlue = { fg = "#EDEDED" },    -- 白色統一
+          MiniIconsCyan = { fg = "#EDEDED" },    -- 白色統一
+          MiniIconsGreen = { fg = "#EDEDED" },   -- 白色統一
+          MiniIconsGrey = { fg = "#EDEDED" },    -- 白色統一
+          MiniIconsOrange = { fg = "#EDEDED" },  -- 白色統一
+          MiniIconsPurple = { fg = "#EDEDED" },  -- 白色統一
+          MiniIconsRed = { fg = "#EDEDED" },     -- 白色統一
+          MiniIconsYellow = { fg = "#EDEDED" },  -- 白色統一
         },
       })
       -- setup()の後にcolorschemeを設定する必要がある
