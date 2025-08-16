@@ -1,9 +1,13 @@
 gui:
   showGraph: "always"
   showBranchCommitGraph: true
-  language: "ja"
+  language: "ja"  # 日本語に戻す
   showIcons: true
   nerdFontsVersion: "3"
+  timeFormat: '02 Jan'
+  shortTimeFormat: '15:04'
+  showRandomTip: false  # ランダムなヒントを無効化してシンプルに
+  showBottomLine: false  # ステータスバーを非表示にしてカラフルな要素を削除
   theme:
     # ボーダー色 - 視認性を改善
     activeBorderColor:
@@ -14,7 +18,7 @@ gui:
     
     # テキスト色
     optionsTextColor:
-      - '#D4D4D4'  # Color 5 (Dark) - より明るくして視認性向上
+      - '#A3A3A3'  # Color 9 (Dark) - 落ち着いた色でカラフルさを抑制
     defaultFgColor:
       - '#FFFFFF'  # Color 10 (Dark) - デフォルトのテキスト色
     
@@ -29,6 +33,10 @@ gui:
       - '#60A5FA'  # Blue 5 - ボーダーと統一
     cherryPickedCommitBgColor:
       - '#1E293B'  # Gray 9 - より濃い背景
+  
+  # 著者色設定 - カラフルさを抑制
+  authorColors:
+    '*': '#A3A3A3'  # Color 9 (Dark) - すべての著者に統一された落ち着いた色
 
 git:
   ignoreWhitespaceInDiffView: true
@@ -38,7 +46,7 @@ git:
 
   paging:
     colorArg: always
-    pager: delta --dark --paging=never  --line-numbers --side-by-side
+    pager: delta --dark --paging=never --side-by-side --commit-decoration-style=none --commit-style=raw --file-decoration-style=none --syntax-theme=Nord
 
   mainBranches:
     - main
@@ -46,6 +54,6 @@ git:
 
 keybinding:
   commits:
-    moveDownCommit: 'J'
-    moveUpCommit: 'K'
+    moveDownCommit: '<c-d>'
+    moveUpCommit: '<c-u>'
 
