@@ -149,8 +149,6 @@ return {
         callback = function()
           -- CopilotChat専用のマークダウンファイルタイプを設定
           vim.bo.filetype = "markdown.copilot-chat"
-          -- render-markdownを有効化
-          vim.cmd("RenderMarkdown enable")
           -- 折り畳みを有効化
           vim.wo.foldenable = true
           vim.wo.foldmethod = "expr"
