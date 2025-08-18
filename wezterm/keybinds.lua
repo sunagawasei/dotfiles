@@ -6,7 +6,7 @@ wezterm.on("update-right-status", function(window, pane)
 	local name = window:active_key_table()
 	if name then
 		local elements = {}
-		
+
 		-- モードごとに異なる色とアイコンを設定
 		if name == "copy_mode" then
 			-- Copy mode: 青背景に白文字（Blue 6）
@@ -29,7 +29,7 @@ wezterm.on("update-right-status", function(window, pane)
 			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
 			table.insert(elements, { Text = " TABLE: " .. name .. " " })
 		end
-		
+
 		window:set_right_status(wezterm.format(elements))
 	else
 		window:set_right_status("")
@@ -80,13 +80,30 @@ return {
 		{
 			key = "n",
 			mods = "SUPER",
-			action = act.SpawnCommandInNewWindow({
-				position = {
-					x = 100,
-					y = 100,
-					origin = "MainScreen",
-				},
-			}),
+			action = wezterm.action_callback(function(window, pane)
+				-- 利用可能なスクリーン情報を取得
+				local screens = wezterm.gui.screens()
+				-- 現在アクティブなスクリーンを取得
+				local active_screen = screens.active
+
+				-- アクティブスクリーンの85%の幅、90%の高さで設定
+				local ratio_width = 0.85
+				local ratio_height = 1
+				local width = active_screen.width * ratio_width
+				local height = active_screen.height * ratio_height
+
+				-- ウィンドウをアクティブスクリーンの中央に配置して新しいウィンドウを作成
+				local tab, pane, new_window = wezterm.mux.spawn_window({
+					position = {
+						x = active_screen.x + (active_screen.width - width) / 2,
+						y = active_screen.y + (active_screen.height - height) / 2,
+						origin = "ActiveScreen",
+					},
+				})
+
+				-- ウィンドウサイズを設定
+				new_window:gui_window():set_inner_size(width, height)
+			end),
 		},
 		-- Tab移動
 		{ key = "]", mods = "SUPER|SHIFT", action = act.ActivateTabRelative(1) },
@@ -224,7 +241,7 @@ return {
 			{ key = "V", mods = "NONE", action = act.CopyMode({ SetSelectionMode = "Line" }) },
 			-- コピー（copy modeは継続）
 			{ key = "y", mods = "NONE", action = act.CopyTo("Clipboard") },
-			
+
 			-- [ キーでcopy modeを終了（vimライク）
 			{ key = "[", mods = "NONE", action = act.CopyMode("Close") },
 
@@ -240,4 +257,3 @@ return {
 		},
 	},
 }
-
