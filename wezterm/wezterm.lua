@@ -39,9 +39,9 @@ wezterm.on("gui-startup", function(cmd)
 	-- 現在アクティブなスクリーンを取得
 	local active_screen = screens.active
 
-	-- アクティブスクリーンの65%の幅、80%の高さで設定
+	-- アクティブスクリーンの85%の幅、90%の高さで設定
 	local ratio_width = 0.65
-	local ratio_height = 0.80
+	local ratio_height = 1
 	local width = active_screen.width * ratio_width
 	local height = active_screen.height * ratio_height
 
@@ -216,20 +216,36 @@ config.colors = {
 -- ==========================================
 -- タブのカスタマイズ
 -- ==========================================
--- タブタイトルのカスタマイズ処理（現在のディレクトリ名を表示）
+-- タブタイトルのカスタマイズ処理（相対パスを表示）
 wezterm.on("format-tab-title", function(tab)
 	-- 現在の作業ディレクトリのURIを取得
 	local cwd_uri = tab.active_pane.current_working_dir
-	-- URIから最後のディレクトリ名を抽出（末尾のディレクトリ名のみ）
-	local cwd = cwd_uri and string.match(cwd_uri.file_path or tostring(cwd_uri), "[^/]+$") or ""
-	-- タイトルを決定（ディレクトリ名があればそれを、なければペインのタイトル）
-	local title = cwd ~= "" and cwd or tab.active_pane.title
+	local title = ""
 	
+	if cwd_uri and cwd_uri.file_path then
+		local path = cwd_uri.file_path
+		local home = os.getenv("HOME")
+		
+		-- ホームディレクトリの場合は「~」を表示
+		if path == home then
+			title = "~"
+		-- ホームディレクトリ配下の場合は相対パスを表示
+		elseif path:sub(1, #home) == home then
+			title = "~" .. path:sub(#home + 1)
+		-- それ以外はフルパスを表示
+		else
+			title = path
+		end
+	else
+		-- パスが取得できない場合はペインのタイトルを使用
+		title = tab.active_pane.title
+	end
+
 	-- タイトルの長さを制限
 	if #title > 16 then
 		title = title:sub(1, 16) .. "…"
 	end
-	
+
 	-- アクティブタブかどうかで表示を分ける
 	if tab.is_active then
 		-- アクティブタブ: 明るくて目立つ表示
@@ -242,4 +258,3 @@ end)
 
 -- 設定をエクスポート
 return config
-
