@@ -107,6 +107,21 @@ return {
           MiniIconsPurple = { fg = "#EDEDED" },  -- 白色統一
           MiniIconsRed = { fg = "#EDEDED" },     -- 白色統一
           MiniIconsYellow = { fg = "#EDEDED" },  -- 白色統一
+          
+          -- GitSigns ハイライトグループ - Vercel Geistカラー統一
+          GitSignsAdd = { fg = "#22C55E" },           -- Green 6 (追加行の縦線)
+          GitSignsChange = { fg = "#3B82F6" },        -- Blue 6 (変更行の縦線)
+          GitSignsDelete = { fg = "#EF4444" },        -- Red 6 (削除行の縦線)
+          GitSignsAddNr = { fg = "#22C55E" },         -- Green 6 (追加行の行番号)
+          GitSignsChangeNr = { fg = "#3B82F6" },      -- Blue 6 (変更行の行番号)
+          GitSignsDeleteNr = { fg = "#EF4444" },      -- Red 6 (削除行の行番号)
+          GitSignsCurrentLineBlame = { fg = "#666666" }, -- Gray (インラインblame)
+          
+          -- Diff関連のハイライトグループ
+          DiffAdd = { fg = "#22C55E" },               -- Green 6
+          DiffChange = { fg = "#3B82F6" },            -- Blue 6
+          DiffDelete = { fg = "#EF4444" },            -- Red 6
+          DiffText = { fg = "#F59E0B", bold = true }, -- Amber 6 (強調部分)
         },
       })
       -- setup()の後にcolorschemeを設定する必要がある

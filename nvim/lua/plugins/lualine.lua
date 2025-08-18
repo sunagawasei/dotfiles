@@ -55,7 +55,19 @@ return {
             end,
           },
         },
-        lualine_b = { "branch", { "diff", show_ahead_behind = false } },
+        lualine_b = { 
+          "branch", 
+          { 
+            "diff", 
+            show_ahead_behind = false,
+            colored = true,
+            diff_color = {
+              added = { fg = "#22C55E" },    -- Vercel Green 6
+              modified = { fg = "#3B82F6" }, -- Vercel Blue 6  
+              removed = { fg = "#EF4444" },  -- Vercel Red 6
+            },
+          } 
+        },
         lualine_c = {
           "diagnostics",
           {
