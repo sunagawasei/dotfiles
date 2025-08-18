@@ -55,7 +55,7 @@ return {
             end,
           },
         },
-        lualine_b = { "branch", "diff" },
+        lualine_b = { "branch", { "diff", show_ahead_behind = false } },
         lualine_c = {
           "diagnostics",
           {
@@ -63,9 +63,9 @@ return {
             path = 1, -- フルパス表示
           },
         },
-        lualine_x = { "encoding", "fileformat", "filetype" },
-        lualine_y = { "progress" },
-        lualine_z = { "location" },
+        lualine_x = { "filetype" },
+        lualine_y = { "location" },
+        lualine_z = {},
       },
       inactive_sections = {
         lualine_a = {},
