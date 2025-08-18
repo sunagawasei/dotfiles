@@ -61,9 +61,9 @@
 | `<leader>tf` | フローティングターミナル | n |
 | `<leader>th` | 水平分割ターミナル | n |
 | `<leader>tv` | 垂直分割ターミナル | n |
-| `<leader>tg` | LazyGitを開く | n |
-| `<leader>tu` | GitUIを開く | n |
-| `<leader>tb` | Btopを開く | n |
+| `<leader>tg` | LazyGitを開く（要: `brew install lazygit`） | n |
+| `<leader>tu` | GitUIを開く（要: `brew install gitui`） | n |
+| `<leader>tb` | Btopを開く（要: `brew install btop`） | n |
 
 ## Git
 
@@ -99,10 +99,6 @@
 | `<leader>af` | Claude Codeにフォーカス | n |
 | `<leader>ar` | 前回のセッションを再開 | n |
 | `<leader>aC` | セッションを継続 | n |
-| `<leader>ab` | 現在のバッファを追加 | n |
-| `<leader>as` | 選択範囲をClaude Codeに送信 | v |
-| `<leader>aa` | Diffを承認 | n |
-| `<leader>ad` | Diffを拒否 | n |
 
 ## Markdown
 
