@@ -9,11 +9,14 @@ return {
     { "<leader>ar", "<cmd>ClaudeCode --resume<cr>", desc = "Resume Claude" },
     { "<leader>aC", "<cmd>ClaudeCode --continue<cr>", desc = "Continue Claude" },
     { "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer" },
-    { "<leader>as", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send to Claude" },
+    -- Visual mode: 選択範囲をClaude Codeに送信
+    { "<leader>as", ":<C-u>ClaudeCodeSend<cr>", mode = "v", desc = "Send selection to Claude" },
+    -- Normal mode: ファイルツリーで使用
     {
       "<leader>as",
       "<cmd>ClaudeCodeTreeAdd<cr>",
-      desc = "Add file",
+      mode = "n",
+      desc = "Add file from tree",
       ft = { "NvimTree", "oil" },
     },
     -- Diff management
