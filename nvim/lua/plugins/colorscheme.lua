@@ -108,20 +108,20 @@ return {
           MiniIconsRed = { fg = "#EDEDED" },     -- 白色統一
           MiniIconsYellow = { fg = "#EDEDED" },  -- 白色統一
           
-          -- GitSigns ハイライトグループ - Vercel Geistカラー統一
-          GitSignsAdd = { fg = "#22C55E" },           -- Green 6 (追加行の縦線)
-          GitSignsChange = { fg = "#3B82F6" },        -- Blue 6 (変更行の縦線)
-          GitSignsDelete = { fg = "#EF4444" },        -- Red 6 (削除行の縦線)
-          GitSignsAddNr = { fg = "#22C55E" },         -- Green 6 (追加行の行番号)
-          GitSignsChangeNr = { fg = "#3B82F6" },      -- Blue 6 (変更行の行番号)
-          GitSignsDeleteNr = { fg = "#EF4444" },      -- Red 6 (削除行の行番号)
+          -- GitSigns ハイライトグループ - Vercel Geistカラー統一（落ち着いた色調）
+          GitSignsAdd = { fg = "#4ADE80" },           -- Green 5 (追加行の縦線) - より落ち着いた緑
+          GitSignsChange = { fg = "#60A5FA" },        -- Blue 5 (変更行の縦線) - より落ち着いた青
+          GitSignsDelete = { fg = "#F87171" },        -- Red 5 (削除行の縦線) - より落ち着いた赤
+          GitSignsAddNr = { fg = "#4ADE80" },         -- Green 5 (追加行の行番号)
+          GitSignsChangeNr = { fg = "#60A5FA" },      -- Blue 5 (変更行の行番号)
+          GitSignsDeleteNr = { fg = "#F87171" },      -- Red 5 (削除行の行番号)
           GitSignsCurrentLineBlame = { fg = "#666666" }, -- Gray (インラインblame)
           
           -- Diff関連のハイライトグループ
-          DiffAdd = { fg = "#22C55E" },               -- Green 6
-          DiffChange = { fg = "#3B82F6" },            -- Blue 6
-          DiffDelete = { fg = "#EF4444" },            -- Red 6
-          DiffText = { fg = "#F59E0B", bold = true }, -- Amber 6 (強調部分)
+          DiffAdd = { fg = "#4ADE80" },               -- Green 5
+          DiffChange = { fg = "#60A5FA" },            -- Blue 5
+          DiffDelete = { fg = "#F87171" },            -- Red 5
+          DiffText = { fg = "#FBBF24", bold = true }, -- Amber 5 (強調部分)
         },
       })
       -- setup()の後にcolorschemeを設定する必要がある

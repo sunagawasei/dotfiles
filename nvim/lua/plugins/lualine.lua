@@ -62,9 +62,9 @@ return {
             show_ahead_behind = false,
             colored = true,
             diff_color = {
-              added = { fg = "#22C55E" },    -- Vercel Green 6
-              modified = { fg = "#3B82F6" }, -- Vercel Blue 6  
-              removed = { fg = "#EF4444" },  -- Vercel Red 6
+              added = { fg = "#4ADE80" },    -- Vercel Green 5 (より落ち着いた緑)
+              modified = { fg = "#60A5FA" }, -- Vercel Blue 5 (より落ち着いた青)
+              removed = { fg = "#F87171" },  -- Vercel Red 5 (より落ち着いた赤)
             },
           } 
         },
