@@ -99,6 +99,10 @@
 | `<leader>af` | Claude Codeにフォーカス | n |
 | `<leader>ar` | 前回のセッションを再開 | n |
 | `<leader>aC` | セッションを継続 | n |
+| `<leader>ab` | 現在のバッファを追加 | n |
+| `<leader>as` | 選択範囲をClaude Codeに送信 | v |
+| `<leader>aa` | Diffを承認 | n |
+| `<leader>ad` | Diffを拒否 | n |
 
 ## Markdown
 
