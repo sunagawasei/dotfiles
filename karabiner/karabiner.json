@@ -135,25 +135,6 @@
                         ]
                     },
                     {
-                        "description": "Ctrl + kをカタカナ変換に変更",
-                        "manipulators": [
-                            {
-                                "from": {
-                                    "key_code": "k",
-                                    "modifiers": {
-                                        "mandatory": [
-                                            "left_command"
-                                        ]
-                                    }
-                                },
-                                "to": {
-                                    "key_code": "f7"
-                                },
-                                "type": "basic"
-                            }
-                        ]
-                    },
-                    {
                         "description": "F10で右クリック",
                         "manipulators": [
                             {
