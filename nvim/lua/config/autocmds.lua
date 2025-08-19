@@ -35,12 +35,16 @@ vim.api.nvim_create_autocmd("FileType", {
 vim.api.nvim_create_autocmd("BufWritePre", {
   group = vim.api.nvim_create_augroup("FormatOnSave", { clear = true }),
   callback = function(args)
+    -- グローバル設定とバッファローカル設定の両方をチェック
     if vim.g.autoformat then
-      require("conform").format({
-        bufnr = args.buf,
-        timeout_ms = 500,
-        lsp_fallback = true,
-      })
+      -- vim.b.autoformat が明示的に false でない場合のみフォーマット
+      if vim.b.autoformat ~= false then
+        require("conform").format({
+          bufnr = args.buf,
+          timeout_ms = 500,
+          lsp_fallback = true,
+        })
+      end
     end
   end,
 })
