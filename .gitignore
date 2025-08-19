@@ -77,3 +77,6 @@ yarn-error.log*
 *.key
 *.pem
 
+# MCP Serena設定・キャッシュ（ローカル環境固有）
+.serena/
+
