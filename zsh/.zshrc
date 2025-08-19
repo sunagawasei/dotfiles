@@ -100,6 +100,11 @@ setopt appendhistory             # 履歴を上書きではなく追加
 bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 
+# edit-command-line - コマンドラインをエディタで編集
+autoload -Uz edit-command-line
+zle -N edit-command-line
+bindkey '^e' edit-command-line  # Ctrl+E でエディタ起動
+
 # 補完用のキーバインド（WezTermと競合しない代替キー）
 # Ctrl+Y - 現在の単語だけを適用して次の補完位置へ（Alt+Enterの代替）
 bindkey '^y' accept-and-menu-complete
@@ -165,6 +170,9 @@ alias k='kubectl'
 
 # SSH接続時のターミナルタイプを明示的に指定（カラー対応）
 alias ssh='TERM=xterm-256color \ssh'
+
+# Delta（diff表示ツール）のデフォルトオプション
+alias delta='delta --dark --paging=never --line-numbers --syntax-theme base16-256 -s'
 
 # ----------------------
 # Google Cloud SDK
