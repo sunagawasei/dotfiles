@@ -164,7 +164,6 @@ return {
       { "<leader>cs", "<cmd>CopilotChatStop<cr>", desc = "CopilotChat - Stop" },
       { "<leader>cr", "<cmd>CopilotChatReset<cr>", desc = "CopilotChat - Reset" },
       { "<leader>cl", "<cmd>CopilotChatLoad<cr>", desc = "CopilotChat - Load session" },
-      { "<leader>cv", "<cmd>CopilotChatSave<cr>", desc = "CopilotChat - Save session" },
 
       -- インタラクティブな質問
       {
