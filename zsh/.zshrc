@@ -168,6 +168,9 @@ alias vi='nvim'
 # Kubernetesショートカット
 alias k='kubectl'
 
+# Lazygit
+alias lg='lazygit'
+
 # SSH接続時のターミナルタイプを明示的に指定（カラー対応）
 alias ssh='TERM=xterm-256color \ssh'
 
