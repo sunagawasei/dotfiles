@@ -55,8 +55,7 @@ YAMLファイルなどで保存時の自動フォーマットを一時的に無�
 
 | キーマップ | 説明 | モード |
 |-----------|------|--------|
-| `gl` | 現在行の診断をフローティングウィンドウで表示 | n |
-| `<leader>ld` | 現在行の診断を表示 | n |
+| `gl` または `<leader>ld` | 行の診断を表示 | n |
 | `<leader>cd` | 診断を表示（LazyVimデフォルト） | n |
 | `[d` | 前の診断へ移動 | n |
 | `]d` | 次の診断へ移動 | n |
@@ -64,6 +63,17 @@ YAMLファイルなどで保存時の自動フォーマットを一時的に無�
 | `]e` | 次のエラーへ移動 | n |
 | `<leader>dl` | 診断をロケーションリストに追加 | n |
 | `<leader>dq` | 診断をQuickfixリストに追加 | n |
+
+### 診断フローティングウィンドウの操作
+
+診断を表示した後のフローティングウィンドウ操作：
+
+| キーマップ | 説明 | 使用場面 |
+|-----------|------|---------|
+| `<C-w>w` または `<C-w><C-w>` | フローティングウィンドウにフォーカス | ウィンドウが開いている時 |
+| `q` または `<Esc>` | フローティングウィンドウを閉じる | フォーカス後 |
+| `<C-w>q` | フローティングウィンドウを閉じる | フォーカス後 |
+| スクロールキー | 長い診断メッセージをスクロール | フォーカス後 |
 
 ## LSP ナビゲーション（LazyVimデフォルト）
 
@@ -184,6 +194,49 @@ YAMLファイルなどで保存時の自動フォーマットを一時的に無�
 | `<leader>ul` | 行番号をトグル | n |
 | `<leader>uL` | 相対行番号をトグル | n |
 | `<leader>uw` | 折り返しをトグル | n |
+
+## ファイルタイプの変更
+
+```vim
+" 現在のファイルタイプを確認
+:set filetype?
+
+" ファイルタイプを設定（例：Markdownに変更）
+:set filetype=markdown
+
+" ファイルタイプを設定（短縮形）
+:set ft=javascript
+
+" よく使うファイルタイプの例
+:set ft=python       " Python
+:set ft=javascript   " JavaScript
+:set ft=typescript   " TypeScript
+:set ft=json        " JSON
+:set ft=yaml        " YAML
+:set ft=html        " HTML
+:set ft=css         " CSS
+:set ft=sh          " Shell Script
+:set ft=vim         " Vim Script
+:set ft=lua         " Lua
+:set ft=rust        " Rust
+:set ft=go          " Go
+:set ft=java        " Java
+:set ft=cpp         " C++
+:set ft=c           " C
+:set ft=ruby        " Ruby
+:set ft=php         " PHP
+:set ft=sql         " SQL
+:set ft=toml        " TOML
+:set ft=xml         " XML
+:set ft=dockerfile  " Dockerfile
+:set ft=gitcommit   " Git Commit
+:set ft=conf        " 設定ファイル
+:set ft=text        " プレーンテキスト
+```
+
+**注意**: 
+- ファイルタイプを変更すると、シンタックスハイライト、インデント、LSP、フォーマッターなどが切り替わります
+- 一時的な変更で、ファイルを開き直すと元に戻ります
 
 ## Zsh キーバインド
 
