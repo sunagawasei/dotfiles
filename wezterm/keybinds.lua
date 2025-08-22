@@ -18,6 +18,11 @@ wezterm.on("update-right-status", function(window, pane)
 			table.insert(elements, { Background = { Color = "#22C55E" } })
 			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
 			table.insert(elements, { Text = "  RESIZE " }) -- NerdFont resize icon
+		elseif name == "pane_navigation" then
+			-- Pane Navigation mode: オレンジ背景に白文字（Amber 6）
+			table.insert(elements, { Background = { Color = "#F59E0B" } })
+			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
+			table.insert(elements, { Text = "  PANE NAV " }) -- NerdFont window icon
 		elseif name == "search_mode" then
 			-- Search mode: 紫背景に白文字（Purple 6）
 			table.insert(elements, { Background = { Color = "#A855F7" } })
@@ -177,6 +182,15 @@ return {
 
 		-- Quick Select mode
 		{ key = "Space", mods = "CTRL|SHIFT", action = act.QuickSelect },
+
+		-- ペインナビゲーションモード (Leader + q)
+		{ key = "q", mods = "LEADER", action = act.ActivateKeyTable({ name = "pane_navigation", one_shot = false }) },
+
+		-- よく使うペイン移動用の直接キーバインド
+		{ key = "H", mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Left") },
+		{ key = "L", mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Right") },
+		{ key = "K", mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Up") },
+		{ key = "J", mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Down") },
 	},
 	-- キーテーブル
 	-- https://wezfurlong.org/wezterm/config/key-tables.html
@@ -254,6 +268,36 @@ return {
 			{ key = "Escape", mods = "NONE", action = act.CopyMode("ClearSelectionMode") },
 			{ key = "c", mods = "CTRL", action = act.CopyMode("Close") },
 			{ key = "q", mods = "NONE", action = act.CopyMode("Close") },
+		},
+		-- ペインナビゲーションモード (Leader + q)
+		pane_navigation = {
+			{ key = "h", action = act.ActivatePaneDirection("Left") },
+			{ key = "l", action = act.ActivatePaneDirection("Right") },
+			{ key = "k", action = act.ActivatePaneDirection("Up") },
+			{ key = "j", action = act.ActivatePaneDirection("Down") },
+			-- 数字キーでペインを直接選択
+			{ key = "1", action = act.ActivatePaneByIndex(0) },
+			{ key = "2", action = act.ActivatePaneByIndex(1) },
+			{ key = "3", action = act.ActivatePaneByIndex(2) },
+			{ key = "4", action = act.ActivatePaneByIndex(3) },
+			{ key = "5", action = act.ActivatePaneByIndex(4) },
+			{ key = "6", action = act.ActivatePaneByIndex(5) },
+			{ key = "7", action = act.ActivatePaneByIndex(6) },
+			{ key = "8", action = act.ActivatePaneByIndex(7) },
+			{ key = "9", action = act.ActivatePaneByIndex(8) },
+			-- ペインサイズ調整
+			{ key = "H", mods = "SHIFT", action = act.AdjustPaneSize({ "Left", 5 }) },
+			{ key = "L", mods = "SHIFT", action = act.AdjustPaneSize({ "Right", 5 }) },
+			{ key = "K", mods = "SHIFT", action = act.AdjustPaneSize({ "Up", 5 }) },
+			{ key = "J", mods = "SHIFT", action = act.AdjustPaneSize({ "Down", 5 }) },
+			-- ペインを閉じる
+			{ key = "x", action = act.CloseCurrentPane({ confirm = true }) },
+			-- ペインをズーム
+			{ key = "z", action = act.TogglePaneZoomState },
+			-- モードを終了
+			{ key = "Enter", action = "PopKeyTable" },
+			{ key = "Escape", action = "PopKeyTable" },
+			{ key = "q", action = "PopKeyTable" },
 		},
 	},
 }
