@@ -348,6 +348,24 @@ claude mcp add serena -s project -- uvx --from git+https://github.com/oraios/ser
 - [Serena GitHub](https://github.com/oraios/serena)
 - [Serena 解説記事](https://azukiazusa.dev/blog/serena-coding-agent/)
 
+## 文字ジャンプ（f/F/t/T コマンド）
+
+### 基本操作
+| キーマップ | 説明 | モード |
+|-----------|------|--------|
+| `f{char}` | 行内で指定文字を前方検索してジャンプ | n |
+| `F{char}` | 行内で指定文字を後方検索してジャンプ | n |
+| `t{char}` | 行内で指定文字の直前にジャンプ | n |
+| `T{char}` | 行内で指定文字の直後にジャンプ | n |
+
+### 検索の繰り返し
+| キーマップ | 説明 | モード |
+|-----------|------|--------|
+| `;` | 最後の文字検索を前方向に繰り返し | n |
+| `,` | 最後の文字検索を逆方向に繰り返し | n |
+
+**重要**: Escapeで中断しても`;`と`,`は最後の検索を記憶しているため、引き続き同じ文字へのジャンプが可能。
+
 ## ノート
 
 - `<leader>` キーはデフォルトでスペースキーに設定されています
