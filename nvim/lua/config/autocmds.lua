@@ -49,10 +49,10 @@ vim.api.nvim_create_autocmd("BufWritePre", {
   end,
 })
 
--- 診断の赤い波線を確実に無効化
-vim.api.nvim_create_autocmd({ "VimEnter", "LspAttach", "BufEnter", "BufWinEnter", "FileType" }, {
+-- 診断の赤い波線を確実に無効化（パフォーマンス最適化：VimEnterとLspAttachのみで実行）
+vim.api.nvim_create_autocmd({ "VimEnter", "LspAttach" }, {
   callback = function()
-    -- 即座に適用
+    -- 一度だけ設定を適用
     vim.diagnostic.config({
       underline = false, -- 赤い波線を無効化
       virtual_text = false, -- インライン診断テキストも無効化
@@ -64,29 +64,14 @@ vim.api.nvim_create_autocmd({ "VimEnter", "LspAttach", "BufEnter", "BufWinEnter"
       severity_sort = true,
       update_in_insert = false,
     })
-
-    -- 遅延して再適用（他のプラグインによる上書きを防ぐ）
-    vim.defer_fn(function()
-      vim.diagnostic.config({
-        underline = false,
-        virtual_text = false,
-        signs = true,
-        float = {
-          border = "rounded",
-          source = "always",
-        },
-        severity_sort = true,
-        update_in_insert = false,
-      })
-    end, 100)
   end,
 })
 
 -- 外部でファイルが変更されたときに自動的にバッファを更新
 vim.api.nvim_create_augroup("auto_read", { clear = true })
 
--- フォーカスを得たとき、バッファに入ったときにファイルの変更をチェック
-vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "TermClose", "TermLeave" }, {
+-- フォーカスを得たときのみファイルの変更をチェック（パフォーマンス最適化）
+vim.api.nvim_create_autocmd({ "FocusGained" }, {
   group = "auto_read",
   callback = function()
     if vim.o.buftype ~= "nofile" then
@@ -95,8 +80,8 @@ vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "TermClose", "TermLeave
   end,
 })
 
--- カーソルが停止したときもチェック（通常モードと挿入モード両方）
-vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
+-- カーソルが停止したときもチェック（updatetimeを長くしたので頻度が下がる）
+vim.api.nvim_create_autocmd({ "CursorHold" }, {
   group = "auto_read",
   callback = function()
     if vim.o.buftype ~= "nofile" then
