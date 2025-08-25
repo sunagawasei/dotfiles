@@ -197,6 +197,13 @@ fi
 complete -C '/opt/homebrew/opt/awscli@1/bin/aws_completer' aws
 
 # ----------------------
+# ----------------------
+# 環境変数
+# ----------------------
+# Claude Config
+export CLAUDE_CONFIG_DIR="${XDG_CONFIG_HOME}"/claude
+
+# ----------------------
 # ローカル設定
 # ----------------------
 # マシン固有の設定があれば読み込む
