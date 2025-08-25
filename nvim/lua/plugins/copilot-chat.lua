@@ -22,7 +22,7 @@ return {
     opts = {
       debug = false,
       model = "claude-sonnet-4",
-      auto_insert_mode = true,
+      auto_insert_mode = false,
       show_help = false,
       show_folds = true, -- コードブロックの折りたたみ表示を有効化
       auto_follow_cursor = false, -- カーソル追従を無効化
@@ -149,10 +149,9 @@ return {
         callback = function()
           -- CopilotChat専用のマークダウンファイルタイプを設定
           vim.bo.filetype = "markdown.copilot-chat"
-          -- 折り畳みを有効化
+          -- 折り畳みを有効化（パフォーマンス最適化のためindentベースに変更）
           vim.wo.foldenable = true
-          vim.wo.foldmethod = "expr"
-          vim.wo.foldexpr = "nvim_treesitter#foldexpr()"
+          vim.wo.foldmethod = "indent"
           vim.wo.foldlevel = 99
         end,
       })
