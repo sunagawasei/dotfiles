@@ -4,106 +4,92 @@
 
 ## リポジトリ概要
 
-macOS上の開発ツール設定を管理する個人用dotfiles設定リポジトリです。バージョン管理にはGitを使用しています（ローカルのみ、リモートなし）。
+macOS上の開発ツール設定を管理する個人用dotfiles設定リポジトリです。バージョン管理にはGitを使用し、GitHubでリモート管理されています。
 
 ## 主要な設定
 
-### Neovim (LazyVim)
-- 場所: `nvim/`
-- フレームワーク: LazyVim（事前設定済みのNeovimセットアップ）
-- Luaフォーマット: `nvim/stylua.toml`でstyluaを使用
+### エディタ
 
-### Weztermターミナル（メイン）
-- 場所: `wezterm/`
-- 主要設定ファイル: `wezterm/wezterm.lua`
-- キーバインド設定: `wezterm/keybinds.lua`
-- テーマ: カスタムVercelダークカラー
+- **Neovim (LazyVim)**: `nvim/` - メインエディタ、詳細設定は `nvim/CLAUDE.md` を参照
+- **Zed**: `zed/` - モダンコードエディタ、カスタム設定とVercelテーマ
 
-### Ghosttyターミナル（サブ使用）
-- 場所: `ghostty/`
-- 主要設定ファイル: `ghostty/config`
-- キーバインドリファレンス: `ghostty/command.md`
-- テーマ: カスタムVercelダークカラー
+### ターミナルエミュレーター
 
-### カラーシステム
-- ドキュメント: `vercel-geist-colors.md`
-- アプリケーション間で一貫したVercel Geistカラースキーム
-- 10色のカラースケール（Gray、Blue、Red、Amber、Green、Teal、Purple、Pink）
-- 色を決める場合は @vercel-geist-colors.md に基づいたカラーを選択してください。
+- **WezTerm (メイン)**: `wezterm/` - GPU加速、カスタムキーバインド
+- **Ghostty (サブ)**: `ghostty/` - macOSネイティブ、軽量
 
 ### シェル設定
-- Starshipプロンプト: `starship.toml`
-- Fishシェル: `fish/`
-- シェルユーティリティ: `shell/`
 
-### Zsh補完のキーバインド
+- **Fish Shell**: `fish/` - メインシェル
+- **Zsh**: `zsh/` - 従来シェル、豊富な補完設定
+- **Starship**: `starship.toml` - プロンプト設定
 
-#### 基本的な補完操作
-- **Tab**: 補完候補を表示・次の候補へ移動
-- **Shift+Tab**: 前の候補へ移動
-- **Enter**: 選択中の補完候補を全部適用
+### 開発ツール
 
-#### 部分適用のキーバインド
-- **Ctrl+F** または **→**: カーソル位置から次の単語区切り（/や.など）まで適用
-- **Alt+F**: 次の単語まで適用
-- **Alt+/**: ディレクトリ区切りまで適用
+- **Git**: `git/` - グローバル設定
+- **LazyGit**: `lazygit/` - Git TUI設定
+- **GitUI**: `gitui/` - Git GUI設定  
+- **tmux**: `tmux/` - ターミナル多重化
+- **Karabiner**: `karabiner/` - キーボード設定
 
-#### 単語ごとの適用
-- **Alt+Enter**: 現在の単語だけを適用して、次の補完位置へ
-- **Ctrl+Q**: 現在の補完を確定して、続けて入力可能に
+### カラーシステム
 
-#### その他の便利なキーバインド
-- **Ctrl+G**: 補完をキャンセル
-- **Ctrl+D**: 補完候補の詳細表示（`zstyle ':completion:*' verbose yes`が必要）
-- **Ctrl+X Ctrl+V**: 補完候補をviエディタで編集
-
-カスタマイズ例（`.zshrc`）:
-```bash
-bindkey '^[[Z' reverse-menu-complete  # Shift+Tab
-```
+- **統一テーマ**: Vercel Geistカラースキーム
+- **ドキュメント**: `vercel-geist-colors.md`
+- **適用範囲**: 全アプリケーション間で一貫性のあるダークテーマ
 
 ## 一般的な開発タスク
 
+### Neovim設定
+
+詳細な設定とキーマップは `nvim/CLAUDE.md` を参照してください。LazyVimベースの設定で、Go言語サポート、テスト実行、AI統合などを含みます。
+
 ### Raycast拡張機能
-`raycast/extensions/`内のRaycast拡張機能を扱う場合：
+
+`raycast/extensions/` 内の拡張機能を扱う場合：
+
 ```bash
-# 拡張機能のビルド
-npm run build  # または ray build
-
-# 開発モード
-npm run dev    # または ray develop
-
-# コードのリント
-npm run lint   # または ray lint
-
-# リントエラーの修正
-npm run fix-lint  # または ray lint --fix
+npm run build    # ビルド
+npm run dev      # 開発モード  
+npm run lint     # リント
 ```
 
-### 設定変更
+### 設定変更のワークフロー
+
 1. 設定ファイルを直接編集
-2. 各アプリケーションで変更をテスト
-3. 説明的な日本語または英語のメッセージでコミット
-4. 最近のコミットスタイルの例：
-   - "キーバインド設定を追加し、^wでコマンドラインを編集できるようにしました"
-   - "プレフィックスキーをCtrl+qに変更し、C-bを解除"
-   - "chore: `raycast/extensions`を除外"
+2. 各アプリケーションで動作確認
+3. 日本語または英語で説明的なコミットメッセージを作成
+4. 変更をコミット
+
+最近のコミット例：
+- "feat(nvim): Go言語サポートを追加"
+- "perf(options): updatetimeを1000msに変更してCPU使用率を改善"
+- "docs: 文字ジャンプコマンドの説明を追加"
 
 ### Gitワークフロー
+
 - `main`ブランチで直接作業
-- リモートリポジトリは設定されていない
-- バックアップファイル（*.bak）は一部のツールによって自動的に作成される
+- リモートリポジトリ: `git@github.com:sunagawasei/dotfiles.git`
+- 定期的にプッシュして同期
 
 ## 重要なパス
-- Neovim設定: `nvim/init.lua`および`nvim/lua/`
-- Wezterm設定: `wezterm/wezterm.lua`および`wezterm/keybinds.lua`
-- Ghostty設定: `ghostty/config`
-- ターミナルテーマ: Vercel Geistカラーベース
-- Raycast拡張機能: `raycast/extensions/*/`
 
-## アーキテクチャの注意点
-- 集中化されたビルドシステムやセットアップスクリプトなし
-- 各アプリケーションが独自の設定を管理
-- 手動での設定デプロイ（stowやシンボリックリンク管理なし）
-- 設定全体で日本語サポート
-- Vercelのデザインシステムを使用した一貫性のあるダークテーマ
+- **Neovim**: `nvim/init.lua` および `nvim/lua/`
+- **WezTerm**: `wezterm/wezterm.lua` および `wezterm/keybinds.lua`  
+- **Ghostty**: `ghostty/config`
+- **Zed**: `zed/settings.json` および `zed/keymap.json`
+- **Git**: `git/config` および `git/ignore`
+
+## アーキテクチャの特徴
+
+- **モジュラー構造**: 各ツールが独立した設定ディレクトリを持つ
+- **手動管理**: stowや自動化ツールは使用せず、直接編集
+- **統一テーマ**: Vercel Geistカラーによる一貫性
+- **日本語サポート**: 設定全体で日本語環境をサポート
+- **パフォーマンス重視**: 各ツールで最適化された設定
+
+## 注意事項
+
+- キーバインドや操作を追加した場合は `KEYMAPS.md` に記録する
+- カラー選択時は `vercel-geist-colors.md` のガイドラインに従う
+- プラグインやツール追加時は適切な設定ディレクトリに配置する

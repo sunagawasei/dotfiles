@@ -35,6 +35,12 @@ zinit light zsh-users/zsh-completions
 # 自動サジェスト - 履歴に基づいてコマンドを提案（薄い文字で表示）
 zinit light zsh-users/zsh-autosuggestions
 
+# zsh-autosuggestions 部分適用の設定
+# forward-wordを部分適用ウィジェットとして使用
+ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-word)
+# forward-charも部分適用ウィジェットとして使用  
+ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-char vi-forward-char)
+
 # FZFタブ補完 - タブ補完をfzfでインタラクティブに
 zinit light Aloxaf/fzf-tab
 
@@ -103,7 +109,12 @@ bindkey '^n' history-search-forward
 # edit-command-line - コマンドラインをエディタで編集
 autoload -Uz edit-command-line
 zle -N edit-command-line
-bindkey '^e' edit-command-line  # Ctrl+E でエディタ起動
+bindkey '^x^e' edit-command-line  # Ctrl+X Ctrl+E でエディタ起動
+
+# zsh-autosuggestionsの部分適用キーバインド
+bindkey '^[f' forward-word          # Alt+F で単語単位の部分適用
+bindkey '^[[1;5C' forward-word      # Ctrl+Right で単語単位の部分適用
+bindkey '^[[C' forward-char         # 右矢印で1文字ずつ適用
 
 # 補完用のキーバインド（WezTermと競合しない代替キー）
 # Ctrl+Y - 現在の単語だけを適用して次の補完位置へ（Alt+Enterの代替）
@@ -111,6 +122,7 @@ bindkey '^y' accept-and-menu-complete
 
 # Ctrl+] - 現在の補完を確定して続けて入力可能に（Ctrl+Qの代替）
 bindkey '^]' accept-and-hold
+
 
 # ----------------------
 # インタラクティブシェル設定
@@ -135,6 +147,21 @@ unsetopt list_types
 # ----------------------
 # 補完機能を有効化
 autoload -U compinit && compinit
+
+# メニュー選択機能を有効化
+zmodload zsh/complist
+
+# メニュー選択モードでのキーバインド
+bindkey -M menuselect '^[[C' forward-char                  # 右矢印で次の候補へ
+bindkey -M menuselect '^[[D' backward-char                 # 左矢印で前の候補へ
+bindkey -M menuselect '^[[B' down-line-or-history          # 下矢印で下の候補へ
+bindkey -M menuselect '^[[A' up-line-or-history            # 上矢印で上の候補へ
+bindkey -M menuselect '^i' menu-complete                   # Tabで次の候補
+bindkey -M menuselect '^[[Z' reverse-menu-complete         # Shift+Tabで前の候補
+bindkey -M menuselect ' ' accept-and-infer-next-history    # スペースでディレクトリ部分適用
+bindkey -M menuselect '/' accept-and-infer-next-history    # スラッシュでディレクトリ部分適用
+bindkey -M menuselect '^m' accept-line                     # Enterで確定
+bindkey -M menuselect '^g' send-break                      # Ctrl+Gでキャンセル
 
 # 補完スタイルの詳細設定
 # 大文字小文字を区別しない補完
