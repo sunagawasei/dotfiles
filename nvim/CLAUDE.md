@@ -148,6 +148,50 @@ Snacks.nvimベース：
 - **nvim-lint**: リンター統合
 - **todo-comments.nvim**: TODOコメントのハイライト
 
+### テスト実行（Neotest）
+- **neotest**: テスト実行フレームワーク（VSCode Test Explorer相当）
+- **neotest-golang**: Go言語テストアダプタ（サブテスト、テーブルテスト対応）
+
+#### 基本テスト実行キーバインド：
+- `<leader>tr`: カーソル位置のテストを実行（最も近いテスト）
+- `<leader>tt`: 現在のファイルのすべてのテストを実行
+- `<leader>tT`: プロジェクト全体のテストを実行
+- `<leader>tl`: 最後に実行したテストを再実行
+- `<leader>td`: カーソル位置のテストをデバッグ実行
+
+#### 拡張テスト実行キーバインド：
+- `<leader>tp`: パッケージ/ディレクトリ単位でテスト実行
+- `<leader>tf`: 失敗したテストのみ再実行（詳細出力付き）
+- `<leader>ta`: プロジェクト全体のテスト実行（詳細出力付き）
+- `<leader>tA`: プロジェクト全体のテスト実行（レース検出付き）
+- `<leader>tc`: 最寄りのテストをカバレッジ測定付きで実行
+- `<leader>tC`: 現在ファイルをカバレッジ測定付きで実行
+
+#### テスト結果・出力操作：
+- `<leader>ts`: テスト結果サマリーを表示/非表示
+- `<leader>to`: テスト出力を表示
+- `<leader>tO`: テスト出力パネルを切り替え
+- `<leader>tx`: 実行中のテストを停止
+- `<leader>tq`: テストquickfixウィンドウを閉じる
+- `<leader>t?`: テストステータスを開く
+- `<leader>tw`: テストウォッチモード切り替え
+
+#### Go言語テスト機能：
+- **サブテスト実行**: `t.Run("subtest", ...)`の個別実行
+- **テーブルテスト対応**: テストケース単位での実行
+- **レース検出**: `-race`フラグによる並行処理バグ検出
+- **カバレッジ測定**: `-cover`フラグによるコードカバレッジ
+- **詳細出力**: `-v`フラグによるテスト実行詳細表示
+- **Testifyサポート**: Testifyフレームワークのテストスイート対応
+- **デバッグ統合**: DAP（Debug Adapter Protocol）連携
+
+#### テスト結果の視覚表示：
+- **インラインマーカー**: テスト関数の横に成功/失敗アイコン表示
+- **カラーコード**: Vercel Geistカラーによる状態表示
+  - ✓ 成功（緑）、✗ 失敗（赤）、◐ 実行中（青）、○ スキップ（黄）
+- **サマリーパネル**: ツリー形式でのテスト構造・結果表示
+- **出力パネル**: テスト実行ログとエラー詳細
+
 ### Git連携
 - **gitsigns.nvim**: Git差分表示
 - **gitgraph.nvim**: Gitグラフビューア（`<leader>gl`）
@@ -161,6 +205,11 @@ Snacks.nvimベース：
   - `<leader>tb`: Btop
 - **render-markdown.nvim**: Markdownプレビュー強化（Vercel Geistカラー適用）
 - **flash.nvim**: 高速移動・検索
+  - `s`: Flash jump（ラベル付きジャンプ）
+  - `S`: Flash Treesitter（構文要素ジャンプ）
+  - `f`/`F`: 前方/後方文字検索（`t`/`T`は無効化済み）
+  - `;`/`,`: 文字検索の繰り返し/逆方向
+  - **注意**: `t`/`T`キーは無効化（Neotestキーバインドとの競合回避）
 - **which-key.nvim**: キーバインドヘルプ表示
 - **nvim-window-picker**: ウィンドウ選択ツール（`<leader>wp`）
 - **trim.nvim**: 行末空白の自動削除
@@ -187,8 +236,91 @@ Snacks.nvimベース：
 
 ## トラブルシューティング
 
+### 基本的なデバッグコマンド
 ```vim
 :checkhealth          # Neovim全体のヘルスチェック
 :Lazy log             # プラグイン更新ログ
 :messages             # エラーメッセージ履歴
 ```
+
+### キーマップの競合確認
+```vim
+:map <leader>tr       # 特定のキーマップを確認
+:nmap <leader>t       # ノーマルモードのキーマップを確認
+:verbose map s        # キーマップの詳細情報を確認
+```
+
+### テスト実行の問題
+
+#### "No tests found" エラーの対処法
+```vim
+:TSInstall go gomod gosum gowork  # Treesitterパーサーを再インストール
+:checkhealth treesitter           # Treesitterの状態確認
+:checkhealth neotest              # Neotestの診断
+:lua print(vim.inspect(require("neotest").summary.get_adapters())) # アダプター確認
+```
+
+#### キーマップが動作しない場合
+- `<leader>tr`が動作しない場合：Flash.nvimの`t`キー設定を確認
+- 設定ファイル：`lua/plugins/flash-config.lua`で`t`/`T`キーを無効化済み
+- 遅延読み込みが原因の場合：プラグインが読み込まれているか確認
+
+#### Goテスト検出の問題
+- **プロジェクトルート**: `go.mod`ファイルがプロジェクトルートに存在するか確認
+- **ファイル名**: `*_test.go`パターンに従っているか確認
+- **関数名**: `Test*`または`Benchmark*`で始まっているか確認
+- **作業ディレクトリ**: Neovimをプロジェクトルートから起動しているか確認
+
+#### デバッグコマンド
+```vim
+:messages                          # 起動時のデバッグメッセージを確認
+:lua vim.print(require("neotest").state.get_adapters()) # アダプター一覧
+:lua vim.print(require("neotest").state.adapter_id("neotest-golang")) # 特定アダプタID
+:checkhealth neotest              # Neotestヘルスチェック
+:Neotest summary                  # テストサマリーを表示
+```
+
+#### 起動時の確認事項
+Neovimを起動後、`:messages`で以下のメッセージが表示されるかを確認：
+```
+neotest-golang loaded successfully
+Neotest configured with 1 adapter(s)
+Adapter 1: neotest-golang
+```
+
+メッセージが表示されない場合は、アダプタの読み込みに失敗しています。
+
+#### 段階的な動作確認手順
+1. **Neovimの再起動**
+   ```bash
+   # プロジェクトルートから起動（go.modがあるディレクトリ）
+   cd /path/to/go/project
+   nvim
+   ```
+
+2. **アダプタ読み込みの確認**
+   ```vim
+   :messages  # 起動メッセージを確認
+   ```
+
+3. **Goテストファイルを開く**
+   ```vim
+   :e *_test.go  # テストファイルを開く
+   ```
+
+4. **テスト関数にカーソルを移動**
+   - `Test*`で始まる関数の中にカーソルを置く
+
+5. **テスト実行**
+   ```vim
+   <leader>tr  # 最寄りのテストを実行
+   ```
+
+6. **結果確認**
+   - 「No tests found」が表示されなければ成功
+   - テストが実行され、結果が表示される
+
+### プラグイン設定の確認
+- Go言語サポート：`lua/config/lazy.lua`で`extras.lang.go`が有効
+- テスト設定：`lua/plugins/neotest.lua`でneotest-golang設定
+- Flash設定：`lua/plugins/flash-config.lua`でキーマップカスタマイズ
