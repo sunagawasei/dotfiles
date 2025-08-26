@@ -67,3 +67,4 @@ vim.keymap.set({ "n", "i", "v" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save fil
 -- ファイル全体をコピー（Normal モード）
 vim.keymap.set("n", "<C-c>", "<cmd>%y+<cr>", { desc = "Copy entire file" })
 
+
