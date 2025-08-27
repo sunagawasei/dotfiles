@@ -197,6 +197,29 @@ return {
         vim.api.nvim_set_hl(0, "ClaudeCodeWinBar", { bg = "none" })
         vim.api.nvim_set_hl(0, "ClaudeCodeWinBarNC", { bg = "none" })
         
+        -- Neotestのハイライトグループ設定（Vercel Geistカラー）
+        -- テスト結果のステータス色
+        vim.api.nvim_set_hl(0, "NeotestPassed", { fg = "#22C55E" })     -- Green 6: 成功
+        vim.api.nvim_set_hl(0, "NeotestFailed", { fg = "#EF4444" })     -- Red 6: 失敗
+        vim.api.nvim_set_hl(0, "NeotestRunning", { fg = "#3B82F6" })    -- Blue 6: 実行中
+        vim.api.nvim_set_hl(0, "NeotestSkipped", { fg = "#F59E0B" })    -- Amber 6: スキップ
+        vim.api.nvim_set_hl(0, "NeotestMarked", { fg = "#A855F7" })     -- Purple 6: マーク済み
+        vim.api.nvim_set_hl(0, "NeotestWinSelect", { fg = "#2563EB" })  -- Blue 7: ウィンドウ選択
+        
+        -- UI要素のハイライト
+        vim.api.nvim_set_hl(0, "NeotestAdapterName", { fg = "#64748B" }) -- Gray 6: アダプタ名
+        vim.api.nvim_set_hl(0, "NeotestBorder", { fg = "#333333" })      -- Color 4 (dark): ボーダー
+        vim.api.nvim_set_hl(0, "NeotestDir", { fg = "#475569" })         -- Gray 7: ディレクトリ
+        vim.api.nvim_set_hl(0, "NeotestFile", { fg = "#FFFFFF" })        -- Color 10 (dark): ファイル名
+        vim.api.nvim_set_hl(0, "NeotestNamespace", { fg = "#14B8A6" })   -- Teal 6: 名前空間
+        vim.api.nvim_set_hl(0, "NeotestIndent", { fg = "#334155" })      -- Gray 8: インデント
+        vim.api.nvim_set_hl(0, "NeotestExpandMarker", { fg = "#94A3B8" }) -- Gray 5: 展開マーカー
+        
+        -- 追加のステータス色（強調バージョン）
+        vim.api.nvim_set_hl(0, "NeotestFocused", { fg = "#2563EB", bold = true })  -- Blue 7: フォーカス
+        vim.api.nvim_set_hl(0, "NeotestUnknown", { fg = "#64748B" })               -- Gray 6: 不明
+        vim.api.nvim_set_hl(0, "NeotestTarget", { fg = "#EC4899" })                -- Pink 6: ターゲット
+        
         -- MiniIconsのハイライトグループは背景透明化しない（アイコンの色を保持）
         -- これらのグループは前景色のみ設定し、背景は透明のままにする
       end
