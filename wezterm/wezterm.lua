@@ -63,9 +63,10 @@ end)
 -- ==========================================
 -- フォントの設定（フォールバック機能付き）
 config.font = wezterm.font_with_fallback({
-	"Geist Mono", -- メインフォント（Vercelのモノスペースフォント）
-	"IBM Plex Sans JP", -- 日本語フォント（メイン）
-	"Hiragino Kaku Gothic ProN", -- 日本語フォント（フォールバック）
+	{ family = "Geist Mono", assume_emoji_presentation = false }, -- メインフォント
+	{ family = "Symbols Nerd Font", assume_emoji_presentation = false }, -- Nerd Fontsアイコン専用
+	{ family = "IBM Plex Sans JP", assume_emoji_presentation = false }, -- 日本語フォント（絵文字表示を無効）
+	{ family = "Hiragino Kaku Gothic ProN", assume_emoji_presentation = false }, -- 日本語フォント（絵文字表示を無効）
 })
 -- フォントサイズを16ポイントに設定
 config.font_size = 16.0
