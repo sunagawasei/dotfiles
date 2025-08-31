@@ -38,7 +38,7 @@ zinit light zsh-users/zsh-autosuggestions
 # zsh-autosuggestions 部分適用の設定
 # forward-wordを部分適用ウィジェットとして使用
 ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-word)
-# forward-charも部分適用ウィジェットとして使用  
+# forward-charも部分適用ウィジェットとして使用
 ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-char vi-forward-char)
 
 # FZFタブ補完 - タブ補完をfzfでインタラクティブに
@@ -191,6 +191,7 @@ alias ll='ls -l'                     # 詳細表示
 alias la='ls -la'                    # 隠しファイルも含めて詳細表示
 alias l='ls -CF'                     # ファイル種別記号付き表示
 alias vi='nvim'
+alias vim='nvim'
 
 # Kubernetesショートカット
 alias k='kubectl'
