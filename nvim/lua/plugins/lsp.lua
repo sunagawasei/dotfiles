@@ -74,6 +74,11 @@ return {
         },
       })
       
+      -- LazyVimのインラインヒント設定を明示的に無効化
+      opts.inlay_hints = {
+        enabled = false,
+      }
+      
       return opts
     end,
   },
