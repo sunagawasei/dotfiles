@@ -192,6 +192,7 @@ alias la='ls -la'                    # 隠しファイルも含めて詳細表�
 alias l='ls -CF'                     # ファイル種別記号付き表示
 alias vi='nvim'
 alias vim='nvim'
+alias cl='claude'
 
 # Kubernetesショートカット
 alias k='kubectl'
