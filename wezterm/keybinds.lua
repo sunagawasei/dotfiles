@@ -256,6 +256,12 @@ return {
 			-- コピー（copy modeは継続）
 			{ key = "y", mods = "NONE", action = act.CopyTo("Clipboard") },
 
+			-- 検索機能（vimライク）
+			{ key = "/", mods = "NONE", action = act.CopyMode("EditPattern") },
+			{ key = "?", mods = "NONE", action = act.CopyMode({ EditPattern = { is_forward = false } }) },
+			{ key = "n", mods = "NONE", action = act.CopyMode("NextMatch") },
+			{ key = "N", mods = "NONE", action = act.CopyMode("PriorMatch") },
+
 			-- [ キーでcopy modeを終了（vimライク）
 			{ key = "[", mods = "NONE", action = act.CopyMode("Close") },
 
@@ -265,7 +271,8 @@ return {
 				mods = "NONE",
 				action = act.Multiple({ { CopyTo = "ClipboardAndPrimarySelection" }, { CopyMode = "Close" } }),
 			},
-			{ key = "Escape", mods = "NONE", action = act.CopyMode("ClearSelectionMode") },
+			-- 検索とセレクションをクリア（Copy Modeは継続）
+			{ key = "Escape", mods = "NONE", action = act.Multiple({ act.CopyMode("ClearPattern"), act.CopyMode("ClearSelectionMode") }) },
 			{ key = "c", mods = "CTRL", action = act.CopyMode("Close") },
 			{ key = "q", mods = "NONE", action = act.CopyMode("Close") },
 		},
