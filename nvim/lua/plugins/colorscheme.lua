@@ -122,6 +122,17 @@ return {
           DiffChange = { fg = "#60A5FA" },            -- Blue 5
           DiffDelete = { fg = "#F87171" },            -- Red 5
           DiffText = { fg = "#FBBF24", bold = true }, -- Amber 5 (強調部分)
+          
+          -- TreesitterContext (スティッキースクロール) ハイライトグループ
+          TreesitterContext = { bg = "#111111", fg = "#ededed" }, -- 黒系背景、白系文字
+          TreesitterContextBottom = { 
+            underline = true, 
+            sp = "#333333" -- Gray系の下線
+          },
+          TreesitterContextLineNumber = { 
+            bg = "#111111",
+            fg = "#666666" -- Gray系の行番号
+          },
         },
       })
       -- setup()の後にcolorschemeを設定する必要がある
