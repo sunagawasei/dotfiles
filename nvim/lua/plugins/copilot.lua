@@ -15,13 +15,28 @@ return {
       })
       vim.g.copilot_tab_fallback = ""
       
-      -- Ctrl+; で次の単語を受け入れる
-      vim.api.nvim_set_keymap("i", "<C-;>", "<Plug>(copilot-accept-word)", {
+      -- Alt+L で次の単語を受け入れる（右移動の L、Karabiner競合回避）
+      vim.api.nvim_set_keymap("i", "<M-l>", "<Plug>(copilot-accept-word)", {
         silent = true,
       })
       
       -- Ctrl+K で次の行を受け入れる
       vim.api.nvim_set_keymap("i", "<C-K>", "<Plug>(copilot-accept-line)", {
+        silent = true,
+      })
+      
+      -- Ctrl+] で補完を拒否/キャンセル（Copilotデフォルト）
+      vim.api.nvim_set_keymap("i", "<C-]>", "<Plug>(copilot-dismiss)", {
+        silent = true,
+      })
+      
+      -- Alt+] で次の提案を表示
+      vim.api.nvim_set_keymap("i", "<M-]>", "<Plug>(copilot-next)", {
+        silent = true,
+      })
+      
+      -- Alt+[ で前の提案を表示
+      vim.api.nvim_set_keymap("i", "<M-[>", "<Plug>(copilot-previous)", {
         silent = true,
       })
     end,
