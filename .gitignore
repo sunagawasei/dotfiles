@@ -80,3 +80,4 @@ yarn-error.log*
 # MCP Serena設定・キャッシュ（ローカル環境固有）
 .serena/
 
+zsh/.zsh_sessions/
