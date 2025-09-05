@@ -49,24 +49,35 @@ return {
             "mode",
             fmt = function(str)
               if str == "NORMAL" then
-                return "N"
+                return "\u{e7c5}" -- Nerd Fonts e7c5 (Vimアイコン)
+              elseif str == "INSERT" then
+                return "\u{ea73}" -- Nerd Fonts e7a5 (編集アイコン)
+              elseif str == "VISUAL" or str == "V-LINE" or str == "V-BLOCK" then
+                return "\u{f0489}" -- Nerd Fonts f0489 (選択アイコン)
+              elseif str == "REPLACE" then
+                return "\u{f06d4}" -- Nerd Fonts f06d4 (置換アイコン)
+              elseif str == "COMMAND" then
+                return "\u{f4b5}" -- Nerd Fonts e7c4 (ターミナルアイコン)
+              elseif str == "TERMINAL" then
+                return "\u{e795}" -- Nerd Fonts e795 (ターミナルアイコン)
+              else
+                return str:sub(1, 1)
               end
-              return str:sub(1, 1)
             end,
           },
         },
-        lualine_b = { 
-          "branch", 
-          { 
-            "diff", 
+        lualine_b = {
+          "branch",
+          {
+            "diff",
             show_ahead_behind = false,
             colored = true,
             diff_color = {
-              added = { fg = "#4ADE80" },    -- Vercel Green 5 (より落ち着いた緑)
+              added = { fg = "#4ADE80" }, -- Vercel Green 5 (より落ち着いた緑)
               modified = { fg = "#60A5FA" }, -- Vercel Blue 5 (より落ち着いた青)
-              removed = { fg = "#F87171" },  -- Vercel Red 5 (より落ち着いた赤)
+              removed = { fg = "#F87171" }, -- Vercel Red 5 (より落ち着いた赤)
             },
-          } 
+          },
         },
         lualine_c = {
           "diagnostics",
@@ -95,3 +106,4 @@ return {
     },
   },
 }
+
