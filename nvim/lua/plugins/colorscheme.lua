@@ -231,6 +231,18 @@ return {
         vim.api.nvim_set_hl(0, "NeotestUnknown", { fg = "#64748B" })               -- Gray 6: 不明
         vim.api.nvim_set_hl(0, "NeotestTarget", { fg = "#EC4899" })                -- Pink 6: ターゲット
         
+        -- Scrollbar関連のハイライトグループ（透明化から除外）
+        vim.api.nvim_set_hl(0, "ScrollbarHandle", { bg = "none", fg = "#333333" })
+        vim.api.nvim_set_hl(0, "ScrollbarSearch", { fg = "#0070f3" })
+        vim.api.nvim_set_hl(0, "ScrollbarError", { fg = "#EF4444" })
+        vim.api.nvim_set_hl(0, "ScrollbarWarn", { fg = "#F59E0B" })
+        vim.api.nvim_set_hl(0, "ScrollbarInfo", { fg = "#3B82F6" })
+        vim.api.nvim_set_hl(0, "ScrollbarHint", { fg = "#14B8A6" })
+        vim.api.nvim_set_hl(0, "ScrollbarMisc", { fg = "#A855F7" })
+        vim.api.nvim_set_hl(0, "ScrollbarGitAdd", { fg = "#4ADE80" })
+        vim.api.nvim_set_hl(0, "ScrollbarGitChange", { fg = "#60A5FA" })
+        vim.api.nvim_set_hl(0, "ScrollbarGitDelete", { fg = "#F87171" })
+        
         -- MiniIconsのハイライトグループは背景透明化しない（アイコンの色を保持）
         -- これらのグループは前景色のみ設定し、背景は透明のままにする
       end
