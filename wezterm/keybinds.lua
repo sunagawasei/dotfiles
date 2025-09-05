@@ -258,7 +258,7 @@ return {
 
 			-- 検索機能（vimライク）
 			{ key = "/", mods = "NONE", action = act.CopyMode("EditPattern") },
-			{ key = "?", mods = "NONE", action = act.CopyMode({ EditPattern = { is_forward = false } }) },
+			{ key = "?", mods = "NONE", action = act.CopyMode("EditPattern") },
 			{ key = "n", mods = "NONE", action = act.CopyMode("NextMatch") },
 			{ key = "N", mods = "NONE", action = act.CopyMode("PriorMatch") },
 
