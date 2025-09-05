@@ -30,6 +30,18 @@ config.front_end = "WebGpu"
 config.scrollback_lines = 3500
 
 -- ==========================================
+-- Unicode文字幅設定
+-- ==========================================
+-- Unicode仕様バージョンを最新（14）に設定
+config.unicode_version = 14
+-- East Asian Ambiguous Width文字を半角として扱う（Box Drawing文字の表示崩れを防ぐ）
+config.treat_east_asian_ambiguous_width_as_wide = false
+-- グリフのオーバーフローを禁止（整列を保つ）
+config.allow_square_glyphs_to_overflow_width = "Never"
+-- すべての文字の幅を統一（Box Drawing文字と日本語文字の表示を揃える）
+config.cell_width = 1.0
+
+-- ==========================================
 -- 起動時のウィンドウ配置設定
 -- ==========================================
 -- GUI起動時のイベントハンドラを設定
@@ -63,13 +75,17 @@ end)
 -- ==========================================
 -- フォントの設定（フォールバック機能付き）
 config.font = wezterm.font_with_fallback({
-	{ family = "Geist Mono", assume_emoji_presentation = false }, -- メインフォント
-	{ family = "Symbols Nerd Font", assume_emoji_presentation = false }, -- Nerd Fontsアイコン専用
-	{ family = "IBM Plex Sans JP", assume_emoji_presentation = false }, -- 日本語フォント（絵文字表示を無効）
-	{ family = "Hiragino Kaku Gothic ProN", assume_emoji_presentation = false }, -- 日本語フォント（絵文字表示を無効）
+	{ family = "GeistMono NF" }, -- メインフォント（Nerd Font版・略名）
+	{ family = "GeistMono NF", assume_emoji_presentation = true }, -- Nerd Fontアイコン用（2回目の定義）
+	{ family = "IBM Plex Sans JP" }, -- 日本語フォント
+	{ family = "Hiragino Kaku Gothic ProN" }, -- 日本語フォント
 })
 -- フォントサイズを16ポイントに設定
 config.font_size = 16.0
+-- フォント間の高さ調整を無効化（メトリクスの一貫性を保つ）
+config.use_cap_height_to_scale_fallback_fonts = false
+-- 行間を少し広げて文字の重なりを防ぐ
+config.line_height = 1.1
 
 -- ==========================================
 -- ウィンドウ設定
