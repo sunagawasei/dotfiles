@@ -29,9 +29,9 @@ style = "#888888" # Geist secondary text
 
 
 [git_branch]
-format = "[$symbol$branch]($style) "
-style = "#0070f3" # Geist blue
-symbol = " "
+format = "  [$symbol$branch]($style) "
+style = "#fafafa" # Geist primary text - 柔らかい白
+symbol = "\ue0a0"
 
 
 [git_status]
