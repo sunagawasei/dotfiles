@@ -43,6 +43,8 @@ end)
 
 return {
 	keys = {
+		-- Claude Code /set-terminal で追加されたShift+Enterキーバインド
+		{ key = "Enter", mods = "SHIFT", action = wezterm.action { SendString = "\x1b\r" } },
 		{
 			-- workspaceの切り替え
 			key = "w",
