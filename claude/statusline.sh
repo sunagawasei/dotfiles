@@ -47,11 +47,11 @@ else
 
   # Color coding for percentage
   if [ "$percentage" -ge 90 ]; then
-    color="\033[31m" # Red
+    color="\033[38;2;239;68;68m" # Geist Red 6
   elif [ "$percentage" -ge 70 ]; then
-    color="\033[33m" # Yellow
+    color="\033[38;2;245;158;11m" # Geist Amber 6
   else
-    color="\033[32m" # Green
+    color="\033[38;2;34;197;94m" # Geist Green 6
   fi
 
   # Format: "10%"
