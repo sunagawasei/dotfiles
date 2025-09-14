@@ -45,17 +45,8 @@ else
   percentage=$((total_tokens * 100 / COMPACTION_THRESHOLD))
 
 
-  # Color coding for percentage
-  if [ "$percentage" -ge 90 ]; then
-    color="\033[38;2;239;68;68m" # Geist Red 6
-  elif [ "$percentage" -ge 70 ]; then
-    color="\033[38;2;245;158;11m" # Geist Amber 6
-  else
-    color="\033[38;2;34;197;94m" # Geist Green 6
-  fi
-
   # Format: "10%"
-  TOKEN_COUNT=$(echo -e "${color}${percentage}%\033[0m")
+  TOKEN_COUNT="${percentage}%"
 fi
 
 echo "󰚩 ${MODEL_DISPLAY} |  ${CURRENT_DIR##*/}${GIT_BRANCH} |  ${TOKEN_COUNT}"
