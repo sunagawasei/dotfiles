@@ -16,7 +16,7 @@ return {
       css = { "prettier" },
       scss = { "prettier" },
       rust = { "rustfmt" },
-      go = { "gofmt" },
+      go = { "goimports" },
       sh = { "shfmt" },
       fish = { "fish_indent" },
       ["_"] = { "trim_whitespace" },

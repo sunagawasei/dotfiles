@@ -65,6 +65,13 @@ return {
             usePlaceholders = true,
             completeUnimported = true,
             staticcheck = true,
+            -- 自動インポート機能を強化
+            ["formatting.gofumpt"] = true,
+            ["formatting.local"] = "github.com/secumo-vpn",
+            ["completion.usePlaceholders"] = true,
+            ["completion.completionBudget"] = "100ms",
+            -- 未使用のインポートを自動削除
+            ["completion.matcher"] = "Fuzzy",
             directoryFilters = { "-.git", "-.vscode", "-.idea", "-.vscode-test", "-node_modules" },
             semanticTokens = true,
             -- 定義ジャンプの精度向上
