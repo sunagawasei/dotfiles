@@ -193,6 +193,7 @@ alias l='ls -CF'                     # ファイル種別記号付き表示
 alias vi='nvim'
 alias vim='nvim'
 alias cl='claude'
+alias now='date "+%Y/%m/%d %H:%M:%S"'
 
 # Kubernetesショートカット
 alias k='kubectl'
