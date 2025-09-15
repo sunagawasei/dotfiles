@@ -59,6 +59,9 @@ karabiner/automatic_backups/
 zed/conversations/*
 zed/prompts/*
 
+# Neovimプラグインのロックファイル
+nvim/lazy-lock.json
+
 # Node.js
 node_modules/
 npm-debug.log*
