@@ -28,9 +28,10 @@ macOS上の開発ツール設定を管理する個人用dotfiles設定リポジ�
 
 - **Git**: `git/` - グローバル設定
 - **LazyGit**: `lazygit/` - Git TUI設定
-- **GitUI**: `gitui/` - Git GUI設定  
+- **GitUI**: `gitui/` - Git GUI設定
 - **tmux**: `tmux/` - ターミナル多重化
 - **Karabiner**: `karabiner/` - キーボード設定
+- **Claude Code**: `claude/` - AI統合開発環境、設定ディレクトリは`$CLAUDE_CONFIG_DIR`で指定
 
 ### カラーシステム
 
@@ -75,10 +76,11 @@ npm run lint     # リント
 ## 重要なパス
 
 - **Neovim**: `nvim/init.lua` および `nvim/lua/`
-- **WezTerm**: `wezterm/wezterm.lua` および `wezterm/keybinds.lua`  
+- **WezTerm**: `wezterm/wezterm.lua` および `wezterm/keybinds.lua`
 - **Ghostty**: `ghostty/config`
 - **Zed**: `zed/settings.json` および `zed/keymap.json`
 - **Git**: `git/config` および `git/ignore`
+- **Claude Code**: `claude/settings.json` および `.claude/settings.local.json`（プロジェクトレベル）
 
 ## アーキテクチャの特徴
 
@@ -87,6 +89,26 @@ npm run lint     # リント
 - **統一テーマ**: Vercel Geistカラーによる一貫性
 - **日本語サポート**: 設定全体で日本語環境をサポート
 - **パフォーマンス重視**: 各ツールで最適化された設定
+
+## Claude Code設定
+
+### 設定ディレクトリ
+- **ユーザー設定**: `$CLAUDE_CONFIG_DIR = /Users/s23159/.config/claude`
+- **プロジェクト設定**: `.claude/` （各プロジェクトのルートディレクトリ）
+
+### 設定ファイル
+- **ユーザーレベル**: `claude/settings.json` - 全プロジェクト共通設定
+- **プロジェクトレベル**: `.claude/settings.local.json` - プロジェクト固有設定
+
+### Output Style
+- **デフォルト**: Explanatory（説明モード）
+- **変更方法**: `/output-style` コマンドまたは設定ファイル編集
+- **設定優先順位**: プロジェクトレベル > ユーザーレベル > システムデフォルト
+
+### その他の設定
+- **モデル**: opusplan（Plan Mode有効時はOpus、通常時はSonnet）
+- **権限**: セキュリティ重視の設定（危険なコマンドをdeny）
+- **フック**: プロンプト送信時にoutput-style遵守の提醒
 
 ## 注意事項
 
