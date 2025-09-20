@@ -187,22 +187,11 @@ return {
         desc = "CopilotChat - Quick chat",
       },
 
-      -- アクションピッカー
+      -- アクションピッカー（新しいAPI対応）
       {
         "<leader>ch",
-        function()
-          local actions = require("CopilotChat.actions")
-          require("CopilotChat.integrations.telescope").pick(actions.help_actions())
-        end,
-        desc = "CopilotChat - Help actions",
-      },
-      {
-        "<leader>cp",
-        function()
-          local actions = require("CopilotChat.actions")
-          require("CopilotChat.integrations.telescope").pick(actions.prompt_actions())
-        end,
-        desc = "CopilotChat - Prompt actions",
+        "<cmd>CopilotChat<cr>",
+        desc = "CopilotChat - Open chat",
       },
       {
         "<leader>cf",
