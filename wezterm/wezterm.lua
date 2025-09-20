@@ -273,5 +273,227 @@ wezterm.on("format-tab-title", function(tab)
 	end
 end)
 
+-- ==========================================
+-- 中央寄せ機能設定 (no-neck-pain風)
+-- ==========================================
+-- 中央寄せ機能の設定
+local centering_config = {
+	enabled = false, -- 中央寄せ機能の有効/無効
+	content_width_ratio = 0.6, -- コンテンツ幅の比率（60%）
+	fullscreen_only = false, -- フルスクリーン時のみ有効化するか
+	min_width_for_centering = 1200, -- 中央寄せを適用する最小ウィンドウ幅
+	max_content_width = 1400, -- コンテンツの最大幅（px）
+	current_preset = "normal", -- 現在のプリセット
+	-- プリセット設定
+	presets = {
+		narrow = { ratio = 0.5, max_width = 1000 }, -- 狭い（50%、最大1000px）
+		normal = { ratio = 0.6, max_width = 1400 }, -- 標準（60%、最大1400px）
+		wide = { ratio = 0.75, max_width = 1800 }, -- 広い（75%、最大1800px）
+		ultra_wide = { ratio = 0.85, max_width = 2200 }, -- 超広い（85%、最大2200px）
+	},
+}
+
+-- ウィンドウサイズ変更時の中央寄せ処理
+wezterm.on("window-resized", function(window, pane)
+	-- 中央寄せが無効の場合は何もしない
+	if not centering_config.enabled then
+		return
+	end
+
+	local window_dims = window:get_dimensions()
+	local overrides = window:get_config_overrides() or {}
+
+	-- フルスクリーン限定モードかつ非フルスクリーンの場合は何もしない
+	if centering_config.fullscreen_only and not window_dims.is_full_screen then
+		overrides.window_padding = nil
+		window:set_config_overrides(overrides)
+		return
+	end
+
+	-- ウィンドウ幅が最小幅未満の場合は中央寄せを無効化
+	if window_dims.pixel_width < centering_config.min_width_for_centering then
+		overrides.window_padding = {
+			left = 5,
+			right = 5,
+			top = 0,
+			bottom = 5,
+		}
+		window:set_config_overrides(overrides)
+		return
+	end
+
+	-- プリセット設定を取得
+	local preset = centering_config.presets[centering_config.current_preset]
+	local effective_ratio = preset and preset.ratio or centering_config.content_width_ratio
+	local max_width = preset and preset.max_width or centering_config.max_content_width
+
+	-- コンテンツ幅を計算（比率による制限と最大幅による制限の小さい方を採用）
+	local ratio_based_width = window_dims.pixel_width * effective_ratio
+	local content_width = math.min(ratio_based_width, max_width)
+
+	-- パディングの合計幅を計算（残りの幅を左右に均等分配）
+	local padding_total = window_dims.pixel_width - content_width
+	local padding_each = math.floor(padding_total / 2)
+
+	-- 最小パディング（5px）を保証
+	local padding_left = math.max(padding_each, 5)
+	local padding_right = math.max(padding_each, 5)
+
+	local new_padding = {
+		left = padding_left,
+		right = padding_right,
+		top = 0, -- 上部パディングは変更しない
+		bottom = 5, -- 下部パディングは元の設定を維持
+	}
+
+	overrides.window_padding = new_padding
+	window:set_config_overrides(overrides)
+end)
+
+-- 中央寄せ機能のトグル関数
+local function toggle_centering(window, pane)
+	centering_config.enabled = not centering_config.enabled
+
+	-- 現在のウィンドウに対してのみ設定を適用
+	if window then
+		local overrides = window:get_config_overrides() or {}
+
+		if centering_config.enabled then
+			-- 中央寄せ有効化時: window-resizedイベントを発火
+			wezterm.emit("window-resized", window, pane)
+		else
+			-- 中央寄せ無効化時: パディングをデフォルトに戻す
+			overrides.window_padding = {
+				left = 5,
+				right = 5,
+				top = 0,
+				bottom = 5,
+			}
+			window:set_config_overrides(overrides)
+		end
+	end
+
+	-- 状態をステータスに表示
+	local status = centering_config.enabled and "ON" or "OFF"
+	wezterm.log_info("Center mode: " .. status)
+end
+
+-- プリセット切り替え関数
+local function cycle_centering_preset(window, pane)
+	local preset_order = { "narrow", "normal", "wide", "ultra_wide" }
+	local current_index = 1
+
+	-- 現在のプリセットのインデックスを見つける
+	for i, preset_name in ipairs(preset_order) do
+		if centering_config.current_preset == preset_name then
+			current_index = i
+			break
+		end
+	end
+
+	-- 次のプリセットに切り替え（循環）
+	local next_index = (current_index % #preset_order) + 1
+	centering_config.current_preset = preset_order[next_index]
+
+	-- 中央寄せが有効な場合は再適用
+	if centering_config.enabled and window then
+		wezterm.emit("window-resized", window, pane)
+	end
+
+	-- 状態をログに表示
+	local preset = centering_config.presets[centering_config.current_preset]
+	wezterm.log_info(string.format(
+		"Center preset: %s (ratio: %.0f%%, max: %dpx)",
+		centering_config.current_preset,
+		preset.ratio * 100,
+		preset.max_width
+	))
+end
+
+-- 幅比率を調整する関数
+local function adjust_centering_width(window, pane, delta)
+	if not centering_config.enabled then
+		return
+	end
+
+	-- カスタムプリセットを作成または更新
+	if centering_config.current_preset ~= "custom" then
+		-- 現在のプリセットをベースにカスタムプリセットを作成
+		local current_preset = centering_config.presets[centering_config.current_preset]
+		centering_config.presets.custom = {
+			ratio = current_preset.ratio,
+			max_width = current_preset.max_width
+		}
+		centering_config.current_preset = "custom"
+	end
+
+	-- 比率を調整（0.3から0.95の範囲で制限）
+	local custom_preset = centering_config.presets.custom
+	custom_preset.ratio = math.max(0.3, math.min(0.95, custom_preset.ratio + delta))
+
+	-- 設定を再適用
+	if window then
+		wezterm.emit("window-resized", window, pane)
+	end
+
+	-- 状態をログに表示
+	wezterm.log_info(string.format(
+		"Center width: %.0f%% (custom)",
+		custom_preset.ratio * 100
+	))
+end
+
+-- 最大幅を調整する関数
+local function adjust_centering_max_width(window, pane, delta)
+	if not centering_config.enabled then
+		return
+	end
+
+	-- カスタムプリセットを作成または更新
+	if centering_config.current_preset ~= "custom" then
+		local current_preset = centering_config.presets[centering_config.current_preset]
+		centering_config.presets.custom = {
+			ratio = current_preset.ratio,
+			max_width = current_preset.max_width
+		}
+		centering_config.current_preset = "custom"
+	end
+
+	-- 最大幅を調整（800px から 3000px の範囲で制限）
+	local custom_preset = centering_config.presets.custom
+	custom_preset.max_width = math.max(800, math.min(3000, custom_preset.max_width + delta))
+
+	-- 設定を再適用
+	if window then
+		wezterm.emit("window-resized", window, pane)
+	end
+
+	-- 状態をログに表示
+	wezterm.log_info(string.format(
+		"Center max width: %dpx (custom)",
+		custom_preset.max_width
+	))
+end
+
+-- フルスクリーンモードの切り替え
+local function toggle_centering_fullscreen_only(window, pane)
+	centering_config.fullscreen_only = not centering_config.fullscreen_only
+
+	-- 中央寄せが有効な場合は再適用
+	if centering_config.enabled and window then
+		wezterm.emit("window-resized", window, pane)
+	end
+
+	local status = centering_config.fullscreen_only and "ON" or "OFF"
+	wezterm.log_info("Center fullscreen-only mode: " .. status)
+end
+
+-- グローバル関数として公開（キーバインドから使用するため）
+wezterm.toggle_centering = toggle_centering
+wezterm.cycle_centering_preset = cycle_centering_preset
+wezterm.adjust_centering_width = adjust_centering_width
+wezterm.adjust_centering_max_width = adjust_centering_max_width
+wezterm.toggle_centering_fullscreen_only = toggle_centering_fullscreen_only
+
 -- 設定をエクスポート
 return config
