@@ -61,6 +61,28 @@ vim.keymap.set("n", "]e", function() vim.diagnostic.goto_next({ severity = vim.d
 vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "Diagnostic location list" })
 vim.keymap.set("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "Diagnostic quickfix list" })
 
+-- 診断メッセージコピー関数
+local function copy_diagnostics()
+  local diagnostics = vim.diagnostic.get(0, { lnum = vim.fn.line('.') - 1 })
+  if #diagnostics == 0 then
+    vim.notify("No diagnostics on current line", vim.log.levels.INFO)
+    return
+  end
+
+  local messages = {}
+  for _, diag in ipairs(diagnostics) do
+    table.insert(messages, diag.message)
+  end
+
+  local text = table.concat(messages, "\n")
+  vim.fn.setreg('+', text)
+  vim.notify("Diagnostic copied to clipboard", vim.log.levels.INFO)
+end
+
+-- 診断コピー
+vim.keymap.set("n", "<leader>dc", copy_diagnostics, { desc = "Copy diagnostics" })
+vim.keymap.set("n", "gy", copy_diagnostics, { desc = "Yank diagnostics" })
+
 -- ファイル保存（Normal、Insert、Visual モード）
 vim.keymap.set({ "n", "i", "v" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save file" })
 
@@ -71,5 +93,8 @@ vim.keymap.set("n", "<C-c>", "<cmd>%y+<cr>", { desc = "Copy entire file" })
 vim.keymap.set("n", "<leader>uh", function()
   vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
 end, { desc = "Toggle Inlay Hints" })
+
+-- Copilotの有効/無効を切り替え（copilot.lua対応）
+vim.keymap.set("n", "<leader>ct", "<cmd>Copilot toggle<cr>", { desc = "Toggle Copilot" })
 
 
