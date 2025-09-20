@@ -145,6 +145,8 @@ return {
 		{ key = "[", mods = "CTRL|SHIFT", action = act.PaneSelect },
 		-- 選択中のPaneのみ表示
 		{ key = "z", mods = "LEADER", action = act.TogglePaneZoomState },
+		-- ターミナルクリア
+		{ key = "c", mods = "LEADER", action = act.SendString('\x0c') },
 
 		-- フォントサイズ切替
 		{ key = "+", mods = "CTRL", action = act.IncreaseFontSize },
@@ -193,6 +195,66 @@ return {
 		{ key = "L", mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Right") },
 		{ key = "K", mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Up") },
 		{ key = "J", mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Down") },
+
+		-- ==========================================
+		-- 中央寄せ機能のキーバインド (no-neck-pain風)
+		-- ==========================================
+		-- 中央寄せ機能のオン/オフ切り替え (Leader + m)
+		{
+			key = "m",
+			mods = "LEADER",
+			action = wezterm.action_callback(function(window, pane)
+				wezterm.toggle_centering(window, pane)
+			end),
+		},
+		-- プリセット切り替え (Leader + M)
+		{
+			key = "M",
+			mods = "LEADER|SHIFT",
+			action = wezterm.action_callback(function(window, pane)
+				wezterm.cycle_centering_preset(window, pane)
+			end),
+		},
+		-- 中央寄せ幅を狭くする (Leader + -)
+		{
+			key = "-",
+			mods = "LEADER",
+			action = wezterm.action_callback(function(window, pane)
+				wezterm.adjust_centering_width(window, pane, -0.05)  -- 5%ずつ調整
+			end),
+		},
+		-- 中央寄せ幅を広くする (Leader + +) - JISキーボード対応
+		{
+			key = "+",
+			mods = "LEADER|SHIFT",
+			action = wezterm.action_callback(function(window, pane)
+				wezterm.adjust_centering_width(window, pane, 0.05)  -- 5%ずつ調整
+			end),
+		},
+		-- 最大幅を狭くする (Leader + ,)
+		{
+			key = ",",
+			mods = "LEADER",
+			action = wezterm.action_callback(function(window, pane)
+				wezterm.adjust_centering_max_width(window, pane, -100)  -- 100pxずつ調整
+			end),
+		},
+		-- 最大幅を広くする (Leader + .)
+		{
+			key = ".",
+			mods = "LEADER",
+			action = wezterm.action_callback(function(window, pane)
+				wezterm.adjust_centering_max_width(window, pane, 100)  -- 100pxずつ調整
+			end),
+		},
+		-- フルスクリーン限定モードの切り替え (Leader + f)
+		{
+			key = "f",
+			mods = "LEADER",
+			action = wezterm.action_callback(function(window, pane)
+				wezterm.toggle_centering_fullscreen_only(window, pane)
+			end),
+		},
 	},
 	-- キーテーブル
 	-- https://wezfurlong.org/wezterm/config/key-tables.html
