@@ -1,5 +1,5 @@
 return {
-  "echasnovski/mini.icons",
+  "nvim-mini/mini.icons",
   opts = {
     -- すべてのアイコンから色を削除
     style = "glyph",
