@@ -51,6 +51,7 @@ karabiner/automatic_backups/
 .metricsUUID
 .last_*
 .uuid
+useful_phrases.md
 
 # エディタ固有
 *.sublime-*
