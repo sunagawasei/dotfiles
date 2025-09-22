@@ -279,7 +279,7 @@ end)
 -- 中央寄せ機能の設定
 local centering_config = {
 	enabled = false, -- 中央寄せ機能の有効/無効
-	content_width_ratio = 0.6, -- コンテンツ幅の比率（60%）
+	content_width_ratio = 0.8, -- コンテンツ幅の比率（80%）
 	fullscreen_only = false, -- フルスクリーン時のみ有効化するか
 	min_width_for_centering = 1200, -- 中央寄せを適用する最小ウィンドウ幅
 	max_content_width = 1400, -- コンテンツの最大幅（px）
@@ -287,7 +287,7 @@ local centering_config = {
 	-- プリセット設定
 	presets = {
 		narrow = { ratio = 0.5, max_width = 1000 }, -- 狭い（50%、最大1000px）
-		normal = { ratio = 0.6, max_width = 1400 }, -- 標準（60%、最大1400px）
+		normal = { ratio = 0.8, max_width = 1400 }, -- 標準（80%、最大1400px）
 		wide = { ratio = 0.75, max_width = 1800 }, -- 広い（75%、最大1800px）
 		ultra_wide = { ratio = 0.85, max_width = 2200 }, -- 超広い（85%、最大2200px）
 	},
