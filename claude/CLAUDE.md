@@ -1,69 +1,111 @@
 # YOU MUST:
 
 - 回答は日本語で行ってください
+- Answer in Japanese even if the reply is in English.
 
-# Golang Guidelines
+# General Guidelines
 
-## Version
+## ドキュメントシンプル化方針
 
-- Always use the latest stable version of Go , best practices, and Go idioms.
-- go の standard library を優先して使用してください
+- 実例・コード例は不要
+- 箇条書きで簡潔に
+- 本質的な情報のみ記載
+- 1画面で読み切れる量を目指す
 
-## Code Design
+# TDD (Test-Driven Development)
 
-- テスト容易性を高めるために Dependency Injection (DI) を用いた実装を行う
-- サードパーティライブラリは使用しない
-
-## Testing
-
-- テストは明示的に指示された場合のみ生成する
-- `t.Run()`を用いたサブテストの形でテストケースを列挙する
-- テーブルテストは基本的には用いず
-
-# TDD (Test-Driven Development) 基本方針
-
-## Red-Green-Refactorサイクル
+## 基本原則：RED-GREEN-REFACTORサイクル
 
 - **[RED]** → 失敗するテストを先に書く
 - **[GRN]** → テストを通す最小限の実装
 - **[REF]** → コードの品質を改善
 
-## TDD表示規則
+## 表示規則
 
 - 進捗状態を `[RED]` `[GRN]` `[REF]` で明示
 - 各フェーズの目的を明確に説明
 - テストファースト原則を厳守
 
-## 開発プラクティス
+## 実践ガイドライン
 
-### TDD（テスト駆動開発）の適用
-- **RED-GREEN-REFACTORサイクル**を厳守
-  - [RED]: 失敗するテストを先に書く
-  - [GRN]: テストを通す最小限の実装
-  - [REF]: コードの品質を改善
 - **統合テストは実装より先に修正**して、テストファーストを維持
 - リファクタリング時はテストから修正を開始
+- RED-GREEN-REFACTORサイクルを厳守し、段階的な開発を徹底
+
+## 開発プラクティス
 
 ### ドキュメント管理
-- **進捗の随時更新**: TODO-*.mdファイルは作業完了時に即座に更新
-- **実装とドキュメントの同期**: コード変更とドキュメントを同時に更新
-- **完了タスクの明示**: 完了したタスクは「完了済み」セクションへ移動
 
-### テストカバレッジ管理
+#### 3文書体制による開発管理
 
-#### テスト実行コマンド
-```bash
-# 全テスト実行（カバレッジ付き）
-go test ./... -cover
+開発の効率性と継続性を最大化するため、以下の3つの核心的ドキュメントで管理：
 
-# 詳細なカバレッジレポート生成
-go test ./... -coverprofile=coverage.out
-go tool cover -html=coverage.out -o coverage.html
+##### 📍 .claude/PROJECT.md - 開発の地図と現在地
 
-# 特定パッケージのテスト
-go test -v ./internal/package_name/
+**役割**: WHERE（どこにいるか） + WHAT（何をするか）
+**内容**:
 
-# PRD環境テストの実行（要設定ファイル）
-go test -v -run "_PRD" ./...
+- プロジェクトのビジョンと最終ゴール
+- 現在地と進捗状況（可視化）
+- なぜ今これをやっているのか（コンテキスト）
+- 今週/今日のTODOリスト
+- ブロッカーと未解決の質問
+- 作業再開時のクイックスタート情報
+
+**記述ルール**: PROJECT.mdは詳細に記述可（他の文書と異なり、しっかりした内容量でOK）
+
+##### 🧠 .claude/LEARNINGS.md - 知識と学びの蓄積
+
+**役割**: WHY（なぜそうするか） + HOW（どうやるか）
+**内容**:
+
+- Claude Codeとの深掘り議論と洞察
+- セッション中の「なぜ？」への回答記録
+- 技術的発見とコードパターン
+- 設計判断の根拠（なぜその技術・アプローチを選んだか）
+- 繰り返し出てくる質問への回答集
+- トレードオフの明文化
+
+##### 📝 .claude/SESSION.md - 作業セッションの継続性
+
+**役割**: WHEN（いつやったか） + CONTINUE（続きから始める）
+**内容**:
+
+- 最新セッションで完了したこと・進行中のこと
+- Claude Codeとの重要な議論記録
+- 次回への申し送り（再開用コマンド含む）
+- セッション間で保持すべきコンテキスト
+- 過去セッションのサマリー
+
+#### ドキュメント更新のタイミングルール
+
+##### 即座に更新
+
+- TODO完了時 → .claude/PROJECT.md
+- ブロッカー発生時 → .claude/PROJECT.md
+- 重要な技術的発見時 → .claude/LEARNINGS.md
+- 設計判断時 → .claude/LEARNINGS.md
+
+##### セッション終了時（必須）
+
+- 作業内容と次回への申し送り → .claude/SESSION.md
+- 進行中タスクの状況更新 → .claude/PROJECT.md
+
+##### 週次での整理
+
+- 全体の棚卸しと方向性確認 → .claude/PROJECT.md
+- 学習内容の整理と体系化 → .claude/LEARNINGS.md
+- 古いセッション情報のアーカイブ → .claude/SESSION.md
+
+#### 相互参照システム
+
 ```
-- output-styleに沿っているか確認して。
+.claude/PROJECT.md ←→ 現在の作業 ←→ .claude/SESSION.md
+        ↓              ↑                    ↓
+      方向性       Claude Code           継続性
+        ↓           対話                  ↓
+.claude/LEARNINGS.md ← 知識蓄積 ← 次回活用
+```
+
+**配置場所について**: これらのドキュメントは各プロジェクトの`.claude/`ディレクトリに配置し、Git管理から除外してプロジェクト固有の作業記録として管理する。
+
