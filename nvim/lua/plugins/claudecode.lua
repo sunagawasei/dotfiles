@@ -15,6 +15,33 @@ return {
       -- tmux、kitty、別ターミナルウィンドウなどで手動で'claude'コマンドを実行すると自動接続
     },
 
+    -- 差分表示・タブ管理設定（v0.3.0新機能）
+    diff = {
+      -- タブ自動命名を有効化
+      additional_tab_options = true,
+
+      -- カスタムタブ名フォーマット関数
+      tab_name_format = function(filename, change_type)
+        -- ファイル名からベース名を抽出
+        local base = filename:match("([^/]+)$") or filename
+
+        -- 変更タイプの日本語マッピング
+        local type_map = {
+          Refactor = "リファクタ",
+          Fix = "修正",
+          Add = "追加",
+          Update = "更新",
+          Remove = "削除",
+          Diff = "差分"
+        }
+
+        local jp_type = type_map[change_type] or change_type
+
+        -- タブ名を生成（例: "[修正] auth.go"）
+        return string.format("[%s] %s", jp_type, base)
+      end,
+    },
+
   },
   config = true, -- setup()を確実に呼び出す（必須）
   keys = {
