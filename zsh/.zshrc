@@ -145,6 +145,9 @@ unsetopt list_types
 # ----------------------
 # 補完機能の設定
 # ----------------------
+# Worklog CLI completion
+fpath=(/Users/s23159/.local/share/zsh/site-functions $fpath)
+
 # 補完機能を有効化
 autoload -U compinit && compinit
 
@@ -194,6 +197,7 @@ alias vi='nvim'
 alias vim='nvim'
 alias cl='claude'
 alias now='date "+%Y/%m/%d %H:%M:%S"'
+alias wl='worklog'
 
 # Kubernetesショートカット
 alias k='kubectl'
