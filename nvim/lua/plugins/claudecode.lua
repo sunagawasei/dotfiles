@@ -60,7 +60,7 @@ return {
       "<leader>at",
       "<cmd>ClaudeCodeTreeAdd<cr>",
       desc = "Add file from tree explorer",
-      ft = { "NvimTree", "oil", "mini.files" },
+      ft = { "neo-tree" },
     },
 
     -- Diff管理（v0.3.0新機能）
