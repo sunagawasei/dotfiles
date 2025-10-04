@@ -64,16 +64,20 @@
 
 ### 検索
 
-| キーマップ   | 説明                   | モード |
-| ------------ | ---------------------- | ------ |
-| `<leader>ff` | ファイル検索           | n      |
-| `<leader>fg` | Grep検索               | n      |
-| `<leader>fb` | バッファ検索           | n      |
-| `<leader>fh` | ヘルプタグ検索         | n      |
-| `<leader>fc` | 設定ファイル検索       | n      |
-| `<leader>fk` | キーマップ検索         | n      |
-| `<leader>fr` | 最近開いたファイル     | n      |
-| `<leader>sr` | 検索と置換（Grug-far） | n,v    |
+| キーマップ   | 説明                               | モード |
+| ------------ | ---------------------------------- | ------ |
+| `<leader>ff` | ファイル検索                       | n      |
+| `<leader>sg` | Grep検索（プロジェクト全体）       | n      |
+| `<leader>fw` | カーソル下の単語をGrep検索         | n      |
+| `<leader>/`  | バッファ内検索（現在ファイル内）   | n      |
+| `<leader>fb` | バッファ検索                       | n      |
+| `<leader>fh` | ヘルプタグ検索                     | n      |
+| `<leader>fc` | 設定ファイル検索                   | n      |
+| `<leader>fk` | キーマップ検索                     | n      |
+| `<leader>fr` | 最近開いたファイル                 | n      |
+| `<leader>sr` | 検索と置換（Grug-far）             | n,v    |
+
+**注**: `<leader>fg`はTelescope使用時のキーマップ。現在はSnacks.nvimを使用しているため`<leader>sg`を使用。
 
 ### バッファ操作
 
