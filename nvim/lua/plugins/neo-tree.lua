@@ -13,6 +13,11 @@ return {
         enabled = true, -- 現在のファイルを自動的にフォーカス
       },
       use_libuv_file_watcher = true, -- ファイル変更の自動監視
+      filtered_items = {
+        visible = true, -- 隠しファイルを表示
+        hide_dotfiles = false, -- .で始まるファイルを表示
+        hide_gitignored = false, -- .gitignoreされたファイルも表示
+      },
     },
   },
   keys = {
