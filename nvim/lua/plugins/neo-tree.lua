@@ -19,6 +19,15 @@ return {
         hide_gitignored = false, -- .gitignoreされたファイルも表示
       },
     },
+    -- イベント通知を抑制
+    event_handlers = {
+      {
+        event = "neo_tree_popup_input_ready",
+        handler = function()
+          vim.cmd("stopinsert")
+        end,
+      },
+    },
   },
   keys = {
     -- LazyVimデフォルトの<leader>feを<leader>eにリマップ
