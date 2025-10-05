@@ -1,6 +1,9 @@
 return {
   "nvim-neo-tree/neo-tree.nvim",
   opts = {
+    -- 通知メッセージを非表示
+    enable_diagnostics = false,
+    enable_git_status = true,
     window = {
       position = "right", -- 右側から開く
       width = 40,
