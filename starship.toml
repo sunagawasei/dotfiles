@@ -38,7 +38,7 @@ symbol = "\ue0a0"
 
 
 [git_status]
-style = "#f5a623" # Geist amber
+style = "#fafafa" # Geist primary text - 他の表示と統一
 
 [shell]
 disabled = true
