@@ -29,6 +29,11 @@ source "$ZINIT_HOME/zinit.zsh"
 # シンタックスハイライト - コマンドをリアルタイムで色付け
 zinit light zsh-users/zsh-syntax-highlighting
 
+# シンタックスハイライトの色設定（Geist primary text）
+# プラグイン読み込み後に設定する
+typeset -A ZSH_HIGHLIGHT_STYLES
+ZSH_HIGHLIGHT_STYLES[arg0]='fg=white'
+
 # 補完定義の追加コレクション - より多くのコマンドの補完をサポート
 zinit light zsh-users/zsh-completions
 
