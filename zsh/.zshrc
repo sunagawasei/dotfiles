@@ -201,14 +201,15 @@ alias l='ls -CF'                     # ファイル種別記号付き表示
 alias vi='nvim'
 alias vim='nvim'
 alias cl='claude'
-alias now='date "+%Y/%m/%d %H:%M:%S"'
-alias wl='worklog'
+alias vtmp='nvim "${TMPDIR%/}/$(date "+%Y%m%d_%H%M%S").md"'  # 一時ディレクトリにタイムスタンプ付きmdファイルを作成して編集
+alias now='date "+%Y/%m/%d %H:%M:%S"'  # 現在日時を表示
+alias wl='worklog'                       # 作業ログツールの短縮形
 
 # Kubernetesショートカット
 alias k='kubectl'
 
 # Lazygit
-alias lg='lazygit'
+alias lg='lazygit'                       # Git操作用のTUIツールを起動
 
 # SSH接続時のターミナルタイプを明示的に指定（カラー対応）
 alias ssh='TERM=xterm-256color \ssh'
@@ -239,7 +240,7 @@ complete -C '/opt/homebrew/opt/awscli@1/bin/aws_completer' aws
 # ----------------------
 # 環境変数
 # ----------------------
-# Claude Config
+# Claude Code設定ディレクトリのパスを指定
 export CLAUDE_CONFIG_DIR="${XDG_CONFIG_HOME}"/claude
 
 # ----------------------
