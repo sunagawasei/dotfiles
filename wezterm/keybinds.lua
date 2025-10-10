@@ -196,6 +196,9 @@ return {
 		{ key = "K", mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Up") },
 		{ key = "J", mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Down") },
 
+		-- ペイン回転
+		{ key = "R", mods = "LEADER|SHIFT", action = act.RotatePanes("Clockwise") },
+
 		-- ==========================================
 		-- 中央寄せ機能のキーバインド (no-neck-pain風)
 		-- ==========================================
@@ -361,6 +364,9 @@ return {
 			{ key = "L", mods = "SHIFT", action = act.AdjustPaneSize({ "Right", 5 }) },
 			{ key = "K", mods = "SHIFT", action = act.AdjustPaneSize({ "Up", 5 }) },
 			{ key = "J", mods = "SHIFT", action = act.AdjustPaneSize({ "Down", 5 }) },
+			-- ペイン回転
+			{ key = "r", action = act.RotatePanes("Clockwise") },
+			{ key = "R", mods = "SHIFT", action = act.RotatePanes("CounterClockwise") },
 			-- ペインを閉じる
 			{ key = "x", action = act.CloseCurrentPane({ confirm = true }) },
 			-- ペインをズーム
