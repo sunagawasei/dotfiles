@@ -52,6 +52,22 @@ vim.keymap.set({ "n", "i", "v" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save fil
 -- ファイル全体をコピー（Normal モード）
 vim.keymap.set("n", "<C-c>", "<cmd>%y+<cr>", { desc = "Copy entire file" })
 
+-- ファイルパスをクリップボードにコピー
+vim.keymap.set("n", "<leader>yp", function()
+  vim.fn.setreg('+', vim.fn.expand('%:p'))
+  vim.notify("Copied absolute path: " .. vim.fn.expand('%:p'), vim.log.levels.INFO)
+end, { desc = "Yank absolute path" })
+
+vim.keymap.set("n", "<leader>yr", function()
+  vim.fn.setreg('+', vim.fn.expand('%'))
+  vim.notify("Copied relative path: " .. vim.fn.expand('%'), vim.log.levels.INFO)
+end, { desc = "Yank relative path" })
+
+vim.keymap.set("n", "<leader>yf", function()
+  vim.fn.setreg('+', vim.fn.expand('%:t'))
+  vim.notify("Copied filename: " .. vim.fn.expand('%:t'), vim.log.levels.INFO)
+end, { desc = "Yank filename" })
+
 -- インラインヒントの表示/非表示を切り替え
 vim.keymap.set("n", "<leader>uh", function()
   vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
