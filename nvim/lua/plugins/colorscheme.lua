@@ -122,7 +122,63 @@ return {
           DiffChange = { fg = "#60A5FA" },            -- Blue 5
           DiffDelete = { fg = "#F87171" },            -- Red 5
           DiffText = { fg = "#FBBF24", bold = true }, -- Amber 5 (強調部分)
-          
+
+          -- 構文ハイライト（shadcn/Vercel風 - 控えめなカラフル配色）
+          -- キーワード（紫系 - if, const, function など）
+          ["@keyword"] = { fg = "#A855F7" },           -- Purple 6
+          ["@keyword.function"] = { fg = "#A855F7" },  -- Purple 6
+          ["@keyword.operator"] = { fg = "#A855F7" },  -- Purple 6
+          ["@keyword.return"] = { fg = "#A855F7" },    -- Purple 6
+          ["@keyword.import"] = { fg = "#A855F7" },    -- Purple 6
+
+          -- 文字列（緑系）
+          ["@string"] = { fg = "#22C55E" },            -- Green 6
+
+          -- 数値・真偽値（オレンジ系）
+          ["@number"] = { fg = "#F59E0B" },            -- Amber 6
+          ["@boolean"] = { fg = "#F59E0B" },           -- Amber 6
+
+          -- コメント（暗いグレー）
+          ["@comment"] = { fg = "#666666" },
+
+          -- 関数名（青系）
+          ["@function"] = { fg = "#60A5FA" },          -- Blue 5
+          ["@function.call"] = { fg = "#60A5FA" },     -- Blue 5
+          ["@function.method"] = { fg = "#60A5FA" },   -- Blue 5
+          ["@function.method.call"] = { fg = "#60A5FA" }, -- Blue 5
+
+          -- 変数・パラメータ（白系 - 通常テキスト）
+          ["@variable"] = { fg = "#EDEDED" },
+          ["@variable.builtin"] = { fg = "#60A5FA" },  -- Blue 5（組み込み変数は青）
+          ["@parameter"] = { fg = "#EDEDED" },
+
+          -- 型名（グレー系）
+          ["@type"] = { fg = "#94A3B8" },              -- Gray 5
+          ["@type.builtin"] = { fg = "#94A3B8" },      -- Gray 5
+
+          -- プロパティ・属性（白系）
+          ["@property"] = { fg = "#EDEDED" },
+          ["@field"] = { fg = "#EDEDED" },
+
+          -- 定数（オレンジ系）
+          ["@constant"] = { fg = "#F59E0B" },          -- Amber 6
+          ["@constant.builtin"] = { fg = "#F59E0B" },  -- Amber 6
+
+          -- 演算子・句読点（グレー）
+          ["@operator"] = { fg = "#94A3B8" },          -- Gray 5
+          ["@punctuation"] = { fg = "#94A3B8" },       -- Gray 5
+          ["@punctuation.bracket"] = { fg = "#94A3B8" }, -- Gray 5
+          ["@punctuation.delimiter"] = { fg = "#94A3B8" }, -- Gray 5
+
+          -- 名前空間・モジュール（白系）
+          ["@namespace"] = { fg = "#EDEDED" },
+          ["@module"] = { fg = "#EDEDED" },
+
+          -- タグ（HTML/XML用 - 紫系）
+          ["@tag"] = { fg = "#A855F7" },               -- Purple 6
+          ["@tag.attribute"] = { fg = "#60A5FA" },     -- Blue 5
+          ["@tag.delimiter"] = { fg = "#94A3B8" },     -- Gray 5
+
           -- TreesitterContext (スティッキースクロール) ハイライトグループ
           TreesitterContext = { bg = "#111111", fg = "#ededed" }, -- 黒系背景、白系文字
           TreesitterContextBottom = { 
