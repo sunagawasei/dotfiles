@@ -63,9 +63,34 @@ return {
     {
       "<leader>e",
       function()
-        require("neo-tree.command").execute({ toggle = true, dir = require("lazyvim.util").root() })
+        local neotree = require("neo-tree.command")
+
+        -- 現在のバッファがneo-treeかどうか判定
+        if vim.bo.filetype == "neo-tree" then
+          -- neo-treeにフォーカスがある場合: 閉じる
+          neotree.execute({ toggle = true, dir = vim.uv.cwd() })
+        else
+          -- neo-tree以外のバッファにフォーカスがある場合
+          -- neo-treeウィンドウが存在するか確認
+          local neo_tree_visible = false
+          for _, win in ipairs(vim.api.nvim_list_wins()) do
+            local buf = vim.api.nvim_win_get_buf(win)
+            if vim.bo[buf].filetype == "neo-tree" then
+              neo_tree_visible = true
+              break
+            end
+          end
+
+          if neo_tree_visible then
+            -- neo-treeが表示されている場合: フォーカスを移す
+            neotree.execute({ action = "focus", dir = vim.uv.cwd() })
+          else
+            -- neo-treeが非表示の場合: 開く
+            neotree.execute({ toggle = true, dir = vim.uv.cwd() })
+          end
+        end
       end,
-      desc = "Explorer Neo-tree (root dir)",
+      desc = "Explorer Neo-tree (toggle/focus)",
     },
     {
       "<leader>E",
