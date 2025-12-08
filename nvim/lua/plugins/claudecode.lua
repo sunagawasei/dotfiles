@@ -43,7 +43,26 @@ return {
     },
 
   },
-  config = true, -- setup()を確実に呼び出す（必須）
+  config = function(_, opts)
+    -- setup()を呼び出す
+    require("claudecode").setup(opts)
+
+    -- 差分表示バッファで行折り返しを有効化
+    vim.api.nvim_create_autocmd({ "BufEnter", "BufWinEnter" }, {
+      group = vim.api.nvim_create_augroup("claudecode_diff_wrap", { clear = true }),
+      callback = function(event)
+        local bufnr = event.buf
+
+        -- claudecode.nvimのバッファ変数で確実に検出
+        if vim.b[bufnr].claudecode_diff_tab_name then
+          vim.opt_local.wrap = true         -- 行折り返しを有効化
+          vim.opt_local.linebreak = true    -- 単語単位で折り返し
+          vim.opt_local.breakindent = true  -- 折り返し行のインデント保持
+          vim.opt_local.showbreak = "↪ "    -- 折り返し行の視覚的マーカー
+        end
+      end,
+    })
+  end,
   keys = {
     { "<leader>a", nil, desc = "AI/Claude Code" },
 
