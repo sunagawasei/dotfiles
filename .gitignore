@@ -63,6 +63,9 @@ zed/prompts/*
 # Neovimプラグインのロックファイル
 nvim/lazy-lock.json
 
+# Neovimスペルチェック辞書（自動生成）
+*.utf-8.add.spl
+
 # Node.js
 node_modules/
 npm-debug.log*
