@@ -52,20 +52,54 @@ vim.keymap.set({ "n", "i", "v" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save fil
 -- ファイル全体をコピー（Normal モード）
 vim.keymap.set("n", "<C-c>", "<cmd>%y+<cr>", { desc = "Copy entire file" })
 
+-- ファイルパスを取得（neo-tree対応）
+local function get_file_path()
+  if vim.bo.filetype == "neo-tree" then
+    local success, manager = pcall(require, "neo-tree.sources.manager")
+    if success then
+      local state = manager.get_state("filesystem")
+      local node = state.tree:get_node()
+      if node then
+        return node:get_id()
+      end
+    end
+    return nil
+  else
+    return vim.fn.expand('%:p')
+  end
+end
+
 -- ファイルパスをクリップボードにコピー
 vim.keymap.set("n", "<leader>yp", function()
-  vim.fn.setreg('+', vim.fn.expand('%:p'))
-  vim.notify("Copied absolute path: " .. vim.fn.expand('%:p'), vim.log.levels.INFO)
+  local path = get_file_path()
+  if path and path ~= "" then
+    vim.fn.setreg('+', path)
+    vim.notify("Copied absolute path: " .. path, vim.log.levels.INFO)
+  else
+    vim.notify("No file path available", vim.log.levels.WARN)
+  end
 end, { desc = "Yank absolute path" })
 
 vim.keymap.set("n", "<leader>yr", function()
-  vim.fn.setreg('+', vim.fn.expand('%'))
-  vim.notify("Copied relative path: " .. vim.fn.expand('%'), vim.log.levels.INFO)
+  local path = get_file_path()
+  if path and path ~= "" then
+    local relative = vim.fn.fnamemodify(path, ':.')
+    vim.fn.setreg('+', relative)
+    vim.notify("Copied relative path: " .. relative, vim.log.levels.INFO)
+  else
+    vim.notify("No file path available", vim.log.levels.WARN)
+  end
 end, { desc = "Yank relative path" })
 
 vim.keymap.set("n", "<leader>yf", function()
-  vim.fn.setreg('+', vim.fn.expand('%:t'))
-  vim.notify("Copied filename: " .. vim.fn.expand('%:t'), vim.log.levels.INFO)
+  local path = get_file_path()
+  if path and path ~= "" then
+    local filename = vim.fn.fnamemodify(path, ':t')
+    vim.fn.setreg('+', filename)
+    vim.notify("Copied filename: " .. filename, vim.log.levels.INFO)
+  else
+    vim.notify("No file path available", vim.log.levels.WARN)
+  end
 end, { desc = "Yank filename" })
 
 -- インラインヒントの表示/非表示を切り替え
