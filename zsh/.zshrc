@@ -249,3 +249,6 @@ export CLAUDE_CONFIG_DIR="${XDG_CONFIG_HOME}"/claude
 # マシン固有の設定があれば読み込む
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
 
+
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /opt/homebrew/bin/terraform terraform
