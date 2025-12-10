@@ -69,6 +69,9 @@ return {
     indent = {
       enabled = false, -- インデントガイドを無効化（全階層表示を防ぐ）
     },
+    zen = {
+      enabled = true, -- Zoom機能を有効化
+    },
   },
 }
 
