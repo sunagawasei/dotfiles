@@ -81,7 +81,7 @@ config.font = wezterm.font_with_fallback({
 	{ family = "Hiragino Kaku Gothic ProN" }, -- 日本語フォント
 })
 -- フォントサイズを16ポイントに設定
-config.font_size = 16.0
+config.font_size = 14.0
 -- フォント間の高さ調整を無効化（メトリクスの一貫性を保つ）
 config.use_cap_height_to_scale_fallback_fonts = false
 -- 行間を少し広げて文字の重なりを防ぐ
@@ -238,11 +238,11 @@ wezterm.on("format-tab-title", function(tab)
 	-- 現在の作業ディレクトリのURIを取得
 	local cwd_uri = tab.active_pane.current_working_dir
 	local title = ""
-	
+
 	if cwd_uri and cwd_uri.file_path then
 		local path = cwd_uri.file_path
 		local home = os.getenv("HOME")
-		
+
 		-- ホームディレクトリの場合は「~」を表示
 		if path == home then
 			title = "~"
@@ -402,12 +402,14 @@ local function cycle_centering_preset(window, pane)
 
 	-- 状態をログに表示
 	local preset = centering_config.presets[centering_config.current_preset]
-	wezterm.log_info(string.format(
-		"Center preset: %s (ratio: %.0f%%, max: %dpx)",
-		centering_config.current_preset,
-		preset.ratio * 100,
-		preset.max_width
-	))
+	wezterm.log_info(
+		string.format(
+			"Center preset: %s (ratio: %.0f%%, max: %dpx)",
+			centering_config.current_preset,
+			preset.ratio * 100,
+			preset.max_width
+		)
+	)
 end
 
 -- 幅比率を調整する関数
@@ -422,7 +424,7 @@ local function adjust_centering_width(window, pane, delta)
 		local current_preset = centering_config.presets[centering_config.current_preset]
 		centering_config.presets.custom = {
 			ratio = current_preset.ratio,
-			max_width = current_preset.max_width
+			max_width = current_preset.max_width,
 		}
 		centering_config.current_preset = "custom"
 	end
@@ -437,10 +439,7 @@ local function adjust_centering_width(window, pane, delta)
 	end
 
 	-- 状態をログに表示
-	wezterm.log_info(string.format(
-		"Center width: %.0f%% (custom)",
-		custom_preset.ratio * 100
-	))
+	wezterm.log_info(string.format("Center width: %.0f%% (custom)", custom_preset.ratio * 100))
 end
 
 -- 最大幅を調整する関数
@@ -454,7 +453,7 @@ local function adjust_centering_max_width(window, pane, delta)
 		local current_preset = centering_config.presets[centering_config.current_preset]
 		centering_config.presets.custom = {
 			ratio = current_preset.ratio,
-			max_width = current_preset.max_width
+			max_width = current_preset.max_width,
 		}
 		centering_config.current_preset = "custom"
 	end
@@ -469,10 +468,7 @@ local function adjust_centering_max_width(window, pane, delta)
 	end
 
 	-- 状態をログに表示
-	wezterm.log_info(string.format(
-		"Center max width: %dpx (custom)",
-		custom_preset.max_width
-	))
+	wezterm.log_info(string.format("Center max width: %dpx (custom)", custom_preset.max_width))
 end
 
 -- フルスクリーンモードの切り替え
@@ -497,3 +493,4 @@ wezterm.toggle_centering_fullscreen_only = toggle_centering_fullscreen_only
 
 -- 設定をエクスポート
 return config
+
