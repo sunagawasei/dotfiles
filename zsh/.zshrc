@@ -40,6 +40,10 @@ ZSH_HIGHLIGHT_STYLES[arg0]='fg=white'
 # 補完定義の追加コレクション - より多くのコマンドの補完をサポート
 zinit light zsh-users/zsh-completions
 
+# AWS CDK CLI 補完
+zinit ice as"completion"
+zinit snippet https://raw.githubusercontent.com/msysh/aws-cdk-zsh-completion/main/_cdk
+
 # 自動サジェスト - 履歴に基づいてコマンドを提案（薄い文字で表示）
 zinit light zsh-users/zsh-autosuggestions
 
@@ -201,7 +205,6 @@ alias ls='ls --color=auto'           # lsに色を付ける
 alias ll='ls -l'                     # 詳細表示
 alias la='ls -la'                    # 隠しファイルも含めて詳細表示
 alias l='ls -CF'                     # ファイル種別記号付き表示
-alias vi='nvim'
 alias vim='nvim'
 alias cl='claude'
 alias vtmp='nvim "${TMPDIR%/}/$(date "+%Y%m%d_%H%M%S").md"'  # 一時ディレクトリにタイムスタンプ付きmdファイルを作成して編集
@@ -255,3 +258,4 @@ export CLAUDE_CONFIG_DIR="${XDG_CONFIG_HOME}"/claude
 
 autoload -U +X bashcompinit && bashcompinit
 complete -o nospace -C /opt/homebrew/bin/terraform terraform
+
