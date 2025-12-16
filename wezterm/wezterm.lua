@@ -233,6 +233,17 @@ config.colors = {
 -- ==========================================
 -- タブのカスタマイズ
 -- ==========================================
+-- タブIDから決定論的に色を生成（タブ識別用）
+local function tab_id_to_color(tab_id)
+	local colors = {
+		"#EF4444", -- Red（赤）
+		"#FACC15", -- Yellow（黄）
+		"#22C55E", -- Green（緑）
+		"#3B82F6", -- Blue（青）
+	}
+	return colors[(tab_id % #colors) + 1]
+end
+
 -- タブタイトルのカスタマイズ処理（相対パスを表示）
 wezterm.on("format-tab-title", function(tab)
 	-- 現在の作業ディレクトリのURIを取得
@@ -265,10 +276,16 @@ wezterm.on("format-tab-title", function(tab)
 
 	-- アクティブタブかどうかで表示を分ける
 	if tab.is_active then
-		-- アクティブタブ: 明るくて目立つ表示
-		return "  " .. title .. "  "
+		-- アクティブタブ: 色付き縦線インジケーター（タブIDから決定論的に色を選択）
+		local color = tab_id_to_color(tab.tab_id)
+		return {
+			{ Foreground = { Color = color } },
+			{ Text = "▎" },
+			{ Foreground = { Color = "#FFFFFF" } },
+			{ Text = " " .. title .. " " },
+		}
 	else
-		-- 非アクティブタブ: 控えめな表示
+		-- 非アクティブタブ: インジケーターなし
 		return "  " .. title .. "  "
 	end
 end)
