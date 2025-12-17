@@ -227,7 +227,8 @@ return {
         -- ステータスライン・タブライン
         vim.api.nvim_set_hl(0, "StatusLine", { bg = "none" })
         vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "none" })
-        vim.api.nvim_set_hl(0, "TabLine", { bg = "none" })
+        vim.api.nvim_set_hl(0, "TabLine", { fg = "#64748B", bg = "none" })      -- 非アクティブタブ（Gray 6）
+        vim.api.nvim_set_hl(0, "TabLineSel", { fg = "#ffffff", bg = "none", bold = true })  -- アクティブタブ
         vim.api.nvim_set_hl(0, "TabLineFill", { bg = "none" })
         
         -- 行番号
