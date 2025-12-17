@@ -15,6 +15,12 @@ return {
       -- tmux、kitty、別ターミナルウィンドウなどで手動で'claude'コマンドを実行すると自動接続
     },
 
+    -- diff表示設定
+    diff_opts = {
+      open_in_new_tab = true,           -- 新規タブでdiffを開く（作業中バッファを汚さない）
+      hide_terminal_in_new_tab = true,  -- 新規タブでターミナル非表示（diffに集中）
+    },
+
     -- 差分表示・タブ管理設定（v0.3.0新機能）
     diff = {
       -- タブ自動命名を有効化
