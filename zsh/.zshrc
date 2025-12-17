@@ -82,22 +82,7 @@ fi
 # ----------------------
 # 履歴設定
 # ----------------------
-# 履歴ファイルの保存先
-export HISTFILE=${HOME}/.config/zsh/.zsh_history
-
-# メモリに保存される履歴の件数
-export HISTSIZE=5000
-
-# 履歴ファイルに保存される履歴の件数
-export SAVEHIST=$HISTSIZE
-
-# 履歴ファイルの最大サイズ
-export HISTFILESIZE=100000
-
-# 重複する履歴を消去
-export HISTDUP=erase
-
-# 履歴の詳細オプション
+# 履歴の詳細オプション（環境変数は.zshenvで設定）
 setopt EXTENDED_HISTORY          # 開始と終了時刻を記録
 setopt hist_ignore_dups          # 直前と同じコマンドは記録しない
 setopt hist_ignore_all_dups      # 履歴内の古い重複コマンドを削除
@@ -139,9 +124,6 @@ bindkey '^]' accept-and-hold
 # ----------------------
 # インタラクティブシェル設定
 # ----------------------
-# 補完候補が多い時の確認プロンプトの閾値（50以上で確認）
-export LISTMAX=50
-
 # バックグラウンドジョブの優先度をフォアグラウンドと同じにする
 unsetopt bg_nice
 
@@ -243,19 +225,13 @@ fi
 complete -C '/opt/homebrew/opt/awscli@1/bin/aws_completer' aws
 
 # ----------------------
+# Terraform
 # ----------------------
-# 環境変数
-# ----------------------
-# Claude Code設定ディレクトリのパスを指定
-export CLAUDE_CONFIG_DIR="${XDG_CONFIG_HOME}"/claude
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /opt/homebrew/bin/terraform terraform
 
 # ----------------------
 # ローカル設定
 # ----------------------
 # マシン固有の設定があれば読み込む
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
-
-
-autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /opt/homebrew/bin/terraform terraform
-
