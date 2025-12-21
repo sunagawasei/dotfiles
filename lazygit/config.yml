@@ -52,4 +52,4 @@ keybinding:
   commits:
     moveDownCommit: '<c-d>'
     moveUpCommit: '<c-u>'
-    viewLogOptions: '<c-o>'  # Ctrl+LからCtrl+Oに変更（Karabinerとの競合回避）
+    openLogMenu: '<c-g>'  # Ctrl+Gでログメニューを開く（Karabinerとの競合回避）
