@@ -114,5 +114,3 @@ vim.keymap.set("n", "<leader>ct", "<cmd>Copilot toggle<cr>", { desc = "Toggle Co
 vim.keymap.set({ "n", "t" }, "<C-w>z", function()
   Snacks.zen.zoom()
 end, { desc = "Toggle Zoom" })
-
-
