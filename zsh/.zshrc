@@ -187,7 +187,7 @@ alias ls='ls --color=auto'           # lsに色を付ける
 alias ll='ls -l'                     # 詳細表示
 alias la='ls -la'                    # 隠しファイルも含めて詳細表示
 alias l='ls -CF'                     # ファイル種別記号付き表示
-alias vim='nvim'
+alias vi='nvim'
 alias cl='claude'
 alias vtmp='nvim "${TMPDIR%/}/$(date "+%Y%m%d_%H%M%S").md"'  # 一時ディレクトリにタイムスタンプ付きmdファイルを作成して編集
 alias now='date "+%Y/%m/%d %H:%M:%S"'  # 現在日時を表示
@@ -235,3 +235,4 @@ complete -o nospace -C /opt/homebrew/bin/terraform terraform
 # ----------------------
 # マシン固有の設定があれば読み込む
 [ -f ~/.zshrc.local ] && source ~/.zshrc.local
+
