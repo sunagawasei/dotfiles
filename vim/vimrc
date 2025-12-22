@@ -1,1 +1,70 @@
 set clipboard=unnamedplus
+
+" 背景色設定
+set background=dark
+
+" 行番号（相対番号）
+set number
+set relativenumber
+set numberwidth=4
+
+" カーソルライン表示
+set cursorline
+
+" True Color有効化
+set termguicolors
+
+" 構文ハイライト有効化
+syntax enable
+
+" ========================================
+" カーソル形状変更（モード別）
+" ========================================
+let &t_SI = "\e[5 q"  " Insert: 点滅バー
+let &t_EI = "\e[1 q"  " Normal: ブロック
+let &t_SR = "\e[3 q"  " Replace: 下線
+
+" ========================================
+" Vercel Geistカラースキーム（Neovim互換）
+" ========================================
+
+" 背景・前景
+highlight Normal guibg=#111111 guifg=#ededed ctermbg=233 ctermfg=255
+highlight NonText guibg=NONE guifg=#333333 ctermbg=NONE ctermfg=236
+
+" 行番号
+highlight LineNr guifg=#666666 guibg=NONE ctermfg=242 ctermbg=NONE
+highlight CursorLineNr guifg=#ededed guibg=NONE ctermfg=255 ctermbg=NONE
+
+" カーソルライン
+highlight CursorLine guibg=#1a1a1a ctermbg=234
+
+" 構文ハイライト
+highlight Comment guifg=#666666 ctermfg=242
+highlight Keyword guifg=#A855F7 ctermfg=135
+highlight Statement guifg=#A855F7 ctermfg=135
+highlight Conditional guifg=#A855F7 ctermfg=135
+highlight Repeat guifg=#A855F7 ctermfg=135
+highlight String guifg=#22C55E ctermfg=41
+highlight Character guifg=#22C55E ctermfg=41
+highlight Function guifg=#60A5FA ctermfg=75
+highlight Identifier guifg=#ededed ctermfg=255
+highlight Number guifg=#F59E0B ctermfg=214
+highlight Float guifg=#F59E0B ctermfg=214
+highlight Boolean guifg=#F59E0B ctermfg=214
+highlight Type guifg=#94A3B8 ctermfg=247
+highlight Constant guifg=#F59E0B ctermfg=214
+highlight Operator guifg=#94A3B8 ctermfg=247
+highlight PreProc guifg=#A855F7 ctermfg=135
+highlight Special guifg=#ededed ctermfg=255
+
+" UI要素
+highlight VertSplit guifg=#333333 guibg=NONE ctermfg=236 ctermbg=NONE
+highlight StatusLine guifg=#ededed guibg=#1a1a1a ctermfg=255 ctermbg=234
+highlight StatusLineNC guifg=#666666 guibg=#111111 ctermfg=242 ctermbg=233
+highlight Visual guibg=#1E40AF guifg=#ffffff ctermbg=25 ctermfg=255
+highlight Pmenu guibg=#1a1a1a guifg=#ededed ctermbg=234 ctermfg=255
+highlight PmenuSel guibg=#2a2a2a guifg=#ffffff ctermbg=235 ctermfg=255
+highlight Search guibg=#0070f3 guifg=#ffffff ctermbg=33 ctermfg=255
+highlight IncSearch guibg=#0070f3 guifg=#ffffff ctermbg=33 ctermfg=255
+highlight MatchParen guibg=#333333 guifg=#ffffff ctermbg=236 ctermfg=255
