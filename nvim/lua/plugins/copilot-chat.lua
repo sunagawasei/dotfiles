@@ -4,9 +4,17 @@
 return {
   "CopilotC-Nvim/CopilotChat.nvim",
   opts = {
-    model = "gpt-5.2",
+    show_help = false,
+    model = "gpt-5.1-codex",
     auto_insert_mode = false,
-    system_prompt = "あなたは優秀なプログラミングアシスタントです。すべての回答は必ず日本語で行ってください。英語での回答は禁止です。",
+    system_prompt = [[あなたは優秀なプログラミングアシスタントです。
+
+【最重要ルール】
+- すべての回答・説明は必ず日本語で行ってください
+- 英語での説明は絶対に禁止です
+- コード内のコメントは英語で構いません
+
+このルールは例外なく、すべての質問に適用されます。]],
     prompts = {
       Explain = {
         prompt = "選択されたコードの説明を日本語で書いてください。",
@@ -24,7 +32,7 @@ return {
         prompt = "選択されたコードにドキュメントコメントを日本語で追加してください。",
       },
       Tests = {
-        prompt = "選択されたコードのテストを生成してください。",
+        prompt = "選択されたコードのテストを生成してください。説明は日本語で書いてください。",
       },
     },
   },
@@ -43,7 +51,7 @@ return {
       function()
         local input = vim.fn.input("Quick Chat: ")
         if input ~= "" then
-          require("CopilotChat").ask(input)
+          require("CopilotChat").ask(input .. "\n\n（必ず日本語で回答してください）")
         end
       end,
       desc = "Quick Chat",
@@ -52,3 +60,4 @@ return {
     { "<leader>cx", "<cmd>CopilotChatReset<cr>", desc = "Clear chat", mode = { "n", "v" } },
   },
 }
+

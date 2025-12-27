@@ -27,3 +27,10 @@
 - test caseは1つずつ, red->green->blueで回す
 
 @guidelines/dockerfile.md
+
+# Bash ツール使用時の注意
+
+- `cd` コマンドは使用禁止（zoxide との競合で `__zoxide_z` エラーになる）
+- ディレクトリ移動が必要な場合は以下を使用：
+  - 絶対パスでコマンド実行: `npm run build --prefix /path/to/dir`
+  - `pushd`/`popd` を使用: `pushd /path && command && popd`

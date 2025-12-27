@@ -27,6 +27,10 @@ opt.updatetime = 1000
 -- LazyVimのformat_on_saveを有効化
 vim.g.autoformat = true
 
+-- プロジェクトローカル設定（.nvim.lua）を有効化
+-- Neovim 0.9以降は安全：初回読み込み時に確認ダイアログが表示される
+vim.o.exrc = true
+
 -- list表示を無効化（タブ文字の>表示を消す）
 opt.list = false
 
