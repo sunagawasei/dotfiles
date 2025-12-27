@@ -51,7 +51,7 @@ macOS上の開発ツール設定を管理する個人用dotfiles設定リポジ�
 
 ```bash
 npm run build    # ビルド
-npm run dev      # 開発モード  
+npm run dev      # 開発モード
 npm run lint     # リント
 ```
 
@@ -63,6 +63,7 @@ npm run lint     # リント
 4. 変更をコミット
 
 最近のコミット例：
+
 - "feat(nvim): Go言語サポートを追加"
 - "perf(options): updatetimeを1000msに変更してCPU使用率を改善"
 - "docs: 文字ジャンプコマンドの説明を追加"
@@ -93,25 +94,18 @@ npm run lint     # リント
 ## Claude Code設定
 
 ### 設定ディレクトリ
+
 - **ユーザー設定**: `$CLAUDE_CONFIG_DIR = /Users/s23159/.config/claude`
 - **プロジェクト設定**: `.claude/` （各プロジェクトのルートディレクトリ）
 
 ### 設定ファイル
+
 - **ユーザーレベル**: `claude/settings.json` - 全プロジェクト共通設定
 - **プロジェクトレベル**: `.claude/settings.local.json` - プロジェクト固有設定
-
-### Output Style
-- **デフォルト**: Explanatory（説明モード）
-- **変更方法**: `/output-style` コマンドまたは設定ファイル編集
-- **設定優先順位**: プロジェクトレベル > ユーザーレベル > システムデフォルト
-
-### その他の設定
-- **モデル**: opusplan（Plan Mode有効時はOpus、通常時はSonnet）
-- **権限**: セキュリティ重視の設定（危険なコマンドをdeny）
-- **フック**: プロンプト送信時にoutput-style遵守の提醒
 
 ## 注意事項
 
 - キーバインドや操作を追加した場合は `KEYMAPS.md` に記録する
 - カラー選択時は `vercel-geist-colors.md` のガイドラインに従う
 - プラグインやツール追加時は適切な設定ディレクトリに配置する
+
