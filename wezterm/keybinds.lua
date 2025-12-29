@@ -115,6 +115,9 @@ return {
 		-- Tab移動
 		{ key = "]", mods = "SUPER|SHIFT", action = act.ActivateTabRelative(1) },
 		{ key = "[", mods = "SUPER|SHIFT", action = act.ActivateTabRelative(-1) },
+		-- Tab移動 (Ctrl+Tab) - 外部キーボード互換用
+		{ key = "Tab", mods = "CTRL", action = act.ActivateTabRelative(1) },
+		{ key = "Tab", mods = "CTRL|SHIFT", action = act.ActivateTabRelative(-1) },
 		-- Tab入れ替え
 		{ key = "{", mods = "LEADER", action = act({ MoveTabRelative = -1 }) },
 		-- Tab新規作成
@@ -123,9 +126,8 @@ return {
 		{ key = "w", mods = "SUPER", action = act({ CloseCurrentTab = { confirm = true } }) },
 		{ key = "}", mods = "LEADER", action = act({ MoveTabRelative = 1 }) },
 
-		-- コピーモード
-		-- { key = 'X', mods = 'LEADER', action = act.ActivateKeyTable{ name = 'copy_mode', one_shot =false }, },
-		{ key = "[", mods = "LEADER", action = act.ActivateCopyMode },
+		-- コピーモード (CTRL+SHIFT+X)
+		{ key = "X", mods = "CTRL|SHIFT", action = act.ActivateCopyMode },
 		-- コピー
 		{ key = "c", mods = "SUPER", action = act.CopyTo("Clipboard") },
 		-- 貼り付け
@@ -286,8 +288,8 @@ return {
 			{ key = "k", mods = "NONE", action = act.CopyMode("MoveUp") },
 			{ key = "l", mods = "NONE", action = act.CopyMode("MoveRight") },
 			-- 最初と最後に移動
-			{ key = "^", mods = "NONE", action = act.CopyMode("MoveToStartOfLineContent") },
-			{ key = "$", mods = "NONE", action = act.CopyMode("MoveToEndOfLineContent") },
+			{ key = "^", mods = "SHIFT", action = act.CopyMode("MoveToStartOfLineContent") },
+			{ key = "$", mods = "SHIFT", action = act.CopyMode("MoveToEndOfLineContent") },
 			-- 左端に移動
 			{ key = "0", mods = "NONE", action = act.CopyMode("MoveToStartOfLine") },
 			{ key = "o", mods = "NONE", action = act.CopyMode("MoveToSelectionOtherEnd") },
@@ -298,6 +300,8 @@ return {
 			{ key = "w", mods = "NONE", action = act.CopyMode("MoveForwardWord") },
 			{ key = "b", mods = "NONE", action = act.CopyMode("MoveBackwardWord") },
 			{ key = "e", mods = "NONE", action = act.CopyMode("MoveForwardWordEnd") },
+			{ key = "Tab", mods = "NONE", action = act.CopyMode("MoveForwardWord") },
+			{ key = "Tab", mods = "SHIFT", action = act.CopyMode("MoveBackwardWord") },
 			-- ジャンプ機能 t f
 			{ key = "t", mods = "NONE", action = act.CopyMode({ JumpForward = { prev_char = true } }) },
 			{ key = "f", mods = "NONE", action = act.CopyMode({ JumpForward = { prev_char = false } }) },
