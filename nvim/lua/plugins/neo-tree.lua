@@ -1,5 +1,6 @@
 return {
   "nvim-neo-tree/neo-tree.nvim",
+  enabled = false,  -- oil.nvimに移行したため無効化
   opts = {
     -- 通知メッセージを非表示
     enable_diagnostics = false,

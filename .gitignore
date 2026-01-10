@@ -87,4 +87,7 @@ yarn-error.log*
 # MCP Serena設定・キャッシュ（ローカル環境固有）
 .serena/
 
+# Codex設定（認証・セッション情報を含む）
+codex/
+
 zsh/.zsh_sessions/
