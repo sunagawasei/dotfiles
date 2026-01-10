@@ -63,8 +63,10 @@ zinit light Aloxaf/fzf-tab
 eval "$(starship init zsh)"
 
 # Zoxide - スマートなcdコマンド（頻繁に使うディレクトリに素早く移動）
-# cdコマンドを置き換え
-eval "$(zoxide init --cmd cd zsh)"
+# cdコマンドを置き換え（Claude Codeでは無効化）
+if [[ "$CLAUDECODE" != "1" ]]; then
+  eval "$(zoxide init --cmd cd zsh)"
+fi
 
 # ----------------------
 # WezTerm用のOSC 7対応
@@ -221,8 +223,8 @@ fi
 # ----------------------
 # AWS CLI
 # ----------------------
-# AWS CLI v1の補完機能を有効化
-complete -C '/opt/homebrew/opt/awscli@1/bin/aws_completer' aws
+# AWS CLI v2の補完機能を有効化
+complete -C '/opt/homebrew/bin/aws_completer' aws
 
 # ----------------------
 # Terraform
