@@ -15,8 +15,7 @@ macOS上の開発ツール設定を管理する個人用dotfiles設定リポジ�
 
 ### ターミナルエミュレーター
 
-- **WezTerm (メイン)**: `wezterm/` - GPU加速、カスタムキーバインド
-- **Ghostty (サブ)**: `ghostty/` - macOSネイティブ、軽量
+- **WezTerm**: `wezterm/` - GPU加速、カスタムキーバインド
 
 ### シェル設定
 
@@ -78,7 +77,6 @@ npm run lint     # リント
 
 - **Neovim**: `nvim/init.lua` および `nvim/lua/`
 - **WezTerm**: `wezterm/wezterm.lua` および `wezterm/keybinds.lua`
-- **Ghostty**: `ghostty/config`
 - **Zed**: `zed/settings.json` および `zed/keymap.json`
 - **Git**: `git/config` および `git/ignore`
 - **Claude Code**: `claude/settings.json` および `.claude/settings.local.json`（プロジェクトレベル）
