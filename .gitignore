@@ -45,7 +45,6 @@ Thumbs.db
 *.swp
 *.swo
 *~
-karabiner/automatic_backups/
 
 # 個人環境固有ファイル
 .metricsUUID
@@ -57,8 +56,6 @@ useful_phrases.md
 *.sublime-*
 .vscode/
 .idea/
-zed/conversations/*
-zed/prompts/*
 
 # Neovimプラグインのロックファイル
 nvim/lazy-lock.json

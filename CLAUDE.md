@@ -11,7 +11,6 @@ macOS上の開発ツール設定を管理する個人用dotfiles設定リポジ�
 ### エディタ
 
 - **Neovim (LazyVim)**: `nvim/` - メインエディタ、詳細設定は `nvim/CLAUDE.md` を参照
-- **Zed**: `zed/` - モダンコードエディタ、カスタム設定とVercelテーマ
 
 ### ターミナルエミュレーター
 
@@ -28,8 +27,6 @@ macOS上の開発ツール設定を管理する個人用dotfiles設定リポジ�
 - **Git**: `git/` - グローバル設定
 - **LazyGit**: `lazygit/` - Git TUI設定
 - **GitUI**: `gitui/` - Git GUI設定
-- **tmux**: `tmux/` - ターミナル多重化
-- **Karabiner**: `karabiner/` - キーボード設定
 - **Claude Code**: `claude/` - AI統合開発環境、設定ディレクトリは`$CLAUDE_CONFIG_DIR`で指定
 
 ### カラーシステム
@@ -77,7 +74,6 @@ npm run lint     # リント
 
 - **Neovim**: `nvim/init.lua` および `nvim/lua/`
 - **WezTerm**: `wezterm/wezterm.lua` および `wezterm/keybinds.lua`
-- **Zed**: `zed/settings.json` および `zed/keymap.json`
 - **Git**: `git/config` および `git/ignore`
 - **Claude Code**: `claude/settings.json` および `.claude/settings.local.json`（プロジェクトレベル）
 
