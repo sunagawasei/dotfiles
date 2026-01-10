@@ -85,7 +85,7 @@ return {
       "<leader>at",
       "<cmd>ClaudeCodeTreeAdd<cr>",
       desc = "Add file from tree explorer",
-      ft = { "neo-tree" },
+      ft = { "oil" },
     },
 
     -- Diff管理（v0.3.0新機能）
