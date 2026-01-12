@@ -37,7 +37,7 @@ return {
         height = function()
           return math.floor(vim.o.lines * 0.8)
         end,
-        winblend = 3,
+        winblend = 0,  -- 透明度を無効化してパフォーマンス改善
         highlights = {
           border = "Normal",
           background = "Normal",
@@ -52,18 +52,6 @@ return {
 
     -- カスタムターミナル関数
     local Terminal = require("toggleterm.terminal").Terminal
-
-    -- lazygit用のターミナル
-    local lazygit = Terminal:new({
-      cmd = "lazygit",
-      direction = "float",
-      float_opts = {
-        border = "double",
-      },
-      on_open = function(term)
-        vim.cmd("startinsert!")
-      end,
-    })
 
     -- gitui用のターミナル
     local gitui = Terminal:new({
@@ -84,10 +72,6 @@ return {
     })
 
     -- カスタムコマンドの作成
-    vim.api.nvim_create_user_command("LazyGit", function()
-      lazygit:toggle()
-    end, {})
-
     vim.api.nvim_create_user_command("GitUI", function()
       gitui:toggle()
     end, {})
@@ -97,10 +81,6 @@ return {
     end, {})
 
     -- グローバル関数として登録（キーマッピング用）
-    _G.toggleterm_lazygit = function()
-      lazygit:toggle()
-    end
-
     _G.toggleterm_gitui = function()
       gitui:toggle()
     end
@@ -119,13 +99,6 @@ return {
     { "<leader>tv", "<cmd>ToggleTerm direction=vertical<cr>", desc = "Terminal vertical" },
 
     -- カスタムターミナル
-    {
-      "<leader>tg",
-      function()
-        _G.toggleterm_lazygit()
-      end,
-      desc = "LazyGit",
-    },
     {
       "<leader>tu",
       function()

@@ -1,6 +1,17 @@
 return {
   "folke/snacks.nvim",
   opts = {
+    lazygit = {
+      enabled = true,
+      configure = true,  -- 自動テーマ設定
+      config = {
+        os = { editPreset = "nvim-remote" },
+        gui = { nerdFontsVersion = "3" },
+      },
+      win = {
+        style = "lazygit",
+      },
+    },
     picker = {
       sources = {
         explorer = {
@@ -72,6 +83,9 @@ return {
     zen = {
       enabled = true, -- Zoom機能を有効化
     },
+  },
+  keys = {
+    { "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
   },
 }
 
