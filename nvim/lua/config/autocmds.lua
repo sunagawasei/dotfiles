@@ -7,6 +7,9 @@
 -- Or remove existing autocmds by their group name (which is prefixed with `lazyvim_` for the defaults)
 -- e.g. vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
 
+-- LazyVimのspell設定を無効化
+vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
+
 -- Disable the concealing in some file formats
 -- The default conceallevel is 3 in LazyVim
 vim.api.nvim_create_autocmd("FileType", {
@@ -16,20 +19,6 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
 })
 
--- Fix wavy lines issue in VSCode by disabling spell check
-vim.api.nvim_create_autocmd("FileType", {
-  group = vim.api.nvim_create_augroup("lazyvim_wrap_spell", { clear = true }),
-  pattern = "*",
-  callback = function()
-    if vim.g.vscode then
-      vim.opt_local.wrap = false
-      vim.opt_local.spell = false
-    else
-      vim.opt_local.wrap = true
-      vim.opt_local.spell = true
-    end
-  end,
-})
 
 -- 自動フォーマット設定（Conform.nvimを直接使用）
 vim.api.nvim_create_autocmd("BufWritePre", {
@@ -46,24 +35,6 @@ vim.api.nvim_create_autocmd("BufWritePre", {
         })
       end
     end
-  end,
-})
-
--- 診断の赤い波線を確実に無効化（パフォーマンス最適化：VimEnterとLspAttachのみで実行）
-vim.api.nvim_create_autocmd({ "VimEnter", "LspAttach" }, {
-  callback = function()
-    -- 一度だけ設定を適用
-    vim.diagnostic.config({
-      underline = false, -- 赤い波線を無効化
-      virtual_text = false, -- インライン診断テキストも無効化
-      signs = true, -- 左側のサインカラムは表示
-      float = {
-        border = "rounded",
-        source = "always",
-      },
-      severity_sort = true,
-      update_in_insert = false,
-    })
   end,
 })
 
