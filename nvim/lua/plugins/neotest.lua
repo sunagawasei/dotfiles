@@ -8,6 +8,9 @@ return {
       "nvim-treesitter/nvim-treesitter",
       "fredrikaverpil/neotest-golang",
     },
+    keys = {
+      { "<leader>t", "", desc = "+test" },
+    },
     config = function()
       local neotest = require("neotest")
 
