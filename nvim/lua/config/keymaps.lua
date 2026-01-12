@@ -52,21 +52,9 @@ vim.keymap.set({ "n", "i", "v" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save fil
 -- ファイル全体をコピー（Normal モード）
 vim.keymap.set("n", "<C-c>", "<cmd>%y+<cr>", { desc = "Copy entire file" })
 
--- ファイルパスを取得（neo-tree対応）
+-- ファイルパスを取得
 local function get_file_path()
-  if vim.bo.filetype == "neo-tree" then
-    local success, manager = pcall(require, "neo-tree.sources.manager")
-    if success then
-      local state = manager.get_state("filesystem")
-      local node = state.tree:get_node()
-      if node then
-        return node:get_id()
-      end
-    end
-    return nil
-  else
-    return vim.fn.expand('%:p')
-  end
+  return vim.fn.expand('%:p')
 end
 
 -- ファイルパスをクリップボードにコピー

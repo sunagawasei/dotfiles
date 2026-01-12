@@ -194,8 +194,6 @@ Snacks.nvimベース：
 
 ### Git連携
 - **gitsigns.nvim**: Git差分表示
-- **gitgraph.nvim**: Gitグラフビューア（`<leader>gl`）
-- **diffview.nvim**: 差分表示ツール
 
 ### エディタ機能
 - **toggleterm.nvim**: 統合ターミナル
