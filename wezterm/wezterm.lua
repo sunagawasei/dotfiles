@@ -109,7 +109,7 @@ config.window_frame = {
 	-- タイトルバーのフォント
 	font = wezterm.font("Geist Mono"),
 	-- タイトルバーのフォントサイズ
-	font_size = 14,
+	font_size = 16,
 }
 -- ウィンドウ背景のグラデーション設定（単色の黒）
 config.window_background_gradient = {
@@ -244,8 +244,49 @@ local function tab_id_to_color(tab_id)
 	return colors[(tab_id % #colors) + 1]
 end
 
+-- Claude Code状態に応じたインジケータを返す
+local function get_claude_status(tab_title)
+	if tab_title:find("%[完了%]") then
+		return { icon = "✓", color = "#22C55E" } -- 緑
+	elseif tab_title:find("%[許可待ち%]") then
+		return { icon = "!", color = "#FACC15" } -- 黄
+	elseif tab_title:find("%[入力待ち%]") then
+		return { icon = "●", color = "#3B82F6" } -- 青
+	elseif tab_title:find("%[実行中%]") then
+		return { icon = "▶", color = "#FFFFFF" } -- 白
+	end
+	return nil
+end
+
 -- タブタイトルのカスタマイズ処理（相対パスを表示）
 wezterm.on("format-tab-title", function(tab)
+	-- Claude Code状態を確認（tab.tab_titleを優先）
+	local tab_title = tab.tab_title or ""
+	local claude_status = get_claude_status(tab_title)
+
+	-- Claude状態がある場合は、状態表示を優先
+	if claude_status then
+		if tab.is_active then
+			local line_color = tab_id_to_color(tab.tab_id)
+			return {
+				{ Foreground = { Color = line_color } },
+				{ Text = "▎" },
+				{ Foreground = { Color = "#FFFFFF" } },
+				{ Text = " claude " },
+				{ Foreground = { Color = claude_status.color } },
+				{ Text = claude_status.icon },
+			}
+		else
+			return {
+				{ Foreground = { Color = "#FFFFFF" } },
+				{ Text = "  claude " },
+				{ Foreground = { Color = claude_status.color } },
+				{ Text = claude_status.icon .. " " },
+			}
+		end
+	end
+
+	-- Claude状態がない場合は、既存の処理（cwd表示）
 	-- 現在の作業ディレクトリのURIを取得
 	local cwd_uri = tab.active_pane.current_working_dir
 	local title = ""
