@@ -34,28 +34,27 @@ gui:
   authorColors:
     '*': '#A3A3A3' # Color 9 (Dark) - すべての著者に統一された落ち着いた色
 git:
-  autoFetch: false  # 自動fetchを無効化してパフォーマンス改善
-  autoRefresh: false  # 自動リフレッシュを無効化してパフォーマンス改善
+  autoFetch: false # 自動fetchを無効化してパフォーマンス改善
+  autoRefresh: false # 自動リフレッシュを無効化してパフォーマンス改善
+  fetchAll: false # git fetch --allを避けて必要なremoteのみ取得（パフォーマンス改善）
   ignoreWhitespaceInDiffView: true
   log:
     showGraph: "always"
-    showWholeGraph: false  # true → false: 全ブランチ表示を無効化（パフォーマンス改善）
+    showWholeGraph: false # true → false: 全ブランチ表示を無効化（パフォーマンス改善）
     order: "topo-order"
   # 全ブランチ表示のカスタマイズ（--allを削除、-n 200で件数制限）
   branchLogCmd: "git log --graph --color=always --abbrev-commit --decorate --date=relative --pretty=medium -n 200 {{branchName}} --"
-  paging:
-    colorArg: always
-    pager: delta --dark --paging=never --side-by-side --commit-decoration-style=none --commit-style=raw --file-decoration-style=none --syntax-theme=Nord
+  pagers:
+    - colorArg: always
+      pager: delta --dark --paging=never --side-by-side --commit-decoration-style=none --commit-style=raw --file-decoration-style=none --syntax-theme=Nord
   mainBranches:
     - main
     - master
-
 refresher:
-  refreshInterval: 60   # リフレッシュ間隔を延長（デフォルト10秒→60秒）
-  fetchInterval: 300    # fetch間隔を延長（デフォルト60秒→300秒）
-
+  refreshInterval: 60 # リフレッシュ間隔を延長（デフォルト10秒→60秒）
+  fetchInterval: 300 # fetch間隔を延長（デフォルト60秒→300秒）
 keybinding:
   commits:
     moveDownCommit: '<c-d>'
     moveUpCommit: '<c-u>'
-    openLogMenu: '<c-g>'  # Ctrl+Gでログメニューを開く（Karabinerとの競合回避）
+    openLogMenu: '<c-g>' # Ctrl+Gでログメニューを開く（Karabinerとの競合回避）

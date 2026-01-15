@@ -10,6 +10,9 @@ return {
       },
       win = {
         style = "lazygit",
+        wo = {
+          scrolloff = 0,  -- スクロールオフセットを無効化してパフォーマンス改善
+        },
       },
     },
     picker = {
