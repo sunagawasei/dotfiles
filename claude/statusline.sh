@@ -49,5 +49,4 @@ else
   TOKEN_COUNT="${percentage}%"
 fi
 
-echo "󰚩 ${MODEL_DISPLAY} |  ${CURRENT_DIR##*/}${GIT_BRANCH} |  ${TOKEN_COUNT}"
-
+printf '%s' "${MODEL_DISPLAY} | ${CURRENT_DIR##*/}${GIT_BRANCH} | ${TOKEN_COUNT}"
