@@ -87,4 +87,7 @@ yarn-error.log*
 # Codex設定（認証・セッション情報を含む）
 codex/
 
+# Colima設定（コンテナランタイム環境固有）
+colima/
+
 zsh/.zsh_sessions/
