@@ -1,6 +1,6 @@
 return {
   "stevearc/oil.nvim",
-  lazy = true,
+  lazy = false,  -- 起動時にoilを開くため遅延読み込みを無効化
   dependencies = { "nvim-tree/nvim-web-devicons" },
   config = function()
     require("oil").setup({
@@ -18,6 +18,18 @@ return {
         ["q"] = "actions.close",
         ["<C-r>"] = "actions.refresh",
       },
+    })
+
+    -- 引数なしで起動した場合のみoilを開く
+    -- vim.schedule_wrap()を使用してタイミング問題を回避
+    -- 参考: https://github.com/stevearc/oil.nvim/issues/268
+    vim.api.nvim_create_autocmd("VimEnter", {
+      callback = vim.schedule_wrap(function(data)
+        -- 引数なしで起動、またはディレクトリを開いた場合のみoilを開く
+        if data.file == "" or vim.fn.isdirectory(data.file) ~= 0 then
+          require("oil").open()
+        end
+      end),
     })
   end,
   keys = {
