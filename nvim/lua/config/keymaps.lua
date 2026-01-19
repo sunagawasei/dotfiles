@@ -54,7 +54,23 @@ vim.keymap.set("n", "<C-c>", "<cmd>%y+<cr>", { desc = "Copy entire file" })
 
 -- ファイルパスを取得
 local function get_file_path()
-  return vim.fn.expand('%:p')
+  local bufname = vim.fn.expand('%:p')
+
+  -- oil.nvimのバッファの場合はカーソル位置のエントリのパスを取得
+  if bufname:match('^oil://') then
+    local ok, oil = pcall(require, "oil")
+    if ok then
+      local entry = oil.get_cursor_entry()
+      local dir = oil.get_current_dir()
+      if entry and dir then
+        return dir .. entry.name
+      end
+    end
+    -- フォールバック: oil://プレフィックスを削除
+    return bufname:gsub('^oil://', '')
+  end
+
+  return bufname
 end
 
 -- ファイルパスをクリップボードにコピー
