@@ -1,6 +1,9 @@
 return {
   "folke/snacks.nvim",
   opts = {
+    dashboard = {
+      enabled = false,  -- oil.nvim起動のためdashboardを無効化
+    },
     lazygit = {
       enabled = true,
       configure = true,  -- 自動テーマ設定
