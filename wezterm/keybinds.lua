@@ -146,7 +146,7 @@ return {
 		{ key = "k", mods = "LEADER", action = act.ActivatePaneDirection("Up") },
 		{ key = "j", mods = "LEADER", action = act.ActivatePaneDirection("Down") },
 		-- Pane選択
-		{ key = "[", mods = "CTRL|SHIFT", action = act.PaneSelect },
+		{ key = "p", mods = "LEADER", action = act.PaneSelect },
 		-- 選択中のPaneのみ表示
 		{ key = "z", mods = "LEADER", action = act.TogglePaneZoomState },
 		-- ターミナルクリア
