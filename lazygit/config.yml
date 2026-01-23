@@ -35,7 +35,7 @@ gui:
     '*': '#A3A3A3' # Color 9 (Dark) - すべての著者に統一された落ち着いた色
 git:
   autoFetch: false # 自動fetchを無効化してパフォーマンス改善
-  autoRefresh: false # 自動リフレッシュを無効化してパフォーマンス改善
+  autoRefresh: true # 自動リフレッシュを有効化してgit操作を即座に反映
   fetchAll: false # git fetch --allを避けて必要なremoteのみ取得（パフォーマンス改善）
   ignoreWhitespaceInDiffView: true
   log:
@@ -51,7 +51,7 @@ git:
     - main
     - master
 refresher:
-  refreshInterval: 60 # リフレッシュ間隔を延長（デフォルト10秒→60秒）
+  refreshInterval: 10 # リフレッシュ間隔（デフォルト値）
   fetchInterval: 300 # fetch間隔を延長（デフォルト60秒→300秒）
 keybinding:
   commits:
