@@ -8,18 +8,13 @@ This repository contains my personal dotfiles for macOS development tools. The c
 
 ## Main Components
 
-### Terminal Emulators
+### Terminal Emulator
 
-#### Wezterm (Primary)
+#### WezTerm
 - **Config**: `wezterm/wezterm.lua`
 - **Keybindings**: `wezterm/keybinds.lua`
 - **Features**: GPU accelerated, multiplexing, custom Vercel dark theme
 - **Leader key**: `Ctrl+q`
-
-#### Ghostty (Secondary)
-- **Config**: `ghostty/config`
-- **Commands reference**: `ghostty/command.md`
-- **Features**: Native macOS terminal, Vercel dark theme
 
 ### Text Editors
 
@@ -27,49 +22,53 @@ This repository contains my personal dotfiles for macOS development tools. The c
 - **Config**: `nvim/init.lua` and `nvim/lua/`
 - **Framework**: LazyVim (pre-configured Neovim setup)
 - **Formatter**: Stylua configured in `nvim/stylua.toml`
-- **Features**: Japanese IME support, performance optimizations
+- **Features**: Japanese IME support, performance optimizations, AI integration (Copilot)
+- **Documentation**: `nvim/CLAUDE.md` for detailed configuration
 
-#### Zed
-- **Config**: `zed/settings.json`
-- **Keybindings**: `zed/keymap.json`
-- **Themes**: `zed/themes/`
+#### Vim (Legacy)
+- **Config**: `vim/vimrc`
+- **Usage**: Fallback for environments without Neovim
 
 ### Shell Configuration
 
-#### Fish Shell
-- **Config**: `fish/conf.d/`
-
 #### Zsh
 - **Config**: `zsh/.zshrc`
-- **Abbreviations**: `zsh-abbr/user-abbreviations`
-- **Plugin manager**: Antigen
+- **Features**: Comprehensive completion settings, aliases
 
 #### Starship Prompt
 - **Config**: `starship.toml`
 - **Theme**: Minimal with Vercel Geist colors
 - **Features**: Git status, time display, custom prompt character (▲)
 
-### Other Tools
+### Development Tools
 
 #### Git
 - **Config**: `git/gitconfig`
-- **Global ignore**: `git/gitignore`
-
-#### tmux
-- **Config**: `tmux/tmux.conf`
+- **Global ignore**: `git/gitignore`, `git/ignore`
 
 #### LazyGit
 - **Config**: `lazygit/config.yml`
+- **Features**: Git TUI with custom keybindings
 
-#### Raycast Extensions
-- **Location**: `raycast/extensions/`
-- **Custom extensions**: Multiple productivity tools and integrations
+#### Claude Code
+- **Config**: `claude/settings.json` (via `$CLAUDE_CONFIG_DIR`)
+- **Scripts**: `claude/statusline.sh` for terminal status line integration
+- **Features**: AI-assisted development environment
+
+#### Raycast
+- **Config**: `raycast/config.json`
+- **Features**: macOS productivity launcher
 
 ## Color System
 
 The entire configuration uses a consistent color scheme based on Vercel's Geist design system. See `vercel-geist-colors.md` for the complete color palette reference including:
 - 10-step color scales for Gray, Blue, Red, Amber, Green, Teal, Purple, and Pink
 - Consistent background, foreground, and accent colors across all applications
+
+## Documentation
+
+- **CLAUDE.md**: Instructions for Claude Code AI assistant
+- **SHORTCUTS.md**: Comprehensive keymaps for Neovim, WezTerm, Zsh, and LazyGit
 
 ## Setup
 
@@ -82,11 +81,12 @@ As this is a manually managed dotfiles repository:
 ### Common Configuration Locations
 
 - Neovim: `~/.config/nvim/`
-- Wezterm: `~/.config/wezterm/`
-- Ghostty: `~/.config/ghostty/`
-- Fish: `~/.config/fish/`
+- WezTerm: `~/.config/wezterm/`
+- Zsh: `~/.zshrc` (symlink from `zsh/.zshrc`)
 - Starship: `~/.config/starship.toml`
-- Git: `~/.gitconfig` (symlink from `~/.config/git/gitconfig`)
+- Git: `~/.gitconfig` (symlink from `git/gitconfig`)
+- LazyGit: `~/.config/lazygit/`
+- Claude Code: `$CLAUDE_CONFIG_DIR` (default: `~/.config/claude/`)
 
 ## Features
 
@@ -94,32 +94,29 @@ As this is a manually managed dotfiles repository:
 - **Japanese Language Support**: Full Japanese input method support in Neovim and terminals
 - **Performance Optimized**: Configurations tuned for fast startup and responsive interaction
 - **Modular Structure**: Each tool's configuration is self-contained
+- **AI Integration**: Claude Code and GitHub Copilot support
 - **Version Controlled**: Git managed with descriptive commit messages
 
 ## Directory Structure
 
 ```
-.config/
+dotfiles/
 ├── nvim/               # Neovim configuration (LazyVim)
-├── wezterm/            # Wezterm terminal configuration
-├── ghostty/            # Ghostty terminal configuration
-├── fish/               # Fish shell configuration
-├── shell/              # Shell utilities (zsh configs)
+├── wezterm/            # WezTerm terminal configuration
+├── vim/                # Vim configuration (legacy)
+├── zsh/                # Zsh shell configuration
 ├── git/                # Git configuration
-├── tmux/               # tmux configuration
-├── lazygit/            # LazyGit configuration
+├── lazygit/            # LazyGit TUI configuration
+├── claude/             # Claude Code AI settings
+├── raycast/            # Raycast launcher configuration
 ├── starship.toml       # Starship prompt configuration
-├── raycast/            # Raycast extensions and config
-├── zed/                # Zed editor configuration
-├── karabiner/          # Karabiner-Elements (keyboard customization)
-├── dlv/                # Go Delve debugger config
 ├── CLAUDE.md           # Claude AI assistant instructions
+├── SHORTCUTS.md        # Keyboard shortcuts reference
 └── vercel-geist-colors.md  # Color system documentation
 ```
 
 ## Notes
 
-- No remote repository configured (local only)
-- Backup files (`*.bak`) are automatically created by some tools
+- Remote repository: `git@github.com:sunagawasei/dotfiles.git`
 - Configuration files contain Japanese comments and documentation
-- All commit messages follow either Japanese or English conventions
+- Commit messages follow either Japanese or English conventions
