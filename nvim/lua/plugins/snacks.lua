@@ -4,6 +4,9 @@ return {
     dashboard = {
       enabled = false,  -- oil.nvim起動のためdashboardを無効化
     },
+    terminal = {
+      enabled = true,
+    },
     lazygit = {
       enabled = true,
       configure = true,  -- 自動テーマ設定
