@@ -14,7 +14,7 @@ gui:
       - '#5AAFAD' # アクセント: cyan（ネオン青緑）
       - bold
     inactiveBorderColor:
-      - '#3A3F3E' # 分割線
+      - '#7E8A89' # 中間グレー（視認性改善）
     # テキスト色
     optionsTextColor:
       - '#D7E2E1' # 前景

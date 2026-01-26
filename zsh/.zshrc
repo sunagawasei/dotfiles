@@ -56,16 +56,6 @@ ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-word)
 # forward-charも部分適用ウィジェットとして使用
 ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-char vi-forward-char)
 
-# FZFタブ補完 - タブ補完をfzfでインタラクティブに
-zinit light Aloxaf/fzf-tab
-
-# fzf-tab用の色設定（Cyber Glitchカラースキーム）
-zstyle ':fzf-tab:*' fzf-flags \
-  --color=bg+:#2A2F2E,bg:#0E1210,fg:#D7E2E1,fg+:#F2FFFF \
-  --color=hl:#5AAFAD,hl+:#96CBD1,info:#7E8A89,marker:#5AAFAD \
-  --color=prompt:#8C83A3,spinner:#8C83A3,pointer:#5AAFAD,header:#7E8A89 \
-  --color=border:#3A3F3E,gutter:#0E1210
-
 # ----------------------
 # プロンプトとナビゲーション
 # ----------------------
@@ -158,13 +148,13 @@ unsetopt list_types
 # di=ディレクトリ(cyan), ln=シンボリックリンク(magenta), ex=実行可能(前景+太字)
 # *.md/*.txt=中間グレー, *.go/*.ts/*.js=bright cyan
 # 注意: fzf-tab使用時はma=（選択項目の色）は効果なし
-export LS_COLORS='ma=48;2;42;47;46;38;2;242;255;255:di=38;2;205;216;215;1:ln=38;2;170;182;181:ex=38;2;215;226;225;1:*.md=38;2;126;138;137:*.txt=38;2;126;138;137:*.go=38;2;215;226;225:*.ts=38;2;215;226;225:*.js=38;2;215;226;225'
+export LS_COLORS='ma=48;2;58;63;62;38;2;242;255;255:di=38;2;205;216;215;1:ln=38;2;170;182;181:ex=38;2;215;226;225;1:*.md=38;2;126;138;137:*.txt=38;2;126;138;137:*.go=38;2;215;226;225:*.ts=38;2;215;226;225:*.js=38;2;215;226;225'
 
 # ========================================
 # FZF カラー設定（fzf-tab用）
 # ========================================
 export FZF_DEFAULT_OPTS='
-  --color=bg+:#2A2F2E,bg:#0E1210,fg:#D7E2E1,fg+:#F2FFFF
+  --color=bg+:#3A3F3E,bg:#0E1210,fg:#D7E2E1,fg+:#F2FFFF
   --color=hl:#5AAFAD,hl+:#96CBD1,info:#7E8A89,marker:#5AAFAD
   --color=prompt:#8C83A3,spinner:#8C83A3,pointer:#5AAFAD,header:#7E8A89
   --color=border:#3A3F3E,gutter:#0E1210
@@ -175,6 +165,19 @@ fpath=(/Users/s23159/.local/share/zsh/site-functions $fpath)
 
 # 補完機能を有効化
 autoload -U compinit && compinit
+
+# FZFタブ補完 - タブ補完をfzfでインタラクティブに（compinitの後に読み込み必須）
+zinit light Aloxaf/fzf-tab
+
+# fzf-tab用の色設定（Cyber Glitchカラースキーム）
+zstyle ':fzf-tab:*' fzf-flags \
+  --color=bg+:#1A2524,bg:#0E1210,fg:#AAB6B5,fg+:#5AAFAD \
+  --color=hl:#5AAFAD,hl+:#96CBD1,info:#7E8A89,marker:#5AAFAD \
+  --color=prompt:#8C83A3,spinner:#8C83A3,pointer:#5AAFAD,header:#7E8A89 \
+  --color=border:#3A3F3E,gutter:#0E1210
+
+# fzf-tabプラグイン用の設定（デフォルトメニューを無効化）
+zstyle ':completion:*' menu no
 
 # メニュー選択機能を有効化
 zmodload zsh/complist
@@ -197,7 +200,7 @@ zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
 # 補完候補に色を付ける（LS_COLORS環境変数を使用 + 選択項目のハイライト色を明示指定）
 # 注意: fzf-tab使用時は上記のzstyle ':fzf-tab:*'設定が優先され、ma=は効果なし
-zstyle ':completion:*' list-colors '${(s.:.)LS_COLORS}' 'ma=48;2;42;47;46;38;2;242;255;255'
+zstyle ':completion:*' list-colors '${(s.:.)LS_COLORS}' 'ma=48;2;58;63;62;38;2;242;255;255'
 
 # 補完候補を矢印キーで選択可能にする
 zstyle ':completion:*' menu select
@@ -207,9 +210,6 @@ zstyle ':completion:*' completer _complete _match _approximate
 
 # 曖昧補完で許容する誤字数（1文字まで）
 zstyle ':completion:*:approximate:*' max-errors 1
-
-# fzf-tabプラグイン用の設定（デフォルトメニューを無効化）
-zstyle ':completion:*' menu no
 
 # ----------------------
 # エイリアス
