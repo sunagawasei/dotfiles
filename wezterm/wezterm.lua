@@ -134,7 +134,7 @@ config.tab_max_width = 20
 config.show_close_tab_button_in_tabs = false
 
 -- ==========================================
--- カラーテーマ設定 (Geist Design System)
+-- カラーテーマ設定
 -- ==========================================
 -- 非アクティブペインを暗くする設定（HSB色空間で調整）
 config.inactive_pane_hsb = {
@@ -163,10 +163,10 @@ config.colors = {
 	-- ANSI色（ターミナルの標準16色）
 	ansi = {
 		"#0E1210", -- black: 背景色
-		"#8C83A3", -- red: magentaアクセント（diff削除行）
-		"#5AAFAD", -- green: cyanアクセント（diff追加行）
-		"#C7D2D1", -- yellow: ライトグレー
-		"#7E8A89", -- blue: 中間グレー
+		"#B9C6C5", -- red → gray
+		"#9AA6A5", -- green → gray
+		"#C7D2D1", -- yellow → gray
+		"#7E8A89", -- blue → gray
 		"#8C83A3", -- magenta: グリッチ紫（アクセント）
 		"#5AAFAD", -- cyan: ネオン青緑（アクセント）
 		"#D7E2E1", -- white: 前景色
@@ -174,13 +174,13 @@ config.colors = {
 	-- 明るいANSI色（太字や高輝度表示用）
 	brights = {
 		"#2A2F2E", -- bright black: 濃い影
-		"#E6F1F0", -- bright red: ニアホワイト
-		"#CDD8D7", -- bright green: ライトグレー
-		"#F2FFFF", -- bright yellow: ハイライト白
-		"#AAB6B5", -- bright blue: 明るいグレー
+		"#E6F1F0", -- bright red → near white
+		"#CDD8D7", -- bright green → light gray
+		"#F2FFFF", -- bright yellow → white
+		"#AAB6B5", -- bright blue → light gray
 		"#B3A9D1", -- bright magenta: ブライト紫（アクセント）
 		"#96CBD1", -- bright cyan: ブライト青緑（アクセント）
-		"#FFFFFF", -- bright white: 純白
+		"#F2FFFF", -- bright white: ハイライト白
 	},
 
 	-- コピーモード色設定

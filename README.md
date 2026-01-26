@@ -1,10 +1,10 @@
 # dotfiles
 
-Personal macOS development environment configuration files with a consistent Vercel Geist design system theme.
+Personal macOS development environment configuration files with a consistent custom dark theme.
 
 ## Overview
 
-This repository contains my personal dotfiles for macOS development tools. The configurations are manually managed without using stow or other dotfile managers. All configurations follow a unified dark theme based on the Vercel Geist design system.
+This repository contains my personal dotfiles for macOS development tools. The configurations are manually managed without using stow or other dotfile managers. All configurations follow a unified custom dark theme.
 
 ## Main Components
 
@@ -13,7 +13,7 @@ This repository contains my personal dotfiles for macOS development tools. The c
 #### WezTerm
 - **Config**: `wezterm/wezterm.lua`
 - **Keybindings**: `wezterm/keybinds.lua`
-- **Features**: GPU accelerated, multiplexing, custom Vercel dark theme
+- **Features**: GPU accelerated, multiplexing, custom dark theme
 - **Leader key**: `Ctrl+q`
 
 ### Text Editors
@@ -37,7 +37,7 @@ This repository contains my personal dotfiles for macOS development tools. The c
 
 #### Starship Prompt
 - **Config**: `starship.toml`
-- **Theme**: Minimal with Vercel Geist colors
+- **Theme**: Minimal with custom colors
 - **Features**: Git status, time display, custom prompt character (▲)
 
 ### Development Tools
@@ -61,8 +61,8 @@ This repository contains my personal dotfiles for macOS development tools. The c
 
 ## Color System
 
-The entire configuration uses a consistent color scheme based on Vercel's Geist design system. See `vercel-geist-colors.md` for the complete color palette reference including:
-- 10-step color scales for Gray, Blue, Red, Amber, Green, Teal, Purple, and Pink
+The entire configuration uses a consistent custom color scheme. See `COLOR-SYSTEM.md` for the complete color palette reference including:
+- Monochrome gradations and accent colors
 - Consistent background, foreground, and accent colors across all applications
 
 ## Documentation
@@ -90,7 +90,7 @@ As this is a manually managed dotfiles repository:
 
 ## Features
 
-- **Unified Theme**: Consistent Vercel Geist dark theme across all tools
+- **Unified Theme**: Consistent custom dark theme across all tools
 - **Japanese Language Support**: Full Japanese input method support in Neovim and terminals
 - **Performance Optimized**: Configurations tuned for fast startup and responsive interaction
 - **Modular Structure**: Each tool's configuration is self-contained
@@ -112,7 +112,7 @@ dotfiles/
 ├── starship.toml       # Starship prompt configuration
 ├── CLAUDE.md           # Claude AI assistant instructions
 ├── SHORTCUTS.md        # Keyboard shortcuts reference
-└── vercel-geist-colors.md  # Color system documentation
+└── COLOR-SYSTEM.md     # Color system documentation
 ```
 
 ## Notes

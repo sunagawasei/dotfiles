@@ -9,27 +9,27 @@ wezterm.on("update-right-status", function(window, pane)
 
 		-- モードごとに異なる色とアイコンを設定
 		if name == "copy_mode" then
-			-- Copy mode: 青背景に白文字（Blue 6）
-			table.insert(elements, { Background = { Color = "#3B82F6" } })
+			-- Copy mode: グレー背景に白文字
+			table.insert(elements, { Background = { Color = "#7E8A89" } })
 			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
 			table.insert(elements, { Text = " 󰆏 COPY MODE " }) -- NerdFont copy icon
 		elseif name == "resize_pane" then
-			-- Resize mode: 緑背景に白文字（Green 6）
-			table.insert(elements, { Background = { Color = "#22C55E" } })
+			-- Resize mode: グレー背景に白文字
+			table.insert(elements, { Background = { Color = "#9AA6A5" } })
 			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
 			table.insert(elements, { Text = "  RESIZE " }) -- NerdFont resize icon
 		elseif name == "pane_navigation" then
-			-- Pane Navigation mode: オレンジ背景に白文字（Amber 6）
-			table.insert(elements, { Background = { Color = "#F59E0B" } })
+			-- Pane Navigation mode: グレー背景に白文字
+			table.insert(elements, { Background = { Color = "#C7D2D1" } })
 			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
 			table.insert(elements, { Text = "  PANE NAV " }) -- NerdFont window icon
 		elseif name == "search_mode" then
-			-- Search mode: 紫背景に白文字（Purple 6）
-			table.insert(elements, { Background = { Color = "#A855F7" } })
+			-- Search mode: グレー背景に白文字
+			table.insert(elements, { Background = { Color = "#B9C6C5" } })
 			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
 			table.insert(elements, { Text = "  SEARCH " }) -- NerdFont search icon
 		else
-			-- その他のモード: グレー背景に白文字（Gray 6）
+			-- その他のモード: グレー背景に白文字
 			table.insert(elements, { Background = { Color = "#64748B" } })
 			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
 			table.insert(elements, { Text = " TABLE: " .. name .. " " })
