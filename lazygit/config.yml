@@ -9,30 +9,30 @@ gui:
   showRandomTip: false # ランダムなヒントを無効化してシンプルに
   showBottomLine: false # ステータスバーを非表示にしてカラフルな要素を削除
   theme:
-    # ボーダー色 - 視認性を改善
+    # ボーダー色
     activeBorderColor:
-      - '#60A5FA' # Blue 5 - より明るいブルーでコントラスト向上
+      - '#5AAFAD' # アクセント: cyan（ネオン青緑）
       - bold
     inactiveBorderColor:
-      - '#666666' # Color 6 (Dark) - より明るいグレーで視認性向上
+      - '#3A3F3E' # 分割線
     # テキスト色
     optionsTextColor:
-      - '#A3A3A3' # Color 9 (Dark) - 落ち着いた色でカラフルさを抑制
+      - '#D7E2E1' # 前景
     defaultFgColor:
-      - '#FFFFFF' # Color 10 (Dark) - デフォルトのテキスト色
+      - '#D7E2E1' # 前景
     # 選択行の背景
     selectedLineBgColor:
-      - '#334155' # Gray 8 - より濃い背景でコントラスト向上
+      - '#2A2F2E' # 濃い影
     # Git関連の色
     unstagedChangesColor:
-      - '#FBBF24' # Amber 5 - より明るいアンバーで視認性向上
+      - '#8C83A3' # アクセント: magenta（グリッチ紫）
     cherryPickedCommitFgColor:
-      - '#60A5FA' # Blue 5 - ボーダーと統一
+      - '#5AAFAD' # アクセント: cyan
     cherryPickedCommitBgColor:
-      - '#1E293B' # Gray 9 - より濃い背景
-  # 著者色設定 - カラフルさを抑制
+      - '#2A2F2E' # 濃い影
+  # 著者色設定
   authorColors:
-    '*': '#A3A3A3' # Color 9 (Dark) - すべての著者に統一された落ち着いた色
+    '*': '#7E8A89' # 中間グレー
 git:
   autoFetch: false # 自動fetchを無効化してパフォーマンス改善
   autoRefresh: true # 自動リフレッシュを有効化してgit操作を即座に反映
@@ -51,7 +51,7 @@ git:
     - main
     - master
 refresher:
-  refreshInterval: 10 # リフレッシュ間隔（デフォルト値）
+  refreshInterval: 1 # リフレッシュ間隔を短縮（外部変更の迅速な検出）
   fetchInterval: 300 # fetch間隔を延長（デフォルト60秒→300秒）
 keybinding:
   commits:
