@@ -47,6 +47,9 @@ zinit snippet https://raw.githubusercontent.com/msysh/aws-cdk-zsh-completion/mai
 # 自動サジェスト - 履歴に基づいてコマンドを提案（薄い文字で表示）
 zinit light zsh-users/zsh-autosuggestions
 
+# zsh-autosuggestions 色設定（モノクロ基調 - 中間グレー）
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7E8A89'
+
 # zsh-autosuggestions 部分適用の設定
 # forward-wordを部分適用ウィジェットとして使用
 ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-word)
@@ -141,6 +144,24 @@ unsetopt list_types
 # ----------------------
 # 補完機能の設定
 # ----------------------
+# ========================================
+# LS_COLORS（補完候補の色設定）
+# ========================================
+# モノクロ基調＋アクセント
+# di=ディレクトリ(cyan), ln=シンボリックリンク(magenta), ex=実行可能(前景+太字)
+# *.md/*.txt=中間グレー, *.go/*.ts/*.js=bright cyan
+export LS_COLORS='di=38;2;90;175;173:ln=38;2;140;131;163:ex=38;2;215;226;225;1:*.md=38;2;126;138;137:*.txt=38;2;126;138;137:*.go=38;2;150;203;209:*.ts=38;2;150;203;209:*.js=38;2;150;203;209'
+
+# ========================================
+# FZF カラー設定（fzf-tab用）
+# ========================================
+export FZF_DEFAULT_OPTS='
+  --color=bg+:#2A2F2E,bg:#0E1210,fg:#D7E2E1,fg+:#F2FFFF
+  --color=hl:#5AAFAD,hl+:#96CBD1,info:#7E8A89,marker:#5AAFAD
+  --color=prompt:#8C83A3,spinner:#8C83A3,pointer:#5AAFAD,header:#7E8A89
+  --color=border:#3A3F3E,gutter:#0E1210
+'
+
 # Worklog CLI completion
 fpath=(/Users/s23159/.local/share/zsh/site-functions $fpath)
 
@@ -206,6 +227,10 @@ alias ssh='TERM=xterm-256color \ssh'
 
 # Delta（diff表示ツール）のデフォルトオプション
 alias delta='delta --dark --paging=never --line-numbers --syntax-theme base16-256 -s'
+
+# Copilot CLIツール
+alias awscp='/opt/homebrew/bin/copilot'                           # AWS Copilot (ECS/Fargateデプロイツール)
+alias copilot='/opt/homebrew/Caskroom/copilot-cli/0.0.394/copilot'  # GitHub Copilot CLI (AIターミナルアシスタント)
 
 # ----------------------
 # Google Cloud SDK
