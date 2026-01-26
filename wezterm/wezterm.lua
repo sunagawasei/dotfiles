@@ -111,9 +111,9 @@ config.window_frame = {
 	-- タイトルバーのフォントサイズ
 	font_size = 16,
 }
--- ウィンドウ背景のグラデーション設定（単色の黒）
+-- ウィンドウ背景のグラデーション設定（モノクロ背景）
 config.window_background_gradient = {
-	colors = { "#000000" },
+	colors = { "#0E1210" },
 }
 -- ウィンドウ内側の余白設定
 config.window_padding = {
@@ -138,92 +138,92 @@ config.show_close_tab_button_in_tabs = false
 -- ==========================================
 -- 非アクティブペインを暗くする設定（HSB色空間で調整）
 config.inactive_pane_hsb = {
-	saturation = 0.7, -- 彩度を30%下げる（色を薄くする）
-	brightness = 0.6, -- 明度を60%にして暗くする（少し明るめ）
+	saturation = 0.6, -- 彩度を40%下げる（色をより薄くする）
+	brightness = 0.4, -- 明度を40%にして暗くする（差を明確に）
 }
 
 config.colors = {
 	-- 基本色
-	foreground = "#FFFFFF", -- 前景色（テキスト色）：白
-	background = "#0a0a0a", -- 背景色：Ghosttyと同じ暗い黒
+	foreground = "#D7E2E1", -- 前景色（テキスト色）：モノクロ
+	background = "#0E1210", -- 背景色：モノクロ背景
 
 	-- カーソル色
-	cursor_bg = "#F8F8F8", -- カーソル背景：オフホワイト
-	cursor_fg = "#1A1A1A", -- カーソル前景：ダークグレー
-	cursor_border = "#666666", -- カーソル境界線：ミディアムグレー
+	cursor_bg = "#F2FFFF", -- カーソル背景：ハイライト白
+	cursor_fg = "#0E1210", -- カーソル前景：背景色
+	cursor_border = "#F2FFFF", -- カーソル境界線：ハイライト白
 
 	-- 選択色
-	selection_fg = "#FFFFFF", -- 選択時のテキスト色：白
-	selection_bg = "#2563EB", -- 選択時の背景色：Blue 7（より鮮明な青）
+	selection_fg = "#F2FFFF", -- 選択時のテキスト色：ハイライト白
+	selection_bg = "#2A2F2E", -- 選択時の背景色：濃い影
 
 	-- スクロールバー・分割線
-	scrollbar_thumb = "#444444", -- スクロールバーのつまみ色：Accent 6
-	split = "#333333", -- ペイン分割線の色：Accent 7
+	scrollbar_thumb = "#2A2F2E", -- スクロールバーのつまみ色：濃い影
+	split = "#5A5F5E", -- ペイン分割線の色：分割線（視認性向上）
 
 	-- ANSI色（ターミナルの標準16色）
 	ansi = {
-		"#333333", -- 黒：Accent 7（より明るいグレー）
-		"#DC2626", -- 赤：Red 7（落ち着いた赤）
-		"#16A34A", -- 緑：Green 7（落ち着いた緑）
-		"#D97706", -- 黄：Amber 7（落ち着いた琥珀）
-		"#2563EB", -- 青：Blue 7（落ち着いた青）
-		"#9333EA", -- マゼンタ：Purple 7（落ち着いた紫）
-		"#0D9488", -- シアン：Teal 7（落ち着いたティール）
-		"#FAFAFA", -- 白：Accent 1
+		"#0E1210", -- black: 背景色
+		"#8C83A3", -- red: magentaアクセント（diff削除行）
+		"#5AAFAD", -- green: cyanアクセント（diff追加行）
+		"#C7D2D1", -- yellow: ライトグレー
+		"#7E8A89", -- blue: 中間グレー
+		"#8C83A3", -- magenta: グリッチ紫（アクセント）
+		"#5AAFAD", -- cyan: ネオン青緑（アクセント）
+		"#D7E2E1", -- white: 前景色
 	},
 	-- 明るいANSI色（太字や高輝度表示用）
 	brights = {
-		"#A3A3A3", -- 明るい黒：Color 6（zsh-autosuggestions用に明るく調整）
-		"#B91C1C", -- 明るい赤：Red 8（より暗い赤）
-		"#15803D", -- 明るい緑：Green 8（より暗い緑）
-		"#B45309", -- 明るい黄：Amber 8（より暗い琥珀）
-		"#1D4ED8", -- 明るい青：Blue 8（より暗い青）
-		"#7C3AED", -- 明るいマゼンタ：Purple 8（より暗い紫）
-		"#0F766E", -- 明るいシアン：Teal 8（より暗いティール）
-		"#FFFFFF", -- 明るい白：純白
+		"#2A2F2E", -- bright black: 濃い影
+		"#E6F1F0", -- bright red: ニアホワイト
+		"#CDD8D7", -- bright green: ライトグレー
+		"#F2FFFF", -- bright yellow: ハイライト白
+		"#AAB6B5", -- bright blue: 明るいグレー
+		"#B3A9D1", -- bright magenta: ブライト紫（アクセント）
+		"#96CBD1", -- bright cyan: ブライト青緑（アクセント）
+		"#FFFFFF", -- bright white: 純白
 	},
 
 	-- コピーモード色設定
-	copy_mode_active_highlight_bg = { Color = "#0070F3" }, -- アクティブハイライト背景：Vercel青
-	copy_mode_active_highlight_fg = { Color = "#FFFFFF" }, -- アクティブハイライト前景：白
-	copy_mode_inactive_highlight_bg = { Color = "#444444" }, -- 非アクティブハイライト背景：グレー
-	copy_mode_inactive_highlight_fg = { Color = "#FFFFFF" }, -- 非アクティブハイライト前景：白
+	copy_mode_active_highlight_bg = { Color = "#5AAFAD" }, -- アクティブハイライト背景：アクセントcyan
+	copy_mode_active_highlight_fg = { Color = "#0E1210" }, -- アクティブハイライト前景：背景色
+	copy_mode_inactive_highlight_bg = { Color = "#2A2F2E" }, -- 非アクティブハイライト背景：濃い影
+	copy_mode_inactive_highlight_fg = { Color = "#D7E2E1" }, -- 非アクティブハイライト前景：前景色
 
 	-- クイックセレクト色設定
-	quick_select_label_bg = { Color = "#7928CA" }, -- ラベル背景：紫
-	quick_select_label_fg = { Color = "#FFFFFF" }, -- ラベル前景：白
-	quick_select_match_bg = { Color = "#0070F3" }, -- マッチ背景：Vercel青
-	quick_select_match_fg = { Color = "#FFFFFF" }, -- マッチ前景：白
+	quick_select_label_bg = { Color = "#8C83A3" }, -- ラベル背景：アクセントmagenta
+	quick_select_label_fg = { Color = "#F2FFFF" }, -- ラベル前景：ハイライト白
+	quick_select_match_bg = { Color = "#5AAFAD" }, -- マッチ背景：アクセントcyan
+	quick_select_match_fg = { Color = "#0E1210" }, -- マッチ前景：背景色
 
 	-- タブバー設定
 	tab_bar = {
 		-- タブバーの背景色
-		background = "#0a0a0a",
+		background = "#0E1210",
 		-- アクティブタブのスタイル
 		active_tab = {
-			bg_color = "#1A1A1A", -- 少し明るい背景
-			fg_color = "#FFFFFF", -- 白いテキスト
+			bg_color = "#2A2F2E", -- 濃い影
+			fg_color = "#F2FFFF", -- ハイライト白
 			intensity = "Bold", -- 太字
 		},
 		-- 非アクティブタブのスタイル
 		inactive_tab = {
-			bg_color = "#0a0a0a", -- 暗い背景
-			fg_color = "#666666", -- グレーのテキスト
+			bg_color = "#0E1210", -- 背景色
+			fg_color = "#7E8A89", -- 中間グレー
 		},
 		-- 非アクティブタブのホバー時スタイル
 		inactive_tab_hover = {
-			bg_color = "#111111", -- 少し明るい背景
-			fg_color = "#A3A3A3", -- 明るいグレー
+			bg_color = "#2A2F2E", -- 濃い影
+			fg_color = "#D7E2E1", -- 前景色
 		},
 		-- 新規タブボタンのスタイル
 		new_tab = {
-			bg_color = "#0a0a0a",
-			fg_color = "#666666",
+			bg_color = "#0E1210",
+			fg_color = "#7E8A89",
 		},
 		-- 新規タブボタンのホバー時スタイル
 		new_tab_hover = {
-			bg_color = "#111111",
-			fg_color = "#A3A3A3",
+			bg_color = "#2A2F2E",
+			fg_color = "#D7E2E1",
 		},
 		-- 非アクティブタブの境界線を非表示
 		inactive_tab_edge = "none",
@@ -236,10 +236,10 @@ config.colors = {
 -- タブIDから決定論的に色を生成（タブ識別用）
 local function tab_id_to_color(tab_id)
 	local colors = {
-		"#EF4444", -- Red（赤）
-		"#FACC15", -- Yellow（黄）
-		"#22C55E", -- Green（緑）
-		"#3B82F6", -- Blue（青）
+		"#5AAFAD", -- cyan（アクセント）
+		"#8C83A3", -- magenta（アクセント）
+		"#D7E2E1", -- 前景（モノクロ）
+		"#7E8A89", -- 中間グレー（モノクロ）
 	}
 	return colors[(tab_id % #colors) + 1]
 end
@@ -247,13 +247,13 @@ end
 -- Claude Code状態に応じたインジケータを返す
 local function get_claude_status(tab_title)
 	if tab_title:find("%[完了%]") then
-		return { icon = "✓", color = "#22C55E" } -- 緑
+		return { icon = "✓", color = "#5AAFAD" } -- cyan
 	elseif tab_title:find("%[許可待ち%]") then
-		return { icon = "!", color = "#FACC15" } -- 黄
+		return { icon = "!", color = "#8C83A3" } -- magenta
 	elseif tab_title:find("%[入力待ち%]") then
-		return { icon = "●", color = "#3B82F6" } -- 青
+		return { icon = "●", color = "#96CBD1" } -- bright cyan
 	elseif tab_title:find("%[実行中%]") then
-		return { icon = "▶", color = "#FFFFFF" } -- 白
+		return { icon = "▶", color = "#D7E2E1" } -- foreground
 	end
 	return nil
 end
