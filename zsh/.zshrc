@@ -207,6 +207,10 @@ alias ssh='TERM=xterm-256color \ssh'
 # Delta（diff表示ツール）のデフォルトオプション
 alias delta='delta --dark --paging=never --line-numbers --syntax-theme base16-256 -s'
 
+# Copilot CLIツール
+alias awscp='/opt/homebrew/bin/copilot'                           # AWS Copilot (ECS/Fargateデプロイツール)
+alias copilot='/opt/homebrew/Caskroom/copilot-cli/0.0.394/copilot'  # GitHub Copilot CLI (AIターミナルアシスタント)
+
 # ----------------------
 # Google Cloud SDK
 # ----------------------
