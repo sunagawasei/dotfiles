@@ -6,18 +6,18 @@ return {
   },
   config = function()
     local colors = {
-      -- Vercel Geistカラーシステムに準拠
-      handle = "#333333",        -- スクロールバーのハンドル
-      search = "#0070f3",        -- 検索結果（Vercel Blue）
-      error = "#EF4444",         -- エラー（Red 6）
-      warn = "#F59E0B",          -- 警告（Amber 6）
-      info = "#3B82F6",          -- 情報（Blue 6）
-      hint = "#14B8A6",          -- ヒント（Teal 6）
-      misc = "#A855F7",          -- その他（Purple 6）
+      -- カスタムカラーシステムに準拠
+      handle = "#2A2F2E",        -- スクロールバーのハンドル（COLOR-SYSTEM.md準拠: 濃い影）
+      search = "#5AAFAD",        -- 検索結果（Cyan）
+      error = "#8C83A3",         -- エラー（Magenta）
+      warn = "#B3A9D1",          -- 警告（Bright Magenta）
+      info = "#96CBD1",          -- 情報（Bright Cyan）
+      hint = "#5AAFAD",          -- ヒント（Cyan）
+      misc = "#7E8A89",          -- その他（Gray）
       -- Git関連（GitSignsと統一）
-      GitAdd = "#4ADE80",       -- 追加（Green 5）
-      GitChange = "#60A5FA",    -- 変更（Blue 5）
-      GitDelete = "#F87171",    -- 削除（Red 5）
+      GitAdd = "#5AAFAD",       -- 追加（Cyan）
+      GitChange = "#8C83A3",    -- 変更（Magenta）
+      GitDelete = "#AAB6B5",    -- 削除（グレー）
     }
 
     require("scrollbar").setup({

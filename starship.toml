@@ -13,7 +13,7 @@ command_timeout = 1000
 [directory]
 truncation_length = 10
 truncate_to_repo = false
-style = "#D7E2E1" # モノクロ基調 - 前景
+style = "#CDD8D7" # ライトグレー: ディレクトリ
 
 
 [character]
@@ -33,7 +33,7 @@ style = "#7E8A89" # モノクロ基調 - 中間グレー
 
 [git_branch]
 format = "  [$symbol$branch]($style) "
-style = "#D7E2E1" # モノクロ基調 - 前景
+style = "#AAB6B5" # 明るいグレー: Gitブランチ
 symbol = "\ue0a0"
 
 

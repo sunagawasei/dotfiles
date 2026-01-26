@@ -1,7 +1,7 @@
 return {
   "stevearc/oil.nvim",
   lazy = false,  -- 起動時にoilを開くため遅延読み込みを無効化
-  dependencies = { "nvim-tree/nvim-web-devicons" },
+  dependencies = { "nvim-mini/mini.icons" },
   config = function()
     local detail = true  -- 詳細表示状態の管理
     require("oil").setup({

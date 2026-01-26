@@ -5,39 +5,39 @@ return {
       options = {
         theme = {
           normal = {
-            a = { fg = "#FFFFFF", bg = "#3B82F6", gui = "bold" }, -- Blue 6
-            b = { fg = "#FFFFFF", bg = "NONE" },
-            c = { fg = "#A3A3A3", bg = "NONE" },
+            a = { fg = "#0E1210", bg = "#7E8A89", gui = "bold" }, -- gray
+            b = { fg = "#D7E2E1", bg = "NONE" },
+            c = { fg = "#7E8A89", bg = "NONE" },
           },
           insert = {
-            a = { fg = "#FFFFFF", bg = "#22C55E", gui = "bold" }, -- Green 6
-            b = { fg = "#FFFFFF", bg = "NONE" },
-            c = { fg = "#A3A3A3", bg = "NONE" },
+            a = { fg = "#0E1210", bg = "#9AA6A5", gui = "bold" }, -- gray
+            b = { fg = "#D7E2E1", bg = "NONE" },
+            c = { fg = "#7E8A89", bg = "NONE" },
           },
           visual = {
-            a = { fg = "#FFFFFF", bg = "#A855F7", gui = "bold" }, -- Purple 6
-            b = { fg = "#FFFFFF", bg = "NONE" },
-            c = { fg = "#A3A3A3", bg = "NONE" },
+            a = { fg = "#0E1210", bg = "#B9C6C5", gui = "bold" }, -- gray
+            b = { fg = "#D7E2E1", bg = "NONE" },
+            c = { fg = "#7E8A89", bg = "NONE" },
           },
           replace = {
-            a = { fg = "#FFFFFF", bg = "#EF4444", gui = "bold" }, -- Red 6
-            b = { fg = "#FFFFFF", bg = "NONE" },
-            c = { fg = "#A3A3A3", bg = "NONE" },
+            a = { fg = "#0E1210", bg = "#AAB6B5", gui = "bold" }, -- gray
+            b = { fg = "#D7E2E1", bg = "NONE" },
+            c = { fg = "#7E8A89", bg = "NONE" },
           },
           command = {
-            a = { fg = "#FFFFFF", bg = "#F59E0B", gui = "bold" }, -- Amber 6
-            b = { fg = "#FFFFFF", bg = "NONE" },
-            c = { fg = "#A3A3A3", bg = "NONE" },
+            a = { fg = "#0E1210", bg = "#C7D2D1", gui = "bold" }, -- gray
+            b = { fg = "#D7E2E1", bg = "NONE" },
+            c = { fg = "#7E8A89", bg = "NONE" },
           },
           terminal = {
-            a = { fg = "#FFFFFF", bg = "#14B8A6", gui = "bold" }, -- Teal 6
-            b = { fg = "#FFFFFF", bg = "NONE" },
-            c = { fg = "#A3A3A3", bg = "NONE" },
+            a = { fg = "#0E1210", bg = "#5AAFAD", gui = "bold" }, -- Cyan維持
+            b = { fg = "#D7E2E1", bg = "NONE" },
+            c = { fg = "#7E8A89", bg = "NONE" },
           },
           inactive = {
-            a = { fg = "#666666", bg = "NONE" },
-            b = { fg = "#666666", bg = "NONE" },
-            c = { fg = "#666666", bg = "NONE" },
+            a = { fg = "#7E8A89", bg = "NONE" },
+            b = { fg = "#7E8A89", bg = "NONE" },
+            c = { fg = "#7E8A89", bg = "NONE" },
           },
         },
         component_separators = { left = "", right = "" },
@@ -73,9 +73,9 @@ return {
             show_ahead_behind = false,
             colored = true,
             diff_color = {
-              added = { fg = "#4ADE80" }, -- Vercel Green 5 (より落ち着いた緑)
-              modified = { fg = "#60A5FA" }, -- Vercel Blue 5 (より落ち着いた青)
-              removed = { fg = "#F87171" }, -- Vercel Red 5 (より落ち着いた赤)
+              added = { fg = "#5AAFAD" }, -- Cyan
+              modified = { fg = "#8C83A3" }, -- Magenta
+              removed = { fg = "#AAB6B5" }, -- グレー
             },
           },
         },

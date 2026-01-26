@@ -61,6 +61,11 @@ return {
           vim.api.nvim_set_hl(0, "RenderMarkdownUnchecked", { fg = "#3A3F3E" })  -- 分割線
           vim.api.nvim_set_hl(0, "RenderMarkdownTodo", { fg = "#8C83A3" })  -- magentaアクセント
           vim.api.nvim_set_hl(0, "RenderMarkdownImportant", { fg = "#B3A9D1" })  -- bright magenta
+
+          -- テーブル関連のハイライト設定（モノクロ基調）
+          vim.api.nvim_set_hl(0, "RenderMarkdownTableHead", { fg = "#E6F1F0", bold = true })  -- ニアホワイト
+          vim.api.nvim_set_hl(0, "RenderMarkdownTableRow", { fg = "#D7E2E1" })  -- 前景
+          vim.api.nvim_set_hl(0, "RenderMarkdownTableFill", { fg = "#3A3F3E" })  -- 分割線
         end,
       })
 

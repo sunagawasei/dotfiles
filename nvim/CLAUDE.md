@@ -100,7 +100,7 @@ Snacks.nvimベース：
 - サインカラムの診断アイコンは表示
 
 ### カラースキーム
-- Vercelテーマを使用（`install.colorscheme = { "vercel" }`）
+- カスタムカラースキームを使用（プラグイン依存なし）
 
 ## カスタマイズ時の注意
 
@@ -117,7 +117,7 @@ Snacks.nvimベース：
 - **snacks.nvim**: ファイルエクスプローラー、ピッカーなどのユーティリティ集
 
 ### テーマ・UI
-- **vercel.nvim**: Vercel Geistカラーテーマ（メイン）
+- **カスタムカラースキーム**: 独自のカラーテーマ（プラグイン依存なし）
 - **bufferline.nvim**: タブライン表示
 - **lualine.nvim**: ステータスライン
 - **noice.nvim**: コマンドライン、メッセージ、ポップアップのUI改善
@@ -187,7 +187,7 @@ Snacks.nvimベース：
 
 #### テスト結果の視覚表示：
 - **インラインマーカー**: テスト関数の横に成功/失敗アイコン表示
-- **カラーコード**: Vercel Geistカラーによる状態表示
+- **カラーコード**: カスタムカラーによる状態表示
   - ✓ 成功（緑）、✗ 失敗（赤）、◐ 実行中（青）、○ スキップ（黄）
 - **サマリーパネル**: ツリー形式でのテスト構造・結果表示
 - **出力パネル**: テスト実行ログとエラー詳細
@@ -201,7 +201,7 @@ Snacks.nvimベース：
   - `<leader>tg`: LazyGit
   - `<leader>tu`: GitUI
   - `<leader>tb`: Btop
-- **render-markdown.nvim**: Markdownプレビュー強化（Vercel Geistカラー適用）
+- **render-markdown.nvim**: Markdownプレビュー強化（カスタムカラー適用）
 - **flash.nvim**: 高速移動・検索
   - `s`: Flash jump（ラベル付きジャンプ）
   - `S`: Flash Treesitter（構文要素ジャンプ）

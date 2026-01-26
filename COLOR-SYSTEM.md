@@ -29,16 +29,38 @@
 | Magenta | `#8C83A3` | 140,131,163 | 文字列、変更 |
 | Bright Magenta | `#B3A9D1` | 179,169,209 | 強調紫 |
 
-### Vercel Geist標準色（UI用）
+### ANSI Red/Green/Yellow/Blue（グレースケール化）
 
-| 色 | HEX | 用途 |
-|-----|-----|-----|
-| Blue 6 | `#3B82F6` | Normalモード |
-| Green 6 | `#22C55E` | Insertモード |
-| Red 6 | `#EF4444` | エラー |
-| Amber 6 | `#F59E0B` | 警告 |
-| Purple 6 | `#A855F7` | Visualモード |
-| Teal 6 | `#14B8A6` | ヒント |
+| 色 | HEX | RGB | 用途 |
+|-----|-----|-----|-----|
+| ANSI Red → Gray | `#B9C6C5` | 185,198,197 | ANSI 1 |
+| ANSI Green → Gray | `#9AA6A5` | 154,166,165 | ANSI 2 |
+| ANSI Yellow → Gray | `#C7D2D1` | 199,210,209 | ANSI 3 |
+| ANSI Blue → Gray | `#7E8A89` | 126,138,137 | ANSI 4 |
+
+### Bright色（グレースケール化）
+
+| 色 | HEX | RGB | 用途 |
+|-----|-----|-----|-----|
+| Bright Red → Near White | `#E6F1F0` | 230,241,240 | ANSI 9 |
+| Bright Green → Light Gray | `#CDD8D7` | 205,216,215 | ANSI 10 |
+| Bright Yellow → White | `#F2FFFF` | 242,255,255 | ANSI 11 |
+| Bright Blue → Light Gray | `#AAB6B5` | 170,182,181 | ANSI 12 |
+
+### ANSI 16色（WezTerm/Neovim共通）
+
+モノクロ基調＋アクセントの統一ANSI 16色マッピング:
+
+```
+ 0: #0E1210 (Black)           8: #2A2F2E (Bright Black)
+ 1: #B9C6C5 (Red→Gray)        9: #E6F1F0 (Bright Red→Near White)
+ 2: #9AA6A5 (Green→Gray)     10: #CDD8D7 (Bright Green→Light Gray)
+ 3: #C7D2D1 (Yellow→Gray)    11: #F2FFFF (Bright Yellow→White)
+ 4: #7E8A89 (Blue→Gray)      12: #AAB6B5 (Bright Blue→Light Gray)
+ 5: #8C83A3 (Magenta)        13: #B3A9D1 (Bright Magenta)
+ 6: #5AAFAD (Cyan)           14: #96CBD1 (Bright Cyan)
+ 7: #D7E2E1 (White)          15: #F2FFFF (Bright White)
+```
 
 ---
 
@@ -73,15 +95,19 @@
 | 追加/成功 | Cyan | `#5AAFAD` | Git追加行、成功メッセージ |
 | 変更/警告 | Magenta | `#8C83A3` | Git変更行、文字列リテラル |
 | 削除 | 明るいグレー | `#AAB6B5` | Git削除行 |
-| エラー | Red 6 | `#EF4444` | エラーメッセージ、診断 |
+| エラー | Magenta | `#8C83A3` | エラーメッセージ、診断 |
+| 警告 | Bright Magenta | `#B3A9D1` | 警告メッセージ |
+| 情報 | Bright Cyan | `#96CBD1` | 情報メッセージ |
+| ヒント | Cyan | `#5AAFAD` | ヒントメッセージ |
 
-### エディタモード色
+### エディタモード色（グレースケール化）
 
-- **Normal**: Blue 6 (`#3B82F6`)
-- **Insert**: Green 6 (`#22C55E`)
-- **Visual**: Purple 6 (`#A855F7`)
-- **Replace**: Red 6 (`#EF4444`)
-- **Command**: Amber 6 (`#F59E0B`)
+- **Normal**: Gray (`#7E8A89`)
+- **Insert**: Gray (`#9AA6A5`)
+- **Visual**: Gray (`#B9C6C5`)
+- **Replace**: Gray (`#AAB6B5`)
+- **Command**: Gray (`#C7D2D1`)
+- **Terminal**: Cyan (`#5AAFAD`) - アクセント維持
 
 ---
 
@@ -96,11 +122,14 @@
 
 **主な設定内容**:
 - ANSI Black: `#0E1210` (背景)
+- ANSI 1-4: グレースケール (`#B9C6C5`, `#9AA6A5`, `#C7D2D1`, `#7E8A89`)
+- ANSI Cyan: `#5AAFAD` (アクセント維持)
+- ANSI Magenta: `#8C83A3` (アクセント維持)
 - ANSI White: `#D7E2E1` (前景)
-- ANSI Cyan: `#5AAFAD`
-- ANSI Magenta: `#8C83A3`
-- カーソル: `#D7E2E1`
+- Bright 9-12: グレースケール (`#E6F1F0`, `#CDD8D7`, `#F2FFFF`, `#AAB6B5`)
+- カーソル: `#F2FFFF`
 - 選択範囲背景: `#2A2F2E`
+- モード色: 全てグレースケール
 
 ### Neovim
 
@@ -115,12 +144,16 @@
 - Normal背景: `#0E1210`
 - 選択行: `#2A2F2E`
 - コメント: `#7E8A89`
-- キーワード: `#5AAFAD`
-- 関数: `#96CBD1`
-- 文字列: `#8C83A3`
-- Git追加: `#5AAFAD`
-- Git変更: `#8C83A3`
-- Git削除: `#AAB6B5`
+- キーワード: `#5AAFAD` (Cyan)
+- 関数: `#96CBD1` (Bright Cyan)
+- 文字列: `#8C83A3` (Magenta)
+- モード色: 全てグレースケール (Normal: `#7E8A89`, Insert: `#9AA6A5`, etc.)
+- Diff追加: `#5AAFAD` (Cyan)
+- Diff変更: `#8C83A3` (Magenta)
+- Diff削除: `#AAB6B5` (グレー)
+- 診断エラー: `#8C83A3` (Magenta)
+- 診断警告: `#B3A9D1` (Bright Magenta)
+- 診断情報: `#96CBD1` (Bright Cyan)
 
 ### プロンプト
 
@@ -179,11 +212,17 @@
    - 通常テキスト: `#D7E2E1`
    - 強調: `#F2FFFF`
 
-3. **意味のある色分けが必要な場合**: アクセントカラーまたはVercel Geist標準色
+3. **意味のある色分けが必要な場合**: アクセントカラーのみ使用
    - 成功/追加: Cyan (`#5AAFAD`)
    - 変更/文字列: Magenta (`#8C83A3`)
-   - エラー: Red 6 (`#EF4444`)
-   - 警告: Amber 6 (`#F59E0B`)
+   - エラー: Magenta (`#8C83A3`)
+   - 警告: Bright Magenta (`#B3A9D1`)
+   - 情報: Bright Cyan (`#96CBD1`)
+   - ヒント: Cyan (`#5AAFAD`)
+
+4. **モード色が必要な場合**: グレースケールを使用
+   - 各モード（Normal, Insert, Visual等）は異なるグレー階調を使用
+   - TerminalモードのみCyan (`#5AAFAD`) を使用
 
 ### カラーコードの記述形式
 
