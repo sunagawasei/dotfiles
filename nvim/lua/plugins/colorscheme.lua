@@ -1,312 +1,365 @@
 return {
+  -- LazyVimのカラースキーム自動適用を無効化（プラグインは維持）
   {
-    "tiesen243/vercel.nvim",
+    "LazyVim/LazyVim",
+    opts = {
+      colorscheme = function() end, -- 何もしない関数で上書き
+    },
+  },
+  {
+    dir = vim.fn.stdpath("config"),
+    name = "custom-colorscheme",
+    -- 独自カラースキーム（プラグイン依存なし）
     lazy = false,
     priority = 1000,
     config = function()
-      require("vercel").setup({
-        theme = "dark", -- dark テーマを設定
-        transparent = true,
-        italics = {
-          comments = false,
-          keywords = false,
-          functions = false,
-          strings = false,
-          variables = false,
-        },
-        overrides = {
-          -- IMEやフローティングウィンドウの設定
-          NormalFloat = { bg = "#2A2F2E", fg = "#D7E2E1" }, -- フローティングウィンドウの背景と文字色（濃い影・氷白）
-          FloatBorder = { bg = "#2A2F2E", fg = "#5AAFAD" }, -- フローティングウィンドウの境界線（発光ライン）
-          Pmenu = { bg = "#2A2F2E", fg = "#D7E2E1" }, -- ポップアップメニューの背景と文字色
-          PmenuSel = { bg = "#2A2F2E", fg = "#F2FFFF" }, -- ポップアップメニューの選択項目（影・bright white）
-          PmenuSbar = { bg = "#2A2F2E" }, -- スクロールバーの背景
-          PmenuThumb = { bg = "#7E8A89" }, -- スクロールバーのつまみ（中間調）
-          -- CJK IME support
-          CmpItemAbbrMatch = { bg = "#2A2F2E", fg = "#96CBD1" },
-          CmpItemAbbrMatchFuzzy = { bg = "#2A2F2E", fg = "#96CBD1" },
-          CmpItemAbbr = { bg = "#2A2F2E", fg = "#D7E2E1" },
-          CmpItemKind = { bg = "#2A2F2E", fg = "#7E8A89" },
-          CmpItemMenu = { bg = "#2A2F2E", fg = "#7E8A89" },
-          CmpItemKindFunction = { bg = "#2A2F2E", fg = "#96CBD1" },
-          CmpItemKindMethod = { bg = "#2A2F2E", fg = "#96CBD1" },
-          CmpItemKindConstructor = { bg = "#2A2F2E", fg = "#96CBD1" },
-          CmpItemKindClass = { bg = "#2A2F2E", fg = "#96CBD1" },
-          CmpItemKindEnum = { bg = "#2A2F2E", fg = "#96CBD1" },
-          CmpItemKindEvent = { bg = "#2A2F2E", fg = "#96CBD1" },
-          CmpItemKindInterface = { bg = "#2A2F2E", fg = "#96CBD1" },
-          CmpItemKindStruct = { bg = "#2A2F2E", fg = "#96CBD1" },
-          CmpItemKindVariable = { bg = "#2A2F2E", fg = "#D7E2E1" },
-          CmpItemKindField = { bg = "#2A2F2E", fg = "#D7E2E1" },
-          CmpItemKindProperty = { bg = "#2A2F2E", fg = "#D7E2E1" },
-          CmpItemKindEnumMember = { bg = "#2A2F2E", fg = "#D7E2E1" },
-          CmpItemKindConstant = { bg = "#2A2F2E", fg = "#96CBD1" },
-          CmpItemKindKeyword = { bg = "#2A2F2E", fg = "#5AAFAD" },
-          CmpItemKindModule = { bg = "#2A2F2E", fg = "#D7E2E1" },
-          CmpItemKindValue = { bg = "#2A2F2E", fg = "#D7E2E1" },
-          CmpItemKindUnit = { bg = "#2A2F2E", fg = "#D7E2E1" },
-          CmpItemKindText = { bg = "#2A2F2E", fg = "#D7E2E1" },
-          CmpItemKindSnippet = { bg = "#2A2F2E", fg = "#D7E2E1" },
-          CmpItemKindFile = { bg = "#2A2F2E", fg = "#D7E2E1" },
-          CmpItemKindFolder = { bg = "#2A2F2E", fg = "#D7E2E1" },
-          CmpItemKindColor = { bg = "#2A2F2E", fg = "#D7E2E1" },
-          CmpItemKindReference = { bg = "#2A2F2E", fg = "#D7E2E1" },
-          CmpItemKindOperator = { bg = "#2A2F2E", fg = "#D7E2E1" },
-          CmpItemKindTypeParameter = { bg = "#2A2F2E", fg = "#D7E2E1" },
+      -- カラーパレット定義
+      local colors = {
+        -- コアカラー（モノクロ階調）
+        bg = "#0E1210",           -- 背景
+        dark_shadow = "#2A2F2E",  -- 濃い影
+        border = "#3A3F3E",       -- 分割線
+        mid_gray = "#7E8A89",     -- 中間グレー
+        light_gray = "#AAB6B5",   -- 明るいグレー
+        operator = "#CDD8D7",     -- ライトグレー
+        fg = "#D7E2E1",           -- 前景
+        near_white = "#E6F1F0",   -- ニアホワイト
+        highlight_white = "#F2FFFF", -- ハイライト白
 
-          -- Blink.cmp 用のハイライトグループ
-          BlinkCmpMenu = { bg = "#2A2F2E", fg = "#D7E2E1" },
-          BlinkCmpMenuBorder = { bg = "#2A2F2E", fg = "#5AAFAD" },
-          BlinkCmpMenuSelection = { bg = "#2A2F2E", fg = "#F2FFFF" },
-          BlinkCmpDoc = { bg = "#2A2F2E", fg = "#D7E2E1" },
-          BlinkCmpDocBorder = { bg = "#2A2F2E", fg = "#5AAFAD" },
-          BlinkCmpLabel = { bg = "#2A2F2E", fg = "#D7E2E1" },
-          BlinkCmpLabelMatch = { bg = "#2A2F2E", fg = "#5AAFAD" },
-          BlinkCmpKind = { bg = "#2A2F2E", fg = "#7E8A89" },
-          BlinkCmpSource = { bg = "#2A2F2E", fg = "#7E8A89" },
-          -- Snacks.nvim Picker/Explorer の透明化
-          SnacksPickerNormal = { bg = "none" },
-          SnacksPickerBorder = { bg = "none" },
-          SnacksPickerNormalFloat = { bg = "none" },
-          SnacksPickerFile = { bg = "none" },
-          SnacksPickerDir = { bg = "none" },
-          SnacksPickerPathHidden = { bg = "none" },
-          SnacksPickerBox = { bg = "none" },
-          SnacksPickerPrompt = { bg = "none" },
-          SnacksPickerMatch = { bg = "none", fg = "#5AAFAD" },
-          SnacksPickerList = { bg = "none" },
-          SnacksPickerListCursorLine = { bg = "#2A2F2E", fg = "#F2FFFF" },
-          SnacksPickerSelection = { bg = "#2A2F2E", fg = "#F2FFFF", bold = true },
-          SnacksPickerPathIgnored = { bg = "none" },
-          -- 一般的なサイドバー関連のハイライトグループ
-          NeoTreeNormal = { bg = "none" },
-          NeoTreeNormalNC = { bg = "none" },
-          NvimTreeNormal = { bg = "none" },
-          NvimTreeNormalNC = { bg = "none" },
-          
-          -- SnacksPickerTreeがLineNrにリンクされているため
-          SnacksPickerTree = { bg = "none" },
-          LineNr = { bg = "none" },
-          
-          -- ClaudeCode関連のハイライトグループ
-          ClaudeCodeNormal = { bg = "none" },
-          ClaudeCodeNormalFloat = { bg = "none" },
-          ClaudeCodeFloatBorder = { bg = "none" },
-          ClaudeCodeWinBar = { bg = "none" },
-          ClaudeCodeWinBarNC = { bg = "none" },
-          ClaudeCodeStatusLine = { bg = "none" },
-          ClaudeCodeStatusLineNC = { bg = "none" },
-          
-          -- MiniIcons ハイライトグループ - 白色統一表示
-          MiniIconsAzure = { fg = "#EDEDED" },   -- 白色統一
-          MiniIconsBlue = { fg = "#EDEDED" },    -- 白色統一
-          MiniIconsCyan = { fg = "#EDEDED" },    -- 白色統一
-          MiniIconsGreen = { fg = "#EDEDED" },   -- 白色統一
-          MiniIconsGrey = { fg = "#EDEDED" },    -- 白色統一
-          MiniIconsOrange = { fg = "#EDEDED" },  -- 白色統一
-          MiniIconsPurple = { fg = "#EDEDED" },  -- 白色統一
-          MiniIconsRed = { fg = "#EDEDED" },     -- 白色統一
-          MiniIconsYellow = { fg = "#EDEDED" },  -- 白色統一
-          
-          -- GitSigns ハイライトグループ - モノクロ基調＋アクセント
-          GitSignsAdd = { fg = "#5AAFAD" },           -- cyanアクセント: 追加
-          GitSignsChange = { fg = "#8C83A3" },        -- magentaアクセント: 変更
-          GitSignsDelete = { fg = "#AAB6B5" },        -- 明るいグレー: 削除
-          GitSignsAddNr = { fg = "#5AAFAD" },         -- cyanアクセント
-          GitSignsChangeNr = { fg = "#8C83A3" },      -- magentaアクセント
-          GitSignsDeleteNr = { fg = "#AAB6B5" },      -- 明るいグレー
-          GitSignsCurrentLineBlame = { fg = "#7E8A89" }, -- 中間グレー
+        -- アクセントカラー
+        cyan = "#5AAFAD",         -- Cyan
+        bright_cyan = "#96CBD1",  -- Bright Cyan
+        magenta = "#8C83A3",      -- Magenta
+        bright_magenta = "#B3A9D1", -- Bright Magenta
 
-          -- Diff関連のハイライトグループ
-          DiffAdd = { fg = "#5AAFAD" },               -- cyanアクセント
-          DiffChange = { fg = "#8C83A3" },            -- magentaアクセント
-          DiffDelete = { fg = "#AAB6B5" },            -- 明るいグレー
-          DiffText = { fg = "#96CBD1", bold = true }, -- bright cyanアクセント
+        -- ANSI色（グレースケール化）
+        ansi_red = "#B9C6C5",     -- red → gray
+        ansi_green = "#9AA6A5",   -- green → gray
+        ansi_yellow = "#C7D2D1",  -- yellow → gray
+        ansi_blue = "#7E8A89",    -- blue → gray
 
-          -- 構文ハイライト（Cyber Glitch Teal - ネオン系配色）
-          -- キーワード（発光ライン - if, const, function など）
-          ["@keyword"] = { fg = "#5AAFAD" },           -- 発光ライン（ネオン青緑）
-          ["@keyword.function"] = { fg = "#5AAFAD" },  -- 発光ライン
-          ["@keyword.operator"] = { fg = "#5AAFAD" },  -- 発光ライン
-          ["@keyword.return"] = { fg = "#5AAFAD" },    -- 発光ライン
-          ["@keyword.import"] = { fg = "#5AAFAD" },    -- 発光ライン
+        -- Bright色（グレースケール化）
+        bright_red = "#E6F1F0",   -- bright red → near white
+        bright_green = "#CDD8D7", -- bright green → light gray
+        bright_yellow = "#F2FFFF", -- bright yellow → white
+        bright_blue = "#AAB6B5",  -- bright blue → light gray
 
-          -- 文字列（グリッチ紫アクセント）
-          ["@string"] = { fg = "#8C83A3" },            -- グリッチ紫
+        -- その他
+        white = "#D7E2E1",        -- アイコン用白色（前景と統一）
+      }
 
-          -- 数値・真偽値（氷白）
-          ["@number"] = { fg = "#D7E2E1" },            -- 氷白
-          ["@boolean"] = { fg = "#D7E2E1" },           -- 氷白
+      -- ハイライトグループの設定
+      local highlights = {
+        -- 基本UI
+        Normal = { bg = colors.bg, fg = colors.fg },
+        NormalNC = { bg = colors.bg, fg = colors.fg },
+        EndOfBuffer = { bg = colors.bg },
+        SignColumn = { bg = colors.bg },
+        VertSplit = { bg = colors.bg },
+        WinSeparator = { bg = colors.bg },
 
-          -- コメント（中間調）
-          ["@comment"] = { fg = "#7E8A89" },
+        -- 基本UI - 追加分
+        Directory = { fg = colors.cyan },           -- ディレクトリ名
+        Title = { fg = colors.highlight_white, bold = true },  -- タイトル
+        Special = { fg = colors.mid_gray },         -- 特殊シンボル
+        Identifier = { fg = colors.fg },            -- 識別子
+        Statement = { fg = colors.cyan },           -- 文
+        PreProc = { fg = colors.cyan },             -- プリプロセッサ
+        Type = { fg = colors.bright_cyan },         -- 型
+        Constant = { fg = colors.fg },              -- 定数
+        String = { fg = colors.magenta },           -- 文字列
+        Number = { fg = colors.fg },                -- 数値
+        Boolean = { fg = colors.fg },               -- 真偽値
+        Function = { fg = colors.bright_cyan },     -- 関数
+        Keyword = { fg = colors.cyan },             -- キーワード
+        Operator = { fg = colors.operator },        -- 演算子
+        Comment = { fg = colors.mid_gray },         -- コメント
 
-          -- 関数名（発光ハイライト）
-          ["@function"] = { fg = "#96CBD1" },          -- 発光ハイライト（明るいシアン）
-          ["@function.call"] = { fg = "#96CBD1" },     -- 発光ハイライト
-          ["@function.method"] = { fg = "#96CBD1" },   -- 発光ハイライト
-          ["@function.method.call"] = { fg = "#96CBD1" }, -- 発光ハイライト
+        -- IMEやフローティングウィンドウの設定
+        NormalFloat = { bg = colors.dark_shadow, fg = colors.fg },
+        FloatBorder = { bg = colors.dark_shadow, fg = colors.cyan },
+        Pmenu = { bg = colors.dark_shadow, fg = colors.fg },
+        PmenuSel = { bg = colors.dark_shadow, fg = colors.highlight_white },
+        PmenuSbar = { bg = colors.dark_shadow },
+        PmenuThumb = { bg = colors.mid_gray },
 
-          -- 変数・パラメータ（氷白）
-          ["@variable"] = { fg = "#D7E2E1" },
-          ["@variable.builtin"] = { fg = "#96CBD1" },  -- 発光ハイライト（組み込み変数）
-          ["@parameter"] = { fg = "#D7E2E1" },
+        -- CJK IME support
+        CmpItemAbbrMatch = { bg = colors.dark_shadow, fg = colors.bright_cyan },
+        CmpItemAbbrMatchFuzzy = { bg = colors.dark_shadow, fg = colors.bright_cyan },
+        CmpItemAbbr = { bg = colors.dark_shadow, fg = colors.fg },
+        CmpItemKind = { bg = colors.dark_shadow, fg = colors.mid_gray },
+        CmpItemMenu = { bg = colors.dark_shadow, fg = colors.mid_gray },
+        CmpItemKindFunction = { bg = colors.dark_shadow, fg = colors.bright_cyan },
+        CmpItemKindMethod = { bg = colors.dark_shadow, fg = colors.bright_cyan },
+        CmpItemKindConstructor = { bg = colors.dark_shadow, fg = colors.bright_cyan },
+        CmpItemKindClass = { bg = colors.dark_shadow, fg = colors.bright_cyan },
+        CmpItemKindEnum = { bg = colors.dark_shadow, fg = colors.bright_cyan },
+        CmpItemKindEvent = { bg = colors.dark_shadow, fg = colors.bright_cyan },
+        CmpItemKindInterface = { bg = colors.dark_shadow, fg = colors.bright_cyan },
+        CmpItemKindStruct = { bg = colors.dark_shadow, fg = colors.bright_cyan },
+        CmpItemKindVariable = { bg = colors.dark_shadow, fg = colors.fg },
+        CmpItemKindField = { bg = colors.dark_shadow, fg = colors.fg },
+        CmpItemKindProperty = { bg = colors.dark_shadow, fg = colors.fg },
+        CmpItemKindEnumMember = { bg = colors.dark_shadow, fg = colors.fg },
+        CmpItemKindConstant = { bg = colors.dark_shadow, fg = colors.bright_cyan },
+        CmpItemKindKeyword = { bg = colors.dark_shadow, fg = colors.cyan },
+        CmpItemKindModule = { bg = colors.dark_shadow, fg = colors.fg },
+        CmpItemKindValue = { bg = colors.dark_shadow, fg = colors.fg },
+        CmpItemKindUnit = { bg = colors.dark_shadow, fg = colors.fg },
+        CmpItemKindText = { bg = colors.dark_shadow, fg = colors.fg },
+        CmpItemKindSnippet = { bg = colors.dark_shadow, fg = colors.fg },
+        CmpItemKindFile = { bg = colors.dark_shadow, fg = colors.fg },
+        CmpItemKindFolder = { bg = colors.dark_shadow, fg = colors.fg },
+        CmpItemKindColor = { bg = colors.dark_shadow, fg = colors.fg },
+        CmpItemKindReference = { bg = colors.dark_shadow, fg = colors.fg },
+        CmpItemKindOperator = { bg = colors.dark_shadow, fg = colors.fg },
+        CmpItemKindTypeParameter = { bg = colors.dark_shadow, fg = colors.fg },
 
-          -- 型名（発光ハイライト）
-          ["@type"] = { fg = "#96CBD1" },              -- 発光ハイライト
-          ["@type.builtin"] = { fg = "#96CBD1" },      -- 発光ハイライト
+        -- Blink.cmp 用のハイライトグループ
+        BlinkCmpMenu = { bg = colors.dark_shadow, fg = colors.fg },
+        BlinkCmpMenuBorder = { bg = colors.dark_shadow, fg = colors.cyan },
+        BlinkCmpMenuSelection = { bg = colors.dark_shadow, fg = colors.highlight_white },
+        BlinkCmpDoc = { bg = colors.dark_shadow, fg = colors.fg },
+        BlinkCmpDocBorder = { bg = colors.dark_shadow, fg = colors.cyan },
+        BlinkCmpLabel = { bg = colors.dark_shadow, fg = colors.fg },
+        BlinkCmpLabelMatch = { bg = colors.dark_shadow, fg = colors.cyan },
+        BlinkCmpKind = { bg = colors.dark_shadow, fg = colors.mid_gray },
+        BlinkCmpSource = { bg = colors.dark_shadow, fg = colors.mid_gray },
 
-          -- プロパティ・属性（氷白）
-          ["@property"] = { fg = "#D7E2E1" },
-          ["@field"] = { fg = "#D7E2E1" },
+        -- Snacks.nvim Picker/Explorer の透明化
+        SnacksPickerNormal = { bg = "none" },
+        SnacksPickerBorder = { bg = "none" },
+        SnacksPickerNormalFloat = { bg = "none" },
+        SnacksPickerFile = { bg = "none" },
+        SnacksPickerDir = { bg = "none" },
+        SnacksPickerPathHidden = { bg = "none" },
+        SnacksPickerBox = { bg = "none" },
+        SnacksPickerPrompt = { bg = "none" },
+        SnacksPickerMatch = { bg = "none", fg = colors.cyan },
+        SnacksPickerList = { bg = "none" },
+        SnacksPickerListCursorLine = { bg = colors.dark_shadow, fg = colors.highlight_white },
+        SnacksPickerSelection = { bg = colors.dark_shadow, fg = colors.highlight_white, bold = true },
+        SnacksPickerPathIgnored = { bg = "none" },
 
-          -- 定数（氷白）
-          ["@constant"] = { fg = "#D7E2E1" },          -- 氷白
-          ["@constant.builtin"] = { fg = "#D7E2E1" },  -- 氷白
+        -- 一般的なサイドバー関連のハイライトグループ
+        NeoTreeNormal = { bg = "none" },
+        NeoTreeNormalNC = { bg = "none" },
+        NvimTreeNormal = { bg = "none" },
+        NvimTreeNormalNC = { bg = "none" },
+        SnacksPickerTree = { bg = "none" },
+        LineNr = { bg = "none" },
 
-          -- 演算子・句読点（中間調）
-          ["@operator"] = { fg = "#7E8A89" },          -- 中間調
-          ["@punctuation"] = { fg = "#7E8A89" },       -- 中間調
-          ["@punctuation.bracket"] = { fg = "#7E8A89" }, -- 中間調
-          ["@punctuation.delimiter"] = { fg = "#7E8A89" }, -- 中間調
+        -- ClaudeCode関連のハイライトグループ
+        ClaudeCodeNormal = { bg = "none" },
+        ClaudeCodeNormalFloat = { bg = "none" },
+        ClaudeCodeFloatBorder = { bg = "none" },
+        ClaudeCodeWinBar = { bg = "none" },
+        ClaudeCodeWinBarNC = { bg = "none" },
+        ClaudeCodeStatusLine = { bg = "none" },
+        ClaudeCodeStatusLineNC = { bg = "none" },
 
-          -- 名前空間・モジュール（氷白）
-          ["@namespace"] = { fg = "#D7E2E1" },
-          ["@module"] = { fg = "#D7E2E1" },
+        -- MiniIcons ハイライトグループ - 白色統一表示
+        MiniIconsAzure = { fg = colors.white },
+        MiniIconsBlue = { fg = colors.white },
+        MiniIconsCyan = { fg = colors.white },
+        MiniIconsGreen = { fg = colors.white },
+        MiniIconsGrey = { fg = colors.white },
+        MiniIconsOrange = { fg = colors.white },
+        MiniIconsPurple = { fg = colors.white },
+        MiniIconsRed = { fg = colors.white },
+        MiniIconsYellow = { fg = colors.white },
 
-          -- タグ（HTML/XML用 - 発光ライン）
-          ["@tag"] = { fg = "#5AAFAD" },               -- 発光ライン
-          ["@tag.attribute"] = { fg = "#96CBD1" },     -- 発光ハイライト
-          ["@tag.delimiter"] = { fg = "#7E8A89" },     -- 中間調
+        -- GitSigns ハイライトグループ - モノクロ基調＋アクセント
+        GitSignsAdd = { fg = colors.cyan },
+        GitSignsChange = { fg = colors.magenta },
+        GitSignsDelete = { fg = colors.light_gray },
+        GitSignsAddNr = { fg = colors.cyan },
+        GitSignsChangeNr = { fg = colors.magenta },
+        GitSignsDeleteNr = { fg = colors.light_gray },
+        GitSignsCurrentLineBlame = { fg = colors.mid_gray },
 
-          -- TreesitterContext (スティッキースクロール) ハイライトグループ
-          TreesitterContext = { bg = "#2A2F2E", fg = "#D7E2E1" }, -- 濃い影背景、前景
-          TreesitterContextBottom = {
-            underline = true,
-            sp = "#2A2F2E" -- 濃い影の下線
-          },
-          TreesitterContextLineNumber = {
-            bg = "#2A2F2E",
-            fg = "#7E8A89" -- 中間グレーの行番号
-          },
-        },
-      })
-      -- setup()の後にcolorschemeを設定する必要がある
-      vim.cmd.colorscheme("vercel")
-      
-      -- ターミナルカラー設定（モノクロ基調＋アクセント）
-      vim.g.terminal_color_0 = "#0E1210"   -- Black: 背景
-      vim.g.terminal_color_1 = "#B9C6C5"   -- Red: グレー
-      vim.g.terminal_color_2 = "#9AA6A5"   -- Green: グレー
-      vim.g.terminal_color_3 = "#C7D2D1"   -- Yellow: グレー
-      vim.g.terminal_color_4 = "#7E8A89"   -- Blue: グレー
-      vim.g.terminal_color_5 = "#8C83A3"   -- Magenta: グリッチ紫（アクセント）
-      vim.g.terminal_color_6 = "#5AAFAD"   -- Cyan: ネオン青緑（アクセント）
-      vim.g.terminal_color_7 = "#D7E2E1"   -- White: 前景
-      vim.g.terminal_color_8 = "#2A2F2E"   -- Bright Black: 濃い影
-      vim.g.terminal_color_9 = "#E6F1F0"   -- Bright Red: ニアホワイト
-      vim.g.terminal_color_10 = "#CDD8D7"  -- Bright Green: ライトグレー
-      vim.g.terminal_color_11 = "#F2FFFF"  -- Bright Yellow: ハイライト白
-      vim.g.terminal_color_12 = "#AAB6B5"  -- Bright Blue: 明るいグレー
-      vim.g.terminal_color_13 = "#B3A9D1"  -- Bright Magenta: ブライト紫（アクセント）
-      vim.g.terminal_color_14 = "#96CBD1"  -- Bright Cyan: ブライト青緑（アクセント）
-      vim.g.terminal_color_15 = "#FFFFFF"  -- Bright White: 純白
-      
+        -- Diff関連のハイライトグループ
+        DiffAdd = { fg = colors.cyan },
+        DiffChange = { fg = colors.magenta },
+        DiffDelete = { fg = colors.light_gray },
+        DiffText = { fg = colors.bright_cyan, bold = true },
+
+        -- 構文ハイライト（Cyber Glitch Teal - ネオン系配色）
+        ["@keyword"] = { fg = colors.cyan },
+        ["@keyword.function"] = { fg = colors.cyan },
+        ["@keyword.operator"] = { fg = colors.cyan },
+        ["@keyword.return"] = { fg = colors.cyan },
+        ["@keyword.import"] = { fg = colors.cyan },
+        ["@string"] = { fg = colors.magenta },
+        ["@number"] = { fg = colors.fg },
+        ["@boolean"] = { fg = colors.fg },
+        ["@comment"] = { fg = colors.mid_gray },
+        ["@function"] = { fg = colors.bright_cyan },
+        ["@function.call"] = { fg = colors.bright_cyan },
+        ["@function.method"] = { fg = colors.bright_cyan },
+        ["@function.method.call"] = { fg = colors.bright_cyan },
+        ["@variable"] = { fg = colors.fg },
+        ["@variable.builtin"] = { fg = colors.bright_cyan },
+        ["@parameter"] = { fg = colors.fg },
+        ["@type"] = { fg = colors.bright_cyan },
+        ["@type.builtin"] = { fg = colors.bright_cyan },
+        ["@property"] = { fg = colors.fg },
+        ["@field"] = { fg = colors.fg },
+        ["@constant"] = { fg = colors.fg },
+        ["@constant.builtin"] = { fg = colors.fg },
+        ["@operator"] = { fg = colors.operator },
+        ["@punctuation"] = { fg = colors.mid_gray },
+        ["@punctuation.bracket"] = { fg = colors.mid_gray },
+        ["@punctuation.delimiter"] = { fg = colors.mid_gray },
+        ["@namespace"] = { fg = colors.fg },
+        ["@module"] = { fg = colors.fg },
+        ["@tag"] = { fg = colors.cyan },
+        ["@tag.attribute"] = { fg = colors.bright_cyan },
+        ["@tag.delimiter"] = { fg = colors.mid_gray },
+
+        -- Treesitter Markup（Markdown用）
+        ["@markup.heading"] = { fg = colors.highlight_white, bold = true },
+        ["@markup.heading.1"] = { fg = colors.highlight_white, bold = true },
+        ["@markup.heading.2"] = { fg = colors.near_white, bold = true },
+        ["@markup.heading.3"] = { fg = colors.fg, bold = true },
+        ["@markup.heading.4"] = { fg = colors.operator, bold = true },
+        ["@markup.heading.5"] = { fg = colors.light_gray, bold = true },
+        ["@markup.heading.6"] = { fg = colors.mid_gray, bold = true },
+        ["@markup.list"] = { fg = colors.mid_gray },
+        ["@markup.list.markdown"] = { fg = colors.mid_gray },
+        ["@markup.list.checked"] = { fg = colors.cyan },
+        ["@markup.list.unchecked"] = { fg = colors.mid_gray },
+        ["@markup.link"] = { fg = colors.cyan, underline = true },
+        ["@markup.link.label"] = { fg = colors.cyan },
+        ["@markup.link.url"] = { fg = colors.mid_gray, underline = true },
+        ["@markup.raw"] = { fg = colors.fg },
+        ["@markup.raw.markdown_inline"] = { bg = colors.dark_shadow, fg = colors.fg },
+        ["@markup.raw.block"] = { fg = colors.fg },
+        ["@markup.strong"] = { fg = colors.highlight_white, bold = true },
+        ["@markup.italic"] = { fg = colors.fg, italic = true },
+        ["@markup.strikethrough"] = { fg = colors.mid_gray, strikethrough = true },
+        ["@markup.quote"] = { fg = colors.mid_gray, italic = true },
+        ["@punctuation.special.markdown"] = { fg = colors.mid_gray },
+
+        -- Oil.nvim固有グループ
+        OilDir = { fg = colors.cyan },
+        OilDirIcon = { fg = colors.cyan },
+        OilLink = { fg = colors.magenta },
+        OilFile = { fg = colors.fg },
+
+        -- TreesitterContext (スティッキースクロール) ハイライトグループ
+        TreesitterContext = { bg = colors.dark_shadow, fg = colors.fg },
+        TreesitterContextBottom = { underline = true, sp = colors.dark_shadow },
+        TreesitterContextLineNumber = { bg = colors.dark_shadow, fg = colors.mid_gray },
+      }
+
+      -- ハイライトグループを適用
+      for group, attrs in pairs(highlights) do
+        vim.api.nvim_set_hl(0, group, attrs)
+      end
+
+      -- ターミナルカラー設定（統一ANSI 16色）
+      vim.g.terminal_color_0 = colors.bg              -- Black: 背景
+      vim.g.terminal_color_1 = colors.ansi_red        -- Red → gray
+      vim.g.terminal_color_2 = colors.ansi_green      -- Green → gray
+      vim.g.terminal_color_3 = colors.ansi_yellow     -- Yellow → gray
+      vim.g.terminal_color_4 = colors.ansi_blue       -- Blue → gray
+      vim.g.terminal_color_5 = colors.magenta         -- Magenta: グリッチ紫（アクセント）
+      vim.g.terminal_color_6 = colors.cyan            -- Cyan: ネオン青緑（アクセント）
+      vim.g.terminal_color_7 = colors.fg              -- White: 前景
+      vim.g.terminal_color_8 = colors.dark_shadow     -- Bright Black: 濃い影
+      vim.g.terminal_color_9 = colors.bright_red      -- Bright Red → near white
+      vim.g.terminal_color_10 = colors.bright_green   -- Bright Green → light gray
+      vim.g.terminal_color_11 = colors.bright_yellow  -- Bright Yellow → white
+      vim.g.terminal_color_12 = colors.bright_blue    -- Bright Blue → light gray
+      vim.g.terminal_color_13 = colors.bright_magenta -- Bright Magenta
+      vim.g.terminal_color_14 = colors.bright_cyan    -- Bright Cyan
+      vim.g.terminal_color_15 = colors.highlight_white -- Bright White: ハイライト白
+
       -- 包括的な透明化設定
       local function set_transparent_bg()
         -- 基本的な背景
         vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
         vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
-        -- NormalFloatは透明化しない（ホバーウィンドウの視認性のため）
-        -- vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
         vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
         vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
         vim.api.nvim_set_hl(0, "VertSplit", { bg = "none" })
         vim.api.nvim_set_hl(0, "WinSeparator", { bg = "none" })
-        
+
         -- ステータスライン・タブライン
         vim.api.nvim_set_hl(0, "StatusLine", { bg = "none" })
         vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "none" })
-        vim.api.nvim_set_hl(0, "TabLine", { fg = "#7E8A89", bg = "none" })      -- 非アクティブタブ（中間グレー）
-        vim.api.nvim_set_hl(0, "TabLineSel", { fg = "#D7E2E1", bg = "none", bold = true })  -- アクティブタブ（前景）
+        vim.api.nvim_set_hl(0, "TabLine", { fg = colors.mid_gray, bg = "none" })
+        vim.api.nvim_set_hl(0, "TabLineSel", { fg = colors.fg, bg = "none", bold = true })
         vim.api.nvim_set_hl(0, "TabLineFill", { bg = "none" })
-        
+
         -- 行番号
         vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
         vim.api.nvim_set_hl(0, "CursorLineNr", { bg = "none" })
-        
+
         -- Snacks関連のハイライトグループ（選択項目は除外）
         local snacks_groups = vim.fn.getcompletion("Snacks", "highlight")
         for _, group in ipairs(snacks_groups) do
-          -- 選択項目関連のハイライトは透明化しない
-          if not string.match(group, "CursorLine") and 
-             not string.match(group, "Selection") and 
+          if not string.match(group, "CursorLine") and
+             not string.match(group, "Selection") and
              not string.match(group, "Cursor") then
             vim.api.nvim_set_hl(0, group, { bg = "none" })
           end
         end
-        
+
         -- Snacks Picker選択項目のハイライトを明示的に設定
-        vim.api.nvim_set_hl(0, "SnacksPickerListCursorLine", { bg = "#2A2F2E", fg = "#F2FFFF" })
-        vim.api.nvim_set_hl(0, "SnacksPickerSelection", { bg = "#2A2F2E", fg = "#F2FFFF", bold = true })
-        vim.api.nvim_set_hl(0, "SnacksPickerCursor", { bg = "#2A2F2E", fg = "#F2FFFF" })
-        vim.api.nvim_set_hl(0, "SnacksPickerCursorLine", { bg = "#2A2F2E", fg = "#F2FFFF" })
-        
+        vim.api.nvim_set_hl(0, "SnacksPickerListCursorLine", { bg = colors.dark_shadow, fg = colors.highlight_white })
+        vim.api.nvim_set_hl(0, "SnacksPickerSelection", { bg = colors.dark_shadow, fg = colors.highlight_white, bold = true })
+        vim.api.nvim_set_hl(0, "SnacksPickerCursor", { bg = colors.dark_shadow, fg = colors.highlight_white })
+        vim.api.nvim_set_hl(0, "SnacksPickerCursorLine", { bg = colors.dark_shadow, fg = colors.highlight_white })
+
         -- ClaudeCode関連のハイライトグループ
         local claudecode_groups = vim.fn.getcompletion("ClaudeCode", "highlight")
         for _, group in ipairs(claudecode_groups) do
           vim.api.nvim_set_hl(0, group, { bg = "none" })
         end
-        
+
         -- 追加の可能性があるClaudeCode関連グループ
         vim.api.nvim_set_hl(0, "ClaudeCodeNormal", { bg = "none" })
         vim.api.nvim_set_hl(0, "ClaudeCodeNormalFloat", { bg = "none" })
         vim.api.nvim_set_hl(0, "ClaudeCodeFloatBorder", { bg = "none" })
         vim.api.nvim_set_hl(0, "ClaudeCodeWinBar", { bg = "none" })
         vim.api.nvim_set_hl(0, "ClaudeCodeWinBarNC", { bg = "none" })
-        
+
         -- Neotestのハイライトグループ設定（モノクロ基調＋アクセント）
-        -- テスト結果のステータス色
-        vim.api.nvim_set_hl(0, "NeotestPassed", { fg = "#5AAFAD" })     -- cyanアクセント: 成功
-        vim.api.nvim_set_hl(0, "NeotestFailed", { fg = "#8C83A3" })     -- magentaアクセント: 失敗
-        vim.api.nvim_set_hl(0, "NeotestRunning", { fg = "#D7E2E1" })    -- 前景: 実行中
-        vim.api.nvim_set_hl(0, "NeotestSkipped", { fg = "#D7E2E1" })    -- 前景: スキップ
-        vim.api.nvim_set_hl(0, "NeotestMarked", { fg = "#5AAFAD" })     -- cyanアクセント: マーク済み
-        vim.api.nvim_set_hl(0, "NeotestWinSelect", { fg = "#5AAFAD" })  -- cyanアクセント: ウィンドウ選択
+        vim.api.nvim_set_hl(0, "NeotestPassed", { fg = colors.cyan })
+        vim.api.nvim_set_hl(0, "NeotestFailed", { fg = colors.magenta })
+        vim.api.nvim_set_hl(0, "NeotestRunning", { fg = colors.fg })
+        vim.api.nvim_set_hl(0, "NeotestSkipped", { fg = colors.fg })
+        vim.api.nvim_set_hl(0, "NeotestMarked", { fg = colors.cyan })
+        vim.api.nvim_set_hl(0, "NeotestWinSelect", { fg = colors.cyan })
+        vim.api.nvim_set_hl(0, "NeotestAdapterName", { fg = colors.mid_gray })
+        vim.api.nvim_set_hl(0, "NeotestBorder", { fg = colors.dark_shadow })
+        vim.api.nvim_set_hl(0, "NeotestDir", { fg = colors.mid_gray })
+        vim.api.nvim_set_hl(0, "NeotestFile", { fg = colors.fg })
+        vim.api.nvim_set_hl(0, "NeotestNamespace", { fg = colors.cyan })
+        vim.api.nvim_set_hl(0, "NeotestIndent", { fg = colors.dark_shadow })
+        vim.api.nvim_set_hl(0, "NeotestExpandMarker", { fg = colors.mid_gray })
+        vim.api.nvim_set_hl(0, "NeotestFocused", { fg = colors.cyan, bold = true })
+        vim.api.nvim_set_hl(0, "NeotestUnknown", { fg = colors.mid_gray })
+        vim.api.nvim_set_hl(0, "NeotestTarget", { fg = colors.cyan })
 
-        -- UI要素のハイライト
-        vim.api.nvim_set_hl(0, "NeotestAdapterName", { fg = "#7E8A89" }) -- 中間グレー: アダプタ名
-        vim.api.nvim_set_hl(0, "NeotestBorder", { fg = "#2A2F2E" })      -- 濃い影: ボーダー
-        vim.api.nvim_set_hl(0, "NeotestDir", { fg = "#7E8A89" })         -- 中間グレー: ディレクトリ
-        vim.api.nvim_set_hl(0, "NeotestFile", { fg = "#D7E2E1" })        -- 前景: ファイル名
-        vim.api.nvim_set_hl(0, "NeotestNamespace", { fg = "#5AAFAD" })   -- cyanアクセント: 名前空間
-        vim.api.nvim_set_hl(0, "NeotestIndent", { fg = "#2A2F2E" })      -- 濃い影: インデント
-        vim.api.nvim_set_hl(0, "NeotestExpandMarker", { fg = "#7E8A89" }) -- 中間グレー: 展開マーカー
-
-        -- 追加のステータス色（強調バージョン）
-        vim.api.nvim_set_hl(0, "NeotestFocused", { fg = "#5AAFAD", bold = true })  -- cyanアクセント: フォーカス
-        vim.api.nvim_set_hl(0, "NeotestUnknown", { fg = "#7E8A89" })               -- 中間グレー: 不明
-        vim.api.nvim_set_hl(0, "NeotestTarget", { fg = "#5AAFAD" })                -- cyanアクセント: ターゲット
-
-        -- Scrollbar関連のハイライトグループ（透明化から除外）
-        vim.api.nvim_set_hl(0, "ScrollbarHandle", { bg = "none", fg = "#2A2F2E" })
-        vim.api.nvim_set_hl(0, "ScrollbarSearch", { fg = "#5AAFAD" })  -- cyanアクセント
-        vim.api.nvim_set_hl(0, "ScrollbarError", { fg = "#8C83A3" })   -- magentaアクセント
-        vim.api.nvim_set_hl(0, "ScrollbarWarn", { fg = "#96CBD1" })    -- bright cyanアクセント
-        vim.api.nvim_set_hl(0, "ScrollbarInfo", { fg = "#96CBD1" })    -- bright cyanアクセント
-        vim.api.nvim_set_hl(0, "ScrollbarHint", { fg = "#5AAFAD" })    -- cyanアクセント
-        vim.api.nvim_set_hl(0, "ScrollbarMisc", { fg = "#7E8A89" })    -- 中間グレー
-        vim.api.nvim_set_hl(0, "ScrollbarGitAdd", { fg = "#5AAFAD" })  -- cyanアクセント
-        vim.api.nvim_set_hl(0, "ScrollbarGitChange", { fg = "#8C83A3" })  -- magentaアクセント
-        vim.api.nvim_set_hl(0, "ScrollbarGitDelete", { fg = "#AAB6B5" })  -- 明るいグレー
-        
-        -- MiniIconsのハイライトグループは背景透明化しない（アイコンの色を保持）
-        -- これらのグループは前景色のみ設定し、背景は透明のままにする
+        -- Scrollbar関連のハイライトグループ
+        vim.api.nvim_set_hl(0, "ScrollbarHandle", { bg = "none", fg = colors.dark_shadow })
+        vim.api.nvim_set_hl(0, "ScrollbarSearch", { fg = colors.cyan })
+        vim.api.nvim_set_hl(0, "ScrollbarError", { fg = colors.magenta })
+        vim.api.nvim_set_hl(0, "ScrollbarWarn", { fg = colors.bright_magenta })
+        vim.api.nvim_set_hl(0, "ScrollbarInfo", { fg = colors.bright_cyan })
+        vim.api.nvim_set_hl(0, "ScrollbarHint", { fg = colors.cyan })
+        vim.api.nvim_set_hl(0, "ScrollbarMisc", { fg = colors.mid_gray })
+        vim.api.nvim_set_hl(0, "ScrollbarGitAdd", { fg = colors.cyan })
+        vim.api.nvim_set_hl(0, "ScrollbarGitChange", { fg = colors.magenta })
+        vim.api.nvim_set_hl(0, "ScrollbarGitDelete", { fg = colors.light_gray })
       end
-      
+
       -- 初回実行
       set_transparent_bg()
-      
+
       -- 複数のイベントで透明化を実行
       vim.api.nvim_create_autocmd({
         "ColorScheme",
@@ -316,11 +369,10 @@ return {
       }, {
         pattern = "*",
         callback = function()
-          -- 少し遅延させて確実に適用
           vim.defer_fn(set_transparent_bg, 10)
         end,
       })
-      
+
       -- ClaudeCodeウィンドウが開いた時にも適用
       vim.api.nvim_create_autocmd("User", {
         pattern = "ClaudeCode*",
@@ -331,4 +383,3 @@ return {
     end,
   },
 }
-
