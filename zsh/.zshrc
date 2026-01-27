@@ -35,7 +35,33 @@ zinit light zsh-users/zsh-syntax-highlighting
 # シンタックスハイライトの色設定（Geist primary text）
 # プラグイン読み込み後に設定する
 typeset -A ZSH_HIGHLIGHT_STYLES
-ZSH_HIGHLIGHT_STYLES[arg0]='fg=white'
+
+# 基本テキスト色（サジェスト採用後の色）
+ZSH_HIGHLIGHT_STYLES[default]='fg=#F2FFFF'
+ZSH_HIGHLIGHT_STYLES[arg0]='fg=#F2FFFF'
+
+# コマンド系（有効なコマンドは太字で強調）
+ZSH_HIGHLIGHT_STYLES[command]='fg=#F2FFFF,bold'
+ZSH_HIGHLIGHT_STYLES[builtin]='fg=#F2FFFF,bold'
+ZSH_HIGHLIGHT_STYLES[alias]='fg=#F2FFFF,bold'
+ZSH_HIGHLIGHT_STYLES[function]='fg=#F2FFFF,bold'
+
+# エラー（赤系アクセント）
+ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#E06C75,bold'
+
+# パス（やや落ち着いた色+下線）
+ZSH_HIGHLIGHT_STYLES[path]='fg=#D7E2E1,underline'
+
+# クォート文字列
+ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=#D7E2E1'
+ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=#D7E2E1'
+
+# オプション（中間色）
+ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=#AABAB9'
+ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=#AABAB9'
+
+# コメント（サジェストと同じ灰色）
+ZSH_HIGHLIGHT_STYLES[comment]='fg=#7E8A89'
 
 # 補完定義の追加コレクション - より多くのコマンドの補完をサポート
 zinit light zsh-users/zsh-completions
@@ -43,18 +69,6 @@ zinit light zsh-users/zsh-completions
 # AWS CDK CLI 補完
 zinit ice as"completion"
 zinit snippet https://raw.githubusercontent.com/msysh/aws-cdk-zsh-completion/main/_cdk
-
-# 自動サジェスト - 履歴に基づいてコマンドを提案（薄い文字で表示）
-zinit light zsh-users/zsh-autosuggestions
-
-# zsh-autosuggestions 色設定（モノクロ基調 - 中間グレー）
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7E8A89'
-
-# zsh-autosuggestions 部分適用の設定
-# forward-wordを部分適用ウィジェットとして使用
-ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-word)
-# forward-charも部分適用ウィジェットとして使用
-ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-char vi-forward-char)
 
 # ----------------------
 # プロンプトとナビゲーション
@@ -169,9 +183,22 @@ autoload -U compinit && compinit
 # FZFタブ補完 - タブ補完をfzfでインタラクティブに（compinitの後に読み込み必須）
 zinit light Aloxaf/fzf-tab
 
+# 自動サジェスト - 履歴に基づいてコマンドを提案（薄い文字で表示）
+# 注意: fzf-tabの後に読み込む（fzf-tabが^Iをフックするため）
+zinit light zsh-users/zsh-autosuggestions
+
+# zsh-autosuggestions 色設定（モノクロ基調 - 中間グレー）
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7E8A89'
+
+# zsh-autosuggestions 部分適用の設定
+# forward-wordを部分適用ウィジェットとして使用
+ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-word)
+# forward-charも部分適用ウィジェットとして使用
+ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-char vi-forward-char)
+
 # fzf-tab用の色設定（Cyber Glitchカラースキーム）
 zstyle ':fzf-tab:*' fzf-flags \
-  --color=bg+:#1A2524,bg:#0E1210,fg:#AAB6B5,fg+:#5AAFAD \
+  --color=bg+:#3A3F3E,bg:#0E1210,fg:#D7E2E1,fg+:#F2FFFF \
   --color=hl:#5AAFAD,hl+:#96CBD1,info:#7E8A89,marker:#5AAFAD \
   --color=prompt:#8C83A3,spinner:#8C83A3,pointer:#5AAFAD,header:#7E8A89 \
   --color=border:#3A3F3E,gutter:#0E1210
@@ -198,12 +225,9 @@ bindkey -M menuselect '^g' send-break                      # Ctrl+Gでキャン�
 # 大文字小文字を区別しない補完
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
 
-# 補完候補に色を付ける（LS_COLORS環境変数を使用 + 選択項目のハイライト色を明示指定）
-# 注意: fzf-tab使用時は上記のzstyle ':fzf-tab:*'設定が優先され、ma=は効果なし
-zstyle ':completion:*' list-colors '${(s.:.)LS_COLORS}' 'ma=48;2;58;63;62;38;2;242;255;255'
-
-# 補完候補を矢印キーで選択可能にする
-zstyle ':completion:*' menu select
+# 補完候補に色を付ける（LS_COLORS環境変数を使用）
+# 注意: fzf-tab使用時は上記のzstyle ':fzf-tab:*'設定が優先される
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 # 補完方法の優先順位（通常補完→部分一致→曖昧補完）
 zstyle ':completion:*' completer _complete _match _approximate
