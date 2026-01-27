@@ -34,13 +34,13 @@ gui:
   authorColors:
     '*': '#7E8A89' # 中間グレー
 git:
-  autoFetch: false # 自動fetchを無効化してパフォーマンス改善
+  autoFetch: true # 自動fetchを有効化
   autoRefresh: true # 自動リフレッシュを有効化してgit操作を即座に反映
   fetchAll: false # git fetch --allを避けて必要なremoteのみ取得（パフォーマンス改善）
   ignoreWhitespaceInDiffView: true
   log:
     showGraph: "always"
-    showWholeGraph: false # true → false: 全ブランチ表示を無効化（パフォーマンス改善）
+    showWholeGraph: true # git log --all を有効化（全ブランチ表示）
     order: "topo-order"
   # 全ブランチ表示のカスタマイズ（--allを削除、-n 200で件数制限）
   branchLogCmd: "git log --graph --color=always --abbrev-commit --decorate --date=relative --pretty=medium -n 200 {{branchName}} --"
@@ -52,7 +52,7 @@ git:
     - master
 refresher:
   refreshInterval: 1 # リフレッシュ間隔を短縮（外部変更の迅速な検出）
-  fetchInterval: 300 # fetch間隔を延長（デフォルト60秒→300秒）
+  fetchInterval: 60 # fetch間隔（デフォルト）
 keybinding:
   commits:
     moveDownCommit: '<c-d>'
