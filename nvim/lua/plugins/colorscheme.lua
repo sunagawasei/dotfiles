@@ -29,7 +29,7 @@ return {
         -- アクセントカラー
         cyan = "#5AAFAD",         -- Cyan
         bright_cyan = "#96CBD1",  -- Bright Cyan
-        magenta = "#8C83A3",      -- Magenta
+        magenta = "#9E95B8",      -- Magenta
         bright_magenta = "#B3A9D1", -- Bright Magenta
 
         -- ANSI色（グレースケール化）
@@ -46,6 +46,7 @@ return {
 
         -- その他
         white = "#D7E2E1",        -- アイコン用白色（前景と統一）
+        selection = "#1E3A3A",    -- シアン系の選択背景色
       }
 
       -- ハイライトグループの設定
@@ -268,8 +269,9 @@ return {
         MatchParen = { bg = colors.border, fg = colors.highlight_white, bold = true },
 
         -- カーソル・選択関連
-        Visual = { bg = colors.dark_shadow },
-        VisualNOS = { bg = colors.dark_shadow },
+        Visual = { bg = colors.selection },
+        VisualNOS = { bg = colors.selection },
+        Select = { bg = colors.selection },
         CursorLine = { bg = colors.dark_shadow },
         CursorColumn = { bg = colors.dark_shadow },
         Cursor = { bg = colors.fg, fg = colors.bg },
@@ -331,15 +333,15 @@ return {
         NoiceCmdlineIcon = { fg = colors.cyan },
         NoiceCmdlineIconSearch = { fg = colors.cyan },
         NoiceCmdlinePopup = { bg = "none" },
-        NoiceCmdlinePopupBorder = { fg = colors.border },
+        NoiceCmdlinePopupBorder = { fg = colors.cyan },
         NoiceCmdlinePopupTitle = { fg = colors.cyan },
         NoiceConfirm = { bg = "none" },
         NoiceConfirmBorder = { fg = colors.cyan },
         NoiceMini = { bg = "none" },
         NoicePopup = { bg = "none" },
-        NoicePopupBorder = { fg = colors.border },
+        NoicePopupBorder = { fg = colors.cyan },
         NoicePopupmenu = { bg = "none" },
-        NoicePopupmenuBorder = { fg = colors.border },
+        NoicePopupmenuBorder = { fg = colors.cyan },
         NoicePopupmenuMatch = { fg = colors.cyan, bold = true },
         NoicePopupmenuSelected = { bg = colors.dark_shadow },
         NoiceVirtualText = { fg = colors.mid_gray },
@@ -392,6 +394,27 @@ return {
         QuickFixLine = { bg = colors.dark_shadow },
         WinBar = { bg = "none", fg = colors.fg },
         WinBarNC = { bg = "none", fg = colors.mid_gray },
+
+        -- Lazy.nvim
+        LazyButton = { bg = "none", fg = colors.mid_gray },
+        LazyButtonActive = { bg = colors.selection, fg = colors.highlight_white, bold = true },
+        LazyH1 = { fg = colors.highlight_white, bold = true },
+        LazyH2 = { fg = colors.cyan, bold = true },
+        LazySpecial = { fg = colors.cyan },
+        LazyCommit = { fg = colors.mid_gray },
+        LazyCommitType = { fg = colors.cyan },
+        LazyDimmed = { fg = colors.mid_gray },
+        LazyProp = { fg = colors.light_gray },
+        LazyValue = { fg = colors.bright_magenta },
+        LazyLocal = { fg = colors.cyan },
+        LazyProgressDone = { fg = colors.cyan },
+        LazyProgressTodo = { fg = colors.border },
+        LazyReasonCmd = { fg = colors.cyan },
+        LazyReasonEvent = { fg = colors.bright_cyan },
+        LazyReasonFt = { fg = colors.bright_cyan },
+        LazyReasonKeys = { fg = colors.cyan },
+        LazyReasonPlugin = { fg = colors.cyan },
+        LazyReasonStart = { fg = colors.cyan },
       }
 
       -- ハイライトグループを適用
