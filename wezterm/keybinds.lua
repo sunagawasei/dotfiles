@@ -153,10 +153,10 @@ return {
 		{ key = "c", mods = "LEADER", action = act.SendString('\x0c') },
 
 		-- フォントサイズ切替
-		{ key = "+", mods = "CTRL", action = act.IncreaseFontSize },
-		{ key = "-", mods = "CTRL", action = act.DecreaseFontSize },
+		{ key = "+", mods = "SUPER", action = act.IncreaseFontSize },
+		{ key = "-", mods = "SUPER", action = act.DecreaseFontSize },
 		-- フォントサイズのリセット
-		{ key = "0", mods = "CTRL", action = act.ResetFontSize },
+		{ key = "0", mods = "SUPER", action = act.ResetFontSize },
 
 		-- タブ切替 Cmd + 数字
 		{ key = "1", mods = "SUPER", action = act.ActivateTab(0) },
