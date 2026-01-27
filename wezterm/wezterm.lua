@@ -96,8 +96,8 @@ config.line_height = 1.1
 config.window_decorations = "INTEGRATED_BUTTONS|RESIZE|MACOS_FORCE_ENABLE_SHADOW"
 -- 統合タイトルボタンのスタイルをmacOSネイティブに設定
 config.integrated_title_button_style = "MacOsNative"
--- ウィンドウ背景の不透明度（75%）
-config.window_background_opacity = 0.85
+-- ウィンドウ背景の不透明度（95%）
+config.window_background_opacity = 0.95
 -- macOSのぼかし効果の強度
 config.macos_window_background_blur = 30
 -- ウィンドウフレームの設定
@@ -113,7 +113,7 @@ config.window_frame = {
 }
 -- ウィンドウ背景のグラデーション設定（モノクロ背景）
 config.window_background_gradient = {
-	colors = { "#0E1210" },
+	colors = { "#1A201E" },
 }
 -- ウィンドウ内側の余白設定
 config.window_padding = {
@@ -138,18 +138,18 @@ config.show_close_tab_button_in_tabs = false
 -- ==========================================
 -- 非アクティブペインを暗くする設定（HSB色空間で調整）
 config.inactive_pane_hsb = {
-	saturation = 0.6, -- 彩度を40%下げる（色をより薄くする）
-	brightness = 0.4, -- 明度を40%にして暗くする（差を明確に）
+	saturation = 0.8, -- 彩度を20%下げる
+	brightness = 0.7, -- 明度を70%にする（視認性向上）
 }
 
 config.colors = {
 	-- 基本色
 	foreground = "#D7E2E1", -- 前景色（テキスト色）：モノクロ
-	background = "#0E1210", -- 背景色：モノクロ背景
+	background = "#1A201E", -- 背景色：モノクロ背景
 
 	-- カーソル色
 	cursor_bg = "#F2FFFF", -- カーソル背景：ハイライト白
-	cursor_fg = "#0E1210", -- カーソル前景：背景色
+	cursor_fg = "#1A201E", -- カーソル前景：背景色
 	cursor_border = "#F2FFFF", -- カーソル境界線：ハイライト白
 
 	-- 選択色
@@ -158,11 +158,11 @@ config.colors = {
 
 	-- スクロールバー・分割線
 	scrollbar_thumb = "#2A2F2E", -- スクロールバーのつまみ色：濃い影
-	split = "#5A5F5E", -- ペイン分割線の色：分割線（視認性向上）
+	split = "#7E8A89", -- ペイン分割線の色：中間グレー（視認性向上）
 
 	-- ANSI色（ターミナルの標準16色）
 	ansi = {
-		"#0E1210", -- black: 背景色
+		"#1A201E", -- black: 背景色
 		"#B9C6C5", -- red → gray
 		"#9AA6A5", -- green → gray
 		"#C7D2D1", -- yellow → gray
@@ -185,7 +185,7 @@ config.colors = {
 
 	-- コピーモード色設定
 	copy_mode_active_highlight_bg = { Color = "#5AAFAD" }, -- アクティブハイライト背景：アクセントcyan
-	copy_mode_active_highlight_fg = { Color = "#0E1210" }, -- アクティブハイライト前景：背景色
+	copy_mode_active_highlight_fg = { Color = "#1A201E" }, -- アクティブハイライト前景：背景色
 	copy_mode_inactive_highlight_bg = { Color = "#2A2F2E" }, -- 非アクティブハイライト背景：濃い影
 	copy_mode_inactive_highlight_fg = { Color = "#D7E2E1" }, -- 非アクティブハイライト前景：前景色
 
@@ -193,12 +193,12 @@ config.colors = {
 	quick_select_label_bg = { Color = "#8C83A3" }, -- ラベル背景：アクセントmagenta
 	quick_select_label_fg = { Color = "#F2FFFF" }, -- ラベル前景：ハイライト白
 	quick_select_match_bg = { Color = "#5AAFAD" }, -- マッチ背景：アクセントcyan
-	quick_select_match_fg = { Color = "#0E1210" }, -- マッチ前景：背景色
+	quick_select_match_fg = { Color = "#1A201E" }, -- マッチ前景：背景色
 
 	-- タブバー設定
 	tab_bar = {
 		-- タブバーの背景色
-		background = "#0E1210",
+		background = "#1A201E",
 		-- アクティブタブのスタイル
 		active_tab = {
 			bg_color = "#2A2F2E", -- 濃い影
@@ -207,8 +207,8 @@ config.colors = {
 		},
 		-- 非アクティブタブのスタイル
 		inactive_tab = {
-			bg_color = "#0E1210", -- 背景色
-			fg_color = "#7E8A89", -- 中間グレー
+			bg_color = "#1A201E", -- 背景色
+			fg_color = "#AAB6B5", -- 明るいグレー（視認性向上）
 		},
 		-- 非アクティブタブのホバー時スタイル
 		inactive_tab_hover = {
@@ -217,7 +217,7 @@ config.colors = {
 		},
 		-- 新規タブボタンのスタイル
 		new_tab = {
-			bg_color = "#0E1210",
+			bg_color = "#1A201E",
 			fg_color = "#7E8A89",
 		},
 		-- 新規タブボタンのホバー時スタイル
@@ -258,6 +258,28 @@ local function get_claude_status(tab_title)
 	return nil
 end
 
+-- cwdを取得して短縮表示するヘルパー関数
+local function get_short_cwd(tab, max_len)
+	local cwd_uri = tab.active_pane.current_working_dir
+	if not cwd_uri or not cwd_uri.file_path then
+		return nil
+	end
+	local path = cwd_uri.file_path
+	local home = os.getenv("HOME")
+	local title
+	if path == home then
+		title = "~"
+	elseif path:sub(1, #home) == home then
+		title = "~" .. path:sub(#home + 1)
+	else
+		title = path
+	end
+	if #title > max_len then
+		title = title:sub(1, max_len) .. "…"
+	end
+	return title
+end
+
 -- タブタイトルのカスタマイズ処理（相対パスを表示）
 wezterm.on("format-tab-title", function(tab)
 	-- Claude Code状態を確認（tab.tab_titleを優先）
@@ -266,20 +288,23 @@ wezterm.on("format-tab-title", function(tab)
 
 	-- Claude状態がある場合は、状態表示を優先
 	if claude_status then
+		-- cwdを取得（最大9文字）
+		local cwd = get_short_cwd(tab, 9) or "~"
+
 		if tab.is_active then
 			local line_color = tab_id_to_color(tab.tab_id)
 			return {
 				{ Foreground = { Color = line_color } },
 				{ Text = "▎" },
 				{ Foreground = { Color = "#FFFFFF" } },
-				{ Text = " claude " },
+				{ Text = " " .. cwd .. " │ claude " },
 				{ Foreground = { Color = claude_status.color } },
 				{ Text = claude_status.icon },
 			}
 		else
 			return {
 				{ Foreground = { Color = "#FFFFFF" } },
-				{ Text = "  claude " },
+				{ Text = "  " .. cwd .. " │ claude " },
 				{ Foreground = { Color = claude_status.color } },
 				{ Text = claude_status.icon .. " " },
 			}
