@@ -138,8 +138,8 @@ config.show_close_tab_button_in_tabs = false
 -- ==========================================
 -- 非アクティブペインを暗くする設定（HSB色空間で調整）
 config.inactive_pane_hsb = {
-	saturation = 0.8, -- 彩度を20%下げる
-	brightness = 0.7, -- 明度を70%にする（視認性向上）
+	saturation = 0.1, -- 彩度を90%下げる（完全モノクロ）
+	brightness = 0.1, -- 明度を10%にする（ほぼ黒）
 }
 
 config.colors = {
@@ -201,14 +201,14 @@ config.colors = {
 		background = "#1A201E",
 		-- アクティブタブのスタイル
 		active_tab = {
-			bg_color = "#2A2F2E", -- 濃い影
+			bg_color = "#3A4543", -- より明るくして視認性向上
 			fg_color = "#F2FFFF", -- ハイライト白
 			intensity = "Bold", -- 太字
 		},
 		-- 非アクティブタブのスタイル
 		inactive_tab = {
 			bg_color = "#1A201E", -- 背景色
-			fg_color = "#AAB6B5", -- 明るいグレー（視認性向上）
+			fg_color = "#7E8A89", -- 現在: #AAB6B5 → 少し暗く
 		},
 		-- 非アクティブタブのホバー時スタイル
 		inactive_tab_hover = {
@@ -225,8 +225,8 @@ config.colors = {
 			bg_color = "#2A2F2E",
 			fg_color = "#D7E2E1",
 		},
-		-- 非アクティブタブの境界線を非表示
-		inactive_tab_edge = "none",
+		-- 非アクティブタブの境界線を追加
+		inactive_tab_edge = "#3A3F3E", -- 現在: "none" → 境界線追加
 	},
 }
 
@@ -295,18 +295,19 @@ wezterm.on("format-tab-title", function(tab)
 			local line_color = tab_id_to_color(tab.tab_id)
 			return {
 				{ Foreground = { Color = line_color } },
-				{ Text = "▎" },
-				{ Foreground = { Color = "#FFFFFF" } },
-				{ Text = " " .. cwd .. " │ claude " },
+				{ Text = "█ " },
 				{ Foreground = { Color = claude_status.color } },
-				{ Text = claude_status.icon },
+				{ Text = claude_status.icon .. " " },
+				{ Foreground = { Color = "#FFFFFF" } },
+				{ Text = cwd .. " " },
 			}
 		else
 			return {
-				{ Foreground = { Color = "#FFFFFF" } },
-				{ Text = "  " .. cwd .. " │ claude " },
+				{ Text = "  " },
 				{ Foreground = { Color = claude_status.color } },
 				{ Text = claude_status.icon .. " " },
+				{ Foreground = { Color = "#7E8A89" } },
+				{ Text = cwd .. " " },
 			}
 		end
 	end
@@ -346,7 +347,7 @@ wezterm.on("format-tab-title", function(tab)
 		local color = tab_id_to_color(tab.tab_id)
 		return {
 			{ Foreground = { Color = color } },
-			{ Text = "▎" },
+			{ Text = "█" },
 			{ Foreground = { Color = "#FFFFFF" } },
 			{ Text = " " .. title .. " " },
 		}
