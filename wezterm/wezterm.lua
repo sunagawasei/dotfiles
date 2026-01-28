@@ -108,8 +108,8 @@ config.window_frame = {
 	active_titlebar_bg = "none",
 	-- タイトルバーのフォント
 	font = wezterm.font("Geist Mono"),
-	-- タイトルバーのフォントサイズ
-	font_size = 16,
+	-- タイトルバーのフォントサイズ（通常のフォントサイズと同期）
+	font_size = config.font_size,
 }
 -- ウィンドウ背景のグラデーション設定（モノクロ背景）
 config.window_background_gradient = {
@@ -128,8 +128,8 @@ config.enable_tab_bar = true
 config.show_new_tab_button_in_tab_bar = false
 -- タブインデックス番号を非表示
 config.show_tab_index_in_tab_bar = false
--- タブの最大幅を20文字に設定
-config.tab_max_width = 20
+-- タブの最大幅を60文字に設定
+config.tab_max_width = 60
 -- タブの閉じるボタンを非表示
 config.show_close_tab_button_in_tabs = false
 
@@ -153,8 +153,8 @@ config.colors = {
 	cursor_border = "#F2FFFF", -- カーソル境界線：ハイライト白
 
 	-- 選択色
-	selection_fg = "#F2FFFF", -- 選択時のテキスト色：ハイライト白
-	selection_bg = "#2A2F2E", -- 選択時の背景色：濃い影
+	selection_fg = "#1A201E", -- 選択時のテキスト色：背景色（反転）
+	selection_bg = "#5AAFAD", -- 選択時の背景色：アクセントcyan
 
 	-- スクロールバー・分割線
 	scrollbar_thumb = "#2A2F2E", -- スクロールバーのつまみ色：濃い影
@@ -288,8 +288,8 @@ wezterm.on("format-tab-title", function(tab)
 
 	-- Claude状態がある場合は、状態表示を優先
 	if claude_status then
-		-- cwdを取得（最大9文字）
-		local cwd = get_short_cwd(tab, 9) or "~"
+		-- cwdを取得（最大30文字）
+		local cwd = get_short_cwd(tab, 30) or "~"
 
 		if tab.is_active then
 			local line_color = tab_id_to_color(tab.tab_id)
@@ -336,8 +336,8 @@ wezterm.on("format-tab-title", function(tab)
 	end
 
 	-- タイトルの長さを制限
-	if #title > 16 then
-		title = title:sub(1, 16) .. "…"
+	if #title > 50 then
+		title = title:sub(1, 50) .. "…"
 	end
 
 	-- アクティブタブかどうかで表示を分ける
