@@ -255,6 +255,9 @@ alias k='kubectl'
 # Lazygit
 alias lg='lazygit'                       # Git操作用のTUIツールを起動
 
+# Keifu
+alias kg='keifu'                         # コミットグラフ可視化ツールを起動
+
 # SSH接続時のターミナルタイプを明示的に指定（カラー対応）
 alias ssh='TERM=xterm-256color \ssh'
 
