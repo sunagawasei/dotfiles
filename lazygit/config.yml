@@ -22,7 +22,7 @@ gui:
       - '#D7E2E1' # 前景
     # 選択行の背景
     selectedLineBgColor:
-      - '#2A2F2E' # 濃い影
+      - '#4A4F4E' # カスタム: 分割線より1段階明るい
     # Git関連の色
     unstagedChangesColor:
       - '#8C83A3' # アクセント: magenta（グリッチ紫）
@@ -33,6 +33,9 @@ gui:
   # 著者色設定
   authorColors:
     '*': '#7E8A89' # 中間グレー
+os:
+  editPreset: "nvim-remote"  # eキー用：同じNeovimインスタンスで開く
+  open: '[ -z "$NVIM" ] && open {{filename}} || nvim --server "$NVIM" --remote-tab {{filename}}'
 git:
   autoFetch: true # 自動fetchを有効化
   autoRefresh: true # 自動リフレッシュを有効化してgit操作を即座に反映
