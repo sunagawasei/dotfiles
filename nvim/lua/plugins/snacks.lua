@@ -9,9 +9,9 @@ return {
     },
     lazygit = {
       enabled = true,
-      configure = true,  -- 自動テーマ設定
+      configure = false,  -- 自動テーマ設定を無効化（パフォーマンス改善）
       config = {
-        os = { editPreset = "nvim-remote" },
+        -- os = { editPreset = "nvim-remote" },  -- nvr未インストールのため無効化
         gui = { nerdFontsVersion = "3" },
       },
       win = {
