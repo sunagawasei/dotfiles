@@ -95,6 +95,7 @@ return {
   },
   keys = {
     { "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
+    { "<leader>gk", function() Snacks.terminal("keifu") end, desc = "Keifu (Git Graph)" },
   },
 }
 

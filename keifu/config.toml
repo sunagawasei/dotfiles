@@ -1,0 +1,4 @@
+auto_refresh = true
+refresh_interval = 10
+auto_fetch = true
+fetch_interval = 60
