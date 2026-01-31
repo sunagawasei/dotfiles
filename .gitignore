@@ -91,3 +91,12 @@ codex/
 colima/
 
 zsh/.zsh_sessions/
+
+# AI Agent Tools (temporary/local files)
+agents/
+crush/
+goose/
+opencode/
+
+# Cursor CLI (local configuration)
+cursor/
