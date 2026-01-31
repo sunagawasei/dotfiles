@@ -1,0 +1,59 @@
+{
+  "version": 1,
+  "editor": {
+    "vimMode": true
+  },
+  "display": {
+    "showLineNumbers": true
+  },
+  "model": {
+    "modelId": "gpt-5.2-codex-xhigh",
+    "displayModelId": "gpt-5.2-codex-xhigh",
+    "displayName": "GPT-5.2 Codex Extra High",
+    "displayNameShort": "GPT-5.2 Codex Extra High",
+    "aliases": [],
+    "maxMode": true
+  },
+  "hasChangedDefaultModel": true,
+  "maxMode": true,
+  "approvalMode": "allowlist",
+  "permissions": {
+    "allow": [
+      "Shell(ls)",
+      "Shell(cat)",
+      "Shell(grep)",
+      "Shell(find)",
+      "Shell(git)",
+      "Shell(git status)",
+      "Shell(git diff)",
+      "Shell(git log)",
+      "Shell(git add)",
+      "Shell(git commit)",
+      "Shell(pwd)",
+      "Shell(cd)",
+      "Shell(mkdir)",
+      "Shell(cp)",
+      "Shell(mv)"
+    ],
+    "deny": [
+      "Shell(rm -rf)",
+      "Shell(sudo)",
+      "Shell(chmod 777)"
+    ]
+  },
+  "sandbox": {
+    "mode": "disabled",
+    "networkAccess": "allowlist"
+  },
+  "attribution": {
+    "attributeCommitsToAgent": true,
+    "attributePRsToAgent": true
+  },
+  "privacyCache": {
+    "ghostMode": true,
+    "privacyMode": 2
+  },
+  "network": {
+    "useHttp1ForAgent": false
+  }
+}
