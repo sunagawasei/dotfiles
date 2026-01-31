@@ -138,8 +138,8 @@ config.show_close_tab_button_in_tabs = false
 -- ==========================================
 -- 非アクティブペインを暗くする設定（HSB色空間で調整）
 config.inactive_pane_hsb = {
-	saturation = 0.1, -- 彩度を90%下げる（完全モノクロ）
-	brightness = 0.1, -- 明度を10%にする（ほぼ黒）
+	saturation = 0.2, -- 彩度を80%下げる
+	brightness = 0.2, -- 明度を20%にする
 }
 
 config.colors = {
