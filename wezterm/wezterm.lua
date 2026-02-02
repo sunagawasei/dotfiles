@@ -153,7 +153,7 @@ config.colors = {
 	cursor_border = "#F2FFFF", -- カーソル境界線：ハイライト白
 
 	-- 選択色
-	selection_fg = "#1A201E", -- 選択時のテキスト色：背景色（反転）
+	selection_fg = "#F2FFFF", -- 選択時のテキスト色：ハイライト白
 	selection_bg = "#5AAFAD", -- 選択時の背景色：アクセントcyan
 
 	-- スクロールバー・分割線
@@ -173,7 +173,7 @@ config.colors = {
 	},
 	-- 明るいANSI色（太字や高輝度表示用）
 	brights = {
-		"#2A2F2E", -- bright black: 濃い影
+		"#7E8A89", -- bright black: 中間グレー（視認性向上）
 		"#E6F1F0", -- bright red → near white
 		"#CDD8D7", -- bright green → light gray
 		"#F2FFFF", -- bright yellow → white
