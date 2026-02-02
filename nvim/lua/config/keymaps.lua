@@ -73,6 +73,115 @@ local function get_file_path()
   return bufname
 end
 
+local function systemlist_ok(cmd)
+  local output = vim.fn.systemlist(cmd)
+  if vim.v.shell_error ~= 0 or not output or output[1] == "" then
+    return nil
+  end
+  return output[1]
+end
+
+local function get_git_root(path)
+  if not path or path == "" then
+    return nil
+  end
+
+  local dir = path
+  if vim.fn.isdirectory(path) == 0 then
+    dir = vim.fn.fnamemodify(path, ":h")
+  end
+
+  return systemlist_ok({ "git", "-C", dir, "rev-parse", "--show-toplevel" })
+end
+
+local function get_git_branch(root)
+  return systemlist_ok({ "git", "-C", root, "rev-parse", "--abbrev-ref", "HEAD" })
+end
+
+local function get_git_remote(root)
+  return systemlist_ok({ "git", "-C", root, "remote", "get-url", "origin" })
+end
+
+local function normalize_github_remote(remote)
+  if not remote or remote == "" then
+    return nil
+  end
+
+  local https = remote
+  https = https:gsub("^git@github.com:", "https://github.com/")
+  https = https:gsub("^ssh://git@github.com/", "https://github.com/")
+  https = https:gsub("%.git$", "")
+
+  if not https:match("^https://github.com/") then
+    return nil
+  end
+
+  return https
+end
+
+local function get_repo_relative(path, root)
+  if not path or path == "" or not root or root == "" then
+    return nil
+  end
+
+  if path == root then
+    return ""
+  end
+
+  local prefix = root .. "/"
+  if path:sub(1, #prefix) ~= prefix then
+    return nil
+  end
+
+  return path:sub(#prefix + 1)
+end
+
+local function get_github_url(path)
+  local root = get_git_root(path)
+  if not root then
+    return nil, "Not a git repo"
+  end
+
+  local remote = get_git_remote(root)
+  local base = normalize_github_remote(remote)
+  if not base then
+    return nil, "Not a GitHub remote"
+  end
+
+  local branch = get_git_branch(root)
+  if not branch then
+    return nil, "No branch"
+  end
+
+  local rel = get_repo_relative(path, root)
+  if rel == nil then
+    return nil, "Path not in repo"
+  end
+
+  local kind = vim.fn.isdirectory(path) == 1 and "tree" or "blob"
+  local url = string.format("%s/%s/%s", base, kind, branch)
+  if rel ~= "" then
+    url = url .. "/" .. rel
+  end
+
+  return url
+end
+
+local function get_line_range()
+  local mode = vim.fn.mode()
+  if mode == "v" or mode == "V" or mode == "\22" then
+    local start_line = vim.fn.line("v")
+    local end_line = vim.fn.line(".")
+    if start_line > end_line then
+      start_line, end_line = end_line, start_line
+    end
+    return start_line, end_line
+  end
+
+  local line = vim.fn.line(".")
+  return line, line
+end
+
 -- ファイルパスをクリップボードにコピー
 vim.keymap.set("n", "<leader>yp", function()
   local path = get_file_path()
@@ -106,6 +215,58 @@ vim.keymap.set("n", "<leader>yf", function()
   end
 end, { desc = "Yank filename" })
 
+-- GitHub URLをクリップボードにコピー
+vim.keymap.set("n", "<leader>yg", function()
+  local path = get_file_path()
+  if not path or path == "" then
+    vim.notify("No file path available", vim.log.levels.WARN)
+    return
+  end
+
+  local url, err = get_github_url(path)
+  if not url then
+    vim.notify(err or "GitHub URL not available", vim.log.levels.WARN)
+    return
+  end
+
+  vim.fn.setreg('+', url)
+  vim.notify("Copied GitHub URL: " .. url, vim.log.levels.INFO)
+end, { desc = "Yank GitHub URL" })
+
+-- GitHub行リンクをクリップボードにコピー
+vim.keymap.set({ "n", "v" }, "<leader>yl", function()
+  if vim.fn.expand('%:p'):match('^oil://') then
+    vim.notify("Line link is not available in oil buffers", vim.log.levels.WARN)
+    return
+  end
+
+  local path = get_file_path()
+  if not path or path == "" then
+    vim.notify("No file path available", vim.log.levels.WARN)
+    return
+  end
+
+  if vim.fn.isdirectory(path) == 1 then
+    vim.notify("Line link is only for files", vim.log.levels.WARN)
+    return
+  end
+
+  local url, err = get_github_url(path)
+  if not url then
+    vim.notify(err or "GitHub URL not available", vim.log.levels.WARN)
+    return
+  end
+
+  local start_line, end_line = get_line_range()
+  local anchor = start_line == end_line
+      and ("#L" .. start_line)
+      or ("#L" .. start_line .. "-L" .. end_line)
+  local link = url .. anchor
+
+  vim.fn.setreg('+', link)
+  vim.notify("Copied GitHub line URL: " .. link, vim.log.levels.INFO)
+end, { desc = "Yank GitHub line URL" })
+
 -- インラインヒントの表示/非表示を切り替え
 vim.keymap.set("n", "<leader>uh", function()
   vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
@@ -113,6 +274,8 @@ end, { desc = "Toggle Inlay Hints" })
 
 -- Copilotの有効/無効を切り替え（copilot.lua対応）
 vim.keymap.set("n", "<leader>ct", "<cmd>Copilot toggle<cr>", { desc = "Toggle Copilot" })
+
+vim.keymap.set("n", "<leader>cp", "<cmd>CodeCompanionChat Toggle<cr>", { desc = "CodeCompanion Chat Toggle" })
 
 -- ウィンドウZoom（全画面化トグル）
 vim.keymap.set({ "n", "t" }, "<C-w>z", function()
