@@ -100,3 +100,6 @@ opencode/
 
 # Cursor CLI (local configuration)
 cursor/
+
+# Gemini CLI (local configuration)
+gemini/
