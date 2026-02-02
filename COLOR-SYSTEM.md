@@ -52,7 +52,7 @@
 モノクロ基調＋アクセントの統一ANSI 16色マッピング:
 
 ```
- 0: #1A201E (Black)           8: #2A2F2E (Bright Black)
+ 0: #1A201E (Black)           8: #7E8A89 (Bright Black - 視認性向上)
  1: #B9C6C5 (Red→Gray)        9: #E6F1F0 (Bright Red→Near White)
  2: #9AA6A5 (Green→Gray)     10: #CDD8D7 (Bright Green→Light Gray)
  3: #C7D2D1 (Yellow→Gray)    11: #F2FFFF (Bright Yellow→White)
@@ -128,7 +128,8 @@
 - ANSI White: `#D7E2E1` (前景)
 - Bright 9-12: グレースケール (`#E6F1F0`, `#CDD8D7`, `#F2FFFF`, `#AAB6B5`)
 - カーソル: `#F2FFFF`
-- 選択範囲背景: `#2A2F2E`
+- 選択範囲前景: `#F2FFFF` (Bright White)
+- 選択範囲背景: `#5AAFAD` (Cyan)
 - モード色: 全てグレースケール
 
 ### Cursor CLI
