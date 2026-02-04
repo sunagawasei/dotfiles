@@ -11,28 +11,30 @@ gui:
   theme:
     # ボーダー色
     activeBorderColor:
-      - '#5ABDBC' # Primary Accent (Teal Bright)
+      - '#6CD8D3' # Vibrant Teal
       - bold
     inactiveBorderColor:
-      - '#29595C' # Border (Teal Dark)
+      - '#275D62' # UI Border
     # テキスト色
     optionsTextColor:
-      - '#CEF5F2' # Foreground
+      - '#CEF5F2'
     defaultFgColor:
-      - '#CEF5F2' # Foreground
-    # 選択行の背景
+      - '#CEF5F2'
+    # 選択行の背景 (Ocean Blue - 視認性と可読性のバランス)
     selectedLineBgColor:
-      - '#31364C' # Panel Background (High Contrast)
+      - '#326787'
+    selectedRangeBgColor:
+      - '#326787'
     # Git関連の色
     unstagedChangesColor:
-      - '#926894' # Purple Muted (Error/Delete)
+      - '#936997' # Glitch Purple
     cherryPickedCommitFgColor:
-      - '#5ABDBC' # Primary Accent
+      - '#6CD8D3'
     cherryPickedCommitBgColor:
-      - '#31364C' # Panel Background
+      - '#152A2B' # Dark Teal Panel
   # 著者色設定
   authorColors:
-    '*': '#586269' # Mid Gray
+    '*': '#525B65' # Slate Mid
 os:
   editPreset: "nvim-remote"  # eキー用：同じNeovimインスタンスで開く
   open: '[ -z "$NVIM" ] && open {{filename}} || nvim --server "$NVIM" --remote-tab {{filename}}'
@@ -55,7 +57,7 @@ git:
     - master
 refresher:
   refreshInterval: 1 # リフレッシュ間隔を短縮（外部変更の迅速な検出）
-  fetchInterval: 60 # fetch間隔（デフォルト）
+  fetchInterval: 60 # fetch interval
 keybinding:
   commits:
     moveDownCommit: '<c-d>'
