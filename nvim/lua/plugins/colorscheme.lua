@@ -13,40 +13,40 @@ return {
     lazy = false,
     priority = 1000,
     config = function()
-      -- カラーパレット定義
+      -- カラーパレット定義 (Expanded Abyssal Teal)
       local colors = {
         -- コアカラー
-        bg = "#132018",           -- 背景 (63.4%)
-        dark_shadow = "#1E2A2D",  -- パネル/フロート (3.7% - Updated)
-        border = "#29595C",       -- 分割線 (2.6%)
-        mid_gray = "#586269",     -- 中間グレー (2.5%)
-        light_gray = "#92A2AB",   -- 明るいグレー (1.6%)
-        operator = "#ABB0CC",     -- 演算子 (1.4%)
-        fg = "#CEF5F2",           -- 前景 (6.9%)
-        near_white = "#CEF5F2",   -- ニアホワイト
-        highlight_white = "#A4E4E0", -- ハイライト白 (2.7% - Updated)
+        bg = "#132018",           -- Main
+        dark_shadow = "#1E1E24",  -- UI Shadow
+        border = "#275D62",       -- UI Border
+        mid_gray = "#525B65",     -- Slate Mid (Comment)
+        light_gray = "#92A2AB",   -- Dim text
+        operator = "#64BBBE",     -- Clear Teal
+        fg = "#CEF5F2",           -- Main Text
+        near_white = "#B1F4ED",   -- Brightest
+        highlight_white = "#F2FFFF", -- Purest
 
         -- アクセントカラー
-        cyan = "#659D9E",         -- Teal Mid (2.7%)
-        bright_cyan = "#A4E4E0",  -- Highlight (2.7%)
-        magenta = "#926894",      -- Purple Muted (0.6%)
-        bright_magenta = "#CED5E9", -- Lavender (1.0%)
+        cyan = "#6CD8D3",         -- Vibrant Teal
+        bright_cyan = "#9DDCD9",  -- Heading Cyan
+        magenta = "#936997",      -- Glitch Purple
+        bright_magenta = "#B4B7CD", -- Cloud Slate
 
-        -- ANSI色
-        ansi_red = "#926894",     -- red
-        ansi_green = "#4A8778",   -- green
-        ansi_yellow = "#CED5E9",  -- yellow
-        ansi_blue = "#54688D",    -- blue
-
-        -- Bright色
-        bright_red = "#926894",   -- bright red
-        bright_green = "#5ABDBC", -- bright green (Accent)
-        bright_yellow = "#CED5E9", -- bright yellow
-        bright_blue = "#ABB0CC",  -- bright blue
+        -- 拡張セマンティック
+        purple_accent = "#5F698E", -- Muted Purple (Keyword)
+        ocean_blue = "#326787",    -- Ocean Blue (Blue)
+        lavender = "#CED5E9",      -- Lavender (Constant)
+        
+        -- ANSI/Terminal
+        ansi_red = "#936997",
+        ansi_green = "#349594",
+        ansi_yellow = "#CED5E9",
+        ansi_blue = "#326787",
 
         -- その他
-        white = "#ABB0CC",        -- アイコン用白色
-        selection = "#31364C",    -- 選択背景色 (3.0%)
+        white = "#A4ABCB",        -- Sky Slate (Icon)
+        selection = "#64BBBE",    -- Clear Teal (1.1%)
+        selection_fg = "#132018",
       }
 
       -- ハイライトグループの設定
@@ -60,21 +60,21 @@ return {
         WinSeparator = { bg = colors.bg },
 
         -- 基本UI - 追加分
-        Directory = { fg = colors.cyan },           -- ディレクトリ名
-        Title = { fg = colors.highlight_white, bold = true },  -- タイトル
-        Special = { fg = colors.mid_gray },         -- 特殊シンボル
-        Identifier = { fg = colors.fg },            -- 識別子
-        Statement = { fg = colors.cyan },           -- 文
-        PreProc = { fg = colors.cyan },             -- プリプロセッサ
-        Type = { fg = colors.bright_cyan },         -- 型
-        Constant = { fg = colors.fg },              -- 定数
-        String = { fg = colors.magenta },           -- 文字列
-        Number = { fg = colors.fg },                -- 数値
-        Boolean = { fg = colors.fg },               -- 真偽値
-        Function = { fg = colors.bright_cyan },     -- 関数
-        Keyword = { fg = colors.cyan },             -- キーワード
-        Operator = { fg = colors.operator },        -- 演算子
-        Comment = { fg = colors.mid_gray },         -- コメント
+        Directory = { fg = colors.cyan },
+        Title = { fg = colors.bright_cyan, bold = true },
+        Special = { fg = colors.mid_gray },
+        Identifier = { fg = colors.fg },
+        Statement = { fg = colors.purple_accent },
+        PreProc = { fg = colors.cyan },
+        Type = { fg = colors.white },
+        Constant = { fg = colors.lavender },
+        String = { fg = colors.string or "#659D9E" },
+        Number = { fg = colors.near_white },
+        Boolean = { fg = colors.near_white },
+        Function = { fg = colors.cyan },
+        Keyword = { fg = colors.purple_accent },
+        Operator = { fg = colors.operator },
+        Comment = { fg = colors.mid_gray },
 
         -- IMEやフローティングウィンドウの設定
         NormalFloat = { bg = colors.dark_shadow, fg = colors.fg },
@@ -269,9 +269,9 @@ return {
         MatchParen = { bg = colors.border, fg = colors.highlight_white, bold = true },
 
         -- カーソル・選択関連
-        Visual = { bg = colors.selection },
-        VisualNOS = { bg = colors.selection },
-        Select = { bg = colors.selection },
+        Visual = { bg = colors.selection, fg = colors.selection_fg },
+        VisualNOS = { bg = colors.selection, fg = colors.selection_fg },
+        Select = { bg = colors.selection, fg = colors.selection_fg },
         CursorLine = { bg = colors.dark_shadow },
         CursorColumn = { bg = colors.dark_shadow },
         Cursor = { bg = colors.fg, fg = colors.bg },
