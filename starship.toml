@@ -13,7 +13,7 @@ command_timeout = 1000
 [directory]
 truncation_length = 10
 truncate_to_repo = false
-style = "#CDD8D7" # ライトグレー: ディレクトリ
+style = "#A4E4E0" # Highlight (2.7%)
 
 
 [character]
@@ -28,17 +28,17 @@ vimcmd_visual_symbol ="▲"
 disabled = false
 format = "[$time]($style) "
 time_format = "%H:%M"
-style = "#7E8A89" # モノクロ基調 - 中間グレー
+style = "#586269" # Mid Gray
 
 
 [git_branch]
 format = "  [$symbol$branch]($style) "
-style = "#AAB6B5" # 明るいグレー: Gitブランチ
+style = "#5ABDBC" # Teal Bright (1.7%)
 symbol = "\ue0a0"
 
 
 [git_status]
-style = "#D7E2E1" # モノクロ基調 - 前景
+style = "#CEF5F2" # Foreground
 
 [shell]
 disabled = true
