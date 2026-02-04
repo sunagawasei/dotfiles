@@ -13,7 +13,7 @@ command_timeout = 1000
 [directory]
 truncation_length = 10
 truncate_to_repo = false
-style = "#A4E4E0" # Highlight (2.7%)
+style = "#9DDCD9" # Heading Cyan
 
 
 [character]
@@ -28,17 +28,17 @@ vimcmd_visual_symbol ="▲"
 disabled = false
 format = "[$time]($style) "
 time_format = "%H:%M"
-style = "#586269" # Mid Gray
+style = "#525B65" # Slate Mid
 
 
 [git_branch]
 format = "  [$symbol$branch]($style) "
-style = "#5ABDBC" # Teal Bright (1.7%)
+style = "#6CD8D3" # Vibrant Teal
 symbol = "\ue0a0"
 
 
 [git_status]
-style = "#CEF5F2" # Foreground
+style = "#CEF5F2" # Main Foreground
 
 [shell]
 disabled = true
