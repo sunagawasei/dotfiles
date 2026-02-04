@@ -113,7 +113,7 @@ config.window_frame = {
 }
 -- ウィンドウ背景のグラデーション設定（モノクロ背景）
 config.window_background_gradient = {
-	colors = { "#132018" },
+	colors = { "#0B0C0C" },
 }
 -- ウィンドウ内側の余白設定
 config.window_padding = {
@@ -145,15 +145,15 @@ config.inactive_pane_hsb = {
 config.colors = {
 	-- 基本色
 	foreground = "#CEF5F2", -- Main Foreground
-	background = "#132018", -- Main Background
+	background = "#0B0C0C", -- Main Background
 
 	-- カーソル色
 	cursor_bg = "#6CD8D3", -- Vibrant Teal
-	cursor_fg = "#132018",
+	cursor_fg = "#0B0C0C",
 	cursor_border = "#6CD8D3",
 
 	-- 選択色
-	selection_fg = "#132018", -- Background color for text
+	selection_fg = "#0B0C0C", -- Background color for text
 	selection_bg = "#64BBBE", -- Clear Teal (1.1%) - High Visibility
 
 	-- スクロールバー・分割線
@@ -185,7 +185,7 @@ config.colors = {
 
 	-- コピーモード色設定
 	copy_mode_active_highlight_bg = { Color = "#6CD8D3" },
-	copy_mode_active_highlight_fg = { Color = "#132018" },
+	copy_mode_active_highlight_fg = { Color = "#0B0C0C" },
 	copy_mode_inactive_highlight_bg = { Color = "#152A2B" },
 	copy_mode_inactive_highlight_fg = { Color = "#CEF5F2" },
 
@@ -193,7 +193,7 @@ config.colors = {
 	quick_select_label_bg = { Color = "#936997" },
 	quick_select_label_fg = { Color = "#F2FFFF" },
 	quick_select_match_bg = { Color = "#6CD8D3" },
-	quick_select_match_fg = { Color = "#132018" },
+	quick_select_match_fg = { Color = "#0B0C0C" },
 
 	-- タブバー設定
 	tab_bar = {
