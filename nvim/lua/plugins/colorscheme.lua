@@ -47,6 +47,7 @@ return {
         white = "#A4ABCB",        -- Sky Slate (Icon)
         selection = "#64BBBE",    -- Clear Teal (1.1%)
         selection_fg = "#132018",
+        string = "#659D9E",       -- semantic.string
       }
 
       -- ハイライトグループの設定
@@ -68,7 +69,7 @@ return {
         PreProc = { fg = colors.cyan },
         Type = { fg = colors.white },
         Constant = { fg = colors.lavender },
-        String = { fg = colors.string or "#659D9E" },
+        String = { fg = colors.string },
         Number = { fg = colors.near_white },
         Boolean = { fg = colors.near_white },
         Function = { fg = colors.cyan },

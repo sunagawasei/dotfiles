@@ -6,18 +6,18 @@ return {
   },
   config = function()
     local colors = {
-      -- カスタムカラーシステムに準拠
-      handle = "#2A2F2E",        -- スクロールバーのハンドル（COLOR-SYSTEM.md準拠: 濃い影）
-      search = "#5AAFAD",        -- 検索結果（Cyan）
-      error = "#8C83A3",         -- エラー（Magenta）
-      warn = "#B3A9D1",          -- 警告（Bright Magenta）
-      info = "#96CBD1",          -- 情報（Bright Cyan）
-      hint = "#5AAFAD",          -- ヒント（Cyan）
-      misc = "#7E8A89",          -- その他（Gray）
-      -- Git関連（GitSignsと統一）
-      GitAdd = "#5AAFAD",       -- 追加（Cyan）
-      GitChange = "#8C83A3",    -- 変更（Magenta）
-      GitDelete = "#AAB6B5",    -- 削除（グレー）
+      -- abyssal-teal.toml準拠カラー
+      handle = "#1E1E24",        -- スクロールバーハンドル（core.ui_shadow）
+      search = "#64BBBE",        -- 検索結果（semantic.operator）
+      error = "#936997",         -- エラー（semantic.error）
+      warn = "#CED5E9",          -- 警告（semantic.warning）
+      info = "#6CD8D3",          -- 情報（semantic.info）
+      hint = "#64BBBE",          -- ヒント（semantic.operator）
+      misc = "#525B65",          -- その他（semantic.comment）
+      -- Git関連
+      GitAdd = "#64BBBE",        -- 追加（semantic.operator）
+      GitChange = "#936997",     -- 変更（semantic.error）
+      GitDelete = "#92A2AB",     -- 削除（foregrounds.dim）
     }
 
     require("scrollbar").setup({

@@ -1,12 +1,12 @@
 -- Color Mapping: See colors/abyssal-teal.toml [semantic] section
 local mode_colors = {
-  normal = "#586269",   -- semantic.comment (subdued for idle state)
+  normal = "#525B65",   -- semantic.comment (subdued for idle state)
   insert = "#4A8778",   -- semantic.success (green for creative action)
-  visual = "#5ABDBC",   -- semantic.function (teal bright for selection)
+  visual = "#64BBBE",   -- semantic.operator (teal bright for selection)
   replace = "#CED5E9",  -- semantic.warning (lavender for caution)
-  command = "#54688D",  -- semantic.keyword (blue for commands)
+  command = "#5F698E",  -- semantic.keyword (blue for commands)
   terminal = "#659D9E", -- semantic.string (teal mid for shell)
-  inactive = "#586269", -- semantic.comment (dim for background)
+  inactive = "#525B65", -- semantic.comment (dim for background)
 }
 
 return {
@@ -16,34 +16,34 @@ return {
       options = {
         theme = {
           normal = {
-            a = { fg = "#0E1210", bg = mode_colors.normal, gui = "bold" },
+            a = { fg = "#111E16", bg = mode_colors.normal, gui = "bold" },
             b = { fg = "#CEF5F2", bg = "NONE" },
-            c = { fg = "#586269", bg = "NONE" },
+            c = { fg = "#525B65", bg = "NONE" },
           },
           insert = {
-            a = { fg = "#0E1210", bg = mode_colors.insert, gui = "bold" },
+            a = { fg = "#111E16", bg = mode_colors.insert, gui = "bold" },
             b = { fg = "#CEF5F2", bg = "NONE" },
-            c = { fg = "#586269", bg = "NONE" },
+            c = { fg = "#525B65", bg = "NONE" },
           },
           visual = {
-            a = { fg = "#0E1210", bg = mode_colors.visual, gui = "bold" },
+            a = { fg = "#111E16", bg = mode_colors.visual, gui = "bold" },
             b = { fg = "#CEF5F2", bg = "NONE" },
-            c = { fg = "#586269", bg = "NONE" },
+            c = { fg = "#525B65", bg = "NONE" },
           },
           replace = {
-            a = { fg = "#0E1210", bg = mode_colors.replace, gui = "bold" },
+            a = { fg = "#111E16", bg = mode_colors.replace, gui = "bold" },
             b = { fg = "#CEF5F2", bg = "NONE" },
-            c = { fg = "#586269", bg = "NONE" },
+            c = { fg = "#525B65", bg = "NONE" },
           },
           command = {
-            a = { fg = "#0E1210", bg = mode_colors.command, gui = "bold" },
+            a = { fg = "#111E16", bg = mode_colors.command, gui = "bold" },
             b = { fg = "#CEF5F2", bg = "NONE" },
-            c = { fg = "#586269", bg = "NONE" },
+            c = { fg = "#525B65", bg = "NONE" },
           },
           terminal = {
-            a = { fg = "#0E1210", bg = mode_colors.terminal, gui = "bold" },
+            a = { fg = "#111E16", bg = mode_colors.terminal, gui = "bold" },
             b = { fg = "#CEF5F2", bg = "NONE" },
-            c = { fg = "#586269", bg = "NONE" },
+            c = { fg = "#525B65", bg = "NONE" },
           },
           inactive = {
             a = { fg = mode_colors.inactive, bg = "NONE" },
@@ -84,9 +84,9 @@ return {
             show_ahead_behind = false,
             colored = true,
             diff_color = {
-              added = { fg = "#5ABDBC" },   -- semantic.function (teal bright)
+              added = { fg = "#64BBBE" },   -- semantic.operator (teal bright)
               modified = { fg = "#CED5E9" }, -- semantic.warning (lavender)
-              removed = { fg = "#926894" },  -- semantic.error (purple muted)
+              removed = { fg = "#936997" },  -- semantic.error (purple muted)
             },
           },
         },

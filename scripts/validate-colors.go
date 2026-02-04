@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -32,8 +33,44 @@ var allowedColors = map[string]bool{
 	"#F2FFFF": true, // Bright white
 }
 
+func findGitRoot() (string, error) {
+	cmd := exec.Command("git", "rev-parse", "--show-toplevel")
+	output, err := cmd.Output()
+	if err != nil {
+		return "", fmt.Errorf("not in a git repository: %w", err)
+	}
+	return strings.TrimSpace(string(output)), nil
+}
+
+func getConfigDir() (string, error) {
+	// Try 1: Git root
+	if gitRoot, err := findGitRoot(); err == nil {
+		return gitRoot, nil
+	}
+
+	// Try 2: CONFIG_DIR environment variable
+	if configDir := os.Getenv("CONFIG_DIR"); configDir != "" {
+		if _, err := os.Stat(configDir); err == nil {
+			return configDir, nil
+		}
+	}
+
+	// Try 3: Current working directory
+	cwd, err := os.Getwd()
+	if err != nil {
+		return "", fmt.Errorf("failed to get working directory: %w", err)
+	}
+	return cwd, nil
+}
+
 func main() {
-	configDir := "/Users/s23159/.config"
+	configDir, err := getConfigDir()
+	if err != nil {
+		fmt.Printf("❌ Failed to determine config directory: %v\n", err)
+		os.Exit(1)
+	}
+	fmt.Printf("📁 Using config directory: %s\n", configDir)
+
 	tomlPath := filepath.Join(configDir, "colors", "abyssal-teal.toml")
 
 	// Load color palette
@@ -49,12 +86,22 @@ func main() {
 
 	// Files to check
 	filesToCheck := []string{
+		// Terminal
 		"wezterm/wezterm.lua",
+		"wezterm/keybinds.lua",
+
+		// Neovim
 		"nvim/lua/plugins/colorscheme.lua",
 		"nvim/lua/plugins/render-markdown.lua",
-		"lazygit/config.yml",
+		"nvim/lua/plugins/lualine.lua",
+		"nvim/lua/plugins/scrollbar.lua",
+
+		// Shell
 		"zsh/.zshrc",
 		"starship.toml",
+
+		// Git UI
+		"lazygit/config.yml",
 	}
 
 	hasErrors := false

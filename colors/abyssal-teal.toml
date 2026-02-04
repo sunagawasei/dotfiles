@@ -108,13 +108,13 @@ active_tab = "#1F3451"        # Distinct blue for active
 inactive_tab = "#111E16"
 active_tab_fg = "#B1F4ED"
 inactive_tab_fg = "#525B65"
-selection_bg = "#31364C"
+selection_bg = "#64BBBE"
 split = "#275D62"
 
 [nvim]
 bg = "#132018"
 dark_shadow = "#1E1E24"
-selection = "#31364C"
+selection = "#64BBBE"
 border = "#275D62"
 comment = "#525B65"
 string = "#659D9E"
