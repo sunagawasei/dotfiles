@@ -1,3 +1,14 @@
+-- Color Mapping: See colors/abyssal-teal.toml [semantic] section
+local mode_colors = {
+  normal = "#586269",   -- semantic.comment (subdued for idle state)
+  insert = "#4A8778",   -- semantic.success (green for creative action)
+  visual = "#5ABDBC",   -- semantic.function (teal bright for selection)
+  replace = "#CED5E9",  -- semantic.warning (lavender for caution)
+  command = "#54688D",  -- semantic.keyword (blue for commands)
+  terminal = "#659D9E", -- semantic.string (teal mid for shell)
+  inactive = "#586269", -- semantic.comment (dim for background)
+}
+
 return {
   {
     "nvim-lualine/lualine.nvim",
@@ -5,39 +16,39 @@ return {
       options = {
         theme = {
           normal = {
-            a = { fg = "#0E1210", bg = "#7E8A89", gui = "bold" }, -- gray
-            b = { fg = "#D7E2E1", bg = "NONE" },
-            c = { fg = "#7E8A89", bg = "NONE" },
+            a = { fg = "#0E1210", bg = mode_colors.normal, gui = "bold" },
+            b = { fg = "#CEF5F2", bg = "NONE" },
+            c = { fg = "#586269", bg = "NONE" },
           },
           insert = {
-            a = { fg = "#0E1210", bg = "#9AA6A5", gui = "bold" }, -- gray
-            b = { fg = "#D7E2E1", bg = "NONE" },
-            c = { fg = "#7E8A89", bg = "NONE" },
+            a = { fg = "#0E1210", bg = mode_colors.insert, gui = "bold" },
+            b = { fg = "#CEF5F2", bg = "NONE" },
+            c = { fg = "#586269", bg = "NONE" },
           },
           visual = {
-            a = { fg = "#0E1210", bg = "#B9C6C5", gui = "bold" }, -- gray
-            b = { fg = "#D7E2E1", bg = "NONE" },
-            c = { fg = "#7E8A89", bg = "NONE" },
+            a = { fg = "#0E1210", bg = mode_colors.visual, gui = "bold" },
+            b = { fg = "#CEF5F2", bg = "NONE" },
+            c = { fg = "#586269", bg = "NONE" },
           },
           replace = {
-            a = { fg = "#0E1210", bg = "#AAB6B5", gui = "bold" }, -- gray
-            b = { fg = "#D7E2E1", bg = "NONE" },
-            c = { fg = "#7E8A89", bg = "NONE" },
+            a = { fg = "#0E1210", bg = mode_colors.replace, gui = "bold" },
+            b = { fg = "#CEF5F2", bg = "NONE" },
+            c = { fg = "#586269", bg = "NONE" },
           },
           command = {
-            a = { fg = "#0E1210", bg = "#C7D2D1", gui = "bold" }, -- gray
-            b = { fg = "#D7E2E1", bg = "NONE" },
-            c = { fg = "#7E8A89", bg = "NONE" },
+            a = { fg = "#0E1210", bg = mode_colors.command, gui = "bold" },
+            b = { fg = "#CEF5F2", bg = "NONE" },
+            c = { fg = "#586269", bg = "NONE" },
           },
           terminal = {
-            a = { fg = "#0E1210", bg = "#5AAFAD", gui = "bold" }, -- Cyan維持
-            b = { fg = "#D7E2E1", bg = "NONE" },
-            c = { fg = "#7E8A89", bg = "NONE" },
+            a = { fg = "#0E1210", bg = mode_colors.terminal, gui = "bold" },
+            b = { fg = "#CEF5F2", bg = "NONE" },
+            c = { fg = "#586269", bg = "NONE" },
           },
           inactive = {
-            a = { fg = "#7E8A89", bg = "NONE" },
-            b = { fg = "#7E8A89", bg = "NONE" },
-            c = { fg = "#7E8A89", bg = "NONE" },
+            a = { fg = mode_colors.inactive, bg = "NONE" },
+            b = { fg = mode_colors.inactive, bg = "NONE" },
+            c = { fg = mode_colors.inactive, bg = "NONE" },
           },
         },
         component_separators = { left = "", right = "" },
@@ -73,9 +84,9 @@ return {
             show_ahead_behind = false,
             colored = true,
             diff_color = {
-              added = { fg = "#5AAFAD" }, -- Cyan
-              modified = { fg = "#8C83A3" }, -- Magenta
-              removed = { fg = "#AAB6B5" }, -- グレー
+              added = { fg = "#5ABDBC" },   -- semantic.function (teal bright)
+              modified = { fg = "#CED5E9" }, -- semantic.warning (lavender)
+              removed = { fg = "#926894" },  -- semantic.error (purple muted)
             },
           },
         },
