@@ -7,30 +7,30 @@ wezterm.on("update-right-status", function(window, pane)
 	if name then
 		local elements = {}
 
-		-- モードごとに異なる色とアイコンを設定
+		-- モードごとに異なる色とアイコンを設定（abyssal-teal.toml準拠）
 		if name == "copy_mode" then
-			-- Copy mode: グレー背景に白文字
-			table.insert(elements, { Background = { Color = "#7E8A89" } })
+			-- Copy mode: semantic.comment
+			table.insert(elements, { Background = { Color = "#525B65" } })
 			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
 			table.insert(elements, { Text = " 󰆏 COPY MODE " }) -- NerdFont copy icon
 		elseif name == "resize_pane" then
-			-- Resize mode: グレー背景に白文字
-			table.insert(elements, { Background = { Color = "#9AA6A5" } })
+			-- Resize mode: semantic.string
+			table.insert(elements, { Background = { Color = "#659D9E" } })
 			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
 			table.insert(elements, { Text = "  RESIZE " }) -- NerdFont resize icon
 		elseif name == "pane_navigation" then
-			-- Pane Navigation mode: グレー背景に白文字
-			table.insert(elements, { Background = { Color = "#C7D2D1" } })
-			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
+			-- Pane Navigation mode: foregrounds.dim
+			table.insert(elements, { Background = { Color = "#92A2AB" } })
+			table.insert(elements, { Foreground = { Color = "#111E16" } })
 			table.insert(elements, { Text = "  PANE NAV " }) -- NerdFont window icon
 		elseif name == "search_mode" then
-			-- Search mode: グレー背景に白文字
-			table.insert(elements, { Background = { Color = "#B9C6C5" } })
-			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
+			-- Search mode: semantic.operator
+			table.insert(elements, { Background = { Color = "#64BBBE" } })
+			table.insert(elements, { Foreground = { Color = "#111E16" } })
 			table.insert(elements, { Text = "  SEARCH " }) -- NerdFont search icon
 		else
-			-- その他のモード: グレー背景に白文字
-			table.insert(elements, { Background = { Color = "#64748B" } })
+			-- その他のモード: semantic.keyword
+			table.insert(elements, { Background = { Color = "#5F698E" } })
 			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
 			table.insert(elements, { Text = " TABLE: " .. name .. " " })
 		end

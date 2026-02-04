@@ -1,0 +1,136 @@
+# Abyssal Teal Color Palette (Expanded)
+# ============================================
+# Generated from detailed image analysis (32 colors)
+# Total Pixels Analyzed: 10,000 (100x100)
+
+[metadata]
+name = "Abyssal Teal"
+version = "1.2.0"
+created = "2026-02-03"
+description = "Expanded theme with 32 nuances for detailed UI split"
+
+# 1. Backgrounds & Shadows
+# ---------------------------
+[core]
+background = "#132018"        # Main Background (62%)
+darkest_bg = "#111E16"        # Deepest Shadow (4.2%)
+panel_bg = "#152A2B"          # Dark Teal Panel (2.0%)
+ui_shadow = "#1E1E24"         # Neutral Dark Shadow (1.4%)
+active_line = "#2B2D32"       # Dark Gray-Teal (1.6%)
+selection_bg = "#64BBBE"      # Clear Teal (1.1%) - High Visibility
+selection_fg = "#132018"      # Main Background for contrast
+
+# 2. Foregrounds & High-Intensity
+# ----------------------------------
+[foregrounds]
+main = "#CEF5F2"              # Main Text (6.5%)
+bright = "#B1F4ED"            # Brightest highlights (1.4%)
+dim = "#92A2AB"               # Dimmed text (1.5%)
+heading = "#9DDCD9"           # Heading Cyan (1.7%)
+
+# 3. Teal Spectrum (The core identity)
+# ------------------------------------
+[teals]
+bright = "#6CD8D3"            # Vibrant Teal (0.6%)
+mid_bright = "#64BBBE"        # Clear Teal (1.1%)
+standard = "#659D9E"          # Base Teal (2.3%)
+muted = "#578778"             # Muted Green-Teal (0.5%)
+deep = "#349594"              # Deep Sea Teal (0.8%)
+border = "#275D62"            # UI Borders (1.5%)
+dark_accent = "#304D4F"       # Subtle accent (1.0%)
+sea_green = "#298577"         # Dense Teal (0.1%)
+
+# 4. Blue & Slate Spectrum
+# ------------------------
+[blues_slates]
+slate_mid = "#525B65"         # Inactive/Comments (1.5%)
+slate_dark = "#1F3451"        # Dark Blue UI (0.7%)
+ocean_blue = "#326787"        # Bright Blue Accent (0.4%)
+sky_slate = "#A4ABCB"         # Light Blue-Slate (0.7%)
+cloud_slate = "#B4B7CD"       # Soft Slate (0.6%)
+deep_ocean = "#2F324D"        # Shadow Blue (0.8%)
+
+# 5. Purple & Lavender Spectrum (The "Glitch" elements)
+# -----------------------------------------------------
+[purples]
+lavender = "#CED5E9"          # Light Lavender (0.8%)
+muted_purple = "#5F698E"      # Deep Purple Slate (0.7%)
+bright_purple = "#936997"     # Glitch Purple (0.4%)
+dark_purple = "#4F3759"       # Shadow Purple (0.4%)
+deep_glitch = "#584EA2"       # Vibrant Purple (0.1%)
+soft_magenta = "#865F7B"      # Muted Rose (0.1%)
+dark_rose = "#44363B"         # Atramentous Rose (0.5%)
+
+# Semantic Mappings (Expanded)
+# ----------------------------
+[semantic]
+success = "#4A8778"
+warning = "#CED5E9"
+error = "#936997"
+info = "#6CD8D3"
+comment = "#525B65"
+string = "#659D9E"
+keyword = "#5F698E"           # Using Muted Purple for keywords
+function = "#6CD8D3"
+type = "#A4ABCB"
+variable = "#CEF5F2"
+number = "#B1F4ED"
+operator = "#64BBBE"
+constant = "#CED5E9"
+
+# ANSI 16 Colors (Nuanced Mapping)
+# --------------------------------
+[ansi]
+black = "#111E16"
+red = "#936997"
+green = "#349594"
+yellow = "#CED5E9"
+blue = "#326787"
+magenta = "#584EA2"
+cyan = "#6CD8D3"
+white = "#CEF5F2"
+
+bright_black = "#525B65"      # More visible than background
+bright_red = "#865F7B"
+bright_green = "#64BBBE"
+bright_yellow = "#B1F4ED"
+bright_blue = "#A4ABCB"
+bright_magenta = "#B4B7CD"
+bright_cyan = "#9DDCD9"
+bright_white = "#F2FFFF"      # Purest highlight
+
+# App Specifics
+# -------------
+[wezterm]
+background = "#132018"
+tab_bar = "#111E16"
+active_tab = "#1F3451"        # Distinct blue for active
+inactive_tab = "#111E16"
+active_tab_fg = "#B1F4ED"
+inactive_tab_fg = "#525B65"
+selection_bg = "#64BBBE"
+split = "#275D62"
+
+[nvim]
+bg = "#132018"
+dark_shadow = "#1E1E24"
+selection = "#64BBBE"
+border = "#275D62"
+comment = "#525B65"
+string = "#659D9E"
+keyword = "#5F698E"
+function = "#6CD8D3"
+variable = "#CEF5F2"
+number = "#B1F4ED"
+type = "#A4ABCB"
+operator = "#64BBBE"
+header = "#9DDCD9"
+
+[zsh]
+default = "#CEF5F2"
+command = "#6CD8D3"
+path = "#9DDCD9"
+string = "#659D9E"
+option = "#A4ABCB"
+comment = "#525B65"
+error = "#936997"
