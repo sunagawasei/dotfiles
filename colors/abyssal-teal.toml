@@ -1,134 +1,136 @@
-# Abyssal Teal Color Palette (Proportional Analysis)
+# Abyssal Teal Color Palette (Expanded)
 # ============================================
-# Generated from image analysis of G9FVn5cXMAAs2kU.jpeg
+# Generated from detailed image analysis (32 colors)
 # Total Pixels Analyzed: 10,000 (100x100)
 
 [metadata]
 name = "Abyssal Teal"
-version = "1.1.0"
+version = "1.2.0"
 created = "2026-02-03"
-description = "Proportional theme based on image color distribution"
+description = "Expanded theme with 32 nuances for detailed UI split"
 
-# 1. Backgrounds (Total ~74%)
+# 1. Backgrounds & Shadows
 # ---------------------------
-# Dominant Dark Teal Black: #132018 (63.37%) -> Main Background
-# Darkest Shadow:           #111E16 (4.06%)  -> Tab Bar / Gutter
-# Dark Panel:               #1E2A2D (3.74%)  -> Active Tab / Status Line
-# Panel/Selection:          #31364C (2.99%)  -> Selection / Popup
-
 [core]
-background = "#132018"        # 63.4% - Main Background
-darkest_bg = "#111E16"        # 4.1% - Tab Bar, Gutter
-panel_bg = "#1E2A2D"          # 3.7% - Status Line, Active Tab
-selection_bg = "#31364C"      # 3.0% - Selection, Popups
+background = "#132018"        # Main Background (62%)
+darkest_bg = "#111E16"        # Deepest Shadow (4.2%)
+panel_bg = "#152A2B"          # Dark Teal Panel (2.0%)
+ui_shadow = "#1E1E24"         # Neutral Dark Shadow (1.4%)
+active_line = "#2B2D32"       # Dark Gray-Teal (1.6%)
+selection_bg = "#64BBBE"      # Clear Teal (1.1%) - High Visibility
+selection_fg = "#132018"      # Main Background for contrast
 
-# 2. Foreground / Text (Total ~9.6%)
+# 2. Foregrounds & High-Intensity
 # ----------------------------------
-# Primary White/Cyan:       #CEF5F2 (6.91%) -> Main Text
-# Secondary Cyan/White:     #A4E4E0 (2.67%) -> Heading / Bold
+[foregrounds]
+main = "#CEF5F2"              # Main Text (6.5%)
+bright = "#B1F4ED"            # Brightest highlights (1.4%)
+dim = "#92A2AB"               # Dimmed text (1.5%)
+heading = "#9DDCD9"           # Heading Cyan (1.7%)
 
-foreground = "#CEF5F2"        # 6.9% - Main Text
-highlight = "#A4E4E0"         # 2.7% - Headings, Bold
+# 3. Teal Spectrum (The core identity)
+# ------------------------------------
+[teals]
+bright = "#6CD8D3"            # Vibrant Teal (0.6%)
+mid_bright = "#64BBBE"        # Clear Teal (1.1%)
+standard = "#659D9E"          # Base Teal (2.3%)
+muted = "#578778"             # Muted Green-Teal (0.5%)
+deep = "#349594"              # Deep Sea Teal (0.8%)
+border = "#275D62"            # UI Borders (1.5%)
+dark_accent = "#304D4F"       # Subtle accent (1.0%)
+sea_green = "#298577"         # Dense Teal (0.1%)
 
-# 3. Accents / UI Elements (Total ~16.4%)
-# ---------------------------------------
-# Teal Mid:                 #659D9E (2.65%) -> String / Normal Text
-# Teal Dark (Border):       #29595C (2.58%) -> Borders / Separators
-# Mid Gray:                 #586269 (2.51%) -> Comments / Inactive
-# Teal Bright:              #5ABDBC (1.67%) -> Primary Accent (Function/Cursor)
-# Blue/Gray:                #92A2AB (1.59%) -> Secondary Text
-# Blue Light:               #ABB0CC (1.40%) -> Variables / Parameters
-# Teal Green:               #4A8778 (1.21%) -> Success / Add
-# Blue Muted:               #54688D (1.02%) -> Keywords
-# Lavender:                 #CED5E9 (0.99%) -> Warning / Constants
-# Purple Muted:             #926894 (0.64%) -> Error / Delete
+# 4. Blue & Slate Spectrum
+# ------------------------
+[blues_slates]
+slate_mid = "#525B65"         # Inactive/Comments (1.5%)
+slate_dark = "#1F3451"        # Dark Blue UI (0.7%)
+ocean_blue = "#326787"        # Bright Blue Accent (0.4%)
+sky_slate = "#A4ABCB"         # Light Blue-Slate (0.7%)
+cloud_slate = "#B4B7CD"       # Soft Slate (0.6%)
+deep_ocean = "#2F324D"        # Shadow Blue (0.8%)
 
-border = "#29595C"            # 2.6% - Borders
-mid_gray = "#586269"          # 2.5% - Comments
-blue_gray = "#92A2AB"         # 1.6% - Added for validation
+# 5. Purple & Lavender Spectrum (The "Glitch" elements)
+# -----------------------------------------------------
+[purples]
+lavender = "#CED5E9"          # Light Lavender (0.8%)
+muted_purple = "#5F698E"      # Deep Purple Slate (0.7%)
+bright_purple = "#936997"     # Glitch Purple (0.4%)
+dark_purple = "#4F3759"       # Shadow Purple (0.4%)
+deep_glitch = "#584EA2"       # Vibrant Purple (0.1%)
+soft_magenta = "#865F7B"      # Muted Rose (0.1%)
+dark_rose = "#44363B"         # Atramentous Rose (0.5%)
 
-accent_primary = "#5ABDBC"    # 1.7% - Cursor, Focus
-accent_secondary = "#659D9E"  # 2.7% - String, Info
-
-# ANSI 16 Colors (Mapped to proportions)
-# --------------------------------------
-[ansi]
-black = "#111E16"             # 4.1% (Darkest)
-red = "#926894"               # 0.6% (Purple Muted) - Least frequent = Errors/Alerts
-green = "#4A8778"             # 1.2% (Teal Green)
-yellow = "#CED5E9"            # 1.0% (Lavender)
-blue = "#54688D"              # 1.0% (Blue Muted)
-magenta = "#926894"           # 0.6% (Purple Muted)
-cyan = "#659D9E"              # 2.7% (Teal Mid) - High frequency accent
-white = "#ABB0CC"             # 1.4% (Blue Light)
-
-bright_black = "#31364C"      # 3.0% (Panel/Selection)
-bright_red = "#926894"        # 0.6%
-bright_green = "#5ABDBC"      # 1.7% (Teal Bright) - Primary Accent
-bright_yellow = "#CED5E9"     # 1.0%
-bright_blue = "#ABB0CC"       # 1.4%
-bright_magenta = "#CED5E9"    # 1.0%
-bright_cyan = "#A4E4E0"       # 2.7% (Highlight)
-bright_white = "#CEF5F2"      # 6.9% (Foreground)
-
-# Semantic Colors (Based on frequency/visibility)
-# -----------------------------------------------
+# Semantic Mappings (Expanded)
+# ----------------------------
 [semantic]
-# High frequency (Standard code)
-text_main = "#CEF5F2"         # 6.9%
-text_heading = "#A4E4E0"      # 2.7%
-string = "#659D9E"            # 2.7%
-comment = "#586269"           # 2.5%
+success = "#4A8778"
+warning = "#CED5E9"
+error = "#936997"
+info = "#6CD8D3"
+comment = "#525B65"
+string = "#659D9E"
+keyword = "#5F698E"           # Using Muted Purple for keywords
+function = "#6CD8D3"
+type = "#A4ABCB"
+variable = "#CEF5F2"
+number = "#B1F4ED"
+operator = "#64BBBE"
+constant = "#CED5E9"
 
-# Medium frequency (Important syntax)
-function = "#5ABDBC"          # 1.7%
-variable = "#ABB0CC"          # 1.4%
-keyword = "#54688D"           # 1.0%
+# ANSI 16 Colors (Nuanced Mapping)
+# --------------------------------
+[ansi]
+black = "#111E16"
+red = "#936997"
+green = "#349594"
+yellow = "#CED5E9"
+blue = "#326787"
+magenta = "#584EA2"
+cyan = "#6CD8D3"
+white = "#CEF5F2"
 
-# Low frequency (Alerts/Status)
-success = "#4A8778"           # 1.2%
-warning = "#CED5E9"           # 1.0%
-error = "#926894"             # 0.6%
+bright_black = "#525B65"      # More visible than background
+bright_red = "#865F7B"
+bright_green = "#64BBBE"
+bright_yellow = "#B1F4ED"
+bright_blue = "#A4ABCB"
+bright_magenta = "#B4B7CD"
+bright_cyan = "#9DDCD9"
+bright_white = "#F2FFFF"      # Purest highlight
 
-# Application Specifics
-# ---------------------
+# App Specifics
+# -------------
 [wezterm]
-# Background: Dominant color (63%)
 background = "#132018"
-# Tab Bar: Darkest color (4%)
-tab_bar_bg = "#111E16"
-# Active Tab: Panel color (3.7%)
-active_tab_bg = "#1E2A2D"
-# Inactive Tab: Darkest (4%)
-inactive_tab_bg = "#111E16"
-# Selection: High contrast panel (3%)
+tab_bar = "#111E16"
+active_tab = "#1F3451"        # Distinct blue for active
+inactive_tab = "#111E16"
+active_tab_fg = "#B1F4ED"
+inactive_tab_fg = "#525B65"
 selection_bg = "#31364C"
-selection_fg = "#CEF5F2"
-# Cursor: Primary Accent (1.7%)
-cursor_bg = "#5ABDBC"
-cursor_fg = "#132018"
-# Border: Border color (2.6%)
-split = "#29595C"
+split = "#275D62"
 
 [nvim]
-# UI Elements based on proportions
-bg = "#132018"                # Main
-dark_shadow = "#1E2A2D"       # Panel/Float (Changed from 31364C to 1E2A2D for better hierarchy)
-selection = "#31364C"         # Selection
-border = "#29595C"            # Border
-comment = "#586269"           # Comment
-
-[lazygit]
-background = "#132018"
-selected_line = "#31364C"     # Selection
-border = "#29595C"            # Inactive Border
-active_border = "#5ABDBC"     # Active Border
+bg = "#132018"
+dark_shadow = "#1E1E24"
+selection = "#31364C"
+border = "#275D62"
+comment = "#525B65"
+string = "#659D9E"
+keyword = "#5F698E"
+function = "#6CD8D3"
+variable = "#CEF5F2"
+number = "#B1F4ED"
+type = "#A4ABCB"
+operator = "#64BBBE"
+header = "#9DDCD9"
 
 [zsh]
-# Syntax Highlighting
-default = "#CEF5F2"           # Main
-path = "#5ABDBC"              # Accent
-command = "#A4E4E0"           # Highlight
-comment = "#586269"           # Comment
-string = "#659D9E"            # String
-option = "#ABB0CC"            # Option
+default = "#CEF5F2"
+command = "#6CD8D3"
+path = "#9DDCD9"
+string = "#659D9E"
+option = "#A4ABCB"
+comment = "#525B65"
+error = "#936997"

@@ -12,22 +12,24 @@ import (
 
 // ColorPalette represents the TOML color definition file
 type ColorPalette struct {
-	Core     map[string]string `toml:"core"`
-	ANSI     map[string]string `toml:"ansi"`
-	Palette  map[string]string `toml:"palette"`
-	Semantic map[string]string `toml:"semantic"`
-	WezTerm  map[string]string `toml:"wezterm"`
-	Nvim     map[string]string `toml:"nvim"`
-	LazyGit  map[string]string `toml:"lazygit"`
-	Zsh      map[string]string `toml:"zsh"`
-	Starship map[string]string `toml:"starship"`
+	Metadata     map[string]string `toml:"metadata"`
+	Core         map[string]string `toml:"core"`
+	Foregrounds  map[string]string `toml:"foregrounds"`
+	Teals        map[string]string `toml:"teals"`
+	BluesSlates  map[string]string `toml:"blues_slates"`
+	Purples      map[string]string `toml:"purples"`
+	Semantic     map[string]string `toml:"semantic"`
+	ANSI         map[string]string `toml:"ansi"`
+	WezTerm      map[string]string `toml:"wezterm"`
+	Nvim         map[string]string `toml:"nvim"`
+	Zsh          map[string]string `toml:"zsh"`
 }
 
 // Allowed colors that are not in the palette (common colors)
 var allowedColors = map[string]bool{
 	"#000000": true, // Pure black
 	"#FFFFFF": true, // Pure white
-	"#F2FFFF": true, // Bright white (from palette but may not be in all sections)
+	"#F2FFFF": true, // Bright white
 }
 
 func main() {
@@ -43,7 +45,7 @@ func main() {
 
 	// Extract all valid colors
 	validColors := extractValidColors(palette)
-	fmt.Printf("✓ Loaded %d colors from colors/abyssal-teal.toml\n", len(validColors))
+	fmt.Printf("✓ Loaded %d unique colors from colors/abyssal-teal.toml\n", len(validColors))
 
 	// Files to check
 	filesToCheck := []string{
@@ -58,7 +60,6 @@ func main() {
 	hasErrors := false
 	for _, relPath := range filesToCheck {
 		filePath := filepath.Join(configDir, relPath)
-		// Check if file exists before checking
 		if _, err := os.Stat(filePath); os.IsNotExist(err) {
 			continue
 		}
@@ -98,14 +99,15 @@ func extractValidColors(palette *ColorPalette) map[string]bool {
 
 	// Add all colors from all sections
 	addColors(colors, palette.Core)
-	addColors(colors, palette.ANSI)
-	addColors(colors, palette.Palette)
+	addColors(colors, palette.Foregrounds)
+	addColors(colors, palette.Teals)
+	addColors(colors, palette.BluesSlates)
+	addColors(colors, palette.Purples)
 	addColors(colors, palette.Semantic)
+	addColors(colors, palette.ANSI)
 	addColors(colors, palette.WezTerm)
 	addColors(colors, palette.Nvim)
-	addColors(colors, palette.LazyGit)
 	addColors(colors, palette.Zsh)
-	addColors(colors, palette.Starship)
 
 	// Add allowed colors
 	for color := range allowedColors {
@@ -117,7 +119,6 @@ func extractValidColors(palette *ColorPalette) map[string]bool {
 
 func addColors(dst map[string]bool, src map[string]string) {
 	for _, color := range src {
-		// Normalize to uppercase and remove transparency
 		normalized := normalizeColor(color)
 		if normalized != "" {
 			dst[normalized] = true
@@ -126,22 +127,14 @@ func addColors(dst map[string]bool, src map[string]string) {
 }
 
 func normalizeColor(color string) string {
-	// Remove quotes and whitespace
 	color = strings.Trim(strings.TrimSpace(color), `"'`) // Corrected: Removed unnecessary escaping of quotes
-
-	// Check if it's a hex color
 	if !strings.HasPrefix(color, "#") {
 		return ""
 	}
-
-	// Convert to uppercase
 	color = strings.ToUpper(color)
-
-	// Remove transparency suffix (e.g., #10172CCC -> #10172C)
 	if len(color) == 9 {
 		color = color[:7]
 	}
-
 	return color
 }
 
@@ -152,8 +145,6 @@ func checkFile(path string, validColors map[string]bool) error {
 	}
 
 	content := string(data)
-
-	// Regex to find hex colors
 	hexPattern := regexp.MustCompile(`#[0-9A-Fa-f]{6}(?:[0-9A-Fa-f]{2})?`)
 	matches := hexPattern.FindAllString(content, -1)
 
@@ -165,14 +156,10 @@ func checkFile(path string, validColors map[string]bool) error {
 		if normalized == "" {
 			continue
 		}
-
-		// Skip if already reported
 		if seenColors[normalized] {
 			continue
 		}
 		seenColors[normalized] = true
-
-		// Check if color is valid
 		if !validColors[normalized] {
 			undefinedColors = append(undefinedColors, normalized)
 		}
@@ -181,6 +168,5 @@ func checkFile(path string, validColors map[string]bool) error {
 	if len(undefinedColors) > 0 {
 		return fmt.Errorf("  %s", strings.Join(undefinedColors, "\n  "))
 	}
-
 	return nil
 }
