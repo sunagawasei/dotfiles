@@ -144,89 +144,82 @@ config.inactive_pane_hsb = {
 
 config.colors = {
 	-- 基本色
-	foreground = "#CEF5F2", -- 前景色 (6.9%)
-	background = "#132018", -- 背景色 (63.4%)
+	foreground = "#CEF5F2", -- Main Foreground
+	background = "#132018", -- Main Background
 
 	-- カーソル色
-	cursor_bg = "#5ABDBC", -- Primary Accent (1.7%)
-	cursor_fg = "#132018", -- Background
-	cursor_border = "#5ABDBC",
+	cursor_bg = "#6CD8D3", -- Vibrant Teal
+	cursor_fg = "#132018",
+	cursor_border = "#6CD8D3",
 
 	-- 選択色
-	selection_fg = "#CEF5F2", -- Foreground
-	selection_bg = "#31364C", -- Selection/Panel (3.0%)
+	selection_fg = "#132018", -- Background color for text
+	selection_bg = "#64BBBE", -- Clear Teal (1.1%) - High Visibility
 
 	-- スクロールバー・分割線
-	scrollbar_thumb = "#29595C", -- Border (2.6%)
-	split = "#29595C", -- Border (2.6%)
+	scrollbar_thumb = "#275D62", -- UI Border
+	split = "#275D62",
 
-	-- ANSI色（ターミナルの標準16色）
+	-- ANSI色
 	ansi = {
-		"#111E16", -- black (4.1% - Darkest)
-		"#926894", -- red (0.6% - Purple)
-		"#4A8778", -- green (1.2% - Teal Green)
-		"#CED5E9", -- yellow (1.0% - Lavender)
-		"#54688D", -- blue (1.0% - Blue Muted)
-		"#926894", -- magenta (0.6% - Purple)
-		"#659D9E", -- cyan (2.7% - Teal Mid)
-		"#ABB0CC", -- white (1.4% - Blue Light)
+		"#111E16", -- black (Darkest)
+		"#936997", -- red (Glitch Purple)
+		"#349594", -- green (Deep Sea)
+		"#CED5E9", -- yellow (Lavender)
+		"#326787", -- blue (Ocean Blue)
+		"#584EA2", -- magenta (Vibrant Purple)
+		"#6CD8D3", -- cyan (Vibrant Teal)
+		"#CEF5F2", -- white (Main Text)
 	},
 	-- 明るいANSI色
 	brights = {
-		"#31364C", -- bright black (3.0% - Panel)
-		"#926894", -- bright red
-		"#5ABDBC", -- bright green (1.7% - Accent)
-		"#CED5E9", -- bright yellow
-		"#ABB0CC", -- bright blue
-		"#CED5E9", -- bright magenta
-		"#A4E4E0", -- bright cyan (2.7% - Highlight)
-		"#CEF5F2", -- bright white (6.9% - Foreground)
+		"#525B65", -- bright black (Slate Mid)
+		"#865F7B", -- bright red (Muted Rose)
+		"#64BBBE", -- bright green (Clear Teal)
+		"#B1F4ED", -- bright yellow (Brightest Text)
+		"#A4ABCB", -- bright blue (Sky Slate)
+		"#B4B7CD", -- bright magenta (Cloud Slate)
+		"#9DDCD9", -- bright cyan (Heading Cyan)
+		"#F2FFFF", -- bright white (Purest Highlight)
 	},
 
 	-- コピーモード色設定
-	copy_mode_active_highlight_bg = { Color = "#5ABDBC" },
+	copy_mode_active_highlight_bg = { Color = "#6CD8D3" },
 	copy_mode_active_highlight_fg = { Color = "#132018" },
-	copy_mode_inactive_highlight_bg = { Color = "#31364C" },
+	copy_mode_inactive_highlight_bg = { Color = "#152A2B" },
 	copy_mode_inactive_highlight_fg = { Color = "#CEF5F2" },
 
 	-- クイックセレクト色設定
-	quick_select_label_bg = { Color = "#926894" },
-	quick_select_label_fg = { Color = "#CEF5F2" },
-	quick_select_match_bg = { Color = "#5ABDBC" },
+	quick_select_label_bg = { Color = "#936997" },
+	quick_select_label_fg = { Color = "#F2FFFF" },
+	quick_select_match_bg = { Color = "#6CD8D3" },
 	quick_select_match_fg = { Color = "#132018" },
 
 	-- タブバー設定
 	tab_bar = {
-		-- タブバーの背景色 (Darkest - 4.1%)
 		background = "#111E16",
-		-- アクティブタブのスタイル (Panel - 3.7%)
 		active_tab = {
-			bg_color = "#1E2A2D",
-			fg_color = "#CEF5F2",
+			bg_color = "#1F3451", -- Distinct Ocean Blue for active
+			fg_color = "#B1F4ED", -- Brightest highlight
 			intensity = "Bold",
 		},
-		-- 非アクティブタブのスタイル (Darkest - 4.1%)
 		inactive_tab = {
 			bg_color = "#111E16",
-			fg_color = "#586269", -- Mid Gray
+			fg_color = "#525B65", -- Slate Mid
 		},
-		-- 非アクティブタブのホバー時スタイル
 		inactive_tab_hover = {
-			bg_color = "#31364C",
+			bg_color = "#152A2B",
 			fg_color = "#CEF5F2",
 		},
-		-- 新規タブボタンのスタイル
 		new_tab = {
 			bg_color = "#111E16",
-			fg_color = "#586269",
+			fg_color = "#525B65",
 		},
-		-- 新規タブボタンのホバー時スタイル
 		new_tab_hover = {
-			bg_color = "#31364C",
+			bg_color = "#152A2B",
 			fg_color = "#CEF5F2",
 		},
-		-- 非アクティブタブの境界線を追加
-		inactive_tab_edge = "#29595C",
+		inactive_tab_edge = "#275D62",
 	},
 }
 
@@ -236,10 +229,14 @@ config.colors = {
 -- タブIDから決定論的に色を生成（タブ識別用）
 local function tab_id_to_color(tab_id)
 	local colors = {
-		"#5ABDBC", -- Teal Bright
-		"#926894", -- Purple Muted
-		"#659D9E", -- Teal Mid
+		"#6CD8D3", -- Vibrant Teal
+		"#936997", -- Glitch Purple
+		"#64BBBE", -- Clear Teal
 		"#CED5E9", -- Lavender
+		"#326787", -- Ocean Blue
+		"#584EA2", -- Vibrant Purple
+		"#9DDCD9", -- Heading Cyan
+		"#A4ABCB", -- Sky Slate
 	}
 	return colors[(tab_id % #colors) + 1]
 end
@@ -247,13 +244,13 @@ end
 -- Claude Code状態に応じたインジケータを返す
 local function get_claude_status(tab_title)
 	if tab_title:find("%[完了%]") then
-		return { icon = "✓", color = "#4A8778" } -- Success Green
+		return { icon = "✓", color = "#349594" } -- Deep Sea Teal (Success)
 	elseif tab_title:find("%[許可待ち%]") then
-		return { icon = "!", color = "#926894" } -- Error/Warning Purple
+		return { icon = "!", color = "#936997" } -- Glitch Purple (Error/Warning)
 	elseif tab_title:find("%[入力待ち%]") then
-		return { icon = "●", color = "#5ABDBC" } -- Info Teal
+		return { icon = "●", color = "#6CD8D3" } -- Vibrant Teal (Info)
 	elseif tab_title:find("%[実行中%]") then
-		return { icon = "▶", color = "#CEF5F2" } -- Foreground
+		return { icon = "▶", color = "#CEF5F2" } -- Main Foreground
 	end
 	return nil
 end
@@ -306,7 +303,7 @@ wezterm.on("format-tab-title", function(tab)
 				{ Text = "  " },
 				{ Foreground = { Color = claude_status.color } },
 				{ Text = claude_status.icon .. " " },
-				{ Foreground = { Color = "#586269" } },
+				{ Foreground = { Color = "#525B65" } },
 				{ Text = cwd .. " " },
 			}
 		end
