@@ -32,36 +32,36 @@ source "$ZINIT_HOME/zinit.zsh"
 # シンタックスハイライト - コマンドをリアルタイムで色付け
 zinit light zsh-users/zsh-syntax-highlighting
 
-# シンタックスハイライトの色設定（Geist primary text）
+# シンタックスハイライトの色設定（Abyssal Teal Proportional）
 # プラグイン読み込み後に設定する
 typeset -A ZSH_HIGHLIGHT_STYLES
 
-# 基本テキスト色（サジェスト採用後の色）
-ZSH_HIGHLIGHT_STYLES[default]='fg=#F2FFFF'
-ZSH_HIGHLIGHT_STYLES[arg0]='fg=#F2FFFF'
+# 基本テキスト色 (Foreground - 6.9%)
+ZSH_HIGHLIGHT_STYLES[default]='fg=#CEF5F2'
+ZSH_HIGHLIGHT_STYLES[arg0]='fg=#CEF5F2'
 
-# コマンド系（有効なコマンドは太字で強調）
-ZSH_HIGHLIGHT_STYLES[command]='fg=#F2FFFF,bold'
-ZSH_HIGHLIGHT_STYLES[builtin]='fg=#F2FFFF,bold'
-ZSH_HIGHLIGHT_STYLES[alias]='fg=#F2FFFF,bold'
-ZSH_HIGHLIGHT_STYLES[function]='fg=#F2FFFF,bold'
+# コマンド系 (Highlight - 2.7%)
+ZSH_HIGHLIGHT_STYLES[command]='fg=#A4E4E0,bold'
+ZSH_HIGHLIGHT_STYLES[builtin]='fg=#A4E4E0,bold'
+ZSH_HIGHLIGHT_STYLES[alias]='fg=#A4E4E0,bold'
+ZSH_HIGHLIGHT_STYLES[function]='fg=#A4E4E0,bold'
 
-# エラー（赤系アクセント）
-ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#E06C75,bold'
+# エラー (Purple Muted - 0.6%)
+ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#926894,bold'
 
-# パス（やや落ち着いた色+下線）
-ZSH_HIGHLIGHT_STYLES[path]='fg=#D7E2E1,underline'
+# パス (Teal Bright - 1.7%)
+ZSH_HIGHLIGHT_STYLES[path]='fg=#5ABDBC,underline'
 
-# クォート文字列
-ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=#D7E2E1'
-ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=#D7E2E1'
+# クォート文字列 (Teal Mid - 2.7%)
+ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=#659D9E'
+ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=#659D9E'
 
-# オプション（中間色）
-ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=#AABAB9'
-ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=#AABAB9'
+# オプション (Blue Light - 1.4%)
+ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=#ABB0CC'
+ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=#ABB0CC'
 
-# コメント（サジェストと同じ灰色）
-ZSH_HIGHLIGHT_STYLES[comment]='fg=#7E8A89'
+# コメント (Mid Gray - 2.5%)
+ZSH_HIGHLIGHT_STYLES[comment]='fg=#586269'
 
 # 補完定義の追加コレクション - より多くのコマンドの補完をサポート
 zinit light zsh-users/zsh-completions
@@ -158,20 +158,19 @@ unsetopt list_types
 # ========================================
 # LS_COLORS（補完候補の色設定）
 # ========================================
-# モノクロ基調＋アクセント
-# di=ディレクトリ(cyan), ln=シンボリックリンク(magenta), ex=実行可能(前景+太字)
-# *.md/*.txt=中間グレー, *.go/*.ts/*.js=bright cyan
-# 注意: fzf-tab使用時はma=（選択項目の色）は効果なし
-export LS_COLORS='ma=48;2;58;63;62;38;2;242;255;255:di=38;2;205;216;215;1:ln=38;2;170;182;181:ex=38;2;215;226;225;1:*.md=38;2;126;138;137:*.txt=38;2;126;138;137:*.go=38;2;215;226;225:*.ts=38;2;215;226;225:*.js=38;2;215;226;225'
+# Abyssal Teal Theme (Proportional)
+# di=ディレクトリ(Teal Bright), ln=シンボリックリンク(Purple Muted), ex=実行可能(Highlight)
+# *.md/*.txt=Mid Gray, *.go/*.ts/*.js=Blue Light
+export LS_COLORS='ma=48;2;49;54;76;38;2;206;245;242:di=38;2;90;189;188:ln=38;2;146;104;148:ex=38;2;164;228;224;1:*.md=38;2;88;98;105:*.txt=38;2;88;98;105:*.go=38;2;171;176;204:*.ts=38;2;171;176;204:*.js=38;2;171;176;204'
 
 # ========================================
 # FZF カラー設定（fzf-tab用）
 # ========================================
 export FZF_DEFAULT_OPTS='
-  --color=bg+:#3A3F3E,bg:#0E1210,fg:#D7E2E1,fg+:#F2FFFF
-  --color=hl:#5AAFAD,hl+:#96CBD1,info:#7E8A89,marker:#5AAFAD
-  --color=prompt:#8C83A3,spinner:#8C83A3,pointer:#5AAFAD,header:#7E8A89
-  --color=border:#3A3F3E,gutter:#0E1210
+  --color=bg+:#31364C,bg:-1,fg:#CEF5F2,fg+:#A4E4E0
+  --color=hl:#5ABDBC,hl+:#A4E4E0,info:#586269,marker:#5ABDBC
+  --color=prompt:#926894,spinner:#926894,pointer:#5ABDBC,header:#586269
+  --color=border:#29595C,gutter:-1
 '
 
 # Worklog CLI completion
@@ -188,7 +187,7 @@ zinit light Aloxaf/fzf-tab
 zinit light zsh-users/zsh-autosuggestions
 
 # zsh-autosuggestions 色設定（モノクロ基調 - 中間グレー）
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7E8A89'
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#586269'
 
 # zsh-autosuggestions 部分適用の設定
 # forward-wordを部分適用ウィジェットとして使用
@@ -196,12 +195,12 @@ ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-word)
 # forward-charも部分適用ウィジェットとして使用
 ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-char vi-forward-char)
 
-# fzf-tab用の色設定（Cyber Glitchカラースキーム）
+# fzf-tab用の色設定（Abyssal Teal）
 zstyle ':fzf-tab:*' fzf-flags \
-  --color=bg+:#3A3F3E,bg:#0E1210,fg:#D7E2E1,fg+:#F2FFFF \
-  --color=hl:#5AAFAD,hl+:#96CBD1,info:#7E8A89,marker:#5AAFAD \
-  --color=prompt:#8C83A3,spinner:#8C83A3,pointer:#5AAFAD,header:#7E8A89 \
-  --color=border:#3A3F3E,gutter:#0E1210
+  --color=bg+:#31364C,bg:-1,fg:#CEF5F2,fg+:#A4E4E0 \
+  --color=hl:#5ABDBC,hl+:#A4E4E0,info:#586269,marker:#5ABDBC \
+  --color=prompt:#926894,spinner:#926894,pointer:#5ABDBC,header:#586269 \
+  --color=border:#29595C,gutter:-1
 
 # fzf-tabプラグイン用の設定（デフォルトメニューを無効化）
 zstyle ':completion:*' menu no
