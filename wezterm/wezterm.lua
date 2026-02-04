@@ -113,7 +113,7 @@ config.window_frame = {
 }
 -- ウィンドウ背景のグラデーション設定（モノクロ背景）
 config.window_background_gradient = {
-	colors = { "#1A201E" },
+	colors = { "#132018" },
 }
 -- ウィンドウ内側の余白設定
 config.window_padding = {
@@ -144,89 +144,82 @@ config.inactive_pane_hsb = {
 
 config.colors = {
 	-- 基本色
-	foreground = "#D7E2E1", -- 前景色（テキスト色）：モノクロ
-	background = "#1A201E", -- 背景色：モノクロ背景
+	foreground = "#CEF5F2", -- Main Foreground
+	background = "#132018", -- Main Background
 
 	-- カーソル色
-	cursor_bg = "#F2FFFF", -- カーソル背景：ハイライト白
-	cursor_fg = "#1A201E", -- カーソル前景：背景色
-	cursor_border = "#F2FFFF", -- カーソル境界線：ハイライト白
+	cursor_bg = "#6CD8D3", -- Vibrant Teal
+	cursor_fg = "#132018",
+	cursor_border = "#6CD8D3",
 
 	-- 選択色
-	selection_fg = "#F2FFFF", -- 選択時のテキスト色：ハイライト白
-	selection_bg = "#5AAFAD", -- 選択時の背景色：アクセントcyan
+	selection_fg = "#132018", -- Background color for text
+	selection_bg = "#64BBBE", -- Clear Teal (1.1%) - High Visibility
 
 	-- スクロールバー・分割線
-	scrollbar_thumb = "#2A2F2E", -- スクロールバーのつまみ色：濃い影
-	split = "#7E8A89", -- ペイン分割線の色：中間グレー（視認性向上）
+	scrollbar_thumb = "#275D62", -- UI Border
+	split = "#275D62",
 
-	-- ANSI色（ターミナルの標準16色）
+	-- ANSI色
 	ansi = {
-		"#1A201E", -- black: 背景色
-		"#B9C6C5", -- red → gray
-		"#9AA6A5", -- green → gray
-		"#C7D2D1", -- yellow → gray
-		"#7E8A89", -- blue → gray
-		"#8C83A3", -- magenta: グリッチ紫（アクセント）
-		"#5AAFAD", -- cyan: ネオン青緑（アクセント）
-		"#D7E2E1", -- white: 前景色
+		"#111E16", -- black (Darkest)
+		"#936997", -- red (Glitch Purple)
+		"#349594", -- green (Deep Sea)
+		"#CED5E9", -- yellow (Lavender)
+		"#326787", -- blue (Ocean Blue)
+		"#584EA2", -- magenta (Vibrant Purple)
+		"#6CD8D3", -- cyan (Vibrant Teal)
+		"#CEF5F2", -- white (Main Text)
 	},
-	-- 明るいANSI色（太字や高輝度表示用）
+	-- 明るいANSI色
 	brights = {
-		"#7E8A89", -- bright black: 中間グレー（視認性向上）
-		"#E6F1F0", -- bright red → near white
-		"#CDD8D7", -- bright green → light gray
-		"#F2FFFF", -- bright yellow → white
-		"#AAB6B5", -- bright blue → light gray
-		"#B3A9D1", -- bright magenta: ブライト紫（アクセント）
-		"#96CBD1", -- bright cyan: ブライト青緑（アクセント）
-		"#F2FFFF", -- bright white: ハイライト白
+		"#525B65", -- bright black (Slate Mid)
+		"#865F7B", -- bright red (Muted Rose)
+		"#64BBBE", -- bright green (Clear Teal)
+		"#B1F4ED", -- bright yellow (Brightest Text)
+		"#A4ABCB", -- bright blue (Sky Slate)
+		"#B4B7CD", -- bright magenta (Cloud Slate)
+		"#9DDCD9", -- bright cyan (Heading Cyan)
+		"#F2FFFF", -- bright white (Purest Highlight)
 	},
 
 	-- コピーモード色設定
-	copy_mode_active_highlight_bg = { Color = "#5AAFAD" }, -- アクティブハイライト背景：アクセントcyan
-	copy_mode_active_highlight_fg = { Color = "#1A201E" }, -- アクティブハイライト前景：背景色
-	copy_mode_inactive_highlight_bg = { Color = "#2A2F2E" }, -- 非アクティブハイライト背景：濃い影
-	copy_mode_inactive_highlight_fg = { Color = "#D7E2E1" }, -- 非アクティブハイライト前景：前景色
+	copy_mode_active_highlight_bg = { Color = "#6CD8D3" },
+	copy_mode_active_highlight_fg = { Color = "#132018" },
+	copy_mode_inactive_highlight_bg = { Color = "#152A2B" },
+	copy_mode_inactive_highlight_fg = { Color = "#CEF5F2" },
 
 	-- クイックセレクト色設定
-	quick_select_label_bg = { Color = "#8C83A3" }, -- ラベル背景：アクセントmagenta
-	quick_select_label_fg = { Color = "#F2FFFF" }, -- ラベル前景：ハイライト白
-	quick_select_match_bg = { Color = "#5AAFAD" }, -- マッチ背景：アクセントcyan
-	quick_select_match_fg = { Color = "#1A201E" }, -- マッチ前景：背景色
+	quick_select_label_bg = { Color = "#936997" },
+	quick_select_label_fg = { Color = "#F2FFFF" },
+	quick_select_match_bg = { Color = "#6CD8D3" },
+	quick_select_match_fg = { Color = "#132018" },
 
 	-- タブバー設定
 	tab_bar = {
-		-- タブバーの背景色
-		background = "#1A201E",
-		-- アクティブタブのスタイル
+		background = "#111E16",
 		active_tab = {
-			bg_color = "#3A4543", -- より明るくして視認性向上
-			fg_color = "#F2FFFF", -- ハイライト白
-			intensity = "Bold", -- 太字
+			bg_color = "#1F3451", -- Distinct Ocean Blue for active
+			fg_color = "#B1F4ED", -- Brightest highlight
+			intensity = "Bold",
 		},
-		-- 非アクティブタブのスタイル
 		inactive_tab = {
-			bg_color = "#1A201E", -- 背景色
-			fg_color = "#7E8A89", -- 現在: #AAB6B5 → 少し暗く
+			bg_color = "#111E16",
+			fg_color = "#525B65", -- Slate Mid
 		},
-		-- 非アクティブタブのホバー時スタイル
 		inactive_tab_hover = {
-			bg_color = "#2A2F2E", -- 濃い影
-			fg_color = "#D7E2E1", -- 前景色
+			bg_color = "#152A2B",
+			fg_color = "#CEF5F2",
 		},
-		-- 新規タブボタンのスタイル
 		new_tab = {
-			bg_color = "#1A201E",
-			fg_color = "#7E8A89",
+			bg_color = "#111E16",
+			fg_color = "#525B65",
 		},
-		-- 新規タブボタンのホバー時スタイル
 		new_tab_hover = {
-			bg_color = "#2A2F2E",
-			fg_color = "#D7E2E1",
+			bg_color = "#152A2B",
+			fg_color = "#CEF5F2",
 		},
-		-- 非アクティブタブの境界線を追加
-		inactive_tab_edge = "#3A3F3E", -- 現在: "none" → 境界線追加
+		inactive_tab_edge = "#275D62",
 	},
 }
 
@@ -236,10 +229,14 @@ config.colors = {
 -- タブIDから決定論的に色を生成（タブ識別用）
 local function tab_id_to_color(tab_id)
 	local colors = {
-		"#5AAFAD", -- cyan（アクセント）
-		"#8C83A3", -- magenta（アクセント）
-		"#D7E2E1", -- 前景（モノクロ）
-		"#7E8A89", -- 中間グレー（モノクロ）
+		"#6CD8D3", -- Vibrant Teal
+		"#936997", -- Glitch Purple
+		"#64BBBE", -- Clear Teal
+		"#CED5E9", -- Lavender
+		"#326787", -- Ocean Blue
+		"#584EA2", -- Vibrant Purple
+		"#9DDCD9", -- Heading Cyan
+		"#A4ABCB", -- Sky Slate
 	}
 	return colors[(tab_id % #colors) + 1]
 end
@@ -247,13 +244,13 @@ end
 -- Claude Code状態に応じたインジケータを返す
 local function get_claude_status(tab_title)
 	if tab_title:find("%[完了%]") then
-		return { icon = "✓", color = "#5AAFAD" } -- cyan
+		return { icon = "✓", color = "#349594" } -- Deep Sea Teal (Success)
 	elseif tab_title:find("%[許可待ち%]") then
-		return { icon = "!", color = "#8C83A3" } -- magenta
+		return { icon = "!", color = "#936997" } -- Glitch Purple (Error/Warning)
 	elseif tab_title:find("%[入力待ち%]") then
-		return { icon = "●", color = "#96CBD1" } -- bright cyan
+		return { icon = "●", color = "#6CD8D3" } -- Vibrant Teal (Info)
 	elseif tab_title:find("%[実行中%]") then
-		return { icon = "▶", color = "#D7E2E1" } -- foreground
+		return { icon = "▶", color = "#CEF5F2" } -- Main Foreground
 	end
 	return nil
 end
@@ -306,7 +303,7 @@ wezterm.on("format-tab-title", function(tab)
 				{ Text = "  " },
 				{ Foreground = { Color = claude_status.color } },
 				{ Text = claude_status.icon .. " " },
-				{ Foreground = { Color = "#7E8A89" } },
+				{ Foreground = { Color = "#525B65" } },
 				{ Text = cwd .. " " },
 			}
 		end
