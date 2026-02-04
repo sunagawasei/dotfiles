@@ -167,9 +167,9 @@ export LS_COLORS='ma=48;2;100;187;190;38;2;19;32;24:di=38;2;157;220;217:ln=38;2;
 # FZF カラー設定（fzf-tab用）
 # ========================================
 export FZF_DEFAULT_OPTS='
-  --color=bg+:#64BBBE,bg:-1,fg:#CEF5F2,fg+:#132018
-  --color=hl:#6CD8D3,hl+:#132018,info:#525B65,marker:#132018
-  --color=prompt:#936997,spinner:#936997,pointer:#132018,header:#525B65
+  --color=bg+:#64BBBE,bg:-1,fg:#CEF5F2,fg+:#0B0C0C
+  --color=hl:#6CD8D3,hl+:#0B0C0C,info:#525B65,marker:#0B0C0C
+  --color=prompt:#936997,spinner:#936997,pointer:#0B0C0C,header:#525B65
   --color=border:#275D62,gutter:-1
 '
 
@@ -197,9 +197,9 @@ ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-char vi-forward-char)
 
 # fzf-tab用の色設定 (Expanded Abyssal Teal)
 zstyle ':fzf-tab:*' fzf-flags \
-  --color=bg+:#64BBBE,bg:-1,fg:#CEF5F2,fg+:#132018 \
-  --color=hl:#6CD8D3,hl+:#132018,info:#525B65,marker:#132018 \
-  --color=prompt:#936997,spinner:#936997,pointer:#132018,header:#525B65 \
+  --color=bg+:#64BBBE,bg:-1,fg:#CEF5F2,fg+:#0B0C0C \
+  --color=hl:#6CD8D3,hl+:#0B0C0C,info:#525B65,marker:#0B0C0C \
+  --color=prompt:#936997,spinner:#936997,pointer:#0B0C0C,header:#525B65 \
   --color=border:#275D62,gutter:-1
 
 # fzf-tabプラグイン用の設定（デフォルトメニューを無効化）

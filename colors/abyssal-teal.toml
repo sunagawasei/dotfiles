@@ -12,13 +12,13 @@ description = "Expanded theme with 32 nuances for detailed UI split"
 # 1. Backgrounds & Shadows
 # ---------------------------
 [core]
-background = "#132018"        # Main Background (62%)
+background = "#0B0C0C"        # Main Background (62%) - Pure Black
 darkest_bg = "#111E16"        # Deepest Shadow (4.2%)
 panel_bg = "#152A2B"          # Dark Teal Panel (2.0%)
 ui_shadow = "#1E1E24"         # Neutral Dark Shadow (1.4%)
 active_line = "#2B2D32"       # Dark Gray-Teal (1.6%)
 selection_bg = "#64BBBE"      # Clear Teal (1.1%) - High Visibility
-selection_fg = "#132018"      # Main Background for contrast
+selection_fg = "#0B0C0C"      # Main Background for contrast
 
 # 2. Foregrounds & High-Intensity
 # ----------------------------------
@@ -102,7 +102,7 @@ bright_white = "#F2FFFF"      # Purest highlight
 # App Specifics
 # -------------
 [wezterm]
-background = "#132018"
+background = "#0B0C0C"
 tab_bar = "#111E16"
 active_tab = "#1F3451"        # Distinct blue for active
 inactive_tab = "#111E16"
@@ -112,7 +112,7 @@ selection_bg = "#64BBBE"
 split = "#275D62"
 
 [nvim]
-bg = "#132018"
+bg = "#0B0C0C"
 dark_shadow = "#1E1E24"
 selection = "#64BBBE"
 border = "#275D62"

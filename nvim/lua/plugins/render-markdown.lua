@@ -43,7 +43,7 @@ return {
             local fg_name = "RenderMarkdownH" .. i
             vim.api.nvim_set_hl(0, bg_name, {
               bg = colors["h" .. i],
-              fg = "#132018",  -- Background
+              fg = "#0B0C0C",  -- Background (Pure Black)
               bold = true
             })
             vim.api.nvim_set_hl(0, fg_name, {

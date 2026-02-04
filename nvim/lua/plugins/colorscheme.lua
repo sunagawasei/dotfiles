@@ -16,7 +16,7 @@ return {
       -- カラーパレット定義 (Expanded Abyssal Teal)
       local colors = {
         -- コアカラー
-        bg = "#132018",           -- Main
+        bg = "#0B0C0C",           -- Main (Pure Black)
         dark_shadow = "#1E1E24",  -- UI Shadow
         border = "#275D62",       -- UI Border
         mid_gray = "#525B65",     -- Slate Mid (Comment)
@@ -46,7 +46,7 @@ return {
         -- その他
         white = "#A4ABCB",        -- Sky Slate (Icon)
         selection = "#64BBBE",    -- Clear Teal (1.1%)
-        selection_fg = "#132018",
+        selection_fg = "#0B0C0C",
         string = "#659D9E",       -- semantic.string
       }
 
