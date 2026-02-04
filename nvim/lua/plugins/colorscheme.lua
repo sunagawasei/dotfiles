@@ -15,38 +15,38 @@ return {
     config = function()
       -- カラーパレット定義
       local colors = {
-        -- コアカラー（モノクロ階調）
-        bg = "#0E1210",           -- 背景
-        dark_shadow = "#2A2F2E",  -- 濃い影
-        border = "#3A3F3E",       -- 分割線
-        mid_gray = "#7E8A89",     -- 中間グレー
-        light_gray = "#AAB6B5",   -- 明るいグレー
-        operator = "#CDD8D7",     -- ライトグレー
-        fg = "#D7E2E1",           -- 前景
-        near_white = "#E6F1F0",   -- ニアホワイト
-        highlight_white = "#F2FFFF", -- ハイライト白
+        -- コアカラー
+        bg = "#132018",           -- 背景 (63.4%)
+        dark_shadow = "#1E2A2D",  -- パネル/フロート (3.7% - Updated)
+        border = "#29595C",       -- 分割線 (2.6%)
+        mid_gray = "#586269",     -- 中間グレー (2.5%)
+        light_gray = "#92A2AB",   -- 明るいグレー (1.6%)
+        operator = "#ABB0CC",     -- 演算子 (1.4%)
+        fg = "#CEF5F2",           -- 前景 (6.9%)
+        near_white = "#CEF5F2",   -- ニアホワイト
+        highlight_white = "#A4E4E0", -- ハイライト白 (2.7% - Updated)
 
         -- アクセントカラー
-        cyan = "#5AAFAD",         -- Cyan
-        bright_cyan = "#96CBD1",  -- Bright Cyan
-        magenta = "#9E95B8",      -- Magenta
-        bright_magenta = "#B3A9D1", -- Bright Magenta
+        cyan = "#659D9E",         -- Teal Mid (2.7%)
+        bright_cyan = "#A4E4E0",  -- Highlight (2.7%)
+        magenta = "#926894",      -- Purple Muted (0.6%)
+        bright_magenta = "#CED5E9", -- Lavender (1.0%)
 
-        -- ANSI色（グレースケール化）
-        ansi_red = "#B9C6C5",     -- red → gray
-        ansi_green = "#9AA6A5",   -- green → gray
-        ansi_yellow = "#C7D2D1",  -- yellow → gray
-        ansi_blue = "#7E8A89",    -- blue → gray
+        -- ANSI色
+        ansi_red = "#926894",     -- red
+        ansi_green = "#4A8778",   -- green
+        ansi_yellow = "#CED5E9",  -- yellow
+        ansi_blue = "#54688D",    -- blue
 
-        -- Bright色（グレースケール化）
-        bright_red = "#E6F1F0",   -- bright red → near white
-        bright_green = "#CDD8D7", -- bright green → light gray
-        bright_yellow = "#F2FFFF", -- bright yellow → white
-        bright_blue = "#AAB6B5",  -- bright blue → light gray
+        -- Bright色
+        bright_red = "#926894",   -- bright red
+        bright_green = "#5ABDBC", -- bright green (Accent)
+        bright_yellow = "#CED5E9", -- bright yellow
+        bright_blue = "#ABB0CC",  -- bright blue
 
         -- その他
-        white = "#D7E2E1",        -- アイコン用白色（前景と統一）
-        selection = "#1E3A3A",    -- シアン系の選択背景色
+        white = "#ABB0CC",        -- アイコン用白色
+        selection = "#31364C",    -- 選択背景色 (3.0%)
       }
 
       -- ハイライトグループの設定

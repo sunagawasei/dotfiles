@@ -30,12 +30,12 @@ return {
         callback = function()
           -- ヘッダーカラーの設定（モノクロ階調）
           local colors = {
-            h1 = "#F2FFFF", -- ハイライト白
-            h2 = "#E6F1F0", -- ニアホワイト
-            h3 = "#D7E2E1", -- 前景
-            h4 = "#CDD8D7", -- ライトグレー
-            h5 = "#AAB6B5", -- 明るいグレー
-            h6 = "#7E8A89", -- 中間グレー
+            h1 = "#A4E4E0", -- Highlight (2.7%)
+            h2 = "#CEF5F2", -- Foreground (6.9%)
+            h3 = "#659D9E", -- Teal Mid (2.7%)
+            h4 = "#ABB0CC", -- Blue Light (1.4%)
+            h5 = "#92A2AB", -- Blue/Gray (1.6%)
+            h6 = "#586269", -- Mid Gray (2.5%)
           }
 
           for i = 1, 6 do
@@ -43,7 +43,7 @@ return {
             local fg_name = "RenderMarkdownH" .. i
             vim.api.nvim_set_hl(0, bg_name, {
               bg = colors["h" .. i],
-              fg = "#0E1210",  -- 背景色を前景に
+              fg = "#132018",  -- Background (63.4%)
               bold = true
             })
             vim.api.nvim_set_hl(0, fg_name, {
@@ -53,19 +53,19 @@ return {
           end
 
           -- その他のハイライト設定
-          vim.api.nvim_set_hl(0, "RenderMarkdownCode", { bg = "#2A2F2E" })  -- 濃い影
-          vim.api.nvim_set_hl(0, "RenderMarkdownCodeInline", { bg = "#2A2F2E", fg = "#D7E2E1" })  -- 濃い影 + 前景
-          vim.api.nvim_set_hl(0, "RenderMarkdownLink", { fg = "#5AAFAD", underline = true })  -- cyanアクセント
-          vim.api.nvim_set_hl(0, "RenderMarkdownQuote", { fg = "#7E8A89", italic = true })  -- 中間グレー
-          vim.api.nvim_set_hl(0, "RenderMarkdownChecked", { fg = "#5AAFAD" })  -- cyanアクセント
-          vim.api.nvim_set_hl(0, "RenderMarkdownUnchecked", { fg = "#3A3F3E" })  -- 分割線
-          vim.api.nvim_set_hl(0, "RenderMarkdownTodo", { fg = "#8C83A3" })  -- magentaアクセント
-          vim.api.nvim_set_hl(0, "RenderMarkdownImportant", { fg = "#B3A9D1" })  -- bright magenta
+          vim.api.nvim_set_hl(0, "RenderMarkdownCode", { bg = "#1E2A2D" })  -- Panel Background (3.7%)
+          vim.api.nvim_set_hl(0, "RenderMarkdownCodeInline", { bg = "#1E2A2D", fg = "#CEF5F2" })
+          vim.api.nvim_set_hl(0, "RenderMarkdownLink", { fg = "#5ABDBC", underline = true })  -- Primary Accent (1.7%)
+          vim.api.nvim_set_hl(0, "RenderMarkdownQuote", { fg = "#586269", italic = true })  -- Mid Gray
+          vim.api.nvim_set_hl(0, "RenderMarkdownChecked", { fg = "#4A8778" })  -- Teal Green (Success)
+          vim.api.nvim_set_hl(0, "RenderMarkdownUnchecked", { fg = "#29595C" })  -- Border
+          vim.api.nvim_set_hl(0, "RenderMarkdownTodo", { fg = "#926894" })  -- Purple Muted (Error/Alert)
+          vim.api.nvim_set_hl(0, "RenderMarkdownImportant", { fg = "#CED5E9" })  -- Lavender (Warning)
 
-          -- テーブル関連のハイライト設定（モノクロ基調）
-          vim.api.nvim_set_hl(0, "RenderMarkdownTableHead", { fg = "#E6F1F0", bold = true })  -- ニアホワイト
-          vim.api.nvim_set_hl(0, "RenderMarkdownTableRow", { fg = "#D7E2E1" })  -- 前景
-          vim.api.nvim_set_hl(0, "RenderMarkdownTableFill", { fg = "#3A3F3E" })  -- 分割線
+          -- テーブル関連のハイライト設定
+          vim.api.nvim_set_hl(0, "RenderMarkdownTableHead", { fg = "#A4E4E0", bold = true })
+          vim.api.nvim_set_hl(0, "RenderMarkdownTableRow", { fg = "#CEF5F2" })
+          vim.api.nvim_set_hl(0, "RenderMarkdownTableFill", { fg = "#29595C" })  -- ボーダー
         end,
       })
 
