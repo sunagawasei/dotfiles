@@ -11,28 +11,28 @@ gui:
   theme:
     # ボーダー色
     activeBorderColor:
-      - '#5AAFAD' # アクセント: cyan（ネオン青緑）
+      - '#5ABDBC' # Primary Accent (Teal Bright)
       - bold
     inactiveBorderColor:
-      - '#7E8A89' # 中間グレー（視認性改善）
+      - '#29595C' # Border (Teal Dark)
     # テキスト色
     optionsTextColor:
-      - '#D7E2E1' # 前景
+      - '#CEF5F2' # Foreground
     defaultFgColor:
-      - '#D7E2E1' # 前景
+      - '#CEF5F2' # Foreground
     # 選択行の背景
     selectedLineBgColor:
-      - '#4A4F4E' # カスタム: 分割線より1段階明るい
+      - '#31364C' # Panel Background (High Contrast)
     # Git関連の色
     unstagedChangesColor:
-      - '#8C83A3' # アクセント: magenta（グリッチ紫）
+      - '#926894' # Purple Muted (Error/Delete)
     cherryPickedCommitFgColor:
-      - '#5AAFAD' # アクセント: cyan
+      - '#5ABDBC' # Primary Accent
     cherryPickedCommitBgColor:
-      - '#2A2F2E' # 濃い影
+      - '#31364C' # Panel Background
   # 著者色設定
   authorColors:
-    '*': '#7E8A89' # 中間グレー
+    '*': '#586269' # Mid Gray
 os:
   editPreset: "nvim-remote"  # eキー用：同じNeovimインスタンスで開く
   open: '[ -z "$NVIM" ] && open {{filename}} || nvim --server "$NVIM" --remote-tab {{filename}}'
