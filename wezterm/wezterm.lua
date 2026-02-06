@@ -96,8 +96,8 @@ config.line_height = 1.1
 config.window_decorations = "INTEGRATED_BUTTONS|RESIZE|MACOS_FORCE_ENABLE_SHADOW"
 -- 統合タイトルボタンのスタイルをmacOSネイティブに設定
 config.integrated_title_button_style = "MacOsNative"
--- ウィンドウ背景の不透明度（95%）
-config.window_background_opacity = 0.95
+-- ウィンドウ背景の不透明度（88%）
+config.window_background_opacity = 0.88
 -- macOSのぼかし効果の強度
 config.macos_window_background_blur = 30
 -- ウィンドウフレームの設定
@@ -139,7 +139,7 @@ config.show_close_tab_button_in_tabs = false
 -- 非アクティブペインを暗くする設定（HSB色空間で調整）
 config.inactive_pane_hsb = {
 	saturation = 0.2, -- 彩度を80%下げる
-	brightness = 0.2, -- 明度を20%にする
+	brightness = 0.3, -- 明度を30%にする
 }
 
 config.colors = {

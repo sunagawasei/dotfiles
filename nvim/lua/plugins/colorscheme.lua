@@ -213,6 +213,7 @@ return {
         ["@punctuation"] = { fg = colors.mid_gray },
         ["@punctuation.bracket"] = { fg = colors.mid_gray },
         ["@punctuation.delimiter"] = { fg = colors.mid_gray },
+        ["@punctuation.delimiter.yaml"] = { fg = colors.light_gray }, -- YAML list marker visibility
         ["@namespace"] = { fg = colors.fg },
         ["@module"] = { fg = colors.fg },
         ["@tag"] = { fg = colors.cyan },
