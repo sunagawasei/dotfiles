@@ -2,13 +2,26 @@ return {
   "lewis6991/gitsigns.nvim",
   event = { "BufReadPre", "BufNewFile" },
   opts = {
-    -- デフォルトでサインカラムを非表示
-    signcolumn = false,  -- デフォルトOFF
-    numhl = false,       -- 行番号ハイライトもOFF
-    linehl = false,      -- 行ハイライトもOFF
-    word_diff = false,   -- 単語差分もOFF
-    current_line_blame = false, -- Blame表示もOFF
-    
+    -- Git差分とBlame表示をデフォルトで有効化
+    signcolumn = true,   -- Git差分記号を表示
+    numhl = false,       -- 行番号ハイライトはOFF
+    linehl = false,      -- 行ハイライトはOFF
+    word_diff = false,   -- 単語差分はOFF
+    current_line_blame = true, -- Blame表示をON
+
+    -- Blame表示のオプション設定
+    current_line_blame_opts = {
+      virt_text = true,              -- 仮想テキストで表示
+      virt_text_pos = 'eol',         -- 行末に表示
+      delay = 500,                   -- カーソル移動後500msで表示(ちらつき防止)
+      ignore_whitespace = true,      -- 空白のみの変更は無視
+      virt_text_priority = 100,      -- 表示優先度
+      use_focus = true,              -- アクティブウィンドウでのみ表示
+    },
+
+    -- Blame表示のフォーマット
+    current_line_blame_formatter = '<author>, <author_time:%Y-%m-%d> - <summary>',
+
     -- その他の基本設定
     attach_to_untracked = true,
     watch_gitdir = { interval = 1000, follow_files = true },
@@ -24,17 +37,7 @@ return {
     end,
   },
   keys = {
-    -- メイントグル: サインカラムの表示/非表示
-    { "<leader>ug", ":Gitsigns toggle_signs<CR>", desc = "Toggle Git signs" },
-    
-    -- 追加のトグル機能
-    { "<leader>ub", ":Gitsigns toggle_current_line_blame<CR>", desc = "Toggle Git blame line" },
-    { "<leader>un", ":Gitsigns toggle_numhl<CR>", desc = "Toggle Git number highlight" },
-    { "<leader>ul", ":Gitsigns toggle_linehl<CR>", desc = "Toggle Git line highlight" },
-    { "<leader>uw", ":Gitsigns toggle_word_diff<CR>", desc = "Toggle Git word diff" },
-    { "<leader>ud", ":Gitsigns toggle_deleted<CR>", desc = "Toggle Git deleted" },
-    
-    -- プレビュー機能（トグルではない）
+    -- HunkプレビューとBlame詳細表示
     { "<leader>hp", ":Gitsigns preview_hunk<CR>", desc = "Preview Git hunk" },
     { "<leader>hb", ":Gitsigns blame_line<CR>", desc = "Git blame line" },
   },
