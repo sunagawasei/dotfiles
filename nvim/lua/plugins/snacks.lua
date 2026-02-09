@@ -98,21 +98,36 @@ return {
     { "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
     { "<leader>gk", function() Snacks.terminal("keifu") end, desc = "Keifu (Git Graph)" },
 
-    -- 位置別ターミナル切り替え
+    -- 番号付きターミナル（トグル切り替え）
     {
-      "<leader>tr",
-      function() Snacks.terminal(nil, { win = { position = "right" } }) end,
-      desc = "Terminal (Right)",
+      "<leader>t1",
+      function()
+        Snacks.terminal.toggle(nil, {
+          count = 1,
+          win = { position = "bottom" },
+        })
+      end,
+      desc = "Terminal 1",
     },
     {
-      "<leader>tb",
-      function() Snacks.terminal(nil, { win = { position = "bottom" } }) end,
-      desc = "Terminal (Bottom)",
+      "<leader>t2",
+      function()
+        Snacks.terminal.toggle(nil, {
+          count = 2,
+          win = { position = "bottom" },
+        })
+      end,
+      desc = "Terminal 2",
     },
     {
-      "<leader>tf",
-      function() Snacks.terminal(nil, { win = { position = "float" } }) end,
-      desc = "Terminal (Float)",
+      "<leader>t3",
+      function()
+        Snacks.terminal.toggle(nil, {
+          count = 3,
+          win = { position = "bottom" },
+        })
+      end,
+      desc = "Terminal 3",
     },
 
     -- ターミナルモードでのESCキーバインド
