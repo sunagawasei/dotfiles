@@ -6,6 +6,10 @@ return {
     },
     terminal = {
       enabled = true,
+      win = {
+        position = "bottom",  -- デフォルト位置
+        stack = false,        -- 複数ターミナルを置き換え表示（横並び防止）
+      },
     },
     lazygit = {
       enabled = true,
@@ -102,30 +106,21 @@ return {
     {
       "<leader>t1",
       function()
-        Snacks.terminal.toggle(nil, {
-          count = 1,
-          win = { position = "bottom" },
-        })
+        Snacks.terminal.toggle(nil, { count = 1 })
       end,
       desc = "Terminal 1",
     },
     {
       "<leader>t2",
       function()
-        Snacks.terminal.toggle(nil, {
-          count = 2,
-          win = { position = "bottom" },
-        })
+        Snacks.terminal.toggle(nil, { count = 2 })
       end,
       desc = "Terminal 2",
     },
     {
       "<leader>t3",
       function()
-        Snacks.terminal.toggle(nil, {
-          count = 3,
-          win = { position = "bottom" },
-        })
+        Snacks.terminal.toggle(nil, { count = 3 })
       end,
       desc = "Terminal 3",
     },
