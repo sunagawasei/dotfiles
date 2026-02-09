@@ -94,8 +94,37 @@ return {
     },
   },
   keys = {
+    -- 既存のカスタムターミナル（維持）
     { "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
     { "<leader>gk", function() Snacks.terminal("keifu") end, desc = "Keifu (Git Graph)" },
+
+    -- 位置別ターミナル切り替え
+    {
+      "<leader>tr",
+      function() Snacks.terminal(nil, { win = { position = "right" } }) end,
+      desc = "Terminal (Right)",
+    },
+    {
+      "<leader>tb",
+      function() Snacks.terminal(nil, { win = { position = "bottom" } }) end,
+      desc = "Terminal (Bottom)",
+    },
+    {
+      "<leader>tf",
+      function() Snacks.terminal(nil, { win = { position = "float" } }) end,
+      desc = "Terminal (Float)",
+    },
+
+    -- ターミナルモードでのESCキーバインド
+    { "<Esc><Esc>", [[<C-\><C-n>]], mode = "t", desc = "Exit terminal mode" },
+    { "<C-q>", [[<C-\><C-n>]], mode = "t", desc = "Exit terminal mode (quick)" },
+    { "jk", [[<C-\><C-n>]], mode = "t", desc = "Exit terminal mode (jk)" },
+
+    -- ターミナルモードでのウィンドウ移動
+    { "<C-h>", [[<Cmd>wincmd h<CR>]], mode = "t", desc = "Go to left window" },
+    { "<C-j>", [[<Cmd>wincmd j<CR>]], mode = "t", desc = "Go to lower window" },
+    { "<C-k>", [[<Cmd>wincmd k<CR>]], mode = "t", desc = "Go to upper window" },
+    { "<C-l>", [[<Cmd>wincmd l<CR>]], mode = "t", desc = "Go to right window" },
   },
 }
 
