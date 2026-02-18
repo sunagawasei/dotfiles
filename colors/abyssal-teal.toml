@@ -36,14 +36,17 @@ mid_bright = "#64BBBE"        # Clear Teal (1.1%)
 standard = "#659D9E"          # Base Teal (2.3%)
 muted = "#578778"             # Muted Green-Teal (0.5%)
 deep = "#349594"              # Deep Sea Teal (0.8%)
-border = "#275D62"            # UI Borders (1.5%)
+border = "#4D8F9E"            # UI Borders (1.5%) - Visibility improved
 dark_accent = "#304D4F"       # Subtle accent (1.0%)
 sea_green = "#298577"         # Dense Teal (0.1%)
 
 # 4. Blue & Slate Spectrum
 # ------------------------
 [blues_slates]
-slate_mid = "#525B65"         # Inactive/Comments (1.5%)
+slate_mid = "#525B65"         # Inactive/Old (kept for specific uses like LspCodeLens)
+punctuation_gray = "#7A8599"  # Punctuation (Visibility improved)
+comment_gray = "#7A869A"      # Readable Comments (Visibility improved)
+git_blame_gray = "#8A97AD"    # Git Blame Info (Brighter than comments)
 slate_dark = "#1F3451"        # Dark Blue UI (0.7%)
 ocean_blue = "#326787"        # Bright Blue Accent (0.4%)
 sky_slate = "#A4ABCB"         # Light Blue-Slate (0.7%)
@@ -54,8 +57,8 @@ deep_ocean = "#2F324D"        # Shadow Blue (0.8%)
 # -----------------------------------------------------
 [purples]
 lavender = "#CED5E9"          # Light Lavender (0.8%)
-muted_purple = "#5F698E"      # Deep Purple Slate (0.7%)
-bright_purple = "#936997"     # Glitch Purple (0.4%)
+muted_purple = "#8A99BD"      # Deep Purple Slate (0.7%) - Visibility improved
+bright_purple = "#A37AA7"     # Bright Purple Enhanced - WCAG AA compliant
 dark_purple = "#4F3759"       # Shadow Purple (0.4%)
 deep_glitch = "#584EA2"       # Vibrant Purple (0.1%)
 soft_magenta = "#865F7B"      # Muted Rose (0.1%)
@@ -64,13 +67,15 @@ dark_rose = "#44363B"         # Atramentous Rose (0.5%)
 # Semantic Mappings (Expanded)
 # ----------------------------
 [semantic]
-success = "#4A8778"
+success = "#6AB9A8"           # Success indicator (Visibility improved - AAA level)
 warning = "#CED5E9"
-error = "#936997"
+error = "#A37AA7"              # Bright Purple Enhanced - WCAG AA compliant
 info = "#6CD8D3"
-comment = "#525B65"
+comment = "#7A869A"           # Improved visibility (was #525B65)
+git_blame = "#8A97AD"         # Git blame and auxiliary info
 string = "#659D9E"
-keyword = "#5F698E"           # Using Muted Purple for keywords
+keyword = "#8A99BD"           # Using Muted Purple for keywords (Visibility improved)
+punctuation = "#7A8599"       # Punctuation marks (Visibility improved)
 function = "#6CD8D3"
 type = "#A4ABCB"
 variable = "#CEF5F2"
@@ -82,7 +87,7 @@ constant = "#CED5E9"
 # --------------------------------
 [ansi]
 black = "#111E16"
-red = "#936997"
+red = "#A37AA7"                # Bright Purple Enhanced - WCAG AA compliant
 green = "#349594"
 yellow = "#CED5E9"
 blue = "#326787"
@@ -107,18 +112,20 @@ tab_bar = "#111E16"
 active_tab = "#1F3451"        # Distinct blue for active
 inactive_tab = "#111E16"
 active_tab_fg = "#B1F4ED"
-inactive_tab_fg = "#525B65"
+inactive_tab_fg = "#8A97AD"  # Git Blame Gray (6.63:1 contrast, WCAG AA)
 selection_bg = "#64BBBE"
-split = "#275D62"
+split = "#4D8F9E"             # Visibility improved
 
 [nvim]
 bg = "#0B0C0C"
 dark_shadow = "#1E1E24"
 selection = "#64BBBE"
-border = "#275D62"
-comment = "#525B65"
+border = "#4D8F9E"            # Visibility improved
+comment = "#7A869A"           # Improved visibility
+git_blame = "#8A97AD"         # Git blame info
+punctuation = "#7A8599"       # Punctuation (Visibility improved)
 string = "#659D9E"
-keyword = "#5F698E"
+keyword = "#8A99BD"           # Visibility improved
 function = "#6CD8D3"
 variable = "#CEF5F2"
 number = "#B1F4ED"
@@ -132,5 +139,5 @@ command = "#6CD8D3"
 path = "#9DDCD9"
 string = "#659D9E"
 option = "#A4ABCB"
-comment = "#525B65"
+comment = "#7A869A"           # Improved visibility
 error = "#936997"
