@@ -1,20 +1,17 @@
-# YOU MUST:
+# グローバルCLAUDE設定
 
-- コード生成時は、明示的に指定がない限りGolangを使用してください（Pythonは使用しない）
+このファイルの内容は、より効率的な`.claude/rules/`に移行されました。
 
-## セキュリティガイドライン
+## ルールファイル
 
-**クレデンシャル（認証情報）を平文表示しない**
+以下のルールが全プロジェクトに適用されます：
 
-- `cat secrets`, `echo $API_KEY` などの平文表示は禁止
-- Parameter Store/Secrets Managerから取得時は変数に直接代入
+- **Go言語規約**: 詳細は各プロジェクトの`.claude/rules/golang.md`を参照
+- **セキュリティガイドライン**: 詳細は各プロジェクトの`.claude/rules/shell-security.md`を参照
 
-```bash
-# ✅ 良い例
-API_KEY=$(aws ssm get-parameter --name "/path/API_KEY" --with-decryption --query "Parameter.Value" --output text) && \
-curl -H "Authorization: Bearer ${API_KEY}" https://api.example.com
+これらのルールは、該当するファイルを編集する際に自動的に適用されます。
 
-# ❌ 悪い例
-cat secrets
-echo $API_KEY
-```
+## スクリプト言語
+
+- スクリプトやCLIツールを新規作成する際は、**常にGo言語（Golang）を使用**すること
+- Python、Bash、Node.jsなどの他の言語は、ユーザーが明示的に指定した場合のみ使用可

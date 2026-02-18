@@ -196,11 +196,34 @@ Snacks.nvimベース：
 - **gitsigns.nvim**: Git差分表示
 
 ### エディタ機能
-- **toggleterm.nvim**: 統合ターミナル
-  - `<C-\>`: ターミナルトグル
-  - `<leader>tg`: LazyGit
-  - `<leader>tu`: GitUI
-  - `<leader>tb`: Btop
+- **toggleterm.nvim**: 統合ターミナル（最も人気のあるプラグイン）
+  - **基本操作**:
+    - `<leader>t1/t2/t3`: 番号付きターミナル
+    - `<C-/>`: 最後のターミナルトグル
+    - `<leader>ta`: 全ターミナル一括トグル
+  - **モード・方向切り替え**:
+    - `<leader>tm`: モード切り替え（Single/Side-by-Side）
+    - `<leader>th`: Horizontal（下部横分割）
+    - `<leader>tv`: Vertical（右側縦分割）
+    - `<leader>tf`: Float（フローティング）
+    - `<leader>tD`: 方向をサイクル切り替え（H→V→F）
+  - **サイズ変更**:
+    - `<M-k>` / `<M-j>`: 高さを1行ずつ増減（Alt + k/j）
+    - `<M-K>` / `<M-J>`: 高さを5行ずつ増減（Alt + Shift + k/j）
+    - `<leader>t+`: 最大化
+    - `<leader>t-`: 小サイズ（10行）
+  - **REPL機能（選択範囲送信）**:
+    - `<leader>ts`: 選択範囲をターミナルに送信（ビジュアル/ノーマル）
+    - `<leader>tl`: 選択行をターミナルに送信（ビジュアル）
+  - **管理機能**:
+    - `<leader>tn`: ターミナルに名前を付ける
+    - `<leader>tS`: ターミナル選択UI
+  - **Git統合**:
+    - `<leader>gg`: LazyGit（フローティング）
+    - `<leader>gk`: Keifu（フローティング）
+  - **ターミナル内操作**:
+    - `<Esc><Esc>` / `<C-q>` / `jk`: ノーマルモードへ
+    - `<C-h/j/k/l>`: ウィンドウ移動
 - **render-markdown.nvim**: Markdownプレビュー強化（カスタムカラー適用）
 - **flash.nvim**: 高速移動・検索
   - `s`: Flash jump（ラベル付きジャンプ）
