@@ -5,6 +5,11 @@
 # ----------------------
 # 基本設定
 # ----------------------
+# pyenv シェル統合（インタラクティブシェルのみ）
+if command -v pyenv &>/dev/null; then
+  eval "$(pyenv init -)"
+fi
+
 # Emacsキーバインドを明示的に設定（$EDITORにnvimを設定しているためviモードになるのを防ぐ）
 bindkey -e
 
@@ -60,8 +65,8 @@ ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=#659D9E'
 ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=#A4ABCB'
 ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=#A4ABCB'
 
-# コメント (Slate Mid)
-ZSH_HIGHLIGHT_STYLES[comment]='fg=#525B65'
+# コメント (Comment Gray - improved visibility)
+ZSH_HIGHLIGHT_STYLES[comment]='fg=#7A869A'
 
 # 補完定義の追加コレクション - より多くのコマンドの補完をサポート
 zinit light zsh-users/zsh-completions
@@ -168,9 +173,9 @@ export LS_COLORS='ma=48;2;100;187;190;38;2;19;32;24:di=38;2;157;220;217:ln=38;2;
 # ========================================
 export FZF_DEFAULT_OPTS='
   --color=bg+:#64BBBE,bg:-1,fg:#CEF5F2,fg+:#0B0C0C
-  --color=hl:#6CD8D3,hl+:#0B0C0C,info:#525B65,marker:#0B0C0C
-  --color=prompt:#936997,spinner:#936997,pointer:#0B0C0C,header:#525B65
-  --color=border:#275D62,gutter:-1
+  --color=hl:#6CD8D3,hl+:#0B0C0C,info:#7A869A,marker:#0B0C0C
+  --color=prompt:#936997,spinner:#936997,pointer:#0B0C0C,header:#7A869A
+  --color=border:#4D8F9E,gutter:-1
 '
 
 # Worklog CLI completion
@@ -186,8 +191,8 @@ zinit light Aloxaf/fzf-tab
 # 注意: fzf-tabの後に読み込む（fzf-tabが^Iをフックするため）
 zinit light zsh-users/zsh-autosuggestions
 
-# zsh-autosuggestions 色設定 (Slate Mid)
-ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#525B65'
+# zsh-autosuggestions 色設定 (Comment Gray - improved visibility)
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7A869A'
 
 # zsh-autosuggestions 部分適用の設定
 # forward-wordを部分適用ウィジェットとして使用
@@ -198,9 +203,9 @@ ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-char vi-forward-char)
 # fzf-tab用の色設定 (Expanded Abyssal Teal)
 zstyle ':fzf-tab:*' fzf-flags \
   --color=bg+:#64BBBE,bg:-1,fg:#CEF5F2,fg+:#0B0C0C \
-  --color=hl:#6CD8D3,hl+:#0B0C0C,info:#525B65,marker:#0B0C0C \
-  --color=prompt:#936997,spinner:#936997,pointer:#0B0C0C,header:#525B65 \
-  --color=border:#275D62,gutter:-1
+  --color=hl:#6CD8D3,hl+:#0B0C0C,info:#7A869A,marker:#0B0C0C \
+  --color=prompt:#936997,spinner:#936997,pointer:#0B0C0C,header:#7A869A \
+  --color=border:#4D8F9E,gutter:-1
 
 # fzf-tabプラグイン用の設定（デフォルトメニューを無効化）
 zstyle ':completion:*' menu no
@@ -264,8 +269,8 @@ alias ssh='TERM=xterm-256color \ssh'
 alias delta='delta --dark --paging=never --line-numbers --syntax-theme base16-256 -s'
 
 # Copilot CLIツール
-alias awscp='/opt/homebrew/bin/copilot'                           # AWS Copilot (ECS/Fargateデプロイツール)
-alias copilot='/opt/homebrew/Caskroom/copilot-cli/0.0.394/copilot'  # GitHub Copilot CLI (AIターミナルアシスタント)
+alias awscp='/opt/homebrew/bin/copilot'  # AWS Copilot (ECS/Fargateデプロイツール)
+alias copilot='/opt/homebrew/bin/copilot'  # GitHub Copilot CLI (AIターミナルアシスタント)
 
 # ----------------------
 # Google Cloud SDK

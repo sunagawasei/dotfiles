@@ -14,7 +14,7 @@ gui:
       - '#6CD8D3' # Vibrant Teal
       - bold
     inactiveBorderColor:
-      - '#275D62' # UI Border
+      - '#4D8F9E' # UI Border (Visibility improved)
     # テキスト色
     optionsTextColor:
       - '#CEF5F2'
@@ -34,7 +34,7 @@ gui:
       - '#152A2B' # Dark Teal Panel
   # 著者色設定
   authorColors:
-    '*': '#525B65' # Slate Mid
+    '*': '#8A97AD' # Git Blame Gray (improved visibility)
 os:
   editPreset: "nvim-remote"  # eキー用：同じNeovimインスタンスで開く
   open: '[ -z "$NVIM" ] && open {{filename}} || nvim --server "$NVIM" --remote-tab {{filename}}'
