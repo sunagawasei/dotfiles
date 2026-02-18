@@ -18,9 +18,15 @@ return {
         -- コアカラー
         bg = "#0B0C0C",           -- Main (Pure Black)
         dark_shadow = "#1E1E24",  -- UI Shadow
-        border = "#275D62",       -- UI Border
-        mid_gray = "#525B65",     -- Slate Mid (Comment)
+        gutter_bg = "#13171A",    -- Gutter background (LineNr/SignColumn/FoldColumn)
+        border = "#4D8F9E",       -- UI Border (Visibility improved)
+        mid_gray = "#525B65",     -- Slate Mid (kept for LspCodeLens, Conceal, inactive elements)
         light_gray = "#92A2AB",   -- Dim text
+
+        -- Visibility improvements
+        punctuation_gray = "#7A8599",  -- 句読点（視認性改善版）
+        comment_gray = "#7A869A",      -- ブルー系の明るいグレー（コメント用）
+        git_blame_gray = "#8A97AD",    -- さらに明るいグレー（Git blame用）
         operator = "#64BBBE",     -- Clear Teal
         fg = "#CEF5F2",           -- Main Text
         near_white = "#B1F4ED",   -- Brightest
@@ -33,7 +39,8 @@ return {
         bright_magenta = "#B4B7CD", -- Cloud Slate
 
         -- 拡張セマンティック
-        purple_accent = "#5F698E", -- Muted Purple (Keyword)
+        purple_accent = "#8A99BD", -- Muted Purple (Keyword) - Visibility improved
+        success = "#6AB9A8",       -- Success indicator (Visibility improved - AAA level)
         ocean_blue = "#326787",    -- Ocean Blue (Blue)
         lavender = "#CED5E9",      -- Lavender (Constant)
         
@@ -56,7 +63,7 @@ return {
         Normal = { bg = colors.bg, fg = colors.fg },
         NormalNC = { bg = colors.bg, fg = colors.fg },
         EndOfBuffer = { bg = colors.bg },
-        SignColumn = { bg = colors.bg },
+        SignColumn = { bg = colors.gutter_bg },
         VertSplit = { bg = colors.bg },
         WinSeparator = { bg = colors.bg },
 
@@ -75,7 +82,7 @@ return {
         Function = { fg = colors.cyan },
         Keyword = { fg = colors.purple_accent },
         Operator = { fg = colors.operator },
-        Comment = { fg = colors.mid_gray },
+        Comment = { fg = colors.comment_gray },  -- より明るく読みやすく
 
         -- IMEやフローティングウィンドウの設定
         NormalFloat = { bg = colors.dark_shadow, fg = colors.fg },
@@ -149,7 +156,8 @@ return {
         NvimTreeNormal = { bg = "none" },
         NvimTreeNormalNC = { bg = "none" },
         SnacksPickerTree = { bg = "none" },
-        LineNr = { bg = "none" },
+        LineNr = { bg = colors.gutter_bg },
+        CursorLineNr = { bg = colors.gutter_bg, fg = colors.highlight_white, bold = true },
 
         -- ClaudeCode関連のハイライトグループ
         ClaudeCodeNormal = { bg = "none" },
@@ -172,13 +180,13 @@ return {
         MiniIconsYellow = { fg = colors.white },
 
         -- GitSigns ハイライトグループ - モノクロ基調＋アクセント
-        GitSignsAdd = { fg = colors.cyan },
+        GitSignsAdd = { fg = colors.success },
         GitSignsChange = { fg = colors.magenta },
         GitSignsDelete = { fg = colors.light_gray },
-        GitSignsAddNr = { fg = colors.cyan },
+        GitSignsAddNr = { fg = colors.success },
         GitSignsChangeNr = { fg = colors.magenta },
         GitSignsDeleteNr = { fg = colors.light_gray },
-        GitSignsCurrentLineBlame = { fg = colors.mid_gray },
+        GitSignsCurrentLineBlame = { fg = colors.git_blame_gray },  -- コメントより明るく
 
         -- Diff関連のハイライトグループ
         DiffAdd = { fg = colors.cyan },
@@ -195,7 +203,7 @@ return {
         ["@string"] = { fg = colors.magenta },
         ["@number"] = { fg = colors.fg },
         ["@boolean"] = { fg = colors.fg },
-        ["@comment"] = { fg = colors.mid_gray },
+        ["@comment"] = { fg = colors.comment_gray },  -- Commentと統一
         ["@function"] = { fg = colors.bright_cyan },
         ["@function.call"] = { fg = colors.bright_cyan },
         ["@function.method"] = { fg = colors.bright_cyan },
@@ -210,9 +218,9 @@ return {
         ["@constant"] = { fg = colors.fg },
         ["@constant.builtin"] = { fg = colors.fg },
         ["@operator"] = { fg = colors.operator },
-        ["@punctuation"] = { fg = colors.mid_gray },
-        ["@punctuation.bracket"] = { fg = colors.mid_gray },
-        ["@punctuation.delimiter"] = { fg = colors.mid_gray },
+        ["@punctuation"] = { fg = colors.punctuation_gray },
+        ["@punctuation.bracket"] = { fg = colors.punctuation_gray },
+        ["@punctuation.delimiter"] = { fg = colors.punctuation_gray },
         ["@punctuation.delimiter.yaml"] = { fg = colors.light_gray }, -- YAML list marker visibility
         ["@namespace"] = { fg = colors.fg },
         ["@module"] = { fg = colors.fg },
@@ -228,10 +236,10 @@ return {
         ["@markup.heading.4"] = { fg = colors.operator, bold = true },
         ["@markup.heading.5"] = { fg = colors.light_gray, bold = true },
         ["@markup.heading.6"] = { fg = colors.mid_gray, bold = true },
-        ["@markup.list"] = { fg = colors.mid_gray },
-        ["@markup.list.markdown"] = { fg = colors.mid_gray },
+        ["@markup.list"] = { fg = colors.light_gray },
+        ["@markup.list.markdown"] = { fg = colors.light_gray },
         ["@markup.list.checked"] = { fg = colors.cyan },
-        ["@markup.list.unchecked"] = { fg = colors.mid_gray },
+        ["@markup.list.unchecked"] = { fg = colors.light_gray },
         ["@markup.link"] = { fg = colors.cyan, underline = true },
         ["@markup.link.label"] = { fg = colors.cyan },
         ["@markup.link.url"] = { fg = colors.mid_gray, underline = true },
@@ -241,8 +249,8 @@ return {
         ["@markup.strong"] = { fg = colors.highlight_white, bold = true },
         ["@markup.italic"] = { fg = colors.fg, italic = true },
         ["@markup.strikethrough"] = { fg = colors.mid_gray, strikethrough = true },
-        ["@markup.quote"] = { fg = colors.mid_gray, italic = true },
-        ["@punctuation.special.markdown"] = { fg = colors.mid_gray },
+        ["@markup.quote"] = { fg = colors.light_gray, italic = true },
+        ["@punctuation.special.markdown"] = { fg = colors.light_gray },
 
         -- Oil.nvim固有グループ
         OilDir = { fg = colors.cyan },
@@ -311,7 +319,7 @@ return {
 
         -- Folding関連
         Folded = { bg = colors.dark_shadow, fg = colors.mid_gray },
-        FoldColumn = { bg = "none", fg = colors.border },
+        FoldColumn = { bg = colors.gutter_bg, fg = colors.border },
 
         -- Flash.nvim
         FlashBackdrop = { fg = colors.mid_gray },
@@ -448,7 +456,7 @@ return {
         vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
         vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
         vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
-        vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
+        vim.api.nvim_set_hl(0, "SignColumn", { bg = colors.gutter_bg })
         vim.api.nvim_set_hl(0, "VertSplit", { bg = "none" })
         vim.api.nvim_set_hl(0, "WinSeparator", { bg = "none" })
 
@@ -460,8 +468,9 @@ return {
         vim.api.nvim_set_hl(0, "TabLineFill", { bg = "none" })
 
         -- 行番号
-        vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
-        vim.api.nvim_set_hl(0, "CursorLineNr", { bg = "none" })
+        vim.api.nvim_set_hl(0, "LineNr", { bg = colors.gutter_bg })
+        vim.api.nvim_set_hl(0, "CursorLineNr", { bg = colors.gutter_bg, fg = colors.highlight_white, bold = true })
+        vim.api.nvim_set_hl(0, "FoldColumn", { bg = colors.gutter_bg, fg = colors.border })
 
         -- Snacks関連のハイライトグループ（選択項目は除外）
         local snacks_groups = vim.fn.getcompletion("Snacks", "highlight")

@@ -56,16 +56,16 @@ return {
           vim.api.nvim_set_hl(0, "RenderMarkdownCode", { bg = "#152A2B" })  -- Dark Teal Panel
           vim.api.nvim_set_hl(0, "RenderMarkdownCodeInline", { bg = "#152A2B", fg = "#B1F4ED" })
           vim.api.nvim_set_hl(0, "RenderMarkdownLink", { fg = "#6CD8D3", underline = true })
-          vim.api.nvim_set_hl(0, "RenderMarkdownQuote", { fg = "#525B65", italic = true })
+          vim.api.nvim_set_hl(0, "RenderMarkdownQuote", { fg = "#92A2AB", italic = true })
           vim.api.nvim_set_hl(0, "RenderMarkdownChecked", { fg = "#349594" }) -- Deep Sea Teal
-          vim.api.nvim_set_hl(0, "RenderMarkdownUnchecked", { fg = "#275D62" }) -- UI Border
+          vim.api.nvim_set_hl(0, "RenderMarkdownUnchecked", { fg = "#92A2AB" }) -- UI Border (Visibility improved)
           vim.api.nvim_set_hl(0, "RenderMarkdownTodo", { fg = "#936997" }) -- Glitch Purple
           vim.api.nvim_set_hl(0, "RenderMarkdownImportant", { fg = "#CED5E9" }) -- Lavender
 
           -- テーブル関連のハイライト設定
           vim.api.nvim_set_hl(0, "RenderMarkdownTableHead", { fg = "#9DDCD9", bold = true })
           vim.api.nvim_set_hl(0, "RenderMarkdownTableRow", { fg = "#CEF5F2" })
-          vim.api.nvim_set_hl(0, "RenderMarkdownTableFill", { fg = "#275D62" })  -- ボーダー
+          vim.api.nvim_set_hl(0, "RenderMarkdownTableFill", { fg = "#4D8F9E" })  -- ボーダー (Visibility improved)
         end,
       })
 
