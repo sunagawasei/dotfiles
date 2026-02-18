@@ -3,7 +3,7 @@ return {
   event = { "BufReadPost", "BufNewFile" },
   opts = {
     max_lines = 3,
-    mode = "cursor",
+    mode = "topline",  -- ビューポートスクロール時のみ更新（カーソル移動では更新しない、パフォーマンス最適化）
   },
   keys = {
     {

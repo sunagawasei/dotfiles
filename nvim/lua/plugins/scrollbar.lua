@@ -59,7 +59,7 @@ return {
         "SnacksExplorer",
       },
       handlers = {
-        cursor = true,     -- カーソル位置表示
+        cursor = false,    -- カーソル位置表示（パフォーマンス最適化のため無効化）
         diagnostic = true, -- 診断情報表示
         handle = true,     -- スクロールハンドル表示
         search = false,    -- 検索結果表示（hlslens未使用のためメッセージ抑制）

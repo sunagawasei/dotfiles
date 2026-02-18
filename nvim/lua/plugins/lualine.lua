@@ -1,10 +1,10 @@
 -- Color Mapping: See colors/abyssal-teal.toml [semantic] section
 local mode_colors = {
   normal = "#525B65",   -- semantic.comment (subdued for idle state)
-  insert = "#4A8778",   -- semantic.success (green for creative action)
+  insert = "#6AB9A8",   -- semantic.success (green for creative action) - Visibility improved
   visual = "#64BBBE",   -- semantic.operator (teal bright for selection)
   replace = "#CED5E9",  -- semantic.warning (lavender for caution)
-  command = "#5F698E",  -- semantic.keyword (blue for commands)
+  command = "#8A99BD",  -- semantic.keyword (blue for commands) - Visibility improved
   terminal = "#659D9E", -- semantic.string (teal mid for shell)
   inactive = "#525B65", -- semantic.comment (dim for background)
 }
@@ -84,7 +84,7 @@ return {
             show_ahead_behind = false,
             colored = true,
             diff_color = {
-              added = { fg = "#64BBBE" },   -- semantic.operator (teal bright)
+              added = { fg = "#6AB9A8" },    -- semantic.success (visibility improved)
               modified = { fg = "#CED5E9" }, -- semantic.warning (lavender)
               removed = { fg = "#936997" },  -- semantic.error (purple muted)
             },

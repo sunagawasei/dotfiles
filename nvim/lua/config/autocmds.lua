@@ -10,6 +10,18 @@
 -- LazyVimのspell設定を無効化
 vim.api.nvim_del_augroup_by_name("lazyvim_wrap_spell")
 
+-- テキストファイルとMarkdownで折り返しを有効化（スペルチェックなし）
+vim.api.nvim_create_autocmd("FileType", {
+  group = vim.api.nvim_create_augroup("custom_text_wrap", { clear = true }),
+  pattern = { "text", "plaintex", "markdown", "gitcommit" },
+  callback = function()
+    vim.opt_local.wrap = true           -- 行折り返しを有効化
+    vim.opt_local.linebreak = false     -- 画面幅ベースで折り返し（日本語対応）
+    vim.opt_local.breakindent = true    -- 折り返し行のインデント保持
+    vim.opt_local.showbreak = "> "      -- 折り返し行マーカー（日本語対応）
+  end,
+})
+
 -- Disable the concealing in some file formats
 -- The default conceallevel is 3 in LazyVim
 vim.api.nvim_create_autocmd("FileType", {
@@ -52,14 +64,15 @@ vim.api.nvim_create_autocmd({ "FocusGained" }, {
 })
 
 -- カーソルが停止したときもチェック（updatetimeを長くしたので頻度が下がる）
-vim.api.nvim_create_autocmd({ "CursorHold" }, {
-  group = "auto_read",
-  callback = function()
-    if vim.o.buftype ~= "nofile" then
-      vim.cmd("checktime")
-    end
-  end,
-})
+-- パフォーマンス最適化のため無効化（FocusGainedで既にチェック済み）
+-- vim.api.nvim_create_autocmd({ "CursorHold" }, {
+--   group = "auto_read",
+--   callback = function()
+--     if vim.o.buftype ~= "nofile" then
+--       vim.cmd("checktime")
+--     end
+--   end,
+-- })
 
 -- ファイルが外部で変更されたときの通知（オプション）
 vim.api.nvim_create_autocmd("FileChangedShellPost", {
@@ -94,3 +107,28 @@ vim.api.nvim_create_user_command("FormatToggle", function(args)
     vim.notify("Autoformat " .. (vim.b.autoformat and "enabled" or "disabled") .. " for this buffer")
   end
 end, { bang = true })
+
+-- ターミナルバッファでTreesitter foldexprを無効化（パフォーマンス最適化）
+-- Gemini調査で判明した最大のボトルネック：
+-- Treesitterがターミナル出力（構造化されていないテキスト）を
+-- 構文解析しようとして、開閉/スクロール時に大きなラグが発生
+vim.api.nvim_create_autocmd("TermOpen", {
+  pattern = "term://*",
+  callback = function()
+    vim.opt_local.foldmethod = "manual"
+    vim.opt_local.foldexpr = "0"
+  end,
+  desc = "Disable Treesitter foldexpr in terminal buffers for performance",
+})
+
+-- CursorLineをファイルエクスプローラーで無効化（パフォーマンス最適化）
+-- Codex調査で判明したNeovim既知バグ（neovim/neovim#8159）への対策：
+-- CursorLineハイライトが下方向カーソル移動を劇的に遅延させる
+-- 上方向は高速、下方向のみ遅い非対称的な問題
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = { "neo-tree", "NvimTree", "oil" },
+  callback = function()
+    vim.opt_local.cursorline = false
+  end,
+  desc = "Disable cursorline in file explorers for performance",
+})
