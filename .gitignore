@@ -107,3 +107,9 @@ gemini/
 # Playwright CLI (session cache / screenshots)
 .playwright-cli/
 playwright-intro-page.png
+
+# Raycast (OAuth token / account credentials)
+raycast/config.json
+
+# Zsh session files
+zsh/.zsh_sessions/
