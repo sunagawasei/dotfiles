@@ -30,7 +30,7 @@ wezterm.on("update-right-status", function(window, pane)
 			table.insert(elements, { Text = "  SEARCH " }) -- NerdFont search icon
 		else
 			-- その他のモード: semantic.keyword
-			table.insert(elements, { Background = { Color = "#5F698E" } })
+			table.insert(elements, { Background = { Color = "#8A99BD" } })
 			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
 			table.insert(elements, { Text = " TABLE: " .. name .. " " })
 		end
@@ -90,19 +90,23 @@ return {
 			key = "n",
 			mods = "SUPER",
 			action = wezterm.action_callback(function(window, pane)
+				-- 現在のワークスペース名を取得
+				local workspace = window:mux_window():get_workspace()
+				
 				-- 利用可能なスクリーン情報を取得
 				local screens = wezterm.gui.screens()
 				-- 現在アクティブなスクリーンを取得
 				local active_screen = screens.active
 
-				-- アクティブスクリーンの85%の幅、90%の高さで設定
+				-- アクティブスクリーンの85%の幅、100%の高さで設定
 				local ratio_width = 0.85
 				local ratio_height = 1
 				local width = active_screen.width * ratio_width
 				local height = active_screen.height * ratio_height
 
-				-- ウィンドウをアクティブスクリーンの中央に配置して新しいウィンドウを作成
+				-- 現在のワークスペースで新しいウィンドウを作成
 				local tab, pane, new_window = wezterm.mux.spawn_window({
+					workspace = workspace,  -- 現在のワークスペースを指定
 					position = {
 						x = active_screen.x + (active_screen.width - width) / 2,
 						y = active_screen.y + (active_screen.height - height) / 2,
