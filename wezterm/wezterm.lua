@@ -76,9 +76,9 @@ end)
 -- フォントの設定（フォールバック機能付き）
 config.font = wezterm.font_with_fallback({
 	{ family = "GeistMono NF" }, -- メインフォント（Nerd Font版・略名）
-	{ family = "GeistMono NF", assume_emoji_presentation = true }, -- Nerd Fontアイコン用（2回目の定義）
-	{ family = "IBM Plex Sans JP" }, -- 日本語フォント
-	{ family = "Hiragino Kaku Gothic ProN" }, -- 日本語フォント
+	{ family = "GeistMono NF", assume_emoji_presentation = true }, -- Nerd Fontアイコン用
+	{ family = "IBM Plex Mono" }, -- 日本語フォント（モノスペース）
+	{ family = "Hiragino Kaku Gothic ProN" }, -- 日本語フォント（フォールバック）
 })
 -- フォントサイズを16ポイントに設定
 config.font_size = 14.0
@@ -88,14 +88,50 @@ config.use_cap_height_to_scale_fallback_fonts = false
 config.line_height = 1.1
 
 -- ==========================================
+-- Geist Pixel Font Rules (Semantic Pixelation)
+-- ==========================================
+-- Maps italic styling to pixel fonts for UI-only rendering
+-- Terminal content remains in Geist Mono for readability
+-- NOTE: Geist Pixel Squareフォントが未インストールのため一時的に無効化
+--[[
+config.font_rules = {
+	-- When italic is requested, use Geist Pixel instead
+	{
+		intensity = "Normal",
+		italic = true,
+		font = wezterm.font_with_fallback({
+			{
+				family = "Geist Pixel Square",
+				-- WOFF2 format with absolute path
+				-- WezTerm may support WOFF2 directly
+			},
+			{ family = "IBM Plex Sans JP" }, -- CJK fallback
+			{ family = "GeistMono NF" }, -- Ultimate fallback
+		}),
+	},
+	-- Bold + Italic → Bold Geist Pixel
+	{
+		intensity = "Bold",
+		italic = true,
+		font = wezterm.font_with_fallback({
+			{
+				family = "Geist Pixel Square",
+				weight = "Bold",
+			},
+			{ family = "IBM Plex Sans JP", weight = "Bold" },
+			{ family = "GeistMono NF", weight = "Bold" },
+		}),
+	},
+}
+--]]
+
+-- ==========================================
 -- ウィンドウ設定
 -- ==========================================
 
 -- ウィンドウの外観
--- macOSネイティブボタン付きのタイトルバー（最小化・最大化・閉じる）
-config.window_decorations = "INTEGRATED_BUTTONS|RESIZE|MACOS_FORCE_ENABLE_SHADOW"
--- 統合タイトルボタンのスタイルをmacOSネイティブに設定
-config.integrated_title_button_style = "MacOsNative"
+-- macOSネイティブボタンを非表示にし、リサイズ機能だけを残す
+config.window_decorations = "RESIZE"
 -- ウィンドウ背景の不透明度（88%）
 config.window_background_opacity = 0.88
 -- macOSのぼかし効果の強度
@@ -119,11 +155,17 @@ config.window_background_gradient = {
 config.window_padding = {
 	left = 5, -- 左余白
 	right = 5, -- 右余白
-	top = 0, -- 上余白（タブバーに密着）
-	bottom = 5, -- 下余白
+	top = 5, -- 上余白（信号ボタンを消したため少し空ける）
+	bottom = 0, -- 下余白（タブバーに密着）
 }
 -- タブバーを有効化
 config.enable_tab_bar = true
+-- タブバーを下に配置
+config.tab_bar_at_bottom = true
+-- レトロなタブバースタイルを使用（カスタマイズ性が高い）
+config.use_fancy_tab_bar = false
+-- タブが1つの時もタブバーを表示
+config.hide_tab_bar_if_only_one_tab = false
 -- タブバーの新規タブボタンを非表示
 config.show_new_tab_button_in_tab_bar = false
 -- タブインデックス番号を非表示
@@ -157,8 +199,8 @@ config.colors = {
 	selection_bg = "#64BBBE", -- Clear Teal (1.1%) - High Visibility
 
 	-- スクロールバー・分割線
-	scrollbar_thumb = "#275D62", -- UI Border
-	split = "#275D62",
+	scrollbar_thumb = "#4D8F9E", -- UI Border (Visibility improved)
+	split = "#4D8F9E",           -- Visibility improved
 
 	-- ANSI色
 	ansi = {
@@ -197,29 +239,29 @@ config.colors = {
 
 	-- タブバー設定
 	tab_bar = {
-		background = "#111E16",
+		background = "none",
 		active_tab = {
 			bg_color = "#1F3451", -- Distinct Ocean Blue for active
 			fg_color = "#B1F4ED", -- Brightest highlight
 			intensity = "Bold",
 		},
 		inactive_tab = {
-			bg_color = "#111E16",
-			fg_color = "#525B65", -- Slate Mid
+			bg_color = "none",
+			fg_color = "#8A97AD", -- Git Blame Gray (6.63:1 contrast, WCAG AA)
 		},
 		inactive_tab_hover = {
 			bg_color = "#152A2B",
 			fg_color = "#CEF5F2",
 		},
 		new_tab = {
-			bg_color = "#111E16",
-			fg_color = "#525B65",
+			bg_color = "none",
+			fg_color = "#8A97AD", -- Git Blame Gray (統一性のため)
 		},
 		new_tab_hover = {
 			bg_color = "#152A2B",
 			fg_color = "#CEF5F2",
 		},
-		inactive_tab_edge = "#275D62",
+		inactive_tab_edge = "#4D8F9E", -- Visibility improved
 	},
 }
 
@@ -277,81 +319,60 @@ local function get_short_cwd(tab, max_len)
 	return title
 end
 
--- タブタイトルのカスタマイズ処理（相対パスを表示）
-wezterm.on("format-tab-title", function(tab)
-	-- Claude Code状態を確認（tab.tab_titleを優先）
+-- タブタイトルのカスタマイズ処理（斜めシェイプの適用）
+wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover)
+	-- 背景色の定義
+	local bar_bg = "none"
+	local inactive_bg = "none"
+	local hover_bg = "#152A2B"
+
+	-- タブIDに基づく色の取得
+	local id_color = tab_id_to_color(tab.tab_id)
+
+	local bg = inactive_bg
+	local fg = "#8A97AD" -- inactive_tab.fg_color (Git Blame Gray)
+
+	if tab.is_active then
+		bg = id_color
+		fg = "#0B0C0C" -- High contrast for active tab
+	elseif hover then
+		bg = hover_bg
+		fg = "#CEF5F2" -- inactive_tab_hover.fg_color
+	end
+
+	-- Claude Code状態を確認
 	local tab_title = tab.tab_title or ""
 	local claude_status = get_claude_status(tab_title)
-
-	-- Claude状態がある場合は、状態表示を優先
-	if claude_status then
-		-- cwdを取得（最大30文字）
-		local cwd = get_short_cwd(tab, 30) or "~"
-
-		if tab.is_active then
-			local line_color = tab_id_to_color(tab.tab_id)
-			return {
-				{ Foreground = { Color = line_color } },
-				{ Text = "█ " },
-				{ Foreground = { Color = claude_status.color } },
-				{ Text = claude_status.icon .. " " },
-				{ Foreground = { Color = "#FFFFFF" } },
-				{ Text = cwd .. " " },
-			}
-		else
-			return {
-				{ Text = "  " },
-				{ Foreground = { Color = claude_status.color } },
-				{ Text = claude_status.icon .. " " },
-				{ Foreground = { Color = "#525B65" } },
-				{ Text = cwd .. " " },
-			}
-		end
-	end
-
-	-- Claude状態がない場合は、既存の処理（cwd表示）
-	-- 現在の作業ディレクトリのURIを取得
-	local cwd_uri = tab.active_pane.current_working_dir
 	local title = ""
 
-	if cwd_uri and cwd_uri.file_path then
-		local path = cwd_uri.file_path
-		local home = os.getenv("HOME")
-
-		-- ホームディレクトリの場合は「~」を表示
-		if path == home then
-			title = "~"
-		-- ホームディレクトリ配下の場合は相対パスを表示
-		elseif path:sub(1, #home) == home then
-			title = "~" .. path:sub(#home + 1)
-		-- それ以外はフルパスを表示
+	if claude_status then
+		title = get_short_cwd(tab, 30) or "~"
+		title = claude_status.icon .. " " .. title
+	else
+		local cwd_uri = tab.active_pane.current_working_dir
+		if cwd_uri and cwd_uri.file_path then
+			local path = cwd_uri.file_path
+			local home = os.getenv("HOME")
+			title = (path == home) and "~" or (path:sub(1, #home) == home and "~" .. path:sub(#home + 1) or path)
 		else
-			title = path
+			title = tab.active_pane.title
 		end
-	else
-		-- パスが取得できない場合はペインのタイトルを使用
-		title = tab.active_pane.title
+		if #title > 50 then
+			title = title:sub(1, 50) .. "…"
+		end
 	end
 
-	-- タイトルの長さを制限
-	if #title > 50 then
-		title = title:sub(1, 50) .. "…"
-	end
-
-	-- アクティブタブかどうかで表示を分ける
-	if tab.is_active then
-		-- アクティブタブ: 色付き縦線インジケーター（タブIDから決定論的に色を選択）
-		local color = tab_id_to_color(tab.tab_id)
-		return {
-			{ Foreground = { Color = color } },
-			{ Text = "█" },
-			{ Foreground = { Color = "#FFFFFF" } },
-			{ Text = " " .. title .. " " },
-		}
-	else
-		-- 非アクティブタブ: インジケーターなし
-		return "  " .. title .. "  "
-	end
+	return {
+		{ Background = { Color = bar_bg } },
+		{ Foreground = { Color = bg } },
+		{ Text = "" }, -- 左端の斜めシェイプ
+		{ Background = { Color = bg } },
+		{ Foreground = { Color = fg } },
+		{ Text = " " .. title .. " " },
+		{ Background = { Color = bar_bg } },
+		{ Foreground = { Color = bg } },
+		{ Text = "" }, -- 右端の斜めシェイプ
+	}
 end)
 
 -- ==========================================
@@ -423,8 +444,8 @@ wezterm.on("window-resized", function(window, pane)
 	local new_padding = {
 		left = padding_left,
 		right = padding_right,
-		top = 0, -- 上部パディングは変更しない
-		bottom = 5, -- 下部パディングは元の設定を維持
+		top = 5, -- 上部パディングを維持
+		bottom = 0, -- 下部パディングはタブバーに密着
 	}
 
 	overrides.window_padding = new_padding
@@ -447,8 +468,8 @@ local function toggle_centering(window, pane)
 			overrides.window_padding = {
 				left = 5,
 				right = 5,
-				top = 0,
-				bottom = 5,
+				top = 5,
+				bottom = 0,
 			}
 			window:set_config_overrides(overrides)
 		end
