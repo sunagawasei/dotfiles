@@ -42,3 +42,7 @@ opt.laststatus = 3
 if vim.fn.has("nvim-0.10") == 1 then
   vim.o.winborder = "rounded"
 end
+
+-- East Asian Ambiguous Width文字の扱い
+-- WezTermの設定（treat_east_asian_ambiguous_width_as_wide = false）と一致させる
+opt.ambiwidth = "single"

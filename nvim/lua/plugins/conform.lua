@@ -15,6 +15,7 @@ return {
       html = { "prettier" },
       css = { "prettier" },
       scss = { "prettier" },
+      vue = { "prettier" },
       rust = { "rustfmt" },
       go = { "goimports" },
       sh = { "shfmt" },
