@@ -9,6 +9,7 @@ return {
         "lua-language-server",
         "stylua",
         "typescript-language-server",
+        "vue-language-server",
         "prettier",
         "black",
         "isort",

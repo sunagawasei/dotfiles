@@ -1,3 +1,11 @@
+-- Leader key設定を最優先で実行（lazy.nvim読み込み前に必須）
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
+
+-- キャッシュ問題を回避するため、明示的にleader keyを確定
+-- これにより、どのプラグインもleader keyを正しく認識できる
+vim.api.nvim_set_keymap('', '<Space>', '<Nop>', { noremap = true, silent = true })
+
 -- bootstrap lazy.nvim, LazyVim and your plugins
 require("config.lazy")
 

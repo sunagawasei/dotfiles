@@ -1,3 +1,7 @@
+-- Leader keyの再確認（プラグイン読み込み前に確実に設定）
+vim.g.mapleader = " "
+vim.g.maplocalleader = "\\"
+
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
   local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -21,6 +25,7 @@ require("lazy").setup({
     -- import/override with your plugins
     { import = "lazyvim.plugins.extras.lang.python" },
     { import = "lazyvim.plugins.extras.lang.go" },
+    { import = "lazyvim.plugins.extras.lang.vue" },
     -- { import = "lazyvim.plugins.extras.lang.markdown" }, -- markdownlintを無効化するため無効化
     { import = "lazyvim.plugins.extras.ui.mini-indentscope" },
     { import = "lazyvim.plugins.extras.ai.copilot" },
