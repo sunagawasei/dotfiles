@@ -34,15 +34,19 @@
 
 | グループ | 色 | HEX | 用途 |
 |---------|-----|-----|-----|
-| **Teal** | Vibrant Teal | `#6CD8D3` | 成功、関数、コマンド |
+| **Teal** | Success Teal | `#6AB9A8` | 成功インジケーター（AAA level） |
+| | Vibrant Teal | `#6CD8D3` | 関数、コマンド |
 | | Clear Teal | `#64BBBE` | 演算子、ステータス |
 | | Base Teal | `#659D9E` | 文字列、情報 |
-| | UI Border | `#275D62` | 境界線、分割線 |
-| **Slate** | Slate Mid | `#525B65` | コメント、非アクティブ |
+| | UI Border | `#4D8F9E` | 境界線、分割線（視認性改善版） |
+| **Slate** | Git Blame Gray | `#8A97AD` | Git blame、補助情報 |
+| | Comment Gray | `#7A869A` | コメント（視認性改善版） |
+| | Punctuation Gray | `#7A8599` | 句読点（視認性改善版） |
+| | Slate Mid | `#525B65` | 非アクティブ（特定用途のみ） |
 | | Sky Slate | `#A4ABCB` | 型、オプション |
 | **Purple** | Glitch Purple | `#936997` | エラー、重要警告 |
 | | Lavender | `#CED5E9` | 警告、定数、ラベル |
-| | Muted Purple | `#5F698E` | キーワード、予約語 |
+| | Muted Purple | `#8A99BD` | キーワード、予約語（視認性改善版） |
 
 ### ANSI 16色（拡張マッピング）
 
@@ -75,7 +79,10 @@
 2. **`#B1F4ED` (High)**: 定数、アクティブ要素
 3. **`#CEF5F2` (Standard)**: メインテキスト
 4. **`#92A2AB` (Low)**: 補助情報
-5. **`#525B65` (Inactive)**: コメント
+5. **`#8A97AD` (Auxiliary)**: Git blame、補助的な情報
+6. **`#7A869A` (Comment)**: コメント（視認性改善版）
+7. **`#7A8599` (Punctuation)**: 句読点（視認性改善版）
+8. **`#525B65` (Inactive)**: 非アクティブ要素（意図的に暗い）
 
 ---
 
