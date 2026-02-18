@@ -5,25 +5,10 @@ return {
       enabled = false,  -- oil.nvim起動のためdashboardを無効化
     },
     terminal = {
-      enabled = true,
-      win = {
-        position = "bottom",  -- デフォルト位置
-        stack = false,        -- 複数ターミナルを置き換え表示（横並び防止）
-      },
+      enabled = false,  -- toggleterm使用のため無効化
     },
     lazygit = {
-      enabled = true,
-      configure = false,  -- 自動テーマ設定を無効化（パフォーマンス改善）
-      config = {
-        -- os = { editPreset = "nvim-remote" },  -- nvr未インストールのため無効化
-        gui = { nerdFontsVersion = "3" },
-      },
-      win = {
-        style = "lazygit",
-        wo = {
-          scrolloff = 0,  -- スクロールオフセットを無効化してパフォーマンス改善
-        },
-      },
+      enabled = false,  -- toggletermで実装
     },
     picker = {
       sources = {
@@ -98,43 +83,14 @@ return {
     },
   },
   keys = {
-    -- 既存のカスタムターミナル（維持）
-    { "<leader>gg", function() Snacks.lazygit() end, desc = "Lazygit" },
-    { "<leader>gk", function() Snacks.terminal("keifu") end, desc = "Keifu (Git Graph)" },
-
-    -- 番号付きターミナル（トグル切り替え）
+    -- Zen モードのみ維持
     {
-      "<leader>t1",
+      "<C-w>z",
       function()
-        Snacks.terminal.toggle(nil, { count = 1 })
+        Snacks.zen()
       end,
-      desc = "Terminal 1",
+      desc = "Toggle Zen Mode",
     },
-    {
-      "<leader>t2",
-      function()
-        Snacks.terminal.toggle(nil, { count = 2 })
-      end,
-      desc = "Terminal 2",
-    },
-    {
-      "<leader>t3",
-      function()
-        Snacks.terminal.toggle(nil, { count = 3 })
-      end,
-      desc = "Terminal 3",
-    },
-
-    -- ターミナルモードでのESCキーバインド
-    { "<Esc><Esc>", [[<C-\><C-n>]], mode = "t", desc = "Exit terminal mode" },
-    { "<C-q>", [[<C-\><C-n>]], mode = "t", desc = "Exit terminal mode (quick)" },
-    { "jk", [[<C-\><C-n>]], mode = "t", desc = "Exit terminal mode (jk)" },
-
-    -- ターミナルモードでのウィンドウ移動
-    { "<C-h>", [[<Cmd>wincmd h<CR>]], mode = "t", desc = "Go to left window" },
-    { "<C-j>", [[<Cmd>wincmd j<CR>]], mode = "t", desc = "Go to lower window" },
-    { "<C-k>", [[<Cmd>wincmd k<CR>]], mode = "t", desc = "Go to upper window" },
-    { "<C-l>", [[<Cmd>wincmd l<CR>]], mode = "t", desc = "Go to right window" },
   },
 }
 
