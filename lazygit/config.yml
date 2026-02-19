@@ -37,7 +37,7 @@ gui:
     '*': '#8A97AD' # Git Blame Gray (improved visibility)
 os:
   editPreset: "nvim-remote"  # eキー用：同じNeovimインスタンスで開く
-  open: '[ -z "$NVIM" ] && open {{filename}} || nvim --server "$NVIM" --remote-tab {{filename}}'
+  open: '[ -z "$NVIM" ] && open {{filename}} || nvim --server "$NVIM" --remote {{filename}}'
 git:
   autoFetch: true # 自動fetchを有効化
   autoRefresh: true # 自動リフレッシュを有効化してgit操作を即座に反映

@@ -121,6 +121,38 @@ vim.api.nvim_create_autocmd("TermOpen", {
   desc = "Disable Treesitter foldexpr in terminal buffers for performance",
 })
 
+-- ターミナルモード（tモード）でもleader keyマッピングを使えるようにする
+-- 背景: terminal_mappings=trueはtogglterm固有のマッピングのみ有効にするため、
+-- LazyVimのグローバルleader keyマッピングはtモードでは動作しない。
+-- ここでstopinsertしてからSnacksを呼び出すことで、ターミナルモードのままでも動作する。
+vim.api.nvim_create_autocmd("TermOpen", {
+  pattern = "term://*toggleterm#*",
+  callback = function()
+    local opts = { buffer = 0, silent = true }
+    vim.keymap.set("t", "<leader>ff", function()
+      vim.cmd("stopinsert")
+      Snacks.picker.files()
+    end, vim.tbl_extend("force", opts, { desc = "Find Files (from terminal)" }))
+    vim.keymap.set("t", "<leader><space>", function()
+      vim.cmd("stopinsert")
+      Snacks.picker.files()
+    end, vim.tbl_extend("force", opts, { desc = "Find Files (from terminal)" }))
+    vim.keymap.set("t", "<leader>fg", function()
+      vim.cmd("stopinsert")
+      Snacks.picker.grep()
+    end, vim.tbl_extend("force", opts, { desc = "Grep (from terminal)" }))
+    vim.keymap.set("t", "<leader>fb", function()
+      vim.cmd("stopinsert")
+      Snacks.picker.buffers()
+    end, vim.tbl_extend("force", opts, { desc = "Buffers (from terminal)" }))
+    vim.keymap.set("t", "<leader>e", function()
+      vim.cmd("stopinsert")
+      Snacks.picker.explorer()
+    end, vim.tbl_extend("force", opts, { desc = "Explorer (from terminal)" }))
+  end,
+  desc = "Enable leader key mappings in toggleterm terminal mode",
+})
+
 -- CursorLineをファイルエクスプローラーで無効化（パフォーマンス最適化）
 -- Codex調査で判明したNeovim既知バグ（neovim/neovim#8159）への対策：
 -- CursorLineハイライトが下方向カーソル移動を劇的に遅延させる
