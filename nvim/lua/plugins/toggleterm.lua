@@ -330,12 +330,6 @@ return {
       desc = "Exit terminal mode (quick)",
     },
     {
-      "jk",
-      [[<C-\><C-n>]],
-      mode = "t",
-      desc = "Exit terminal mode (jk)",
-    },
-    {
       "<C-h>",
       [[<Cmd>wincmd h<CR>]],
       mode = "t",
