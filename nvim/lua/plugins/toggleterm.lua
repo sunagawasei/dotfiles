@@ -137,6 +137,9 @@ return {
     local lazygit = Terminal:new({
       cmd = "lazygit",
       direction = "float",
+      env = {
+        NVIM = vim.v.servername, -- $NVIMを明示的に渡してneovim-remoteで開けるようにする
+      },
       float_opts = {
         border = "curved",
         width = math.floor(vim.o.columns * 0.95),
