@@ -25,46 +25,80 @@ let &t_EI = "\e[1 q"  " Normal: ブロック
 let &t_SR = "\e[3 q"  " Replace: 下線
 
 " ========================================
-" モノクロ基調＋アクセント（Neovim互換）
+" Abyssal Teal カラースキーム（TOML準拠）
 " ========================================
 
-" 背景・前景
-highlight Normal guibg=#0E1210 guifg=#D7E2E1 ctermbg=233 ctermfg=253
-highlight NonText guibg=NONE guifg=#3A3F3E ctermbg=NONE ctermfg=237
+" 背景・前景（透過）
+highlight Normal guibg=NONE guifg=#CEF5F2 ctermbg=NONE ctermfg=195
+highlight NormalNC guibg=NONE guifg=#CEF5F2 ctermbg=NONE ctermfg=195
+highlight NonText guibg=NONE guifg=#4D8F9E ctermbg=NONE ctermfg=67
+highlight EndOfBuffer guibg=NONE ctermbg=NONE
 
 " 行番号
-highlight LineNr guifg=#7E8A89 guibg=NONE ctermfg=245 ctermbg=NONE
-highlight CursorLineNr guifg=#D7E2E1 guibg=NONE ctermfg=253 ctermbg=NONE
+highlight LineNr guifg=#7A869A guibg=NONE ctermfg=245 ctermbg=NONE
+highlight CursorLineNr guifg=#F2FFFF guibg=NONE ctermfg=15 ctermbg=NONE gui=bold cterm=bold
 
-" カーソルライン（下線なし）
-highlight CursorLine guibg=#2A2F2E ctermbg=235 cterm=NONE gui=NONE
+" カーソルライン
+highlight CursorLine guibg=#1E1E24 ctermbg=234 cterm=NONE gui=NONE
+highlight CursorColumn guibg=#1E1E24 ctermbg=234
+highlight ColorColumn guibg=#1E1E24 ctermbg=234
 
 " 構文ハイライト
-highlight Comment guifg=#7E8A89 ctermfg=245              " 中間グレー
-highlight Keyword guifg=#5AAFAD ctermfg=73               " cyanアクセント
-highlight Statement guifg=#5AAFAD ctermfg=73             " cyanアクセント
-highlight Conditional guifg=#5AAFAD ctermfg=73           " cyanアクセント
-highlight Repeat guifg=#5AAFAD ctermfg=73                " cyanアクセント
-highlight String guifg=#8C83A3 ctermfg=103               " magentaアクセント
-highlight Character guifg=#8C83A3 ctermfg=103            " magentaアクセント
-highlight Function guifg=#96CBD1 ctermfg=152             " bright cyanアクセント
-highlight Identifier guifg=#D7E2E1 ctermfg=253           " 前景
-highlight Number guifg=#D7E2E1 ctermfg=253               " 前景
-highlight Float guifg=#D7E2E1 ctermfg=253                " 前景
-highlight Boolean guifg=#D7E2E1 ctermfg=253              " 前景
-highlight Type guifg=#96CBD1 ctermfg=152                 " bright cyanアクセント
-highlight Constant guifg=#D7E2E1 ctermfg=253             " 前景
-highlight Operator guifg=#CDD8D7 ctermfg=252             " ライトグレー
-highlight PreProc guifg=#5AAFAD ctermfg=73               " cyanアクセント
-highlight Special guifg=#D7E2E1 ctermfg=253              " 前景
+highlight Comment guifg=#7A869A ctermfg=245
+highlight Keyword guifg=#8A99BD ctermfg=103
+highlight Statement guifg=#8A99BD ctermfg=103
+highlight Conditional guifg=#8A99BD ctermfg=103
+highlight Repeat guifg=#8A99BD ctermfg=103
+highlight String guifg=#659D9E ctermfg=73
+highlight Character guifg=#659D9E ctermfg=73
+highlight Function guifg=#6CD8D3 ctermfg=80
+highlight Identifier guifg=#CEF5F2 ctermfg=195
+highlight Number guifg=#B1F4ED ctermfg=159
+highlight Float guifg=#B1F4ED ctermfg=159
+highlight Boolean guifg=#B1F4ED ctermfg=159
+highlight Type guifg=#A4ABCB ctermfg=146
+highlight Constant guifg=#CED5E9 ctermfg=253
+highlight Operator guifg=#64BBBE ctermfg=73
+highlight PreProc guifg=#6CD8D3 ctermfg=80
+highlight Special guifg=#525B65 ctermfg=240
+highlight Todo guifg=#6CD8D3 guibg=NONE ctermfg=80 ctermbg=NONE gui=bold cterm=bold
+highlight Underlined guifg=#6CD8D3 ctermfg=80 gui=underline cterm=underline
+highlight Conceal guifg=#525B65 ctermfg=240
 
 " UI要素
-highlight VertSplit guifg=#3A3F3E guibg=NONE ctermfg=237 ctermbg=NONE
-highlight StatusLine guifg=#D7E2E1 guibg=#2A2F2E ctermfg=253 ctermbg=235
-highlight StatusLineNC guifg=#7E8A89 guibg=#0E1210 ctermfg=245 ctermbg=233
-highlight Visual guibg=#2A2F2E guifg=#F2FFFF ctermbg=235 ctermfg=255
-highlight Pmenu guibg=#2A2F2E guifg=#D7E2E1 ctermbg=235 ctermfg=253
-highlight PmenuSel guibg=#3A3F3E guifg=#F2FFFF ctermbg=237 ctermfg=255
-highlight Search guibg=#5AAFAD guifg=#0E1210 ctermbg=73 ctermfg=233      " cyanアクセント
-highlight IncSearch guibg=#5AAFAD guifg=#0E1210 ctermbg=73 ctermfg=233   " cyanアクセント
-highlight MatchParen guibg=#3A3F3E guifg=#F2FFFF ctermbg=237 ctermfg=255
+highlight SignColumn guibg=NONE ctermbg=NONE
+highlight FoldColumn guibg=NONE guifg=#4D8F9E ctermbg=NONE ctermfg=67
+highlight VertSplit guifg=#4D8F9E guibg=NONE ctermfg=67 ctermbg=NONE
+highlight StatusLine guifg=#CEF5F2 guibg=NONE ctermfg=195 ctermbg=NONE gui=bold cterm=bold
+highlight StatusLineNC guifg=#525B65 guibg=NONE ctermfg=240 ctermbg=NONE gui=NONE cterm=NONE
+highlight TabLine guifg=#525B65 guibg=NONE ctermfg=240 ctermbg=NONE
+highlight TabLineSel guifg=#CEF5F2 guibg=NONE ctermfg=195 ctermbg=NONE gui=bold cterm=bold
+highlight TabLineFill guibg=NONE ctermbg=NONE
+highlight Visual guibg=#64BBBE guifg=#0B0C0C ctermbg=73 ctermfg=232
+highlight Pmenu guibg=#1E1E24 guifg=#CEF5F2 ctermbg=234 ctermfg=195
+highlight PmenuSel guibg=#1E1E24 guifg=#F2FFFF ctermbg=234 ctermfg=15
+highlight Search guibg=#1E1E24 guifg=#6CD8D3 ctermbg=234 ctermfg=80
+highlight IncSearch guibg=#6CD8D3 guifg=#0B0C0C ctermbg=80 ctermfg=232
+highlight MatchParen guibg=#4D8F9E guifg=#F2FFFF ctermbg=67 ctermfg=15 gui=bold cterm=bold
+
+" 追加グループ
+highlight Directory guifg=#6CD8D3 ctermfg=80
+highlight Title guifg=#9DDCD9 ctermfg=152 gui=bold cterm=bold
+highlight Folded guibg=#1E1E24 guifg=#525B65 ctermbg=234 ctermfg=240
+highlight WildMenu guibg=#1E1E24 guifg=#F2FFFF ctermbg=234 ctermfg=15
+highlight Question guifg=#6CD8D3 ctermfg=80
+highlight MoreMsg guifg=#6CD8D3 ctermfg=80
+highlight ModeMsg guifg=#CEF5F2 ctermfg=195 gui=bold cterm=bold
+highlight QuickFixLine guibg=#1E1E24 ctermbg=234
+highlight ErrorMsg guifg=#A37AA7 ctermfg=133
+highlight WarningMsg guifg=#B4B7CD ctermfg=146
+
+" Diff
+highlight DiffAdd guifg=#6CD8D3 guibg=#0D1F1F ctermfg=80 ctermbg=234
+highlight DiffChange guifg=#A37AA7 guibg=#1A141A ctermfg=133 ctermbg=234
+highlight DiffDelete guifg=#92A2AB guibg=#151515 ctermfg=247 ctermbg=233
+highlight DiffText guifg=#9DDCD9 guibg=NONE ctermfg=152 ctermbg=NONE gui=bold cterm=bold
+
+" スペルチェック
+highlight SpellBad guifg=#A37AA7 ctermfg=133 gui=undercurl cterm=underline
+highlight SpellCap guifg=#B4B7CD ctermfg=146 gui=undercurl cterm=underline
