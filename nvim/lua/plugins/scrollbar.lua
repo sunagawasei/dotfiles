@@ -5,19 +5,18 @@ return {
     "lewis6991/gitsigns.nvim",
   },
   config = function()
+    local p = require("config.palette").colors
     local colors = {
-      -- abyssal-teal.toml準拠カラー
-      handle = "#1E1E24",        -- スクロールバーハンドル（core.ui_shadow）
-      search = "#64BBBE",        -- 検索結果（semantic.operator）
-      error = "#936997",         -- エラー（semantic.error）
-      warn = "#CED5E9",          -- 警告（semantic.warning）
-      info = "#6CD8D3",          -- 情報（semantic.info）
-      hint = "#64BBBE",          -- ヒント（semantic.operator）
-      misc = "#525B65",          -- その他（semantic.comment）
-      -- Git関連
-      GitAdd = "#64BBBE",        -- 追加（semantic.operator）
-      GitChange = "#936997",     -- 変更（semantic.error）
-      GitDelete = "#92A2AB",     -- 削除（foregrounds.dim）
+      handle = p.dark_shadow,   -- core.ui_shadow
+      search = p.operator,      -- semantic.operator
+      error = p.magenta,        -- semantic.error
+      warn = p.lavender,        -- semantic.warning
+      info = p.cyan,            -- semantic.info
+      hint = p.operator,        -- semantic.operator
+      misc = p.mid_gray,        -- semantic.comment
+      GitAdd = p.operator,      -- semantic.operator
+      GitChange = p.magenta,    -- semantic.error
+      GitDelete = p.light_gray, -- foregrounds.dim
     }
 
     require("scrollbar").setup({

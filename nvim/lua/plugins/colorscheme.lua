@@ -13,49 +13,8 @@ return {
     lazy = false,
     priority = 1000,
     config = function()
-      -- カラーパレット定義 (Expanded Abyssal Teal)
-      local colors = {
-        -- コアカラー
-        bg = "#0B0C0C",           -- Main (Pure Black)
-        dark_shadow = "#1E1E24",  -- UI Shadow
-        gutter_bg = "#13171A",    -- Gutter background (LineNr/SignColumn/FoldColumn)
-        border = "#4D8F9E",       -- UI Border (Visibility improved)
-        mid_gray = "#525B65",     -- Slate Mid (kept for LspCodeLens, Conceal, inactive elements)
-        light_gray = "#92A2AB",   -- Dim text
-
-        -- Visibility improvements
-        punctuation_gray = "#7A8599",  -- 句読点（視認性改善版）
-        comment_gray = "#7A869A",      -- ブルー系の明るいグレー（コメント用）
-        git_blame_gray = "#8A97AD",    -- さらに明るいグレー（Git blame用）
-        operator = "#64BBBE",     -- Clear Teal
-        fg = "#CEF5F2",           -- Main Text
-        near_white = "#B1F4ED",   -- Brightest
-        highlight_white = "#F2FFFF", -- Purest
-
-        -- アクセントカラー
-        cyan = "#6CD8D3",         -- Vibrant Teal
-        bright_cyan = "#9DDCD9",  -- Heading Cyan
-        magenta = "#936997",      -- Glitch Purple
-        bright_magenta = "#B4B7CD", -- Cloud Slate
-
-        -- 拡張セマンティック
-        purple_accent = "#8A99BD", -- Muted Purple (Keyword) - Visibility improved
-        success = "#6AB9A8",       -- Success indicator (Visibility improved - AAA level)
-        ocean_blue = "#326787",    -- Ocean Blue (Blue)
-        lavender = "#CED5E9",      -- Lavender (Constant)
-        
-        -- ANSI/Terminal
-        ansi_red = "#936997",
-        ansi_green = "#349594",
-        ansi_yellow = "#CED5E9",
-        ansi_blue = "#326787",
-
-        -- その他
-        white = "#A4ABCB",        -- Sky Slate (Icon)
-        selection = "#64BBBE",    -- Clear Teal (1.1%)
-        selection_fg = "#0B0C0C",
-        string = "#659D9E",       -- semantic.string
-      }
+      -- カラーパレット定義 — TOMLソース: colors/abyssal-teal.toml
+      local colors = require("config.palette").colors
 
       -- ハイライトグループの設定
       local highlights = {
@@ -63,7 +22,7 @@ return {
         Normal = { bg = colors.bg, fg = colors.fg },
         NormalNC = { bg = colors.bg, fg = colors.fg },
         EndOfBuffer = { bg = colors.bg },
-        SignColumn = { bg = colors.gutter_bg },
+        SignColumn = { bg = "none" },
         VertSplit = { bg = colors.bg },
         WinSeparator = { bg = colors.bg },
 
@@ -156,8 +115,8 @@ return {
         NvimTreeNormal = { bg = "none" },
         NvimTreeNormalNC = { bg = "none" },
         SnacksPickerTree = { bg = "none" },
-        LineNr = { bg = colors.gutter_bg },
-        CursorLineNr = { bg = colors.gutter_bg, fg = colors.highlight_white, bold = true },
+        LineNr = { bg = "none" },
+        CursorLineNr = { bg = "none", fg = colors.highlight_white, bold = true },
 
         -- ClaudeCode関連のハイライトグループ
         ClaudeCodeNormal = { bg = "none" },
@@ -189,18 +148,18 @@ return {
         GitSignsCurrentLineBlame = { fg = colors.git_blame_gray },  -- コメントより明るく
 
         -- Diff関連のハイライトグループ
-        DiffAdd = { fg = colors.cyan },
-        DiffChange = { fg = colors.magenta },
-        DiffDelete = { fg = colors.light_gray },
+        DiffAdd = { fg = colors.cyan, bg = "#0D1F1F" },
+        DiffChange = { fg = colors.magenta, bg = "#1A141A" },
+        DiffDelete = { fg = colors.light_gray, bg = "#151515" },
         DiffText = { fg = colors.bright_cyan, bold = true },
 
         -- 構文ハイライト（Cyber Glitch Teal - ネオン系配色）
-        ["@keyword"] = { fg = colors.cyan },
-        ["@keyword.function"] = { fg = colors.cyan },
-        ["@keyword.operator"] = { fg = colors.cyan },
-        ["@keyword.return"] = { fg = colors.cyan },
+        ["@keyword"] = { fg = colors.purple_accent },
+        ["@keyword.function"] = { fg = colors.purple_accent },
+        ["@keyword.operator"] = { fg = colors.purple_accent },
+        ["@keyword.return"] = { fg = colors.purple_accent },
         ["@keyword.import"] = { fg = colors.cyan },
-        ["@string"] = { fg = colors.magenta },
+        ["@string"] = { fg = colors.string },
         ["@number"] = { fg = colors.fg },
         ["@boolean"] = { fg = colors.fg },
         ["@comment"] = { fg = colors.comment_gray },  -- Commentと統一
@@ -319,7 +278,7 @@ return {
 
         -- Folding関連
         Folded = { bg = colors.dark_shadow, fg = colors.mid_gray },
-        FoldColumn = { bg = colors.gutter_bg, fg = colors.border },
+        FoldColumn = { bg = "none", fg = colors.border },
 
         -- Flash.nvim
         FlashBackdrop = { fg = colors.mid_gray },
@@ -456,7 +415,7 @@ return {
         vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
         vim.api.nvim_set_hl(0, "NormalNC", { bg = "none" })
         vim.api.nvim_set_hl(0, "EndOfBuffer", { bg = "none" })
-        vim.api.nvim_set_hl(0, "SignColumn", { bg = colors.gutter_bg })
+        vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
         vim.api.nvim_set_hl(0, "VertSplit", { bg = "none" })
         vim.api.nvim_set_hl(0, "WinSeparator", { bg = "none" })
 
@@ -468,9 +427,9 @@ return {
         vim.api.nvim_set_hl(0, "TabLineFill", { bg = "none" })
 
         -- 行番号
-        vim.api.nvim_set_hl(0, "LineNr", { bg = colors.gutter_bg })
-        vim.api.nvim_set_hl(0, "CursorLineNr", { bg = colors.gutter_bg, fg = colors.highlight_white, bold = true })
-        vim.api.nvim_set_hl(0, "FoldColumn", { bg = colors.gutter_bg, fg = colors.border })
+        vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
+        vim.api.nvim_set_hl(0, "CursorLineNr", { bg = "none", fg = colors.highlight_white, bold = true })
+        vim.api.nvim_set_hl(0, "FoldColumn", { bg = "none", fg = colors.border })
 
         -- Snacks関連のハイライトグループ（選択項目は除外）
         local snacks_groups = vim.fn.getcompletion("Snacks", "highlight")
@@ -538,9 +497,7 @@ return {
       -- 複数のイベントで透明化を実行
       vim.api.nvim_create_autocmd({
         "ColorScheme",
-        "VimEnter",
         "UIEnter",
-        "BufWinEnter",
       }, {
         pattern = "*",
         callback = function()

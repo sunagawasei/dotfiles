@@ -26,47 +26,51 @@ return {
       require("render-markdown").setup(opts)
 
       -- モノクロ基調＋アクセントカラーテーマとの統合
+      local function apply_colors()
+        local p = require("config.palette").colors
+
+        -- ヘッダーカラーの設定 (Expanded Abyssal Teal)
+        local h_colors = {
+          h1 = p.bright_cyan,    -- Heading Cyan
+          h2 = p.fg,             -- Main Text
+          h3 = p.operator,       -- Clear Teal
+          h4 = p.white,          -- Sky Slate
+          h5 = p.bright_magenta, -- Cloud Slate
+          h6 = p.mid_gray,       -- Slate Mid
+        }
+
+        for i = 1, 6 do
+          local bg_name = "RenderMarkdownH" .. i .. "Bg"
+          local fg_name = "RenderMarkdownH" .. i
+          vim.api.nvim_set_hl(0, bg_name, {
+            bg = h_colors["h" .. i],
+            fg = p.bg,   -- サーフェス統一: panel_bg背景上のテキストは bg で contrast確保
+            bold = true,
+          })
+          vim.api.nvim_set_hl(0, fg_name, {
+            fg = h_colors["h" .. i],
+            bold = true,
+          })
+        end
+
+        -- サーフェス色の統一 (Step 10): code block は panel_bg で一貫
+        vim.api.nvim_set_hl(0, "RenderMarkdownCode", { bg = p.panel_bg })
+        vim.api.nvim_set_hl(0, "RenderMarkdownCodeInline", { bg = p.panel_bg, fg = p.near_white })
+        vim.api.nvim_set_hl(0, "RenderMarkdownLink", { fg = p.cyan, underline = true })
+        vim.api.nvim_set_hl(0, "RenderMarkdownQuote", { fg = p.light_gray, italic = true })
+        vim.api.nvim_set_hl(0, "RenderMarkdownChecked", { fg = p.ansi_green })
+        vim.api.nvim_set_hl(0, "RenderMarkdownUnchecked", { fg = p.light_gray })
+        vim.api.nvim_set_hl(0, "RenderMarkdownTodo", { fg = p.magenta })
+        vim.api.nvim_set_hl(0, "RenderMarkdownImportant", { fg = p.lavender })
+
+        -- テーブル関連のハイライト設定
+        vim.api.nvim_set_hl(0, "RenderMarkdownTableHead", { fg = p.bright_cyan, bold = true })
+        vim.api.nvim_set_hl(0, "RenderMarkdownTableRow", { fg = p.fg })
+        vim.api.nvim_set_hl(0, "RenderMarkdownTableFill", { fg = p.border })
+      end
+
       vim.api.nvim_create_autocmd("ColorScheme", {
-        callback = function()
-          -- ヘッダーカラーの設定 (Expanded Abyssal Teal)
-          local colors = {
-            h1 = "#9DDCD9", -- Heading Cyan
-            h2 = "#CEF5F2", -- Main Text
-            h3 = "#64BBBE", -- Clear Teal
-            h4 = "#A4ABCB", -- Sky Slate
-            h5 = "#B4B7CD", -- Cloud Slate
-            h6 = "#525B65", -- Slate Mid
-          }
-
-          for i = 1, 6 do
-            local bg_name = "RenderMarkdownH" .. i .. "Bg"
-            local fg_name = "RenderMarkdownH" .. i
-            vim.api.nvim_set_hl(0, bg_name, {
-              bg = colors["h" .. i],
-              fg = "#0B0C0C",  -- Background (Pure Black)
-              bold = true
-            })
-            vim.api.nvim_set_hl(0, fg_name, {
-              fg = colors["h" .. i],
-              bold = true
-            })
-          end
-
-          -- その他のハイライト設定
-          vim.api.nvim_set_hl(0, "RenderMarkdownCode", { bg = "#152A2B" })  -- Dark Teal Panel
-          vim.api.nvim_set_hl(0, "RenderMarkdownCodeInline", { bg = "#152A2B", fg = "#B1F4ED" })
-          vim.api.nvim_set_hl(0, "RenderMarkdownLink", { fg = "#6CD8D3", underline = true })
-          vim.api.nvim_set_hl(0, "RenderMarkdownQuote", { fg = "#92A2AB", italic = true })
-          vim.api.nvim_set_hl(0, "RenderMarkdownChecked", { fg = "#349594" }) -- Deep Sea Teal
-          vim.api.nvim_set_hl(0, "RenderMarkdownUnchecked", { fg = "#92A2AB" }) -- UI Border (Visibility improved)
-          vim.api.nvim_set_hl(0, "RenderMarkdownTodo", { fg = "#936997" }) -- Glitch Purple
-          vim.api.nvim_set_hl(0, "RenderMarkdownImportant", { fg = "#CED5E9" }) -- Lavender
-
-          -- テーブル関連のハイライト設定
-          vim.api.nvim_set_hl(0, "RenderMarkdownTableHead", { fg = "#9DDCD9", bold = true })
-          vim.api.nvim_set_hl(0, "RenderMarkdownTableRow", { fg = "#CEF5F2" })
-          vim.api.nvim_set_hl(0, "RenderMarkdownTableFill", { fg = "#4D8F9E" })  -- ボーダー (Visibility improved)
-        end,
+        callback = apply_colors,
       })
 
       -- 初期化時にもカラー設定を適用
