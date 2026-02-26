@@ -189,10 +189,10 @@ config.colors = {
 	foreground = "#CEF5F2", -- Main Foreground
 	background = "#0B0C0C", -- Main Background
 
-	-- カーソル色
-	cursor_bg = "#6CD8D3", -- Vibrant Teal
+	-- カーソル色（前景色と統一）
+	cursor_bg = "#CEF5F2", -- Main Foreground
 	cursor_fg = "#0B0C0C",
-	cursor_border = "#6CD8D3",
+	cursor_border = "#CEF5F2",
 
 	-- 選択色
 	selection_fg = "#0B0C0C", -- Background color for text
@@ -202,8 +202,8 @@ config.colors = {
 	scrollbar_thumb = "#4D8F9E", -- UI Border (Visibility improved)
 	split = "#4D8F9E",           -- Visibility improved
 
-	-- IME入力中カーソル（通常カーソルと区別）
-	compose_cursor = "#A37AA7",
+	-- IME入力中カーソル（通常カーソルと統一）
+	compose_cursor = "#CEF5F2",
 	-- ビジュアルベル（控えめフラッシュ）
 	visual_bell = "#304D4F",
 

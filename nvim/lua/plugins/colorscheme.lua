@@ -245,7 +245,7 @@ return {
         CursorColumn = { bg = colors.dark_shadow },
         Cursor = { bg = colors.fg, fg = colors.bg },
         lCursor = { bg = colors.fg, fg = colors.bg },
-        CursorIM = { bg = colors.cyan, fg = colors.bg },
+        CursorIM = { bg = colors.fg, fg = colors.bg },
         TermCursor = { bg = colors.fg },
         TermCursorNC = { bg = colors.mid_gray },
         ColorColumn = { bg = colors.dark_shadow },
