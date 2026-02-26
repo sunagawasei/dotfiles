@@ -119,6 +119,7 @@ split = "#4D8F9E"             # Visibility improved
 [nvim]
 bg = "#0B0C0C"
 dark_shadow = "#1E1E24"
+gutter_bg = "#13171A"    # Gutter background (LineNr/SignColumn/FoldColumn)
 selection = "#64BBBE"
 border = "#4D8F9E"            # Visibility improved
 comment = "#7A869A"           # Improved visibility
