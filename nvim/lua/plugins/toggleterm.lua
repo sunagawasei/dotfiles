@@ -148,6 +148,8 @@ return {
       on_open = function(term)
         vim.cmd("startinsert!")
         vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", { noremap = true, silent = true })
+        -- Ctrl+GをLazyGitにパススルー（グローバルのcycle_terminalマッピングを上書き）
+        vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<C-g>", "<C-g>", { noremap = true, silent = true })
       end,
       on_close = function(term)
         vim.cmd("startinsert!")

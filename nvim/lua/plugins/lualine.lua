@@ -1,12 +1,14 @@
 -- Color Mapping: See colors/abyssal-teal.toml [semantic] section
+local p = require("config.palette").colors
+
 local mode_colors = {
-  normal = "#525B65",   -- semantic.comment (subdued for idle state)
-  insert = "#6AB9A8",   -- semantic.success (green for creative action) - Visibility improved
-  visual = "#64BBBE",   -- semantic.operator (teal bright for selection)
-  replace = "#CED5E9",  -- semantic.warning (lavender for caution)
-  command = "#8A99BD",  -- semantic.keyword (blue for commands) - Visibility improved
-  terminal = "#659D9E", -- semantic.string (teal mid for shell)
-  inactive = "#525B65", -- semantic.comment (dim for background)
+  normal = p.mid_gray,        -- semantic.comment (subdued for idle state)
+  insert = p.success,         -- semantic.success (green for creative action)
+  visual = p.operator,        -- semantic.operator (teal bright for selection)
+  replace = p.lavender,       -- semantic.warning (lavender for caution)
+  command = p.purple_accent,  -- semantic.keyword (blue for commands)
+  terminal = p.string,        -- semantic.string (teal mid for shell)
+  inactive = p.mid_gray,      -- semantic.comment (dim for background)
 }
 
 return {
@@ -16,34 +18,34 @@ return {
       options = {
         theme = {
           normal = {
-            a = { fg = "#111E16", bg = mode_colors.normal, gui = "bold" },
-            b = { fg = "#CEF5F2", bg = "NONE" },
-            c = { fg = "#525B65", bg = "NONE" },
+            a = { fg = p.darkest_bg, bg = mode_colors.normal, gui = "bold" },
+            b = { fg = p.fg, bg = "NONE" },
+            c = { fg = p.mid_gray, bg = "NONE" },
           },
           insert = {
-            a = { fg = "#111E16", bg = mode_colors.insert, gui = "bold" },
-            b = { fg = "#CEF5F2", bg = "NONE" },
-            c = { fg = "#525B65", bg = "NONE" },
+            a = { fg = p.darkest_bg, bg = mode_colors.insert, gui = "bold" },
+            b = { fg = p.fg, bg = "NONE" },
+            c = { fg = p.mid_gray, bg = "NONE" },
           },
           visual = {
-            a = { fg = "#111E16", bg = mode_colors.visual, gui = "bold" },
-            b = { fg = "#CEF5F2", bg = "NONE" },
-            c = { fg = "#525B65", bg = "NONE" },
+            a = { fg = p.darkest_bg, bg = mode_colors.visual, gui = "bold" },
+            b = { fg = p.fg, bg = "NONE" },
+            c = { fg = p.mid_gray, bg = "NONE" },
           },
           replace = {
-            a = { fg = "#111E16", bg = mode_colors.replace, gui = "bold" },
-            b = { fg = "#CEF5F2", bg = "NONE" },
-            c = { fg = "#525B65", bg = "NONE" },
+            a = { fg = p.darkest_bg, bg = mode_colors.replace, gui = "bold" },
+            b = { fg = p.fg, bg = "NONE" },
+            c = { fg = p.mid_gray, bg = "NONE" },
           },
           command = {
-            a = { fg = "#111E16", bg = mode_colors.command, gui = "bold" },
-            b = { fg = "#CEF5F2", bg = "NONE" },
-            c = { fg = "#525B65", bg = "NONE" },
+            a = { fg = p.darkest_bg, bg = mode_colors.command, gui = "bold" },
+            b = { fg = p.fg, bg = "NONE" },
+            c = { fg = p.mid_gray, bg = "NONE" },
           },
           terminal = {
-            a = { fg = "#111E16", bg = mode_colors.terminal, gui = "bold" },
-            b = { fg = "#CEF5F2", bg = "NONE" },
-            c = { fg = "#525B65", bg = "NONE" },
+            a = { fg = p.darkest_bg, bg = mode_colors.terminal, gui = "bold" },
+            b = { fg = p.fg, bg = "NONE" },
+            c = { fg = p.mid_gray, bg = "NONE" },
           },
           inactive = {
             a = { fg = mode_colors.inactive, bg = "NONE" },
@@ -52,7 +54,7 @@ return {
           },
         },
         component_separators = { left = "", right = "" },
-        section_separators = { left = "", right = "" },
+        section_separators = { left = "\u{E0B6}", right = "\u{E0B4}" },
       },
       sections = {
         lualine_a = {
@@ -84,9 +86,9 @@ return {
             show_ahead_behind = false,
             colored = true,
             diff_color = {
-              added = { fg = "#6AB9A8" },    -- semantic.success (visibility improved)
-              modified = { fg = "#CED5E9" }, -- semantic.warning (lavender)
-              removed = { fg = "#936997" },  -- semantic.error (purple muted)
+              added = { fg = p.success },
+              modified = { fg = p.lavender },
+              removed = { fg = p.magenta },
             },
           },
         },
@@ -94,7 +96,8 @@ return {
           "diagnostics",
           {
             "filename",
-            path = 1, -- フルパス表示
+            path = 3,            -- 短縮相対パス
+            shorting_target = 40,
           },
         },
         lualine_x = { "filetype" },
@@ -107,7 +110,8 @@ return {
         lualine_c = {
           {
             "filename",
-            path = 1, -- フルパス表示
+            path = 3,            -- 短縮相対パス
+            shorting_target = 40,
           },
         },
         lualine_x = {},
@@ -117,4 +121,3 @@ return {
     },
   },
 }
-
