@@ -35,10 +35,10 @@ This repository contains my personal dotfiles for macOS development tools. The c
 - **Config**: `zsh/.zshrc`
 - **Features**: Comprehensive completion settings, aliases
 
-#### Starship Prompt
-- **Config**: `starship.toml`
-- **Theme**: Minimal with custom colors
-- **Features**: Git status, time display, custom prompt character (▲)
+#### Pure Prompt
+- **Config**: `zsh/.zshrc` (inline configuration)
+- **Theme**: Minimal with Abyssal Teal colors
+- **Features**: Git status, async fetch, execution time display, two-line layout
 
 ### Development Tools
 
@@ -83,7 +83,6 @@ As this is a manually managed dotfiles repository:
 - Neovim: `~/.config/nvim/`
 - WezTerm: `~/.config/wezterm/`
 - Zsh: `~/.zshrc` (symlink from `zsh/.zshrc`)
-- Starship: `~/.config/starship.toml`
 - Git: `~/.gitconfig` (symlink from `git/gitconfig`)
 - LazyGit: `~/.config/lazygit/`
 - Claude Code: `$CLAUDE_CONFIG_DIR` (default: `~/.config/claude/`)
@@ -109,7 +108,6 @@ dotfiles/
 ├── lazygit/            # LazyGit TUI configuration
 ├── claude/             # Claude Code AI settings
 ├── raycast/            # Raycast launcher configuration
-├── starship.toml       # Starship prompt configuration
 ├── CLAUDE.md           # Claude AI assistant instructions
 ├── SHORTCUTS.md        # Keyboard shortcuts reference
 └── COLOR-SYSTEM.md     # Color system documentation

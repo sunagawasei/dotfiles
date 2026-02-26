@@ -95,7 +95,7 @@
 *   **WezTerm**: 32色分解に基づいたフルパレット適用
 *   **Neovim**: 構文ハイライトに Muted Purple (Keyword), Clear Teal (Operator) 等を追加
 *   **Zsh**: コマンド、パス、オプションに個別アクセントを割り当て
-*   **Starship**: ヘディング・アクセントを最適化
+*   **Pure**: path・git・prompt各要素にAbyssal Tealを適用
 *   **LazyGit**: ボーダーと選択色のコントラストを調整
 
 ### バリデーション

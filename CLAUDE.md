@@ -17,7 +17,7 @@ macOS上の開発ツール設定を管理する個人用dotfiles設定リポジ�
 ## 主要技術スタック
 
 - **エディタ**: Neovim (LazyVim) - 詳細は `nvim/CLAUDE.md`
-- **ターミナル**: WezTerm, Fish/Zsh, Starship
+- **ターミナル**: WezTerm, Fish/Zsh, Pure
 - **Git**: LazyGit, GitUI, GitHub連携
 - **AI**: Claude Code, Cursor CLI
 - **カラーシステム**: Abyssal Teal (32色パレット)
