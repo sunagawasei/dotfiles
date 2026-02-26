@@ -99,23 +99,32 @@ zstyle ':prompt:pure:git:stash' show yes           # stash表示を有効化
 zstyle ':prompt:pure:git:fetch' only_upstream yes    # upstream branchのみfetch（効率化）
 zstyle ':prompt:pure:environment:nix-shell' show yes # nix-shell表示を有効化
 
-# --- zstyleカラー設定（Abyssal Teal — 読み込み前に設定） ---
-zstyle ':prompt:pure:path' color '#9DDCD9'                # Heading Cyan（branchと視線分離）
-zstyle ':prompt:pure:git:branch' color '#CEF5F2'          # Main Foreground
-zstyle ':prompt:pure:git:branch:cached' color '#8A99BD'   # Muted Purple（errorと視覚分離）
-zstyle ':prompt:pure:git:dirty' color '#7A869A'           # Comment Gray
-zstyle ':prompt:pure:git:arrow' color '#6CD8D3'           # Vibrant Teal
-zstyle ':prompt:pure:git:stash' color '#6CD8D3'           # Vibrant Teal
-zstyle ':prompt:pure:git:action' color '#CED5E9'          # Lavender
-zstyle ':prompt:pure:execution_time' color '#7A869A'      # Comment Gray
-zstyle ':prompt:pure:prompt:success' color '#6CD8D3'      # Vibrant Teal
-zstyle ':prompt:pure:prompt:error' color '#936997'        # Glitch Purple
-zstyle ':prompt:pure:prompt:continuation' color '#7A869A' # Comment Gray
-zstyle ':prompt:pure:suspended_jobs' color '#CED5E9'      # Lavender
-zstyle ':prompt:pure:virtualenv' color '#7A869A'          # Comment Gray
-zstyle ':prompt:pure:host' color '#7A869A'                # Comment Gray
-zstyle ':prompt:pure:user' color '#7A869A'                # Comment Gray
-zstyle ':prompt:pure:user:root' color '#A37AA7'           # Bright Purple（root警告）
+# --- zstyleカラー設定（Abyssal Teal — 4色簡素化版） ---
+
+# MAIN: Main Foreground (#CEF5F2) — 主要要素（path, prompt, branch, arrow等を統一）
+zstyle ':prompt:pure:path' color '#CEF5F2'
+zstyle ':prompt:pure:git:arrow' color '#CEF5F2'
+zstyle ':prompt:pure:git:action' color '#CEF5F2'
+zstyle ':prompt:pure:prompt:success' color '#CEF5F2'
+
+# MAIN (続き): Main Foreground (#CEF5F2) — 重要な文脈情報
+zstyle ':prompt:pure:git:branch' color '#CEF5F2'
+zstyle ':prompt:pure:git:stash' color '#CEF5F2'
+zstyle ':prompt:pure:suspended_jobs' color '#CEF5F2'
+
+# TERTIARY: Comment Gray (#7A869A) — 補助情報
+zstyle ':prompt:pure:git:branch:cached' color '#7A869A'
+zstyle ':prompt:pure:git:dirty' color '#7A869A'
+zstyle ':prompt:pure:execution_time' color '#7A869A'
+zstyle ':prompt:pure:prompt:continuation' color '#7A869A'
+zstyle ':prompt:pure:virtualenv' color '#7A869A'
+zstyle ':prompt:pure:host' color '#7A869A'
+zstyle ':prompt:pure:user' color '#7A869A'
+
+# ERROR: success と同色（#CEF5F2）— ❯ は常に統一色で表示
+# root ログイン時のみ Bright Purple (#A37AA7) で警告
+zstyle ':prompt:pure:prompt:error' color '#CEF5F2'
+zstyle ':prompt:pure:user:root' color '#A37AA7'
 
 # --- Zinit経由でPureを読み込み ---
 zinit ice compile'(pure|async).zsh' pick'async.zsh' src'pure.zsh'
@@ -343,5 +352,5 @@ complete -o nospace -C /opt/homebrew/bin/terraform terraform
 # ローカル設定
 # ----------------------
 # マシン固有の設定があれば読み込む
-[ -f ~/.zshrc.local ] && source ~/.zshrc.local
+if [ -f ~/.zshrc.local ]; then source ~/.zshrc.local; fi
 

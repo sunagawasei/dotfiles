@@ -1,44 +1,92 @@
 # CLAUDE.md
 
-このファイルは、このリポジトリでコードを扱う際のClaude Code (claude.ai/code) への指針を提供します。
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 ## リポジトリ概要
 
-macOS上の開発ツール設定を管理する個人用dotfiles設定リポジトリです。バージョン管理にはGitを使用し、GitHubでリモート管理されています。
+macOS上の開発ツール設定を管理する個人用dotfilesリポジトリ。stowなどの自動化ツールは使わず手動管理。
 
-## アーキテクチャの特徴
+- GitHub: `git@github.com:sunagawasei/dotfiles.git` / メインブランチ: `main`
 
-- **モジュラー構造**: 各ツールが独立した設定ディレクトリを持つ
-- **手動管理**: stowや自動化ツールは使用せず、直接編集
-- **統一テーマ**: カスタムAbyssal Tealカラーによる一貫性
-- **日本語サポート**: 設定全体で日本語環境をサポート
-- **パフォーマンス重視**: 各ツールで最適化された設定
+## 重要なコマンド
 
-## 主要技術スタック
+### カラー整合性バリデーション
 
-- **エディタ**: Neovim (LazyVim) - 詳細は `nvim/CLAUDE.md`
-- **ターミナル**: WezTerm, Fish/Zsh, Pure
-- **Git**: LazyGit, GitUI, GitHub連携
-- **AI**: Claude Code, Cursor CLI
-- **カラーシステム**: Abyssal Teal (32色パレット)
+カラー関連ファイルを変更した後は必ず実行：
 
-## 重要なパス
+```bash
+cd scripts && go run validate-colors.go
+```
 
-- `nvim/` - Neovim設定 (詳細: `nvim/CLAUDE.md`)
-- `wezterm/` - WezTerm設定
-- `colors/abyssal-teal.toml` - 統一カラー定義
-- `COLOR-SYSTEM.md` - カラーシステムドキュメント
-- `KEYMAPS.md` - キーバインドリファレンス
+### Raycast拡張機能
 
-## リモートリポジトリ
+```bash
+cd raycast/extensions/<extension-name>
+npm run lint
+npm run build
+```
 
-- GitHub: `git@github.com:sunagawasei/dotfiles.git`
-- メインブランチ: `main`
+### Neovim内操作（詳細は `nvim/CLAUDE.md`）
+
+```vim
+:Lazy sync          # プラグイン同期
+:checkhealth        # ヘルスチェック
+:ConformInfo        # フォーマッター情報
+```
+
+## アーキテクチャ
+
+### カラーシステム（単一ソース原則）
+
+`colors/abyssal-teal.toml` が **唯一の真実のソース**。全アプリの配色はここから派生する。
+
+```
+colors/abyssal-teal.toml  ←── 変更はここだけ
+  ↓
+wezterm/wezterm.lua        # ANSI 16色、背景・前景色
+nvim/lua/plugins/colorscheme.lua  # 構文ハイライト、UI要素
+lazygit/config.yml         # テーマカラー
+zsh/.zshrc                 # プロンプト・シンタックスハイライト
+```
+
+カラー変更後は必ず `scripts/validate-colors.go` でバリデーション実行。詳細は `COLOR-SYSTEM.md`。
+
+### Neovim設定（LazyVim）
+
+`nvim/init.lua` → `nvim/lua/config/lazy.lua` がエントリポイント。プラグインは `nvim/lua/plugins/` に1プラグイン1ファイルで配置。詳細は `nvim/CLAUDE.md`。
+
+### scriptsディレクトリ
+
+Goで書かれたユーティリティスクリプト群（カラーバリデーション、コントラストチェック等）。`go.mod`/`go.sum` で管理。
+
+## コミットメッセージ規約
+
+Conventional Commits形式：`<type>(<scope>): <subject>`
+
+**type**: `feat` / `fix` / `docs` / `refactor` / `perf` / `chore`
+
+**scope**: `nvim` / `wezterm` / `theme` / `zsh` / `fish` / `git` / `scripts` / `docs`
+
+```
+feat(nvim): CodeCompanionプラグインを追加
+fix(wezterm): キーバインドの競合を解消
+feat(theme): 背景色を#0B0C0Cに変更
+```
+
+Claude Codeによる変更には `Co-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>` を追加。
+
+## スキル
+
+- `/config-change`: 設定変更→テスト→コミット→プッシュの標準ワークフロー
+- `/color-validation`: カラー整合性検証の詳細手順
+
+## 言語選択
+
+スクリプト・CLIツールは **Go言語を優先**。Python/Bash/Node.jsはユーザーが明示的に指定した場合のみ。
 
 ## 関連ドキュメント
 
-設定の詳細やワークフローについては、`.claude/` ディレクトリ内のファイルを参照してください:
-
-- **ルール**: `.claude/rules/` - ファイル種別ごとの規約（自動適用）
-- **スキル**: `.claude/skills/` - 再利用可能な手順（`/config-change`, `/color-validation`）
-- **ドキュメント**: `.claude/docs/` - 詳細な技術資料
+- `nvim/CLAUDE.md` - Neovim詳細（プラグイン一覧、キーマップ、トラブルシューティング）
+- `COLOR-SYSTEM.md` - カラーパレット全定義と色選択ルール
+- `KEYMAPS.md` - キーバインドリファレンス
+- `.claude/rules/` - ファイル種別ごとの規約（color-system.md, golang.md, neovim.md）
