@@ -141,7 +141,7 @@ AIアシスタント向けの重要な変更があれば、該当ファイルを
   - プラグインロック: `nvim/lazy-lock.json`
 - **WezTerm**: `wezterm/wezterm.lua`, `wezterm/keybinds.lua`
 - **Zsh**: `zsh/.zshrc`
-- **Starship**: `starship.toml`
+- **Pure**: `zsh/.zshrc` (inline via zinit)
 - **Git**: `git/config`, `git/ignore`
 - **LazyGit**: `lazygit/config.yml`
 - **Cursor CLI**: `cursor/cli-config.json`
