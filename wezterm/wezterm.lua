@@ -180,8 +180,8 @@ config.show_close_tab_button_in_tabs = false
 -- ==========================================
 -- 非アクティブペインを暗くする設定（HSB色空間で調整）
 config.inactive_pane_hsb = {
-	saturation = 0.2, -- 彩度を80%下げる
-	brightness = 0.3, -- 明度を30%にする
+	saturation = 0.9, -- 彩度を10%下げる（可読性を保つ）
+	brightness = 0.7, -- 明度を70%にする（軽い調光）
 }
 
 config.colors = {
@@ -202,14 +202,19 @@ config.colors = {
 	scrollbar_thumb = "#4D8F9E", -- UI Border (Visibility improved)
 	split = "#4D8F9E",           -- Visibility improved
 
+	-- IME入力中カーソル（通常カーソルと区別）
+	compose_cursor = "#A37AA7",
+	-- ビジュアルベル（控えめフラッシュ）
+	visual_bell = "#304D4F",
+
 	-- ANSI色
 	ansi = {
 		"#111E16", -- black (Darkest)
-		"#936997", -- red (Glitch Purple)
+		"#A37AA7", -- red (Muted Purple, WCAG AA 5.50:1)
 		"#349594", -- green (Deep Sea)
 		"#CED5E9", -- yellow (Lavender)
 		"#326787", -- blue (Ocean Blue)
-		"#584EA2", -- magenta (Vibrant Purple)
+		"#8A99BD", -- magenta (Sky Slate, WCAG AA 6.88:1)
 		"#6CD8D3", -- cyan (Vibrant Teal)
 		"#CEF5F2", -- white (Main Text)
 	},
@@ -232,7 +237,7 @@ config.colors = {
 	copy_mode_inactive_highlight_fg = { Color = "#CEF5F2" },
 
 	-- クイックセレクト色設定
-	quick_select_label_bg = { Color = "#936997" },
+	quick_select_label_bg = { Color = "#A37AA7" },
 	quick_select_label_fg = { Color = "#F2FFFF" },
 	quick_select_match_bg = { Color = "#6CD8D3" },
 	quick_select_match_fg = { Color = "#0B0C0C" },
@@ -272,15 +277,28 @@ config.colors = {
 local function tab_id_to_color(tab_id)
 	local colors = {
 		"#6CD8D3", -- Vibrant Teal
-		"#936997", -- Glitch Purple
+		"#A37AA7", -- Muted Purple (WCAG AA)
 		"#64BBBE", -- Clear Teal
 		"#CED5E9", -- Lavender
 		"#326787", -- Ocean Blue
-		"#584EA2", -- Vibrant Purple
+		"#8A99BD", -- Sky Slate (WCAG AA)
 		"#9DDCD9", -- Heading Cyan
-		"#A4ABCB", -- Sky Slate
+		"#A4ABCB", -- Sky Slate Light
 	}
 	return colors[(tab_id % #colors) + 1]
+end
+
+-- 背景色に応じて最適なテキスト色を返す（WCAG AA準拠）
+local function get_fg_for_bg(bg_color)
+	-- 暗い背景色には明るいfgを使用
+	local light_fg_bgs = {
+		["#326787"] = true, -- Ocean Blue（暗色）
+		["#8A99BD"] = true, -- Sky Slate（中間色、白文字が見やすい）
+	}
+	if light_fg_bgs[bg_color] then
+		return "#F2FFFF" -- Purest Highlight
+	end
+	return "#0B0C0C" -- Main Background（高コントラスト）
 end
 
 -- Claude Code状態に応じたインジケータを返す
@@ -288,7 +306,7 @@ local function get_claude_status(tab_title)
 	if tab_title:find("%[完了%]") then
 		return { icon = "✓", color = "#349594" } -- Deep Sea Teal (Success)
 	elseif tab_title:find("%[許可待ち%]") then
-		return { icon = "!", color = "#936997" } -- Glitch Purple (Error/Warning)
+		return { icon = "!", color = "#A37AA7" } -- Muted Purple (Error/Warning, WCAG AA)
 	elseif tab_title:find("%[入力待ち%]") then
 		return { icon = "●", color = "#6CD8D3" } -- Vibrant Teal (Info)
 	elseif tab_title:find("%[実行中%]") then
@@ -334,7 +352,7 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover)
 
 	if tab.is_active then
 		bg = id_color
-		fg = "#0B0C0C" -- High contrast for active tab
+		fg = get_fg_for_bg(id_color) -- 背景色に応じて動的にfgを決定（WCAG AA準拠）
 	elseif hover then
 		bg = hover_bg
 		fg = "#CEF5F2" -- inactive_tab_hover.fg_color
@@ -343,23 +361,36 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover)
 	-- Claude Code状態を確認
 	local tab_title = tab.tab_title or ""
 	local claude_status = get_claude_status(tab_title)
-	local title = ""
 
 	if claude_status then
-		title = get_short_cwd(tab, 30) or "~"
-		title = claude_status.icon .. " " .. title
+		-- アイコンにclaude_status.colorを適用し、cwdを別色で表示
+		local cwd_title = get_short_cwd(tab, 30) or "~"
+		return {
+			{ Background = { Color = bar_bg } },
+			{ Foreground = { Color = bg } },
+			{ Text = "" }, -- 左端の斜めシェイプ
+			{ Background = { Color = bg } },
+			{ Foreground = { Color = claude_status.color } },
+			{ Text = " " .. claude_status.icon },
+			{ Foreground = { Color = fg } },
+			{ Text = " " .. cwd_title .. " " },
+			{ Background = { Color = bar_bg } },
+			{ Foreground = { Color = bg } },
+			{ Text = "" }, -- 右端の斜めシェイプ
+		}
+	end
+
+	local title = ""
+	local cwd_uri = tab.active_pane.current_working_dir
+	if cwd_uri and cwd_uri.file_path then
+		local path = cwd_uri.file_path
+		local home = os.getenv("HOME")
+		title = (path == home) and "~" or (path:sub(1, #home) == home and "~" .. path:sub(#home + 1) or path)
 	else
-		local cwd_uri = tab.active_pane.current_working_dir
-		if cwd_uri and cwd_uri.file_path then
-			local path = cwd_uri.file_path
-			local home = os.getenv("HOME")
-			title = (path == home) and "~" or (path:sub(1, #home) == home and "~" .. path:sub(#home + 1) or path)
-		else
-			title = tab.active_pane.title
-		end
-		if #title > 50 then
-			title = title:sub(1, 50) .. "…"
-		end
+		title = tab.active_pane.title
+	end
+	if #title > 50 then
+		title = title:sub(1, 50) .. "…"
 	end
 
 	return {
@@ -592,6 +623,10 @@ wezterm.cycle_centering_preset = cycle_centering_preset
 wezterm.adjust_centering_width = adjust_centering_width
 wezterm.adjust_centering_max_width = adjust_centering_max_width
 wezterm.toggle_centering_fullscreen_only = toggle_centering_fullscreen_only
+
+-- 文字選択UI色設定（config.colorsの外でトップレベルに設定）
+config.char_select_bg_color = "#1F3451"
+config.char_select_fg_color = "#B1F4ED" -- 10:1コントラスト
 
 -- 設定をエクスポート
 return config
