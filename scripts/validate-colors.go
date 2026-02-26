@@ -98,7 +98,6 @@ func main() {
 
 		// Shell
 		"zsh/.zshrc",
-		"starship.toml",
 
 		// Git UI
 		"lazygit/config.yml",
