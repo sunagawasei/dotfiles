@@ -148,9 +148,9 @@ return {
         GitSignsCurrentLineBlame = { fg = colors.git_blame_gray },  -- コメントより明るく
 
         -- Diff関連のハイライトグループ
-        DiffAdd = { fg = colors.cyan, bg = "#0D1F1F" },
-        DiffChange = { fg = colors.magenta, bg = "#1A141A" },
-        DiffDelete = { fg = colors.light_gray, bg = "#151515" },
+        DiffAdd = { fg = colors.cyan, bg = colors.diff_add_bg },
+        DiffChange = { fg = colors.magenta, bg = colors.diff_change_bg },
+        DiffDelete = { fg = colors.light_gray, bg = colors.diff_delete_bg },
         DiffText = { fg = colors.bright_cyan, bold = true },
 
         -- 構文ハイライト（Cyber Glitch Teal - ネオン系配色）
