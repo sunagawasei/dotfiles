@@ -10,6 +10,9 @@ if command -v pyenv &>/dev/null; then
   eval "$(pyenv init -)"
 fi
 
+# Homebrew の AWS CLI v2 を pyenv shims より優先
+alias aws='/opt/homebrew/bin/aws'
+
 # Emacsキーバインドを明示的に設定（$EDITORにnvimを設定しているためviモードになるのを防ぐ）
 bindkey -e
 
@@ -76,10 +79,47 @@ zinit ice as"completion"
 zinit snippet https://raw.githubusercontent.com/msysh/aws-cdk-zsh-completion/main/_cdk
 
 # ----------------------
-# プロンプトとナビゲーション
+# プロンプトとナビゲーション（Pure）
 # ----------------------
-# Starship - 高速でカスタマイズ可能なプロンプト
-eval "$(starship init zsh)"
+
+# --- 環境変数（PURE_* — 読み込み前に設定が必要） ---
+PURE_CMD_MAX_EXEC_TIME=5              # 実行時間表示の閾値（秒）
+PURE_GIT_PULL=1                       # バックグラウンドgit fetch有効
+PURE_GIT_UNTRACKED_DIRTY=1            # untracked filesもdirtyに含める
+PURE_GIT_DELAY_DIRTY_CHECK=1800       # dirty check遅延（秒、前回>5s時）
+PURE_PROMPT_SYMBOL="❯"                # プロンプトシンボル
+PURE_PROMPT_VICMD_SYMBOL="❮"          # vi-mode vicmdシンボル
+PURE_GIT_DOWN_ARROW="⇣"              # behind（pull要）の矢印
+PURE_GIT_UP_ARROW="⇡"                # ahead（push要）の矢印
+PURE_GIT_STASH_SYMBOL="≡"            # stashシンボル
+PURE_SUSPENDED_JOBS_SYMBOL="✦"        # バックグラウンドジョブシンボル
+
+# --- zstyle動作設定（読み込み前に設定） ---
+zstyle ':prompt:pure:git:stash' show yes           # stash表示を有効化
+zstyle ':prompt:pure:git:fetch' only_upstream yes    # upstream branchのみfetch（効率化）
+zstyle ':prompt:pure:environment:nix-shell' show yes # nix-shell表示を有効化
+
+# --- zstyleカラー設定（Abyssal Teal — 読み込み前に設定） ---
+zstyle ':prompt:pure:path' color '#9DDCD9'                # Heading Cyan（branchと視線分離）
+zstyle ':prompt:pure:git:branch' color '#CEF5F2'          # Main Foreground
+zstyle ':prompt:pure:git:branch:cached' color '#8A99BD'   # Muted Purple（errorと視覚分離）
+zstyle ':prompt:pure:git:dirty' color '#7A869A'           # Comment Gray
+zstyle ':prompt:pure:git:arrow' color '#6CD8D3'           # Vibrant Teal
+zstyle ':prompt:pure:git:stash' color '#6CD8D3'           # Vibrant Teal
+zstyle ':prompt:pure:git:action' color '#CED5E9'          # Lavender
+zstyle ':prompt:pure:execution_time' color '#7A869A'      # Comment Gray
+zstyle ':prompt:pure:prompt:success' color '#6CD8D3'      # Vibrant Teal
+zstyle ':prompt:pure:prompt:error' color '#936997'        # Glitch Purple
+zstyle ':prompt:pure:prompt:continuation' color '#7A869A' # Comment Gray
+zstyle ':prompt:pure:suspended_jobs' color '#CED5E9'      # Lavender
+zstyle ':prompt:pure:virtualenv' color '#7A869A'          # Comment Gray
+zstyle ':prompt:pure:host' color '#7A869A'                # Comment Gray
+zstyle ':prompt:pure:user' color '#7A869A'                # Comment Gray
+zstyle ':prompt:pure:user:root' color '#A37AA7'           # Bright Purple（root警告）
+
+# --- Zinit経由でPureを読み込み ---
+zinit ice compile'(pure|async).zsh' pick'async.zsh' src'pure.zsh'
+zinit light sindresorhus/pure
 
 # Zoxide - スマートなcdコマンド（頻繁に使うディレクトリに素早く移動）
 # cdコマンドを置き換え（Claude Codeでは無効化）
@@ -93,11 +133,13 @@ fi
 # WezTermに現在のディレクトリ情報を送信（タブタイトルに表示）
 # OSC 7エスケープシーケンスを使用してターミナルに現在のパスを通知
 if [ "$TERM_PROGRAM" = "WezTerm" ] || [ -n "$WEZTERM_PANE" ]; then
-  # プロンプトが表示される前に実行される関数
-  precmd() {
+  # add-zsh-hookで登録（precmd()直接定義はPureのprecmdを上書きするため非推奨）
+  __wezterm_osc7() {
     # OSC 7 - 現在のディレクトリをターミナルに通知
     printf '\e]7;file://%s%s\e\\' "$HOST" "$PWD"
   }
+  autoload -Uz add-zsh-hook
+  add-zsh-hook precmd __wezterm_osc7
 fi
 
 # ----------------------
