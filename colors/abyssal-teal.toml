@@ -133,6 +133,9 @@ number = "#B1F4ED"
 type = "#A4ABCB"
 operator = "#64BBBE"
 header = "#9DDCD9"
+diff_add_bg = "#0D1F1F"     # Diff Add background (dark teal tint)
+diff_change_bg = "#1A141A"  # Diff Change background (dark purple tint)
+diff_delete_bg = "#151515"  # Diff Delete background (dark neutral)
 
 [zsh]
 default = "#CEF5F2"

@@ -53,6 +53,11 @@ M.colors = {
   selection = "#64BBBE",    -- Clear Teal [core.selection_bg]
   selection_fg = "#0B0C0C", -- Background for contrast
   string = "#659D9E",       -- Base Teal [semantic.string]
+
+  -- Diff背景カラー
+  diff_add_bg = "#0D1F1F",      -- Diff Add背景 [nvim.diff_add_bg]
+  diff_change_bg = "#1A141A",   -- Diff Change背景 [nvim.diff_change_bg]
+  diff_delete_bg = "#151515",   -- Diff Delete背景 [nvim.diff_delete_bg]
 }
 
 return M
