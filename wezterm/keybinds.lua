@@ -11,12 +11,12 @@ wezterm.on("update-right-status", function(window, pane)
 		if name == "copy_mode" then
 			-- Copy mode: semantic.comment
 			table.insert(elements, { Background = { Color = "#525B65" } })
-			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
+			table.insert(elements, { Foreground = { Color = "#F2FFFF" } }) -- Purest Highlight（テーマ統一）
 			table.insert(elements, { Text = " 󰆏 COPY MODE " }) -- NerdFont copy icon
 		elseif name == "resize_pane" then
 			-- Resize mode: semantic.string
 			table.insert(elements, { Background = { Color = "#659D9E" } })
-			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
+			table.insert(elements, { Foreground = { Color = "#111E16" } }) -- Darkest（WCAG AA 5.63:1）
 			table.insert(elements, { Text = "  RESIZE " }) -- NerdFont resize icon
 		elseif name == "pane_navigation" then
 			-- Pane Navigation mode: foregrounds.dim
@@ -31,7 +31,7 @@ wezterm.on("update-right-status", function(window, pane)
 		else
 			-- その他のモード: semantic.keyword
 			table.insert(elements, { Background = { Color = "#8A99BD" } })
-			table.insert(elements, { Foreground = { Color = "#FFFFFF" } })
+			table.insert(elements, { Foreground = { Color = "#111E16" } }) -- Darkest（WCAG AA 6.04:1）
 			table.insert(elements, { Text = " TABLE: " .. name .. " " })
 		end
 
