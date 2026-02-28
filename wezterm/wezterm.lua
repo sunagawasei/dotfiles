@@ -153,9 +153,9 @@ config.window_background_gradient = {
 }
 -- ウィンドウ内側の余白設定
 config.window_padding = {
-	left = 5, -- 左余白
-	right = 5, -- 右余白
-	top = 5, -- 上余白（信号ボタンを消したため少し空ける）
+	left = 12, -- 左余白
+	right = 12, -- 右余白
+	top = 10, -- 上余白（ボーダレスウィンドウのため余裕を持たせる）
 	bottom = 0, -- 下余白（タブバーに密着）
 }
 -- タブバーを有効化
@@ -446,10 +446,10 @@ wezterm.on("window-resized", function(window, pane)
 	-- ウィンドウ幅が最小幅未満の場合は中央寄せを無効化
 	if window_dims.pixel_width < centering_config.min_width_for_centering then
 		overrides.window_padding = {
-			left = 5,
-			right = 5,
-			top = 0,
-			bottom = 5,
+			left = 12,
+			right = 12,
+			top = 10,
+			bottom = 0,
 		}
 		window:set_config_overrides(overrides)
 		return
@@ -468,14 +468,14 @@ wezterm.on("window-resized", function(window, pane)
 	local padding_total = window_dims.pixel_width - content_width
 	local padding_each = math.floor(padding_total / 2)
 
-	-- 最小パディング（5px）を保証
-	local padding_left = math.max(padding_each, 5)
-	local padding_right = math.max(padding_each, 5)
+	-- 最小パディング（12px）を保証
+	local padding_left = math.max(padding_each, 12)
+	local padding_right = math.max(padding_each, 12)
 
 	local new_padding = {
 		left = padding_left,
 		right = padding_right,
-		top = 5, -- 上部パディングを維持
+		top = 10, -- 上部パディングを維持
 		bottom = 0, -- 下部パディングはタブバーに密着
 	}
 
@@ -497,9 +497,9 @@ local function toggle_centering(window, pane)
 		else
 			-- 中央寄せ無効化時: パディングをデフォルトに戻す
 			overrides.window_padding = {
-				left = 5,
-				right = 5,
-				top = 5,
+				left = 12,
+				right = 12,
+				top = 10,
 				bottom = 0,
 			}
 			window:set_config_overrides(overrides)
