@@ -10,7 +10,6 @@ return {
         "stylua",
         "typescript-language-server",
         "vue-language-server",
-        "prettier",
         "black",
         "isort",
         "shfmt",
