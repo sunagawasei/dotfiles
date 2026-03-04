@@ -77,7 +77,7 @@ end)
 config.font = wezterm.font_with_fallback({
 	{ family = "GeistMono NF" }, -- メインフォント（Nerd Font版・略名）
 	{ family = "GeistMono NF", assume_emoji_presentation = true }, -- Nerd Fontアイコン用
-	{ family = "IBM Plex Mono" }, -- 日本語フォント（モノスペース）
+	{ family = "Osaka" }, -- 日本語フォント
 	{ family = "Hiragino Kaku Gothic ProN" }, -- 日本語フォント（フォールバック）
 })
 -- フォントサイズを16ポイントに設定
