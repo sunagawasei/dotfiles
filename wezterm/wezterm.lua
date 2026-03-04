@@ -80,8 +80,8 @@ config.font = wezterm.font_with_fallback({
 	{ family = "Osaka" }, -- 日本語フォント
 	{ family = "Hiragino Kaku Gothic ProN" }, -- 日本語フォント（フォールバック）
 })
--- フォントサイズを16ポイントに設定
-config.font_size = 14.0
+-- フォントサイズ（OsakaMonoビットマップサイズ15pxに合わせる）
+config.font_size = 15.0
 -- フォント間の高さ調整を無効化（メトリクスの一貫性を保つ）
 config.use_cap_height_to_scale_fallback_fonts = false
 -- 行間を少し広げて文字の重なりを防ぐ
