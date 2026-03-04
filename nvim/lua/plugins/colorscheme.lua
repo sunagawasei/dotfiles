@@ -479,13 +479,13 @@ return {
         vim.api.nvim_set_hl(0, "NeotestTarget", { fg = colors.cyan })
 
         -- Scrollbar関連のハイライトグループ
-        vim.api.nvim_set_hl(0, "ScrollbarHandle", { bg = "none", fg = colors.dark_shadow })
+        vim.api.nvim_set_hl(0, "ScrollbarHandle", { bg = colors.mid_gray })
         vim.api.nvim_set_hl(0, "ScrollbarSearch", { fg = colors.cyan })
         vim.api.nvim_set_hl(0, "ScrollbarError", { fg = colors.magenta })
         vim.api.nvim_set_hl(0, "ScrollbarWarn", { fg = colors.bright_magenta })
         vim.api.nvim_set_hl(0, "ScrollbarInfo", { fg = colors.bright_cyan })
         vim.api.nvim_set_hl(0, "ScrollbarHint", { fg = colors.cyan })
-        vim.api.nvim_set_hl(0, "ScrollbarMisc", { fg = colors.mid_gray })
+        vim.api.nvim_set_hl(0, "ScrollbarMisc", { fg = colors.light_gray })
         vim.api.nvim_set_hl(0, "ScrollbarGitAdd", { fg = colors.cyan })
         vim.api.nvim_set_hl(0, "ScrollbarGitChange", { fg = colors.magenta })
         vim.api.nvim_set_hl(0, "ScrollbarGitDelete", { fg = colors.light_gray })
