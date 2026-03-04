@@ -7,13 +7,13 @@ return {
   config = function()
     local p = require("config.palette").colors
     local colors = {
-      handle = p.dark_shadow,   -- core.ui_shadow
+      handle = p.mid_gray,      -- foregrounds.muted (視認性改善)
       search = p.operator,      -- semantic.operator
       error = p.magenta,        -- semantic.error
       warn = p.lavender,        -- semantic.warning
       info = p.cyan,            -- semantic.info
       hint = p.operator,        -- semantic.operator
-      misc = p.mid_gray,        -- semantic.comment
+      misc = p.light_gray,      -- foregrounds.dim (ハンドル上でも視認可能)
       GitAdd = p.operator,      -- semantic.operator
       GitChange = p.magenta,    -- semantic.error
       GitDelete = p.light_gray, -- foregrounds.dim
