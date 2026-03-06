@@ -28,6 +28,11 @@ config.use_ime = false
 config.front_end = "WebGpu"
 -- スクロールバックバッファを3500行に設定
 config.scrollback_lines = 3500
+-- Pure prompt (sindresorhus/pure) のバックグラウンドgit fetchによるpane閉じ警告を抑制
+config.skip_close_confirmation_for_processes_named = {
+	"bash", "sh", "zsh", "fish", "tmux", "nu", "cmd.exe", "pwsh.exe", "powershell.exe",
+	"git",
+}
 
 -- ==========================================
 -- Unicode文字幅設定
