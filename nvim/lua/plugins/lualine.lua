@@ -54,7 +54,7 @@ return {
           },
         },
         component_separators = { left = "", right = "" },
-        section_separators = { left = "\u{E0B6}", right = "\u{E0B4}" },
+        section_separators = { left = "", right = "" },
       },
       sections = {
         lualine_a = {
