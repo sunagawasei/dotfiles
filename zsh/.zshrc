@@ -19,6 +19,9 @@ bindkey -e
 # コアダンプファイルを作成しない（ディスク容量節約）
 limit coredumpsize 0
 
+# flow control無効化（Ctrl+S/Ctrl+Qによる端末停止を防止、zeno ^x^sに必要）
+stty -ixon
+
 # ----------------------
 # プラグインマネージャー (Zinit)
 # ----------------------
@@ -235,6 +238,17 @@ fpath=(/Users/s23159/.local/share/zsh/site-functions $fpath)
 # 補完機能を有効化
 autoload -U compinit && compinit
 
+# Zeno.zsh - 略語展開（abbr）とfzfベース履歴検索
+zinit light yuki-yano/zeno.zsh
+
+# Zeno keybindings（ZENO_LOADEDガード付き）
+if [[ -n $ZENO_LOADED ]]; then
+  bindkey ' '  zeno-auto-snippet                    # Space で略語を自動展開
+  bindkey '^m' zeno-auto-snippet-and-accept-line     # Enter で略語展開+実行
+  bindkey '^r' zeno-smart-history-selection           # Ctrl+R でSmart History Selection
+  bindkey '^x^s' zeno-insert-snippet                 # Ctrl+X Ctrl+S でスニペット一覧からfzf選択
+fi
+
 # FZFタブ補完 - タブ補完をfzfでインタラクティブに（compinitの後に読み込み必須）
 zinit light Aloxaf/fzf-tab
 
@@ -294,24 +308,9 @@ zstyle ':completion:*:approximate:*' max-errors 1
 # エイリアス
 # ----------------------
 # 基本コマンドのエイリアス
-alias ls='ls --color=auto'           # lsに色を付ける
-alias ll='ls -l'                     # 詳細表示
-alias la='ls -la'                    # 隠しファイルも含めて詳細表示
-alias l='ls -CF'                     # ファイル種別記号付き表示
-alias vi='nvim'
-alias cl='claude'
+alias ls='ls --color=auto'           # lsに色を付ける（ll/la/l abbr展開の基盤）
 alias vtmp='nvim "${TMPDIR%/}/$(date "+%Y%m%d_%H%M%S").md"'  # 一時ディレクトリにタイムスタンプ付きmdファイルを作成して編集
 alias now='date "+%Y/%m/%d %H:%M:%S"'  # 現在日時を表示
-alias wl='worklog'                       # 作業ログツールの短縮形
-
-# Kubernetesショートカット
-alias k='kubectl'
-
-# Lazygit
-alias lg='lazygit'                       # Git操作用のTUIツールを起動
-
-# Keifu
-alias kg='keifu'                         # コミットグラフ可視化ツールを起動
 
 # SSH接続時のターミナルタイプを明示的に指定（カラー対応）
 alias ssh='TERM=xterm-256color \ssh'
