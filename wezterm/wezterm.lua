@@ -33,6 +33,8 @@ config.skip_close_confirmation_for_processes_named = {
 	"bash", "sh", "zsh", "fish", "tmux", "nu", "cmd.exe", "pwsh.exe", "powershell.exe",
 	"git",
 }
+-- デフォルト作業ディレクトリを~/.configに設定
+config.default_cwd = wezterm.home_dir .. "/.config"
 
 -- ==========================================
 -- Unicode文字幅設定
@@ -64,6 +66,7 @@ wezterm.on("gui-startup", function(cmd)
 
 	-- ウィンドウをアクティブスクリーンの中央に配置
 	local tab, pane, window = mux.spawn_window(cmd or {
+		cwd = wezterm.home_dir .. "/.config",
 		position = {
 			x = active_screen.x + (active_screen.width - width) / 2,
 			y = active_screen.y + (active_screen.height - height) / 2,
