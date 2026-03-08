@@ -1,10 +1,4 @@
-# ============================================================================
-# Zsh Configuration
-# ============================================================================
-
-# ----------------------
-# 基本設定
-# ----------------------
+# ---- 基本設定 ----
 # pyenv シェル統合（インタラクティブシェルのみ）
 if command -v pyenv &>/dev/null; then
   eval "$(pyenv init -)"
@@ -13,109 +7,59 @@ fi
 # Homebrew の AWS CLI v2 を pyenv shims より優先
 alias aws='/opt/homebrew/bin/aws'
 
-# Emacsキーバインドを明示的に設定（$EDITORにnvimを設定しているためviモードになるのを防ぐ）
+# Emacsキーバインドを明示的に設定（$EDITORにvimを設定しているためviモードになるのを防ぐ）
 bindkey -e
 
-# コアダンプファイルを作成しない（ディスク容量節約）
+# コアダンプファイルを作成しない
 limit coredumpsize 0
 
 # flow control無効化（Ctrl+S/Ctrl+Qによる端末停止を防止、zeno ^x^sに必要）
 stty -ixon
 
-# ----------------------
-# プラグインマネージャー (Zinit)
-# ----------------------
-# Zinitのインストール先を設定（XDG Base Directory仕様に準拠）
+# ---- プラグインマネージャー (Zinit) ----
 ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
-
-# Zinitが未インストールの場合は自動インストール
 if [ ! -d "$ZINIT_HOME" ]; then
   mkdir -p "$(dirname $ZINIT_HOME)"
   git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
 fi
-
-# Zinitを読み込み
 source "$ZINIT_HOME/zinit.zsh"
 
-# ----------------------
-# Zshプラグイン
-# ----------------------
-# シンタックスハイライト - コマンドをリアルタイムで色付け
-zinit light zsh-users/zsh-syntax-highlighting
-
-# シンタックスハイライトの色設定 (Expanded Abyssal Teal)
-# プラグイン読み込み後に設定する
-typeset -A ZSH_HIGHLIGHT_STYLES
-
-# 基本テキスト色 (Main Foreground)
-ZSH_HIGHLIGHT_STYLES[default]='fg=#CEF5F2'
-ZSH_HIGHLIGHT_STYLES[arg0]='fg=#CEF5F2'
-
-# コマンド系 (Vibrant Teal)
-ZSH_HIGHLIGHT_STYLES[command]='fg=#6CD8D3,bold'
-ZSH_HIGHLIGHT_STYLES[builtin]='fg=#6CD8D3,bold'
-ZSH_HIGHLIGHT_STYLES[alias]='fg=#6CD8D3,bold'
-ZSH_HIGHLIGHT_STYLES[function]='fg=#6CD8D3,bold'
-
-# エラー (Glitch Purple)
-ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#936997,bold'
-
-# パス (Heading Cyan)
-ZSH_HIGHLIGHT_STYLES[path]='fg=#9DDCD9,underline'
-
-# クォート文字列 (Base Teal)
-ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=#659D9E'
-ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=#659D9E'
-
-# オプション (Sky Slate)
-ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=#A4ABCB'
-ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=#A4ABCB'
-
-# コメント (Comment Gray - improved visibility)
-ZSH_HIGHLIGHT_STYLES[comment]='fg=#7A869A'
-
-# 補完定義の追加コレクション - より多くのコマンドの補完をサポート
+# ---- 補完定義の追加コレクション ----
 zinit light zsh-users/zsh-completions
 
 # AWS CDK CLI 補完
 zinit ice as"completion"
 zinit snippet https://raw.githubusercontent.com/msysh/aws-cdk-zsh-completion/main/_cdk
 
-# ----------------------
-# プロンプトとナビゲーション（Pure）
-# ----------------------
+# ---- Pure プロンプト ----
+# 環境変数（読み込み前に設定が必要）
+PURE_CMD_MAX_EXEC_TIME=5
+PURE_GIT_PULL=1
+PURE_GIT_UNTRACKED_DIRTY=1
+PURE_GIT_DELAY_DIRTY_CHECK=1800
+PURE_PROMPT_SYMBOL="❯"
+PURE_PROMPT_VICMD_SYMBOL="❮"
+PURE_GIT_DOWN_ARROW="⇣"
+PURE_GIT_UP_ARROW="⇡"
+PURE_GIT_STASH_SYMBOL="≡"
+PURE_SUSPENDED_JOBS_SYMBOL="✦"
 
-# --- 環境変数（PURE_* — 読み込み前に設定が必要） ---
-PURE_CMD_MAX_EXEC_TIME=5              # 実行時間表示の閾値（秒）
-PURE_GIT_PULL=1                       # バックグラウンドgit fetch有効
-PURE_GIT_UNTRACKED_DIRTY=1            # untracked filesもdirtyに含める
-PURE_GIT_DELAY_DIRTY_CHECK=1800       # dirty check遅延（秒、前回>5s時）
-PURE_PROMPT_SYMBOL="❯"                # プロンプトシンボル
-PURE_PROMPT_VICMD_SYMBOL="❮"          # vi-mode vicmdシンボル
-PURE_GIT_DOWN_ARROW="⇣"              # behind（pull要）の矢印
-PURE_GIT_UP_ARROW="⇡"                # ahead（push要）の矢印
-PURE_GIT_STASH_SYMBOL="≡"            # stashシンボル
-PURE_SUSPENDED_JOBS_SYMBOL="✦"        # バックグラウンドジョブシンボル
+# zstyle動作設定
+zstyle ':prompt:pure:git:stash' show yes
+zstyle ':prompt:pure:git:fetch' only_upstream yes
+zstyle ':prompt:pure:environment:nix-shell' show yes
 
-# --- zstyle動作設定（読み込み前に設定） ---
-zstyle ':prompt:pure:git:stash' show yes           # stash表示を有効化
-zstyle ':prompt:pure:git:fetch' only_upstream yes    # upstream branchのみfetch（効率化）
-zstyle ':prompt:pure:environment:nix-shell' show yes # nix-shell表示を有効化
-
-# --- zstyleカラー設定（Abyssal Teal — 4色簡素化版） ---
-
-# MAIN: Main Foreground (#CEF5F2) — 主要要素（path, prompt, branch, arrow等を統一）
+# zstyleカラー設定（Abyssal Teal）
+# MAIN: Main Foreground (#CEF5F2)
 zstyle ':prompt:pure:path' color '#CEF5F2'
 zstyle ':prompt:pure:git:arrow' color '#CEF5F2'
 zstyle ':prompt:pure:git:action' color '#CEF5F2'
 zstyle ':prompt:pure:prompt:success' color '#CEF5F2'
-
-# MAIN (続き): Main Foreground (#CEF5F2) — 重要な文脈情報
 zstyle ':prompt:pure:git:branch' color '#CEF5F2'
 zstyle ':prompt:pure:git:stash' color '#CEF5F2'
 zstyle ':prompt:pure:suspended_jobs' color '#CEF5F2'
 
-# TERTIARY: Comment Gray (#7A869A) — 補助情報
+# TERTIARY: Comment Gray (#7A869A)
 zstyle ':prompt:pure:git:branch:cached' color '#7A869A'
 zstyle ':prompt:pure:git:dirty' color '#7A869A'
 zstyle ':prompt:pure:execution_time' color '#7A869A'
@@ -124,107 +68,65 @@ zstyle ':prompt:pure:virtualenv' color '#7A869A'
 zstyle ':prompt:pure:host' color '#7A869A'
 zstyle ':prompt:pure:user' color '#7A869A'
 
-# ERROR: success と同色（#CEF5F2）— ❯ は常に統一色で表示
-# root ログイン時のみ Bright Purple (#A37AA7) で警告
+# ERROR: ❯ は常に統一色。rootログイン時のみ警告色
 zstyle ':prompt:pure:prompt:error' color '#CEF5F2'
 zstyle ':prompt:pure:user:root' color '#A37AA7'
 
-# --- Zinit経由でPureを読み込み ---
 zinit ice compile'(pure|async).zsh' pick'async.zsh' src'pure.zsh'
 zinit light sindresorhus/pure
 
-# Zoxide - スマートなcdコマンド（頻繁に使うディレクトリに素早く移動）
-# cdコマンドを置き換え（Claude Codeでは無効化）
-if [[ "$CLAUDECODE" != "1" ]]; then
-  eval "$(zoxide init --cmd cd zsh)"
-fi
-
-# ----------------------
-# WezTerm用のOSC 7対応
-# ----------------------
-# WezTermに現在のディレクトリ情報を送信（タブタイトルに表示）
-# OSC 7エスケープシーケンスを使用してターミナルに現在のパスを通知
+# ---- WezTerm OSC 7 対応 ----
+# WezTermに現在のディレクトリを通知（タブタイトル表示用）
 if [ "$TERM_PROGRAM" = "WezTerm" ] || [ -n "$WEZTERM_PANE" ]; then
-  # add-zsh-hookで登録（precmd()直接定義はPureのprecmdを上書きするため非推奨）
   __wezterm_osc7() {
-    # OSC 7 - 現在のディレクトリをターミナルに通知
     printf '\e]7;file://%s%s\e\\' "$HOST" "$PWD"
   }
   autoload -Uz add-zsh-hook
   add-zsh-hook precmd __wezterm_osc7
 fi
 
-# ----------------------
-# 履歴設定
-# ----------------------
-# 履歴の詳細オプション（環境変数は.zshenvで設定）
-setopt EXTENDED_HISTORY          # 開始と終了時刻を記録
-setopt hist_ignore_dups          # 直前と同じコマンドは記録しない
-setopt hist_ignore_all_dups      # 履歴内の古い重複コマンドを削除
-setopt hist_find_no_dups         # 履歴検索時に重複を表示しない
-setopt hist_ignore_space         # スペースで始まるコマンドは記録しない
-setopt hist_verify               # 履歴展開後、実行前に編集可能にする
-setopt hist_reduce_blanks        # 余分な空白を詰めて記録
-setopt hist_save_no_dups         # 履歴ファイル保存時に重複を除去
-setopt hist_no_store             # historyコマンド自体は記録しない
-setopt hist_expand               # 履歴展開を有効化
-setopt share_history             # 複数のzshセッション間で履歴を共有
-setopt appendhistory             # 履歴を上書きではなく追加
+# ---- 履歴設定 ----
+setopt EXTENDED_HISTORY
+setopt hist_ignore_dups
+setopt hist_ignore_all_dups
+setopt hist_find_no_dups
+setopt hist_ignore_space
+setopt hist_verify
+setopt hist_reduce_blanks
+setopt hist_save_no_dups
+setopt hist_no_store
+setopt hist_expand
+setopt share_history
+setopt appendhistory
 
-# ----------------------
-# キーバインド
-# ----------------------
-# Ctrl+P/N で履歴を前方/後方検索（入力済み文字列にマッチ）
+# ---- キーバインド ----
 bindkey '^p' history-search-backward
 bindkey '^n' history-search-forward
 
-# edit-command-line - コマンドラインをエディタで編集
 autoload -Uz edit-command-line
 zle -N edit-command-line
-bindkey '^x^e' edit-command-line  # Ctrl+X Ctrl+E でエディタ起動
+bindkey '^x^e' edit-command-line
 
-# zsh-autosuggestionsの部分適用キーバインド
-bindkey '^[f' forward-word          # Alt+F で単語単位の部分適用
-bindkey '^[[1;5C' forward-word      # Ctrl+Right で単語単位の部分適用
-bindkey '^[[C' forward-char         # 右矢印で1文字ずつ適用
+# zsh-autosuggestions 部分適用
+bindkey '^[f' forward-word
+bindkey '^[[1;5C' forward-word
+bindkey '^[[C' forward-char
 
-# 補完用のキーバインド（WezTermと競合しない代替キー）
-# Ctrl+Y - 現在の単語だけを適用して次の補完位置へ（Alt+Enterの代替）
+# 補完用
 bindkey '^y' accept-and-menu-complete
-
-# Ctrl+] - 現在の補完を確定して続けて入力可能に（Ctrl+Qの代替）
 bindkey '^]' accept-and-hold
 
-
-# ----------------------
-# インタラクティブシェル設定
-# ----------------------
-# バックグラウンドジョブの優先度をフォアグラウンドと同じにする
+# ---- インタラクティブシェル設定 ----
 unsetopt bg_nice
-
-# 補完候補を詰めて表示（スペース効率化）
 setopt list_packed
-
-# ビープ音を無効化
 setopt no_beep
-
-# ファイル種別記号（*/=@など）を補完リストに表示しない
 unsetopt list_types
 
-# ----------------------
-# 補完機能の設定
-# ----------------------
-# ========================================
+# ---- 補完機能 ----
 # LS_COLORS（補完候補の色設定）
-# ========================================
-# Abyssal Teal Theme (Expanded)
-# di=ディレクトリ(Heading Cyan), ln=シンボリックリンク(Glitch Purple), ex=実行可能(Vibrant Teal)
-# *.md/*.txt=Slate Mid, *.go/*.ts/*.js=Sky Slate
 export LS_COLORS='ma=48;2;100;187;190;38;2;19;32;24:di=38;2;157;220;217:ln=38;2;147;105;151:ex=38;2;108;216;211;1:*.md=38;2;82;91;101:*.txt=38;2;82;91;101:*.go=38;2;164;171;203:*.ts=38;2;164;171;203:*.js=38;2;164;171;203'
 
-# ========================================
-# FZF カラー設定（fzf-tab用）
-# ========================================
+# FZF カラー設定
 export FZF_DEFAULT_OPTS='
   --color=bg+:#64BBBE,bg:-1,fg:#CEF5F2,fg+:#0B0C0C
   --color=hl:#6CD8D3,hl+:#0B0C0C,info:#7A869A,marker:#0B0C0C
@@ -235,121 +137,87 @@ export FZF_DEFAULT_OPTS='
 # Worklog CLI completion
 fpath=(/Users/s23159/.local/share/zsh/site-functions $fpath)
 
-# 補完機能を有効化
 autoload -U compinit && compinit
 
-# Zeno.zsh - 略語展開（abbr）とfzfベース履歴検索
-zinit light yuki-yano/zeno.zsh
-
-# Zeno keybindings（ZENO_LOADEDガード付き）
-if [[ -n $ZENO_LOADED ]]; then
-  bindkey ' '  zeno-auto-snippet                    # Space で略語を自動展開
-  bindkey '^m' zeno-auto-snippet-and-accept-line     # Enter で略語展開+実行
-  bindkey '^r' zeno-smart-history-selection           # Ctrl+R でSmart History Selection
-  bindkey '^x^s' zeno-insert-snippet                 # Ctrl+X Ctrl+S でスニペット一覧からfzf選択
+# Zoxide（compinit後に配置: compdefが実体化している必要あり）
+# cdコマンドを置き換え（Claude Codeでは無効化）
+if [[ "$CLAUDECODE" != "1" ]]; then
+  eval "$(zoxide init --cmd cd zsh)"
 fi
 
-# FZFタブ補完 - タブ補完をfzfでインタラクティブに（compinitの後に読み込み必須）
+# fzf-tab: compinitの後に読み込み必須
 zinit light Aloxaf/fzf-tab
 
-# 自動サジェスト - 履歴に基づいてコマンドを提案（薄い文字で表示）
-# 注意: fzf-tabの後に読み込む（fzf-tabが^Iをフックするため）
+# zsh-autosuggestions: fzf-tabの後に読み込む（fzf-tabが^Iをフックするため）
 zinit light zsh-users/zsh-autosuggestions
-
-# zsh-autosuggestions 色設定 (Comment Gray - improved visibility)
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7A869A'
-
-# zsh-autosuggestions 部分適用の設定
-# forward-wordを部分適用ウィジェットとして使用
 ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-word)
-# forward-charも部分適用ウィジェットとして使用
 ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-char vi-forward-char)
 
-# fzf-tab用の色設定 (Expanded Abyssal Teal)
-zstyle ':fzf-tab:*' fzf-flags \
-  --color=bg+:#64BBBE,bg:-1,fg:#CEF5F2,fg+:#0B0C0C \
-  --color=hl:#6CD8D3,hl+:#0B0C0C,info:#7A869A,marker:#0B0C0C \
-  --color=prompt:#936997,spinner:#936997,pointer:#0B0C0C,header:#7A869A \
-  --color=border:#4D8F9E,gutter:-1
+# Zeno.zsh: fzf-tab/autosuggestionsの後に読み込む（初期化順序の安全性のため）
+zinit light yuki-yano/zeno.zsh
 
-# fzf-tabプラグイン用の設定（デフォルトメニューを無効化）
+# Zeno keybindings
+if [[ -n $ZENO_LOADED ]]; then
+  # Space wrapper: zeno-auto-snippetが「success+空結果」を返した場合にスペースを補完
+  # （zoxideのcd補完でSpace-Tabパターンが機能しない問題を修正）
+  __zeno_space_wrapper() {
+    local orig_buffer="$BUFFER"
+    zle zeno-auto-snippet
+    if [[ "$BUFFER" == "$orig_buffer" ]]; then
+      LBUFFER+=" "
+    fi
+  }
+  zle -N __zeno_space_wrapper
+  bindkey ' '  __zeno_space_wrapper
+  bindkey '^m' zeno-auto-snippet-and-accept-line
+  bindkey '^r' zeno-smart-history-selection
+  bindkey '^x^s' zeno-insert-snippet
+fi
+
+# zsh-syntax-highlighting: 最後に読み込む（競合リスク低減）
+zinit light zsh-users/zsh-syntax-highlighting
+
+# シンタックスハイライトの色設定 (Expanded Abyssal Teal)
+typeset -A ZSH_HIGHLIGHT_STYLES
+ZSH_HIGHLIGHT_STYLES[default]='fg=#CEF5F2'
+ZSH_HIGHLIGHT_STYLES[arg0]='fg=#CEF5F2'
+ZSH_HIGHLIGHT_STYLES[command]='fg=#6CD8D3,bold'
+ZSH_HIGHLIGHT_STYLES[builtin]='fg=#6CD8D3,bold'
+ZSH_HIGHLIGHT_STYLES[alias]='fg=#6CD8D3,bold'
+ZSH_HIGHLIGHT_STYLES[function]='fg=#6CD8D3,bold'
+ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#936997,bold'
+ZSH_HIGHLIGHT_STYLES[path]='fg=#9DDCD9,underline'
+ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=#659D9E'
+ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=#659D9E'
+ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=#A4ABCB'
+ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=#A4ABCB'
+ZSH_HIGHLIGHT_STYLES[comment]='fg=#7A869A'
+
+# fzf-tab設定
 zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:cd:*' disabled-on any  # zoxideとの競合を回避
 
-# メニュー選択機能を有効化
-zmodload zsh/complist
-
-# メニュー選択モードでのキーバインド
-bindkey -M menuselect '^[[C' forward-char                  # 右矢印で次の候補へ
-bindkey -M menuselect '^[[D' backward-char                 # 左矢印で前の候補へ
-bindkey -M menuselect '^[[B' down-line-or-history          # 下矢印で下の候補へ
-bindkey -M menuselect '^[[A' up-line-or-history            # 上矢印で上の候補へ
-bindkey -M menuselect '^i' menu-complete                   # Tabで次の候補
-bindkey -M menuselect '^[[Z' reverse-menu-complete         # Shift+Tabで前の候補
-bindkey -M menuselect ' ' accept-and-infer-next-history    # スペースでディレクトリ部分適用
-bindkey -M menuselect '/' accept-and-infer-next-history    # スラッシュでディレクトリ部分適用
-bindkey -M menuselect '^m' accept-line                     # Enterで確定
-bindkey -M menuselect '^g' send-break                      # Ctrl+Gでキャンセル
-
-# 補完スタイルの詳細設定
-# 大文字小文字を区別しない補完
+# 補完スタイル
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-
-# 補完候補に色を付ける（LS_COLORS環境変数を使用）
-# 注意: fzf-tab使用時は上記のzstyle ':fzf-tab:*'設定が優先される
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' completer _complete _match
 
-# 補完方法の優先順位（通常補完→部分一致→曖昧補完）
-zstyle ':completion:*' completer _complete _match _approximate
-
-# 曖昧補完で許容する誤字数（1文字まで）
-zstyle ':completion:*:approximate:*' max-errors 1
-
-# ----------------------
-# エイリアス
-# ----------------------
-# 基本コマンドのエイリアス
-alias ls='ls --color=auto'           # lsに色を付ける（ll/la/l abbr展開の基盤）
-alias vtmp='nvim "${TMPDIR%/}/$(date "+%Y%m%d_%H%M%S").md"'  # 一時ディレクトリにタイムスタンプ付きmdファイルを作成して編集
-alias now='date "+%Y/%m/%d %H:%M:%S"'  # 現在日時を表示
-
-# SSH接続時のターミナルタイプを明示的に指定（カラー対応）
+# ---- エイリアス ----
+alias ls='ls --color=auto'
+alias vtmp='nvim "${TMPDIR%/}/$(date "+%Y%m%d_%H%M%S").md"'
 alias ssh='TERM=xterm-256color \ssh'
-
-# Delta（diff表示ツール）のデフォルトオプション
 alias delta='delta --dark --paging=never --line-numbers --syntax-theme base16-256 -s'
 
-# Copilot CLIツール
-alias awscp='/opt/homebrew/bin/copilot'  # AWS Copilot (ECS/Fargateデプロイツール)
-alias copilot='/opt/homebrew/bin/copilot'  # GitHub Copilot CLI (AIターミナルアシスタント)
+# ---- Google Cloud SDK ----
+for f in path.zsh.inc completion.zsh.inc; do
+  [[ -f "/opt/homebrew/share/google-cloud-sdk/$f" ]] && source "/opt/homebrew/share/google-cloud-sdk/$f"
+done
 
-# ----------------------
-# Google Cloud SDK
-# ----------------------
-# GCPコマンドラインツールのPATH設定
-if [ -f '/opt/homebrew/share/google-cloud-sdk/path.zsh.inc' ]; then
-  . '/opt/homebrew/share/google-cloud-sdk/path.zsh.inc'
-fi
-
-# GCPコマンド補完機能
-if [ -f '/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc' ]; then
-  . '/opt/homebrew/share/google-cloud-sdk/completion.zsh.inc'
-fi
-
-# ----------------------
-# AWS CLI
-# ----------------------
-# AWS CLI v2の補完機能を有効化
-complete -C '/opt/homebrew/bin/aws_completer' aws
-
-# ----------------------
-# Terraform
-# ----------------------
+# ---- 外部ツール補完 ----
 autoload -U +X bashcompinit && bashcompinit
+complete -C '/opt/homebrew/bin/aws_completer' aws
 complete -o nospace -C /opt/homebrew/bin/terraform terraform
 
-# ----------------------
-# ローカル設定
-# ----------------------
-# マシン固有の設定があれば読み込む
+# ---- ローカル設定 ----
 if [ -f ~/.zshrc.local ]; then source ~/.zshrc.local; fi
-
