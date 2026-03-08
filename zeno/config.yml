@@ -1,0 +1,38 @@
+# ~/.config/zeno/config.yml
+
+snippets:
+  # コマンド短縮
+  - keyword: vi
+    snippet: nvim
+  - keyword: cl
+    snippet: claude
+  - keyword: k
+    snippet: kubectl
+  - keyword: lg
+    snippet: lazygit
+  - keyword: kg
+    snippet: keifu
+  - keyword: wl
+    snippet: worklog
+
+  # ls系
+  - keyword: ll
+    snippet: ls -l
+  - keyword: la
+    snippet: ls -la
+  - keyword: l
+    snippet: ls -CF
+
+  # Git shortcuts
+  - keyword: gs
+    snippet: git status
+  - keyword: gd
+    snippet: git diff
+  - keyword: gp
+    snippet: git push
+  - keyword: gl
+    snippet: git log --oneline -20
+  - keyword: ga
+    snippet: git add
+  - keyword: gc
+    snippet: git commit
