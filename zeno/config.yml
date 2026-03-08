@@ -36,3 +36,7 @@ snippets:
     snippet: git add
   - keyword: gc
     snippet: git commit
+
+  # 日時
+  - keyword: now
+    snippet: date "+%Y/%m/%d %H:%M:%S"
