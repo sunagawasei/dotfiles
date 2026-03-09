@@ -81,8 +81,16 @@ if [ "$TERM_PROGRAM" = "WezTerm" ] || [ -n "$WEZTERM_PANE" ]; then
   __wezterm_osc7() {
     printf '\e]7;file://%s%s\e\\' "$HOST" "$PWD"
   }
+  # シェルidle/busy状態の通知（pane閉じ確認制御用）
+  __wezterm_set_user_var() {
+    printf '\033]1337;SetUserVar=%s=%s\007' "$1" "$(printf '%s' "$2" | base64)"
+  }
+  __wezterm_preexec() { __wezterm_set_user_var WEZTERM_BUSY 1; }
+  __wezterm_precmd_busy() { __wezterm_set_user_var WEZTERM_BUSY 0; }
   autoload -Uz add-zsh-hook
   add-zsh-hook precmd __wezterm_osc7
+  add-zsh-hook preexec __wezterm_preexec
+  add-zsh-hook precmd  __wezterm_precmd_busy
 fi
 
 # ---- 履歴設定 ----

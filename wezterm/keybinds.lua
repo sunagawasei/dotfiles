@@ -1,6 +1,30 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
 
+-- WEZTERM_BUSY user varで判定。未設定("0"以外)は安全側=busy扱い
+local function is_pane_busy(pane)
+	return pane:get_user_vars().WEZTERM_BUSY ~= "0"
+end
+
+local function close_pane_smart(window, pane)
+	window:perform_action(act.CloseCurrentPane({ confirm = is_pane_busy(pane) }), pane)
+end
+
+local function close_tab_smart(window, pane)
+	local tab = pane:tab()
+	if not tab then
+		window:perform_action(act.CloseCurrentTab({ confirm = true }), pane)
+		return
+	end
+	for _, tab_pane in ipairs(tab:panes()) do
+		if is_pane_busy(tab_pane) then
+			window:perform_action(act.CloseCurrentTab({ confirm = true }), pane)
+			return
+		end
+	end
+	window:perform_action(act.CloseCurrentTab({ confirm = false }), pane)
+end
+
 -- Show which key table is active in the status area
 wezterm.on("update-right-status", function(window, pane)
 	local name = window:active_key_table()
@@ -129,7 +153,7 @@ return {
 		-- Tab新規作成
 		{ key = "t", mods = "SUPER", action = act({ SpawnTab = "CurrentPaneDomain" }) },
 		-- Tabを閉じる
-		{ key = "w", mods = "SUPER", action = act({ CloseCurrentTab = { confirm = true } }) },
+		{ key = "w", mods = "SUPER", action = wezterm.action_callback(close_tab_smart) },
 		{ key = "}", mods = "LEADER", action = act({ MoveTabRelative = 1 }) },
 
 		-- コピーモード (CTRL+SHIFT+X)
@@ -143,7 +167,7 @@ return {
 		{ key = "d", mods = "LEADER", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
 		{ key = "r", mods = "LEADER", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
 		-- Paneを閉じる leader + x
-		{ key = "x", mods = "LEADER", action = act({ CloseCurrentPane = { confirm = true } }) },
+		{ key = "x", mods = "LEADER", action = wezterm.action_callback(close_pane_smart) },
 		-- Pane移動 leader + hlkj
 		{ key = "h", mods = "LEADER", action = act.ActivatePaneDirection("Left") },
 		{ key = "l", mods = "LEADER", action = act.ActivatePaneDirection("Right") },
@@ -378,7 +402,7 @@ return {
 			{ key = "r", action = act.RotatePanes("Clockwise") },
 			{ key = "R", mods = "SHIFT", action = act.RotatePanes("CounterClockwise") },
 			-- ペインを閉じる
-			{ key = "x", action = act.CloseCurrentPane({ confirm = true }) },
+			{ key = "x", action = wezterm.action_callback(close_pane_smart) },
 			-- ペインをズーム
 			{ key = "z", action = act.TogglePaneZoomState },
 			-- モードを終了
