@@ -78,7 +78,7 @@ return {
       -- 開いているターミナルのIDを記録（番号付きターミナルのみ）
       local open_terminals = {}
       for _, term in pairs(all_terminals) do
-        -- LazyGit/Keifuを除外：番号付きターミナル（1/2/3）のみ対象
+        -- LazyGitを除外：番号付きターミナル（1/2/3）のみ対象
         if term.id >= 1 and term.id <= 3 and term:is_open() then
           table.insert(open_terminals, term.id)
           term:close()
@@ -158,24 +158,6 @@ return {
 
     _G.lazygit_toggle = function()
       lazygit:toggle()
-    end
-
-    -- Keifu統合
-    local keifu = Terminal:new({
-      cmd = "keifu",
-      direction = "float",
-      float_opts = {
-        border = "curved",
-        width = math.floor(vim.o.columns * 0.9),
-        height = math.floor(vim.o.lines * 0.9),
-      },
-      on_open = function(term)
-        vim.cmd("startinsert!")
-      end,
-    })
-
-    _G.keifu_toggle = function()
-      keifu:toggle()
     end
 
     -- ターミナルウィンドウのサイズを変更
@@ -301,16 +283,6 @@ return {
       end,
       mode = { "n" },
       desc = "LazyGit",
-    },
-
-    -- Keifu
-    {
-      "<leader>gk",
-      function()
-        _G.keifu_toggle()
-      end,
-      mode = { "n" },
-      desc = "Keifu (Git Graph)",
     },
 
     -- ターミナルサイクル切り替え
