@@ -28,6 +28,14 @@ vim.api.nvim_create_autocmd("FileType", {
   pattern = { "json", "jsonc", "markdown" },
   callback = function()
     vim.wo.conceallevel = 0
+    if vim.bo.filetype == "markdown" then
+      vim.keymap.set("n", "<leader>mo", function()
+        Snacks.picker.lsp_symbols()
+      end, {
+        desc = "Markdown outline",
+        buffer = true,
+      })
+    end
   end,
 })
 
