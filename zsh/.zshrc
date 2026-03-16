@@ -1,7 +1,7 @@
 # ---- 基本設定 ----
 # pyenv シェル統合（インタラクティブシェルのみ）
 if command -v pyenv &>/dev/null; then
-  eval "$(pyenv init -)"
+  eval "$(pyenv init - --no-rehash)"
 fi
 
 # Homebrew の AWS CLI v2 を pyenv shims より優先
@@ -95,7 +95,6 @@ fi
 
 # ---- 履歴設定 ----
 setopt EXTENDED_HISTORY
-setopt hist_ignore_dups
 setopt hist_ignore_all_dups
 setopt hist_find_no_dups
 setopt hist_ignore_space
@@ -105,7 +104,6 @@ setopt hist_save_no_dups
 setopt hist_no_store
 setopt hist_expand
 setopt share_history
-setopt appendhistory
 
 # ---- キーバインド ----
 bindkey '^p' history-search-backward
@@ -141,6 +139,10 @@ export FZF_DEFAULT_OPTS='
   --color=prompt:#936997,spinner:#936997,pointer:#0B0C0C,header:#7A869A
   --color=border:#4D8F9E,gutter:-1
 '
+
+# fzf キーバインド: Ctrl+T (ファイル選択), Alt+C (ディレクトリ移動)
+# Ctrl+R は後続の zeno keybindings で上書きされる
+source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
 
 # Worklog CLI completion
 fpath=(/Users/s23159/.local/share/zsh/site-functions $fpath)
