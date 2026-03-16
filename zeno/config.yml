@@ -40,3 +40,9 @@ snippets:
   # 日時
   - keyword: now
     snippet: date "+%Y/%m/%d %H:%M:%S"
+
+history:
+  defaultScope: directory
+  fzfOptions: "--bind 'load:change-preview-window(right:50%:wrap:hidden)'"
+  keymap:
+    togglePreview: ctrl-/
