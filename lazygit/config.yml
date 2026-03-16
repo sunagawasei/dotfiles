@@ -36,7 +36,7 @@ gui:
   authorColors:
     '*': '#8A97AD' # Git Blame Gray (improved visibility)
 os:
-  editPreset: "nvim-remote"  # eキー用：同じNeovimインスタンスで開く
+  editPreset: "nvim-remote" # eキー用：同じNeovimインスタンスで開く
   open: '[ -n "$NVIM" ] && nvim --server "$NVIM" --remote-tab {{filename}} || open {{filename}}'
 git:
   autoFetch: true # 自動fetchを有効化
@@ -63,3 +63,10 @@ keybinding:
     moveDownCommit: '<c-d>'
     moveUpCommit: '<c-u>'
     openLogMenu: '<c-g>' # Ctrl+Gでログメニューを開く（Karabinerとの競合回避）
+customCommands:
+  - key: "<c-g>"
+    context: "files"
+    description: "Claude AIでコミットメッセージを生成"
+    command: >-
+      DIFF=$(git diff --cached) && if [ -z "$DIFF" ]; then printf '\033[31mエラー: ステージされた変更がありません\033[0m\n' && read -r -p '続行するにはキーを押してください...'; else clear && printf '\033[33mClaude AIがコミットメッセージを生成中...\033[0m\n' && LOG=$(git log --oneline -20 2>/dev/null) && MSG=$(printf 'Recent commits:\n%s\n\nDiff:\n%s' "$LOG" "$DIFF" | claude --no-session-persistence --print --model haiku 'Generate ONLY a one-line Git commit message that follows the style and language of the recent commits shown above. If no recent commits exist, default to Japanese. Use Conventional Commits format: type(scope): subject. Types: feat, fix, docs, style, refactor, perf, test, chore. Based strictly on the diff. Output ONLY the message, nothing else.') && git commit -e -m "$MSG"; fi
+    output: terminal
