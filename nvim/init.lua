@@ -2,6 +2,9 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+-- <Space>のデフォルト動作（右移動）を無効化。LazyVimの同設定はVeryLazyで遅延ロードされるため先行設定が必要
+vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
+
 -- bootstrap lazy.nvim, LazyVim and your plugins
 require("config.lazy")
 
