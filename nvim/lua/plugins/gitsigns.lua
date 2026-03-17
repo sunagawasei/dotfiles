@@ -29,12 +29,6 @@ return {
     update_debounce = 100,
     status_formatter = nil,
     max_file_length = 40000,
-    
-    -- scrollbar連携用のコールバック
-    _on_attach_pre = function(_, callback)
-      require("scrollbar.handlers.gitsigns").setup()
-      callback()
-    end,
   },
   keys = {
     -- HunkプレビューとBlame詳細表示

@@ -71,17 +71,6 @@ vim.api.nvim_create_autocmd({ "FocusGained" }, {
   end,
 })
 
--- カーソルが停止したときもチェック（updatetimeを長くしたので頻度が下がる）
--- パフォーマンス最適化のため無効化（FocusGainedで既にチェック済み）
--- vim.api.nvim_create_autocmd({ "CursorHold" }, {
---   group = "auto_read",
---   callback = function()
---     if vim.o.buftype ~= "nofile" then
---       vim.cmd("checktime")
---     end
---   end,
--- })
-
 -- ファイルが外部で変更されたときの通知（オプション）
 vim.api.nvim_create_autocmd("FileChangedShellPost", {
   group = "auto_read",
@@ -166,7 +155,7 @@ vim.api.nvim_create_autocmd("TermOpen", {
 -- CursorLineハイライトが下方向カーソル移動を劇的に遅延させる
 -- 上方向は高速、下方向のみ遅い非対称的な問題
 vim.api.nvim_create_autocmd("FileType", {
-  pattern = { "neo-tree", "NvimTree", "oil" },
+  pattern = { "oil" },
   callback = function()
     vim.opt_local.cursorline = false
   end,

@@ -51,38 +51,6 @@ return {
         PmenuSbar = { bg = colors.dark_shadow },
         PmenuThumb = { bg = colors.mid_gray },
 
-        -- CJK IME support
-        CmpItemAbbrMatch = { bg = colors.dark_shadow, fg = colors.bright_cyan },
-        CmpItemAbbrMatchFuzzy = { bg = colors.dark_shadow, fg = colors.bright_cyan },
-        CmpItemAbbr = { bg = colors.dark_shadow, fg = colors.fg },
-        CmpItemKind = { bg = colors.dark_shadow, fg = colors.mid_gray },
-        CmpItemMenu = { bg = colors.dark_shadow, fg = colors.mid_gray },
-        CmpItemKindFunction = { bg = colors.dark_shadow, fg = colors.bright_cyan },
-        CmpItemKindMethod = { bg = colors.dark_shadow, fg = colors.bright_cyan },
-        CmpItemKindConstructor = { bg = colors.dark_shadow, fg = colors.bright_cyan },
-        CmpItemKindClass = { bg = colors.dark_shadow, fg = colors.bright_cyan },
-        CmpItemKindEnum = { bg = colors.dark_shadow, fg = colors.bright_cyan },
-        CmpItemKindEvent = { bg = colors.dark_shadow, fg = colors.bright_cyan },
-        CmpItemKindInterface = { bg = colors.dark_shadow, fg = colors.bright_cyan },
-        CmpItemKindStruct = { bg = colors.dark_shadow, fg = colors.bright_cyan },
-        CmpItemKindVariable = { bg = colors.dark_shadow, fg = colors.fg },
-        CmpItemKindField = { bg = colors.dark_shadow, fg = colors.fg },
-        CmpItemKindProperty = { bg = colors.dark_shadow, fg = colors.fg },
-        CmpItemKindEnumMember = { bg = colors.dark_shadow, fg = colors.fg },
-        CmpItemKindConstant = { bg = colors.dark_shadow, fg = colors.bright_cyan },
-        CmpItemKindKeyword = { bg = colors.dark_shadow, fg = colors.cyan },
-        CmpItemKindModule = { bg = colors.dark_shadow, fg = colors.fg },
-        CmpItemKindValue = { bg = colors.dark_shadow, fg = colors.fg },
-        CmpItemKindUnit = { bg = colors.dark_shadow, fg = colors.fg },
-        CmpItemKindText = { bg = colors.dark_shadow, fg = colors.fg },
-        CmpItemKindSnippet = { bg = colors.dark_shadow, fg = colors.fg },
-        CmpItemKindFile = { bg = colors.dark_shadow, fg = colors.fg },
-        CmpItemKindFolder = { bg = colors.dark_shadow, fg = colors.fg },
-        CmpItemKindColor = { bg = colors.dark_shadow, fg = colors.fg },
-        CmpItemKindReference = { bg = colors.dark_shadow, fg = colors.fg },
-        CmpItemKindOperator = { bg = colors.dark_shadow, fg = colors.fg },
-        CmpItemKindTypeParameter = { bg = colors.dark_shadow, fg = colors.fg },
-
         -- Blink.cmp 用のハイライトグループ
         BlinkCmpMenu = { bg = colors.dark_shadow, fg = colors.fg },
         BlinkCmpMenuBorder = { bg = colors.dark_shadow, fg = colors.cyan },
@@ -110,22 +78,9 @@ return {
         SnacksPickerPathIgnored = { bg = "none" },
 
         -- 一般的なサイドバー関連のハイライトグループ
-        NeoTreeNormal = { bg = "none" },
-        NeoTreeNormalNC = { bg = "none" },
-        NvimTreeNormal = { bg = "none" },
-        NvimTreeNormalNC = { bg = "none" },
         SnacksPickerTree = { bg = "none" },
         LineNr = { bg = "none" },
         CursorLineNr = { bg = "none", fg = colors.highlight_white, bold = true },
-
-        -- ClaudeCode関連のハイライトグループ
-        ClaudeCodeNormal = { bg = "none" },
-        ClaudeCodeNormalFloat = { bg = "none" },
-        ClaudeCodeFloatBorder = { bg = "none" },
-        ClaudeCodeWinBar = { bg = "none" },
-        ClaudeCodeWinBarNC = { bg = "none" },
-        ClaudeCodeStatusLine = { bg = "none" },
-        ClaudeCodeStatusLineNC = { bg = "none" },
 
         -- MiniIcons ハイライトグループ - 白色統一表示
         MiniIconsAzure = { fg = colors.white },

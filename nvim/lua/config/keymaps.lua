@@ -272,11 +272,6 @@ vim.keymap.set("n", "<leader>uh", function()
   vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
 end, { desc = "Toggle Inlay Hints" })
 
--- Copilotの有効/無効を切り替え（copilot.lua対応）
-vim.keymap.set("n", "<leader>ct", "<cmd>Copilot toggle<cr>", { desc = "Toggle Copilot" })
-
-vim.keymap.set("n", "<leader>cp", "<cmd>CodeCompanionChat Toggle<cr>", { desc = "CodeCompanion Chat Toggle" })
-
 -- ウィンドウZoom（全画面化トグル）
 vim.keymap.set({ "n", "t" }, "<C-w>z", function()
   Snacks.zen.zoom()

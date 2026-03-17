@@ -48,12 +48,8 @@ return {
         "prompt",
       },
       excluded_filetypes = {
-        "NvimTree",
-        "neo-tree",
-        "dashboard",
         "lazy",
         "mason",
-        "TelescopePrompt",
         "SnacksPickerPrompt",
         "SnacksExplorer",
       },
