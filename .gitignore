@@ -90,6 +90,9 @@ colima/
 # Home Managerが生成するファイル（nixストアへのシンボリックリンク）
 git/
 direnv/
+zsh/.zshenv
+zsh/.zprofile
+zsh/.zshrc
 
 zsh/.zsh_sessions/
 
