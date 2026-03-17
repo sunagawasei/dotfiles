@@ -18,11 +18,51 @@ set termguicolors
 syntax enable
 
 " ========================================
-" カーソル形状変更（モード別）
+" 検索
 " ========================================
-let &t_SI = "\e[5 q"  " Insert: 点滅バー
-let &t_EI = "\e[1 q"  " Normal: ブロック
-let &t_SR = "\e[3 q"  " Replace: 下線
+set incsearch       " インクリメンタルサーチ
+set hlsearch        " 検索結果ハイライト
+set ignorecase      " 大文字小文字を無視
+set smartcase       " 大文字を含む場合は区別
+
+" ========================================
+" インデント
+" ========================================
+set expandtab       " タブをスペースに展開
+set tabstop=4       " タブ幅
+set shiftwidth=4    " インデント幅
+set autoindent      " 自動インデント
+set smartindent     " スマートインデント
+
+" ========================================
+" 操作性
+" ========================================
+set backspace=indent,eol,start  " Backspaceを直感的に
+set hidden          " バッファ切替時に保存を強制しない
+set scrolloff=8     " カーソル周辺に余白を確保
+set mouse=a         " マウス操作を有効化
+
+" ========================================
+" ファイル処理
+" ========================================
+set encoding=utf-8  " UTF-8エンコーディング
+set nobackup        " バックアップファイル無効
+set noswapfile      " スワップファイル無効
+set autoread        " 外部変更の自動再読み込み
+
+" ========================================
+" UI改善
+" ========================================
+set laststatus=2    " ステータスライン常時表示
+set showcmd         " 入力中のコマンドを表示
+set wildmenu        " コマンド補完をリッチに
+set signcolumn=yes  " サインカラム常時表示
+
+" ========================================
+" パフォーマンス
+" ========================================
+set lazyredraw      " マクロ実行中の再描画抑制
+set ttyfast         " 高速ターミナル接続
 
 " ========================================
 " Abyssal Teal カラースキーム（TOML準拠）
@@ -102,3 +142,29 @@ highlight DiffText guifg=#9DDCD9 guibg=NONE ctermfg=152 ctermbg=NONE gui=bold ct
 " スペルチェック
 highlight SpellBad guifg=#A37AA7 ctermfg=133 gui=undercurl cterm=underline
 highlight SpellCap guifg=#B4B7CD ctermfg=146 gui=undercurl cterm=underline
+
+" ========================================
+" Markdownプラグイン設定
+" ========================================
+let g:vim_markdown_folding_disabled = 1
+let g:vim_markdown_conceal = 2
+let g:vim_markdown_conceal_code_blocks = 0
+let g:vim_markdown_fenced_languages = ['bash=sh', 'go', 'python', 'vim', 'lua', 'json', 'yaml', 'toml']
+let g:vim_markdown_new_list_item_indent = 2
+let g:vim_markdown_no_extensions_in_markdown = 1
+
+" vim-table-mode: Markdownモード
+let g:table_mode_corner = '|'
+
+" ========================================
+" Markdown ファイルタイプ設定
+" ========================================
+augroup markdown_settings
+  autocmd!
+  autocmd FileType markdown setlocal wrap linebreak
+  autocmd FileType markdown setlocal spell spelllang=en,cjk
+  autocmd FileType markdown setlocal conceallevel=2
+  autocmd FileType markdown setlocal tabstop=2 shiftwidth=2
+  " チェックボックストグル: <Leader>x
+  autocmd FileType markdown nnoremap <buffer> <Leader>x :s/\v\[([ x])\]/\=submatch(1)==' '?'[x]':'[ ]'/<CR>:nohlsearch<CR>
+augroup END
