@@ -1,12 +1,4 @@
 # ---- 基本設定 ----
-# pyenv シェル統合（インタラクティブシェルのみ）
-if command -v pyenv &>/dev/null; then
-  eval "$(pyenv init - --no-rehash)"
-fi
-
-# Homebrew の AWS CLI v2 を pyenv shims より優先
-alias aws='/opt/homebrew/bin/aws'
-
 # Emacsキーバインドを明示的に設定（$EDITORにvimを設定しているためviモードになるのを防ぐ）
 bindkey -e
 
@@ -142,7 +134,7 @@ export FZF_DEFAULT_OPTS='
 
 # fzf キーバインド: Ctrl+T (ファイル選択), Alt+C (ディレクトリ移動)
 # Ctrl+R は後続の zeno keybindings で上書きされる
-source /opt/homebrew/opt/fzf/shell/key-bindings.zsh
+[[ -f "${HOME}/.nix-profile/share/fzf/key-bindings.zsh" ]] && source "${HOME}/.nix-profile/share/fzf/key-bindings.zsh"
 
 # Worklog CLI completion
 fpath=(/Users/s23159/.local/share/zsh/site-functions $fpath)
@@ -220,14 +212,23 @@ alias ssh='TERM=xterm-256color \ssh'
 alias delta='delta --dark --paging=never --line-numbers --syntax-theme base16-256 -s'
 
 # ---- Google Cloud SDK ----
-for f in path.zsh.inc completion.zsh.inc; do
-  [[ -f "/opt/homebrew/share/google-cloud-sdk/$f" ]] && source "/opt/homebrew/share/google-cloud-sdk/$f"
-done
+# Homebrew と Nix 両方のレイアウトに対応
+if command -v gcloud &>/dev/null; then
+  _gcloud_bin="$(command -v gcloud)"
+  _gcloud_root="$(dirname "$(readlink -f "$_gcloud_bin")")/.."
+  for f in path.zsh.inc completion.zsh.inc; do
+    # Nix: .../google-cloud-sdk/google-cloud-sdk/
+    [[ -f "$_gcloud_root/google-cloud-sdk/$f" ]] && source "$_gcloud_root/google-cloud-sdk/$f" && continue
+    # Homebrew: .../google-cloud-sdk/
+    [[ -f "$_gcloud_root/$f" ]] && source "$_gcloud_root/$f"
+  done
+  unset _gcloud_bin _gcloud_root
+fi
 
 # ---- 外部ツール補完 ----
 autoload -U +X bashcompinit && bashcompinit
-complete -C '/opt/homebrew/bin/aws_completer' aws
-complete -o nospace -C /opt/homebrew/bin/terraform terraform
+complete -C "$(which aws_completer)" aws
+complete -o nospace -C "$(which terraform)" terraform
 
 # ---- ローカル設定 ----
 if [ -f ~/.zshrc.local ]; then source ~/.zshrc.local; fi
