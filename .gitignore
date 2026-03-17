@@ -90,6 +90,9 @@ codex/
 # Colima設定（コンテナランタイム環境固有）
 colima/
 
+# Home Managerが生成するgit設定（nixストアへのシンボリックリンク）
+git/
+
 zsh/.zsh_sessions/
 
 # AI Agent Tools (temporary/local files)
