@@ -14,9 +14,6 @@
     LANG = "en_US.UTF-8";
     LC_ALL = "en_US.UTF-8";
     LC_CTYPE = "en_US.UTF-8";
-    HISTFILE = "$HOME/.config/zsh/.zsh_history";
-    HISTSIZE = "50000";
-    SAVEHIST = "50000";
     LISTMAX = "50";
     ZENO_HOME = "$HOME/.config/zeno";
     ZENO_HISTORY_LIMIT = "5000";
