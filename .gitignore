@@ -60,6 +60,9 @@ nvim/lazy-lock.json
 # Neovimスペルチェック辞書（自動生成）
 *.utf-8.add.spl
 
+# Neovimスペル辞書（ユーザー固有の追加単語）
+nvim/spell/en.utf-8.add
+
 # Node.js
 node_modules/
 npm-debug.log*
@@ -78,8 +81,20 @@ yarn-error.log*
 *.key
 *.pem
 
+# Claude Code プロジェクト設定（ローカル環境固有）
+.claude/
+
 # MCP Serena設定・キャッシュ（ローカル環境固有）
 .serena/
+
+# GitHub Copilotログ・設定
+.copilot/
+
+# Geminiクリップボードキャッシュ
+.gemini-clipboard/
+
+# Worklog（個人プロジェクトタグ）
+worklog/
 
 # Codex設定（認証・セッション情報を含む）
 codex/
@@ -114,6 +129,9 @@ playwright-intro-page.png
 
 # Raycast (OAuth token / account credentials)
 raycast/config.json
+
+# Raycast拡張機能（インストール済みバイナリ）
+raycast/extensions/
 
 # Zsh session files
 # Claude Code（デフォルト除外、公開対象のみホワイトリスト）
