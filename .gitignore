@@ -8,9 +8,6 @@ github-copilot/
 # アプリケーション設定ストア
 configstore/
 
-# シェル環境設定（個人環境依存）
-zsh/.zshenv
-
 # キャッシュ・一時ファイル
 *.zwc
 .zsh_history
@@ -90,8 +87,9 @@ codex/
 # Colima設定（コンテナランタイム環境固有）
 colima/
 
-# Home Managerが生成するgit設定（nixストアへのシンボリックリンク）
+# Home Managerが生成するファイル（nixストアへのシンボリックリンク）
 git/
+direnv/
 
 zsh/.zsh_sessions/
 
@@ -115,8 +113,6 @@ playwright-intro-page.png
 raycast/config.json
 
 # Zsh session files
-zsh/.zsh_sessions/
-
 # Claude Code（デフォルト除外、公開対象のみホワイトリスト）
 claude/*
 !claude/CLAUDE.md
