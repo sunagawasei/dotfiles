@@ -1,5 +1,7 @@
 ---
 name: copilot
+context: fork
+allowed-tools: Bash, Read, Glob, Grep
 description: |
   Execute GitHub Copilot CLI for code review, error analysis, test suggestions, and documentation recommendations.
   Copilot provides analysis and recommendations ONLY - no implementation.

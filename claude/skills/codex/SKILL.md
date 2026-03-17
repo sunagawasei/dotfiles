@@ -1,5 +1,7 @@
 ---
 name: codex
+context: fork
+allowed-tools: Bash, Read, Glob, Grep
 description: |
   Execute Codex CLI directly for expert code analysis. Codex is a read-only analyst —
   Claude Code handles all implementation. Use when the user requests:
