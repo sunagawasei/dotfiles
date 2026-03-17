@@ -141,8 +141,9 @@ Snacks.nvimベース：
     - `#glob:*.lua` - パターンマッチするファイル一覧
     - `#grep:TODO` - ワークスペース内検索
 - **claudecode.nvim**: Claude Code統合
-  - `<leader>ac`: Claude Codeトグル
-  - `<leader>ar`: 前回のセッションを再開
+  - `<leader>aI`: Claude Code起動
+  - `<leader>aS`: Claude Code停止
+  - `<leader>ai`: Claude Codeステータス確認
 - **blink.cmp**: 補完エンジン（LazyVimデフォルト）
 - **conform.nvim**: コードフォーマッター
 - **nvim-lint**: リンター統合
@@ -220,7 +221,6 @@ Snacks.nvimベース：
     - `<leader>tS`: ターミナル選択UI
   - **Git統合**:
     - `<leader>gg`: LazyGit（フローティング）
-    - `<leader>gk`: Keifu（フローティング）
   - **ターミナル内操作**:
     - `<Esc><Esc>` / `<C-q>` / `jk`: ノーマルモードへ
     - `<C-h/j/k/l>`: ウィンドウ移動
@@ -232,8 +232,6 @@ Snacks.nvimベース：
   - `;`/`,`: 文字検索の繰り返し/逆方向
   - **注意**: `t`/`T`キーは無効化（Neotestキーバインドとの競合回避）
 - **which-key.nvim**: キーバインドヘルプ表示
-- **nvim-window-picker**: ウィンドウ選択ツール（`<leader>wp`）
-- **trim.nvim**: 行末空白の自動削除
 - **mini.ai**: テキストオブジェクト拡張
 - **mini.pairs**: 括弧の自動ペアリング
 - **nvim-ts-autotag**: HTMLタグの自動閉じ

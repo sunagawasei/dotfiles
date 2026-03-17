@@ -30,12 +30,6 @@ return {
       -- 初回設定
       set_markdown_preview_theme()
 
-      -- システムテーマ変更時に自動更新
-      vim.api.nvim_create_autocmd({ "VimEnter", "FocusGained" }, {
-        callback = set_markdown_preview_theme,
-        desc = "Update markdown preview theme based on system theme",
-      })
-
       -- 基本設定
       vim.g.mkdp_auto_start = 0 -- 自動開始を無効
       vim.g.mkdp_auto_close = 1 -- バッファ切り替え時に自動クローズ
