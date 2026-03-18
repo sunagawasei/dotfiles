@@ -19,7 +19,7 @@ return {
       insert_mappings = true,
       terminal_mappings = true,
       persist_size = true,
-      persist_mode = true,
+      persist_mode = false,
       direction = "horizontal",
       close_on_exit = true,
       shell = vim.o.shell,
@@ -194,26 +194,38 @@ return {
     -- 番号付きターミナル
     {
       "<leader>t1",
-      function()
-        _G.toggle_smart_terminal(1)
-      end,
-      mode = { "n", "t" },
+      function() _G.toggle_smart_terminal(1) end,
+      mode = "n",
+      desc = "Terminal 1",
+    },
+    {
+      "<leader>t1",
+      [[<C-\><C-n><cmd>lua _G.toggle_smart_terminal(1)<CR>]],
+      mode = "t",
       desc = "Terminal 1",
     },
     {
       "<leader>t2",
-      function()
-        _G.toggle_smart_terminal(2)
-      end,
-      mode = { "n", "t" },
+      function() _G.toggle_smart_terminal(2) end,
+      mode = "n",
+      desc = "Terminal 2",
+    },
+    {
+      "<leader>t2",
+      [[<C-\><C-n><cmd>lua _G.toggle_smart_terminal(2)<CR>]],
+      mode = "t",
       desc = "Terminal 2",
     },
     {
       "<leader>t3",
-      function()
-        _G.toggle_smart_terminal(3)
-      end,
-      mode = { "n", "t" },
+      function() _G.toggle_smart_terminal(3) end,
+      mode = "n",
+      desc = "Terminal 3",
+    },
+    {
+      "<leader>t3",
+      [[<C-\><C-n><cmd>lua _G.toggle_smart_terminal(3)<CR>]],
+      mode = "t",
       desc = "Terminal 3",
     },
 
@@ -262,17 +274,31 @@ return {
     },
 
     -- 最後のターミナルトグル
+    -- tモードは<C-\><C-n>でterminal normalに出てからクローズ。
+    -- これにより閉じ時のModeChangedパターンがnt:nとなり、which-keyが正しく再アタッチできる。
     {
       "<C-/>",
       "<cmd>ToggleTerm<CR>",
-      mode = { "n", "t" },
+      mode = "n",
       desc = "Toggle Terminal (Last)",
+    },
+    {
+      "<C-/>",
+      [[<C-\><C-n><cmd>ToggleTerm<CR>]],
+      mode = "t",
+      desc = "Toggle Terminal (Last, exit insert first)",
     },
     {
       "<C-_>",
       "<cmd>ToggleTerm<CR>",
-      mode = { "n", "t" },
+      mode = "n",
       desc = "Toggle Terminal (Last)",
+    },
+    {
+      "<C-_>",
+      [[<C-\><C-n><cmd>ToggleTerm<CR>]],
+      mode = "t",
+      desc = "Toggle Terminal (Last, exit insert first)",
     },
 
     -- LazyGit

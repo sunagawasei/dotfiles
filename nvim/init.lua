@@ -5,6 +5,12 @@ vim.g.maplocalleader = "\\"
 -- <Space>のデフォルト動作（右移動）を無効化。LazyVimの同設定はVeryLazyで遅延ロードされるため先行設定が必要
 vim.keymap.set({ "n", "v" }, "<Space>", "<Nop>", { silent = true })
 
+-- Nix per-user profile binaries をPATHに追加（macOSでGUI起動時にPATHが不足するため）
+local nix_per_user = "/etc/profiles/per-user/" .. (vim.env.USER or "") .. "/bin"
+if vim.fn.isdirectory(nix_per_user) == 1 and not vim.env.PATH:find(nix_per_user, 1, true) then
+  vim.env.PATH = nix_per_user .. ":" .. vim.env.PATH
+end
+
 -- bootstrap lazy.nvim, LazyVim and your plugins
 require("config.lazy")
 
