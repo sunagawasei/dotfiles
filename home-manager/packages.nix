@@ -2,6 +2,7 @@
 {
   home.packages = with pkgs; [
     nixfmt
+    nil # Nix LSP
 
     # ファイル操作
     fd tree unar
