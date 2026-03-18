@@ -142,8 +142,8 @@ return {
       },
       float_opts = {
         border = "curved",
-        width = math.floor(vim.o.columns * 0.95),
-        height = math.floor(vim.o.lines * 0.95),
+        width = function() return math.floor(vim.o.columns * 0.95) end,
+        height = function() return math.floor(vim.o.lines * 0.95) end,
       },
       on_open = function(term)
         vim.cmd("startinsert!")
