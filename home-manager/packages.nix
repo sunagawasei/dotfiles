@@ -8,13 +8,15 @@
     fd tree unar
 
     # テキスト処理
-    jq wget
+    jq wget pv gron nkf
 
     # セキュリティ
     gnupg pinentry_mac git-crypt bitwarden-cli
 
     # 開発ツール
     gh lazygit neovim deno bun luarocks hadolint markdownlint-cli
+    grpcurl gitui imagemagick gifski pwgen tmux ansifilter
+    ripgrep oxlint unzip
 
     # インフラ
     colima docker qemu
