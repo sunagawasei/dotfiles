@@ -80,6 +80,18 @@ return {
         },
       })
       
+      -- nil LSP (Nix言語サポート、Nix管理のためMasonをスキップ)
+      opts.servers.nil_ls = {
+        mason = false,
+        settings = {
+          ["nil"] = {
+            formatting = {
+              command = { "nixfmt" },
+            },
+          },
+        },
+      }
+
       -- LazyVimのインラインヒント設定を明示的に無効化
       opts.inlay_hints = {
         enabled = false,

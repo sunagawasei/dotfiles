@@ -20,6 +20,7 @@ return {
       go = { "goimports" },
       sh = { "shfmt" },
       fish = { "fish_indent" },
+      nix = { "nixfmt" },
       ["_"] = { "trim_whitespace" },
     },
   },
