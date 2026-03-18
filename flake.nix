@@ -21,22 +21,13 @@
       nix-darwin,
       ...
     }:
-    let
-      system = "aarch64-darwin";
-      pkgs = import nixpkgs {
-        inherit system;
-        config.allowUnfree = true;
-      };
-    in
     {
-      homeConfigurations."s23159" = home-manager.lib.homeManagerConfiguration {
-        inherit pkgs;
-        modules = [ ./home-manager/home.nix ];
-      };
-
       darwinConfigurations."CA-20021145" = nix-darwin.lib.darwinSystem {
         specialArgs = { inherit self; };
-        modules = [ ./nix-darwin/configuration.nix ];
+        modules = [
+          ./nix-darwin/configuration.nix
+          home-manager.darwinModules.home-manager
+        ];
       };
     };
 }

@@ -37,6 +37,7 @@
       vtmp = ''nvim "''${TMPDIR%/}/$(date "+%Y%m%d_%H%M%S").md"'';
       ssh = ''TERM=xterm-256color \ssh'';
       delta = "delta --dark --paging=never --line-numbers --syntax-theme base16-256 -s";
+      nswitch = "sudo darwin-rebuild switch --flake ~/.config";
     };
 
     # Zinit の zsh-completions が compinit より前にロードされるため
@@ -49,6 +50,11 @@
     envExtra = ''
       # Homebrew (最初に評価 — 他のツールが依存)
       [ -x /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
+
+      # Homebrew GitHub API token (cycloud-io/tap に必要)
+      if command -v gh &>/dev/null && gh auth status &>/dev/null 2>&1; then
+        export HOMEBREW_GITHUB_API_TOKEN=$(gh auth token)
+      fi
 
       # Nix Home Manager（brew shellenv / path_helper より後に評価して優先させる）
       if [ -e "$HOME/.nix-profile/bin" ]; then
