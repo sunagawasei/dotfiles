@@ -6,5 +6,7 @@
     terraform
     kubectl
     kubeseal
+    kind
+    s3cmd
   ];
 }
