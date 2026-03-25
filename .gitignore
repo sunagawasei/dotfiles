@@ -54,6 +54,9 @@ useful_phrases.md
 .vscode/
 .idea/
 
+# Vim netrw履歴
+vim/.netrwhist
+
 # Neovimプラグインのロックファイル
 nvim/lazy-lock.json
 
