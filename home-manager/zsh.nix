@@ -100,17 +100,34 @@
         fi
         source "$ZINIT_HOME/zinit.zsh"
 
-        # ---- 補完定義の追加コレクション ----
-        zinit light zsh-users/zsh-completions
-
-        # AWS CDK CLI 補完
-        zinit ice as"completion"
-        zinit snippet https://raw.githubusercontent.com/msysh/aws-cdk-zsh-completion/main/_cdk
+        # ---- 補完初期化ヘルパー（turbo wait"0b" の atinit から呼ばれる）----
+        __setup_completions() {
+          zicompinit
+          zicdreplay
+          # zoxide（compdef が compinit 後に正常動作）
+          if [[ "$CLAUDECODE" != "1" ]]; then
+            eval "$(zoxide init --cmd cd zsh)"
+          fi
+          # bashcompinit + 外部ツール補完
+          autoload -U +X bashcompinit && bashcompinit
+          complete -C "$(command -v aws_completer)" aws
+          complete -o nospace -C "$(command -v terraform)" terraform
+          # Google Cloud SDK 補完
+          if command -v gcloud &>/dev/null; then
+            _gcloud_bin="$(command -v gcloud)"
+            _gcloud_root="$(dirname "$(readlink -f "$_gcloud_bin")")/.."
+            for f in completion.zsh.inc; do
+              [[ -f "$_gcloud_root/google-cloud-sdk/$f" ]] && source "$_gcloud_root/google-cloud-sdk/$f" && continue
+              [[ -f "$_gcloud_root/$f" ]] && source "$_gcloud_root/$f"
+            done
+            unset _gcloud_bin _gcloud_root
+          fi
+        }
 
         # ---- Pure プロンプト ----
         # 環境変数（読み込み前に設定が必要）
         PURE_CMD_MAX_EXEC_TIME=5
-        PURE_GIT_PULL=1
+        PURE_GIT_PULL=0
         PURE_GIT_UNTRACKED_DIRTY=1
         PURE_GIT_DELAY_DIRTY_CHECK=1800
         PURE_PROMPT_SYMBOL="❯"
@@ -205,30 +222,46 @@
         # Worklog CLI completion
         fpath=(${config.home.homeDirectory}/.local/share/zsh/site-functions $fpath)
 
-        autoload -U compinit && compinit
+        # fzf-tab・補完スタイル設定（compinit前に宣言しても有効）
+        zstyle ':completion:*' menu no
+        zstyle ':fzf-tab:complete:cd:*' disabled-on any  # zoxideとの競合を回避
+        zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
+        zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
+        zstyle ':completion:*' completer _complete _match
 
-        # Zoxide（compinit後に配置: compdefが実体化している必要あり）
-        # cdコマンドを置き換え（Claude Codeでは無効化）
-        if [[ "$CLAUDECODE" != "1" ]]; then
-          eval "$(zoxide init --cmd cd zsh)"
+        # ---- Google Cloud SDK (PATH設定のみ同期) ----
+        if command -v gcloud &>/dev/null; then
+          _gcloud_bin="$(command -v gcloud)"
+          _gcloud_root="$(dirname "$(readlink -f "$_gcloud_bin")")/.."
+          for f in path.zsh.inc; do
+            [[ -f "$_gcloud_root/google-cloud-sdk/$f" ]] && source "$_gcloud_root/google-cloud-sdk/$f" && continue
+            [[ -f "$_gcloud_root/$f" ]] && source "$_gcloud_root/$f"
+          done
+          unset _gcloud_bin _gcloud_root
         fi
 
-        # fzf-tab: compinitの後に読み込み必須
+        # ---- Turbo mode zinit ----
+        # wait"0a": fpath追加（compinit前）
+        zinit ice wait"0a" lucid blockf atpull'zinit creinstall -q .'
+        zinit light zsh-users/zsh-completions
+
+        zinit ice wait"0a" lucid as"completion"
+        zinit snippet https://raw.githubusercontent.com/msysh/aws-cdk-zsh-completion/main/_cdk
+
+        # wait"0b": compinit実行 → fzf-tab
+        zinit ice wait"0b" lucid atinit'__setup_completions'
         zinit light Aloxaf/fzf-tab
 
-        # zsh-autosuggestions: fzf-tabの後に読み込む（fzf-tabが^Iをフックするため）
+        # wait"0c": autosuggestions, zeno（fzf-tab の後）
+        zinit ice wait"0c" lucid atload'
+          _zsh_autosuggest_start
+          ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#7A869A"
+          ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-word)
+          ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-char vi-forward-char)
+        '
         zinit light zsh-users/zsh-autosuggestions
-        ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=#7A869A'
-        ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-word)
-        ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-char vi-forward-char)
 
-        # Zeno.zsh: fzf-tab/autosuggestionsの後に読み込む（初期化順序の安全性のため）
-        zinit light yuki-yano/zeno.zsh
-
-        # Zeno keybindings
-        if [[ -n $ZENO_LOADED ]]; then
-          # Space wrapper: zeno-auto-snippetが「success+空結果」を返した場合にスペースを補完
-          # （zoxideのcd補完でSpace-Tabパターンが機能しない問題を修正）
+        zinit ice wait"0c" lucid atload'
           __zeno_space_wrapper() {
             local orig_buffer="$BUFFER"
             zle zeno-auto-snippet
@@ -237,58 +270,31 @@
             fi
           }
           zle -N __zeno_space_wrapper
-          bindkey ' '  __zeno_space_wrapper
-          bindkey '^m' zeno-auto-snippet-and-accept-line
-          bindkey '^r' zeno-smart-history-selection
-          bindkey '^x^s' zeno-insert-snippet
-        fi
+          bindkey " " __zeno_space_wrapper
+          bindkey "^m" zeno-auto-snippet-and-accept-line
+          bindkey "^r" zeno-smart-history-selection
+          bindkey "^x^s" zeno-insert-snippet
+        '
+        zinit light yuki-yano/zeno.zsh
 
-        # zsh-syntax-highlighting: 最後に読み込む（競合リスク低減）
+        # wait"0d": syntax-highlighting（最後）
+        zinit ice wait"0d" lucid atload'
+          typeset -A ZSH_HIGHLIGHT_STYLES
+          ZSH_HIGHLIGHT_STYLES[default]="fg=#CEF5F2"
+          ZSH_HIGHLIGHT_STYLES[arg0]="fg=#CEF5F2"
+          ZSH_HIGHLIGHT_STYLES[command]="fg=#6CD8D3,bold"
+          ZSH_HIGHLIGHT_STYLES[builtin]="fg=#6CD8D3,bold"
+          ZSH_HIGHLIGHT_STYLES[alias]="fg=#6CD8D3,bold"
+          ZSH_HIGHLIGHT_STYLES[function]="fg=#6CD8D3,bold"
+          ZSH_HIGHLIGHT_STYLES[unknown-token]="fg=#936997,bold"
+          ZSH_HIGHLIGHT_STYLES[path]="fg=#9DDCD9,underline"
+          ZSH_HIGHLIGHT_STYLES[single-quoted-argument]="fg=#659D9E"
+          ZSH_HIGHLIGHT_STYLES[double-quoted-argument]="fg=#659D9E"
+          ZSH_HIGHLIGHT_STYLES[single-hyphen-option]="fg=#A4ABCB"
+          ZSH_HIGHLIGHT_STYLES[double-hyphen-option]="fg=#A4ABCB"
+          ZSH_HIGHLIGHT_STYLES[comment]="fg=#7A869A"
+        '
         zinit light zsh-users/zsh-syntax-highlighting
-
-        # シンタックスハイライトの色設定 (Expanded Abyssal Teal)
-        typeset -A ZSH_HIGHLIGHT_STYLES
-        ZSH_HIGHLIGHT_STYLES[default]='fg=#CEF5F2'
-        ZSH_HIGHLIGHT_STYLES[arg0]='fg=#CEF5F2'
-        ZSH_HIGHLIGHT_STYLES[command]='fg=#6CD8D3,bold'
-        ZSH_HIGHLIGHT_STYLES[builtin]='fg=#6CD8D3,bold'
-        ZSH_HIGHLIGHT_STYLES[alias]='fg=#6CD8D3,bold'
-        ZSH_HIGHLIGHT_STYLES[function]='fg=#6CD8D3,bold'
-        ZSH_HIGHLIGHT_STYLES[unknown-token]='fg=#936997,bold'
-        ZSH_HIGHLIGHT_STYLES[path]='fg=#9DDCD9,underline'
-        ZSH_HIGHLIGHT_STYLES[single-quoted-argument]='fg=#659D9E'
-        ZSH_HIGHLIGHT_STYLES[double-quoted-argument]='fg=#659D9E'
-        ZSH_HIGHLIGHT_STYLES[single-hyphen-option]='fg=#A4ABCB'
-        ZSH_HIGHLIGHT_STYLES[double-hyphen-option]='fg=#A4ABCB'
-        ZSH_HIGHLIGHT_STYLES[comment]='fg=#7A869A'
-
-        # fzf-tab設定
-        zstyle ':completion:*' menu no
-        zstyle ':fzf-tab:complete:cd:*' disabled-on any  # zoxideとの競合を回避
-
-        # 補完スタイル
-        zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-        zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
-        zstyle ':completion:*' completer _complete _match
-
-        # ---- Google Cloud SDK ----
-        # Homebrew と Nix 両方のレイアウトに対応
-        if command -v gcloud &>/dev/null; then
-          _gcloud_bin="$(command -v gcloud)"
-          _gcloud_root="$(dirname "$(readlink -f "$_gcloud_bin")")/.."
-          for f in path.zsh.inc completion.zsh.inc; do
-            # Nix: .../google-cloud-sdk/google-cloud-sdk/
-            [[ -f "$_gcloud_root/google-cloud-sdk/$f" ]] && source "$_gcloud_root/google-cloud-sdk/$f" && continue
-            # Homebrew: .../google-cloud-sdk/
-            [[ -f "$_gcloud_root/$f" ]] && source "$_gcloud_root/$f"
-          done
-          unset _gcloud_bin _gcloud_root
-        fi
-
-        # ---- 外部ツール補完 ----
-        autoload -U +X bashcompinit && bashcompinit
-        complete -C "$(which aws_completer)" aws
-        complete -o nospace -C "$(which terraform)" terraform
 
         # ---- ローカル設定 ----
         if [ -f ~/.zshrc.local ]; then source ~/.zshrc.local; fi
