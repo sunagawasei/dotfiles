@@ -116,6 +116,7 @@ zsh/.zsh_sessions/
 
 # AI Agent Tools (temporary/local files)
 agents/
+!agents/.skill-lock.json
 crush/
 goose/
 opencode/
