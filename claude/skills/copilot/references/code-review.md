@@ -81,6 +81,7 @@ Provide concrete improvements with code examples.
 ## Example 3: Security-Focused Review
 
 ```bash
+# --effort high 推奨（extended thinking対応モデルのみ。非対応なら省略）
 copilot -p "
 Security review task:
 
@@ -96,12 +97,13 @@ Specifically check for:
 5. Authentication/authorization flaws
 
 Provide security recommendations with secure code examples.
-" --no-ask-user -s
+" --no-ask-user -s --effort high
 ```
 
 ## Example 4: Pre-Commit Review
 
 ```bash
+# --effort low 推奨（速度重視。extended thinking対応モデルのみ。非対応なら省略）
 copilot -p "
 Pre-commit review task:
 
@@ -116,7 +118,7 @@ Identify:
 4. Code quality concerns
 
 Provide quick feedback with specific line references.
-" --no-ask-user -s
+" --no-ask-user -s --effort low
 ```
 
 ## Integration with Claude Code

@@ -36,6 +36,7 @@ Recent changes:
 ## Example 1: Runtime Error
 
 ```bash
+# --effort high 推奨（extended thinking対応モデルのみ。非対応なら省略）
 copilot -p "
 Error analysis task:
 
@@ -60,7 +61,7 @@ Diagnose:
 3. How to prevent this in the future?
 
 Provide fix with code examples.
-" --no-ask-user -s
+" --no-ask-user -s --effort high
 ```
 
 ## Example 2: Build/Compile Error
