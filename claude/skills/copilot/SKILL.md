@@ -1,28 +1,21 @@
 ---
-name: copilot-knowledge
-user-invocable: false
+name: copilot
+user-invocable: true
 description: |
-  Background knowledge for Copilot CLI delegation. Provides context for orchestrating
-  quick code reviews and analysis via the copilot agent.
+  GitHub Copilot CLIでコード分析を実行する。
+  Usage: /copilot "プロンプト"
   Auto-loaded when Claude considers using the copilot agent.
 ---
 
-# Copilot 委譲ナレッジ
+# /copilot
 
-## 使い分けガイド
+ユーザーの引数をタスクプロンプトとして、copilotサブエージェントを起動する。
 
-| 状況 | 推奨ツール |
-|------|----------|
-| さっとレビューしてほしい | copilot agent（軽量・高速） |
-| エラーの原因を診断したい | copilot agent |
-| テストを提案してほしい | copilot agent |
-| ドキュメントのレビュー | copilot agent |
-| 実装計画を立てたい | cursor agent（構造化計画出力） |
-| 設計の比較・トレードオフ分析 | cursor agent |
-| 複数ファイルの依存関係整理 | cursor agent |
-| 深いアーキテクチャ分析 | codex agent |
-| セキュリティ監査 | codex agent |
-| 2回以上失敗したバグ調査 | codex agent |
+## 手順
+
+1. 引数をタスクプロンプトとして受け取る
+2. copilotエージェント（subagent_type: copilot）を起動
+3. 結果を日本語で提示
 
 ## Reference Templates
 

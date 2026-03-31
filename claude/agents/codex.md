@@ -1,36 +1,25 @@
 ---
 name: codex
 description: |
-  Deep code analysis via OpenAI Codex CLI in read-only sandbox mode.
-  Use for: code review (standard or adversarial), root-cause diagnosis (after 2+ failed attempts),
-  architecture analysis, security audit, and research tasks.
-  Do NOT use for: typo fixes, single-line edits, tasks with one obvious solution, or any task that requires writing files.
-  Supports foreground (small diffs, 1-2 files) and background (larger changes) execution.
+  Code analysis via OpenAI Codex CLI in read-only sandbox mode.
+  Provider: OpenAI Codex
+  Only used when the user explicitly requests this agent by name or via /codex slash command.
 
   <example>
-  Context: User asks for a code review of recent changes.
-  user: "このPRレビューして"
-  assistant: "Codex agentでバックグラウンドレビューを実行します。"
+  Context: User explicitly requests codex for a task.
+  user: "codexでこのPRレビューして"
+  assistant: "Codex agentでレビューを実行します。"
   <commentary>
-  PR review is a prime use case for Codex. Estimate diff size first, then run in background if 3+ files.
+  User explicitly named codex — delegate to this agent.
   </commentary>
   </example>
 
   <example>
-  Context: User is debugging a complex issue after multiple failed attempts.
-  user: "この問題の根本原因がわからない、2回試したけどダメだった"
-  assistant: "Codex agentで深い原因分析を行います。"
+  Context: User invokes /codex slash command.
+  user: "/codex このモジュールのセキュリティを監査して"
+  assistant: "Codex agentで分析を実行します。"
   <commentary>
-  Complex debugging after 2+ failures triggers Codex delegation per delegation-patterns.
-  </commentary>
-  </example>
-
-  <example>
-  Context: User requests security audit.
-  user: "セキュリティ監査して"
-  assistant: "Codex agentでセキュリティ分析を実行します。"
-  <commentary>
-  Security audit requires deep analysis — use --effort high.
+  Slash command invocation — delegate to codex agent.
   </commentary>
   </example>
 model: inherit

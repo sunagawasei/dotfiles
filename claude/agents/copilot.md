@@ -1,25 +1,25 @@
 ---
 name: copilot
 description: |
-  Quick code review and suggestions via GitHub Copilot CLI. Analysis only - no implementation.
-  Use for code review, error diagnosis, test suggestions, and documentation recommendations.
-  Lighter and faster than Codex - use for quick reviews.
+  Code analysis via GitHub Copilot CLI. Analysis only - no implementation.
+  Provider: GitHub Copilot (Gemini / Claude Opus fallback)
+  Only used when the user explicitly requests this agent by name or via /copilot slash command.
 
   <example>
-  Context: User wants a quick code review.
-  user: "このファイルさっとレビューして"
-  assistant: "Copilot agentで軽量レビューを実行します。"
+  Context: User explicitly requests copilot for a task.
+  user: "copilotでこのコードをレビューして"
+  assistant: "Copilot agentでレビューを実行します。"
   <commentary>
-  Quick review request - Copilot is appropriate for fast, lightweight analysis.
+  User explicitly named copilot — delegate to this agent.
   </commentary>
   </example>
 
   <example>
-  Context: User encounters a runtime error.
-  user: "このエラーの原因分析して"
-  assistant: "Copilot agentでエラー診断を行います。"
+  Context: User invokes /copilot slash command.
+  user: "/copilot このエラーの原因を分析して"
+  assistant: "Copilot agentで分析を実行します。"
   <commentary>
-  Error diagnosis is a core Copilot capability.
+  Slash command invocation — delegate to copilot agent.
   </commentary>
   </example>
 model: inherit

@@ -1,34 +1,25 @@
 ---
 name: cursor
 description: |
-  Structured code analysis and implementation planning via Cursor Agent CLI.
-  Use for implementation plans, design alternative comparison, and multi-file dependency analysis.
-  Produces structured plan output — fills the gap between copilot (quick review) and codex (deep audit).
+  Code analysis via Cursor Agent CLI in read-only mode.
+  Provider: Cursor (composer-2 / composer-2-fast fallback)
+  Only used when the user explicitly requests this agent by name or via /cursor slash command.
 
   <example>
-  Context: User needs an implementation plan for a new feature.
-  user: "この機能の実装計画を立てて"
-  assistant: "cursorで実装計画を策定します。"
+  Context: User explicitly requests cursor for a task.
+  user: "cursorでこのアーキテクチャを分析して"
+  assistant: "cursorで分析を実行します。"
   <commentary>
-  Implementation planning is cursor's core strength. Plan mode generates structured step-by-step output.
+  User explicitly named cursor — delegate to this agent.
   </commentary>
   </example>
 
   <example>
-  Context: User wants to understand design trade-offs before choosing an approach.
-  user: "この2つのアプローチ、どっちがいい？"
-  assistant: "cursorで設計比較分析を実行します。"
+  Context: User invokes /cursor slash command.
+  user: "/cursor このモジュール間の依存関係を整理して"
+  assistant: "cursorで分析を実行します。"
   <commentary>
-  Comparing design alternatives benefits from cursor's structured plan output.
-  </commentary>
-  </example>
-
-  <example>
-  Context: User asks about cross-cutting concerns across multiple files.
-  user: "このモジュール間の依存関係を整理して"
-  assistant: "cursorで依存関係分析を行います。"
-  <commentary>
-  Multi-file analysis with structured output is cursor's differentiator.
+  Slash command invocation — delegate to cursor agent.
   </commentary>
   </example>
 model: inherit

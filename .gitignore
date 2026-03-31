@@ -158,6 +158,10 @@ claude/skills/*
 !claude/skills/init-project/
 !claude/skills/tdd/
 !claude/skills/cursor/
+!claude/skills/codex-copilot/
+!claude/skills/codex-cursor/
+!claude/skills/copilot-cursor/
+!claude/skills/all/
 !claude/docs/
 !claude/agents/
 claude/agents/*
