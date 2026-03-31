@@ -42,6 +42,17 @@ description: |
                                             委譲              Claude Code で実行
 ```
 
+## 使い分けガイド（3エージェント）
+
+| 状況 | 推奨ツール |
+|------|----------|
+| クイックレビュー・エラー診断 | copilot agent |
+| 実装計画・設計比較・依存関係整理 | cursor agent（構造化計画出力） |
+| 深いアーキテクチャ分析 | codex agent |
+| セキュリティ監査 | codex agent |
+| 2回以上失敗したバグ調査 | codex agent |
+| パフォーマンス最適化 | codex agent |
+
 ## 委譲しないケース
 
 | ケース | 理由 |
@@ -50,6 +61,7 @@ description: |
 | 小規模なバグ修正（初回） | まず Claude Code で試行 |
 | ドキュメント更新のみ | 創造性より正確性重視 |
 | フォーマット・リント修正 | 機械的な処理 |
+| 実装計画が必要 | cursor agent に委譲 |
 
 ## Reference Templates
 

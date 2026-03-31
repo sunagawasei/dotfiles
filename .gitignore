@@ -157,4 +157,10 @@ claude/skills/*
 !claude/skills/effective-go/
 !claude/skills/init-project/
 !claude/skills/tdd/
+!claude/skills/cursor/
 !claude/docs/
+!claude/agents/
+claude/agents/*
+!claude/agents/codex.md
+!claude/agents/copilot.md
+!claude/agents/cursor.md
