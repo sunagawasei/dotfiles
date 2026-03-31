@@ -23,7 +23,7 @@ description: |
   </commentary>
   </example>
 model: inherit
-color: magenta
+color: red
 tools:
   - Bash
   - Read
