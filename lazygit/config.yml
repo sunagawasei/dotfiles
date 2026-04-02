@@ -66,7 +66,7 @@ keybinding:
 customCommands:
   - key: "<c-g>"
     context: "files"
-    description: "Claude AIでコミットメッセージを生成"
+    description: "Copilot AIでコミットメッセージを生成"
     command: >-
-      DIFF=$(git diff --cached) && if [ -z "$DIFF" ]; then printf '\033[31mエラー: ステージされた変更がありません\033[0m\n' && read -r -p '続行するにはキーを押してください...'; else clear && printf '\033[33mClaude AIがコミットメッセージを生成中...\033[0m\n' && LOG=$(git log --oneline -20 2>/dev/null) && MSG=$(printf 'Recent commits:\n%s\n\nDiff:\n%s' "$LOG" "$DIFF" | claude --no-session-persistence --print --model haiku 'Generate ONLY a one-line Git commit message that follows the style and language of the recent commits shown above. If no recent commits exist, default to Japanese. Use Conventional Commits format: type(scope): subject. Types: feat, fix, docs, style, refactor, perf, test, chore. Based strictly on the diff. Output ONLY the message, nothing else.') && git commit -e -m "$MSG"; fi
+      DIFF=$(git diff --cached) && if [ -z "$DIFF" ]; then printf '\033[31mエラー: ステージされた変更がありません\033[0m\n' && read -r -p '続行するにはキーを押してください...'; else clear && printf '\033[33mCopilot AIがコミットメッセージを生成中...\033[0m\n' && LOG=$(git log --oneline -20 2>/dev/null) && MSG=$(copilot -p "$(printf 'Recent commits:\n%s\n\nDiff:\n%s\n\nGenerate ONLY a one-line Git commit message that follows the style and language of the recent commits shown above. If no recent commits exist, default to Japanese. Use Conventional Commits format: type(scope): subject. Types: feat, fix, docs, style, refactor, perf, test, chore. Based strictly on the diff. Output ONLY the message, nothing else.' "$LOG" "$DIFF")" --allow-all-tools 2>/dev/null | sed '/^$/,$d') && git commit -e -m "$MSG"; fi
     output: terminal
