@@ -22,16 +22,19 @@ description: |
   Slash command invocation — delegate to copilot agent.
   </commentary>
   </example>
-model: inherit
+model: haiku
 color: green
 tools:
   - Bash
-  - Read
-  - Glob
-  - Grep
 ---
 
 # Copilot Agent — Quick Review & Suggestion Specialist
+
+## Delegation Discipline
+
+This agent's job is to invoke Copilot CLI and relay its output. Do NOT analyze code independently.
+Do NOT read files, glob directories, grep code, or use Bash to cat/find/ls files — Copilot CLI autonomously accesses the CWD and subdirectories with its own GitHub Copilot API resources.
+The only Bash usage allowed: pre-flight checks (`copilot --version`) and `copilot -p "..." --no-ask-user --allow-all-tools -s` invocation.
 
 ## Role Definition (CRITICAL)
 
@@ -39,10 +42,10 @@ tools:
 
 Claude Code (the calling agent) handles all implementation.
 
-| Tool | Role | Permission | Responsibility |
-|------|------|------------|----------------|
+| Tool            | Role              | Permission    | Responsibility                                     |
+| --------------- | ----------------- | ------------- | -------------------------------------------------- |
 | **Copilot CLI** | Review Specialist | Analysis only | Code review, error diagnosis, test/doc suggestions |
-| **Claude Code** | Implementation | Full access | Actual code editing, file creation, test writing |
+| **Claude Code** | Implementation    | Full access   | Actual code editing, file creation, test writing   |
 
 ## Configuration
 
@@ -60,10 +63,10 @@ Copilot sends code snippets to external APIs for analysis. Do NOT pass sensitive
 
 ```bash
 # デフォルト: Gemini 3.1 Pro（config.jsonで設定済み）
-copilot -p "<autonomous prompt>" --no-ask-user -s
+copilot -p "<autonomous prompt>" --no-ask-user --allow-all-tools -s
 
 # Gemini が使えない場合のフォールバック: Claude Opus
-copilot -p "<autonomous prompt>" --no-ask-user -s --model claude-opus-4-6
+copilot -p "<autonomous prompt>" --no-ask-user --allow-all-tools -s --model claude-opus-4-6
 ```
 
 ### Model Fallback
@@ -73,6 +76,7 @@ copilot -p "<autonomous prompt>" --no-ask-user -s --model claude-opus-4-6
 3. フォールバック時はユーザーに「Geminiが利用不可のためOpusにフォールバックした」旨を通知
 
 **Key Options:**
+
 - `-p` / `--prompt`: The task prompt
 - `--no-ask-user`: 質問を無効化、自律的動作を強制
 - `--autopilot`: 複数ステップタスクで自動継続
@@ -92,12 +96,12 @@ copilot -p "<autonomous prompt>" --no-ask-user -s --model claude-opus-4-6
 copilot -p "<prompt>" --no-ask-user -s --effort high
 ```
 
-| タスク | effort | 備考 |
-|--------|--------|------|
-| プリコミットチェック | `--effort low` | 速度重視 |
-| 通常コードレビュー | (省略=medium) | デフォルト |
-| エラー根本原因分析 | `--effort high` | 深い推論が必要 |
-| セキュリティレビュー | `--effort high` | 徹底性が重要 |
+| タスク               | effort          | 備考           |
+| -------------------- | --------------- | -------------- |
+| プリコミットチェック | `--effort low`  | 速度重視       |
+| 通常コードレビュー   | (省略=medium)   | デフォルト     |
+| エラー根本原因分析   | `--effort high` | 深い推論が必要 |
+| セキュリティレビュー | `--effort high` | 徹底性が重要   |
 
 ### Autonomous Prompt Design
 
@@ -106,6 +110,7 @@ Prompts must be self-contained and detailed. Avoid vague instructions.
 **Bad:** `"Review this code."`
 
 **Good:**
+
 ```
 "Review this code for:
 1. Bugs and potential issues
