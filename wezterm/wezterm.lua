@@ -2,6 +2,8 @@
 local wezterm = require("wezterm")
 -- マルチプレクサ（ウィンドウ・タブ管理）モジュールを読み込む
 local mux = wezterm.mux
+-- エージェント監視モジュールを読み込む
+local agent = require("agent")
 -- 設定ビルダーを初期化（型安全な設定を作成）
 local config = wezterm.config_builder()
 
@@ -412,6 +414,20 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover)
 		{ Foreground = { Color = bg } },
 		{ Text = "" }, -- 右端の斜めシェイプ
 	}
+end)
+
+-- ==========================================
+-- エージェント監視: コマンドパレット統合
+-- ==========================================
+wezterm.on("augment-command-palette", function()
+	return agent.palette_entries()
+end)
+
+-- wez-cc-viewer TUIからのワークスペース切り替え
+wezterm.on("user-var-changed", function(window, pane, name, value)
+	if name == "switch_workspace" then
+		window:perform_action(wezterm.action.SwitchToWorkspace({ name = value }), pane)
+	end
 end)
 
 -- ==========================================

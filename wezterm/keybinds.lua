@@ -1,5 +1,6 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
+local agent = require("agent")
 
 -- WEZTERM_BUSY user varで判定。未設定("0"以外)は安全側=busy扱い
 local function is_pane_busy(pane)
@@ -61,7 +62,30 @@ wezterm.on("update-right-status", function(window, pane)
 
 		window:set_right_status(wezterm.format(elements))
 	else
-		window:set_right_status("")
+		-- キーテーブル非アクティブ時: エージェント状態を表示
+		local agents = agent.scan()
+		if #agents == 0 then
+			window:set_right_status("")
+		else
+			local running = 0
+			for _, a in ipairs(agents) do
+				if a.status == "running" then
+					running = running + 1
+				end
+			end
+			local workspace = window:active_workspace()
+			local elements = {}
+			-- running数/total数に応じて色を変える
+			local bg = running > 0 and "#6CD8D3" or "#525B65" -- Vibrant Teal / semantic.comment
+			local fg = running > 0 and "#111E16" or "#F2FFFF" -- Darkest / Purest Highlight
+			local icon = running > 0 and "🔵" or "⚫"
+			table.insert(elements, { Background = { Color = bg } })
+			table.insert(elements, { Foreground = { Color = fg } })
+			table.insert(elements, {
+				Text = string.format(" %s %d/%d %s ", icon, running, #agents, workspace),
+			})
+			window:set_right_status(wezterm.format(elements))
+		end
 	end
 end)
 
@@ -206,7 +230,7 @@ return {
 		{
 			key = "a",
 			mods = "LEADER",
-			action = act.ActivateKeyTable({ name = "activate_pane", timeout_milliseconds = 1000 }),
+			action = agent.dashboard_action(),
 		},
 
 		-- バックスラッシュ入力用 (¥の代わりに\を入力)
@@ -303,12 +327,6 @@ return {
 
 			-- Cancel the mode by pressing escape
 			{ key = "Enter", action = "PopKeyTable" },
-		},
-		activate_pane = {
-			{ key = "h", action = act.ActivatePaneDirection("Left") },
-			{ key = "l", action = act.ActivatePaneDirection("Right") },
-			{ key = "k", action = act.ActivatePaneDirection("Up") },
-			{ key = "j", action = act.ActivatePaneDirection("Down") },
 		},
 		-- copyモード leader + [
 		copy_mode = {
