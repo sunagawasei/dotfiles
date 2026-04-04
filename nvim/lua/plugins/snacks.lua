@@ -83,6 +83,8 @@ return {
     },
   },
   keys = {
+    -- LazyVimデフォルトのgit diff pickerを無効化（diffview.nvimを使用）
+    { "<leader>gd", false },
     -- Zen モードのみ維持
     {
       "<C-w>z",
