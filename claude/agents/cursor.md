@@ -59,6 +59,19 @@ Claude Code (the calling agent) handles all implementation.
 
 Cursor Agent sends code to external APIs. Do NOT pass sensitive data such as credentials, API keys, or proprietary secrets in prompts.
 
+## Sensitive File Protection
+
+Cursor Agent CLIにはファイルパス単位のハードなdeny機能がないため、プロンプトベースの制御に依存する。
+すべてのCLI実行プロンプトに以下の指示を**必ず先頭に**含めること:
+
+```
+SECURITY: Do NOT read, open, cat, or reference any of the following files:
+- .env, .env.*, .env.local, .env.production, .env.development, .env.staging
+- Any file containing API keys, tokens, secrets, or credentials
+- Files matching: *credentials*, *secret*, *token*, id_rsa, id_ed25519
+If you encounter such files during analysis, skip them entirely and do not include their contents in your output.
+```
+
 ## Execution Pattern
 
 ```bash

@@ -44,6 +44,19 @@ The only post-execution work allowed: formatting/translating output, extracting 
 
 Codex sends code to external OpenAI API. Do NOT use with secrets, credentials, or proprietary code unless explicitly authorized.
 
+## Sensitive File Protection
+
+`~/.codex/config.toml` により `.env*` ファイルへのアクセスはハードブロックされている。
+加えて、すべてのCLI実行プロンプトに以下の指示を含めること:
+
+```
+SECURITY: Do NOT read, open, cat, or reference any of the following files:
+- .env, .env.*, .env.local, .env.production, .env.development, .env.staging
+- Any file containing API keys, tokens, secrets, or credentials
+- Files matching: *credentials*, *secret*, *token*, id_rsa, id_ed25519
+If you encounter such files during analysis, skip them entirely and do not include their contents in your output.
+```
+
 ## Pre-Flight Checks
 
 Before running `codex exec`, verify Codex is ready:
