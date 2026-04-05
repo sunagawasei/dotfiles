@@ -76,9 +76,9 @@ wezterm.on("update-right-status", function(window, pane)
 			local workspace = window:active_workspace()
 			local elements = {}
 			-- running数/total数に応じて色を変える
-			local bg = running > 0 and "#6CD8D3" or "#525B65" -- Vibrant Teal / semantic.comment
-			local fg = running > 0 and "#111E16" or "#F2FFFF" -- Darkest / Purest Highlight
-			local icon = running > 0 and "🔵" or "⚫"
+			local bg = running > 0 and "#6CD8D3" or "#304D4F" -- Vibrant Teal / dark teal accent
+			local fg = running > 0 and "#111E16" or "#92A2AB" -- Darkest / dim text
+			local icon = running > 0 and "▶" or "●"
 			table.insert(elements, { Background = { Color = bg } })
 			table.insert(elements, { Foreground = { Color = fg } })
 			table.insert(elements, {
