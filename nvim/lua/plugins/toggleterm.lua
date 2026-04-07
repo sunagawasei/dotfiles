@@ -152,7 +152,12 @@ return {
         vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<C-g>", "<C-g>", { noremap = true, silent = true })
       end,
       on_close = function(term)
-        vim.cmd("startinsert!")
+        -- 通常バッファでstartinsert!するとwhich-keyのModeChangedサイクルが増える
+        vim.schedule(function()
+          if vim.bo.buftype == "terminal" then
+            vim.cmd("startinsert!")
+          end
+        end)
       end,
     })
 

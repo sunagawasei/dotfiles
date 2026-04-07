@@ -150,6 +150,21 @@ vim.api.nvim_create_autocmd("TermOpen", {
   desc = "Enable leader key mappings in toggleterm terminal mode",
 })
 
+-- which-key トリガー復旧ワークアラウンド
+-- which-keyのBufEnterハンドラはBuf.get()のみ呼ぶがclear()を呼ばないため、
+-- staleなtriggerが残留する場合がある。clear({ buf = ev.buf })を補完する。
+-- See: https://github.com/folke/which-key.nvim/issues/968
+vim.api.nvim_create_autocmd({ "BufEnter" }, {
+  group = vim.api.nvim_create_augroup("which_key_reattach", { clear = true }),
+  callback = function(ev)
+    local ok, buf_mod = pcall(require, "which-key.buf")
+    if ok and vim.api.nvim_buf_is_valid(ev.buf) then
+      buf_mod.clear({ buf = ev.buf })
+    end
+  end,
+  desc = "Clear which-key buffer cache on enter to fix stale triggers",
+})
+
 -- CursorLineをファイルエクスプローラーで無効化（パフォーマンス最適化）
 -- Codex調査で判明したNeovim既知バグ（neovim/neovim#8159）への対策：
 -- CursorLineハイライトが下方向カーソル移動を劇的に遅延させる

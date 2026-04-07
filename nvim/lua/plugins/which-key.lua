@@ -1,8 +1,8 @@
 return {
   "folke/which-key.nvim",
   opts = {
-    -- 遅延を無効化
-    delay = 0,
+    -- 遅延を少し設定（0だとtriggerが存在しない瞬間にヒットしやすい）
+    delay = 50,
     -- プラグインの設定
     plugins = {
       marks = true, -- shows a list of your marks on ' and `
