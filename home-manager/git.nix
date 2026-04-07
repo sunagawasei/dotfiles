@@ -21,12 +21,14 @@
         dw = "diff --ignore-all-space";
         sw = "show --ignore-all-space";
         dcw = "diff --cached --ignore-all-space";
+        wdiff = "diff --color-words";
       };
       core = {
         editor = "vim";
         quotepath = false;
       };
       init.defaultBranch = "main";
+      diff.wordRegex = "[a-zA-Z0-9_]+|[ぁ-ん]+|[ァ-ヶー]+|[一-龥々〇〆]+|.";
       merge.conflictstyle = "zdiff3";
     };
   };
