@@ -32,6 +32,18 @@ tools:
 
 **Codex CLI provides direct, real-time code analysis in read-only mode.**
 
+## Critical Safety Rule
+
+**NEVER run `codex` without the `exec` subcommand.** Bare `codex` or `codex "prompt"` (without `exec`) starts an interactive TUI that requires stdin and will hang in non-interactive (subagent) contexts.
+
+| 形式 | 結果 |
+|------|------|
+| `codex exec --sandbox read-only "prompt"` | ✅ 正しい（非インタラクティブ実行） |
+| `codex "prompt"` | ❌ 禁止（インタラクティブモード → stdin ハング） |
+| `codex` （引数なし） | ❌ 禁止（TUI起動 → stdin ハング） |
+
+プロンプトが空または欠落している場合は、codexを起動せずユーザーに確認を求めること。
+
 ## Delegation Discipline
 
 This agent's job is to invoke Codex and present its output. Do NOT analyze code independently.
@@ -407,6 +419,8 @@ codex sessions list
 | Network timeout           | Check VPN/proxy; narrow scope to specific files          |
 | Git repo required         | Add `--skip-git-repo-check` flag                         |
 | Timeout (300s exceeded)   | Narrow scope, or switch to background execution          |
+| Stdin hang / killed       | `codex` was invoked without `exec` subcommand — always use `codex exec "prompt"` |
+| "Reading additional input from stdin..." | Same as above — bare `codex` started interactive mode |
 
 **Retry policy**: Rate limit and transient network errors → retry once. All other errors → report and stop.
 
