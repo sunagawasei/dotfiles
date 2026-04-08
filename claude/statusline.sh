@@ -8,7 +8,8 @@ eval "$(echo "$input" | jq -r '
   @sh "DIR=\(.workspace.current_dir // "")",
   @sh "USED_PCT=\(.context_window.used_percentage // 0)",
   @sh "ADDED=\(.cost.total_lines_added // 0)",
-  @sh "REMOVED=\(.cost.total_lines_removed // 0)"
+  @sh "REMOVED=\(.cost.total_lines_removed // 0)",
+  @sh "RATE_USED=\(.rate_limits.five_hour.used_percentage // "")"
 ')"
 
 # ディレクトリ名
@@ -63,6 +64,21 @@ segs+=("#1F3451|${C_MODEL}${MODEL}")
 segs+=("#152A2B|${C_DIR}${DIR_NAME}")
 [ -n "$GIT_BRANCH" ] && segs+=("#1E1E24|${C_GIT}${GIT_BRANCH}")
 segs+=("#2B2D32|${C_PCT}${pct}%")
+
+# リミット残量セグメント（データがある場合のみ）
+if [ -n "$RATE_USED" ]; then
+  rate_used_int=${RATE_USED%.*}
+  rate_used_int=${rate_used_int:-0}
+  rate_remaining=$((100 - rate_used_int))
+  if [ "$rate_remaining" -lt 25 ]; then
+    C_RATE="\e[38;2;163;122;167m"   # #a37aa7 警告（purple）
+  elif [ "$rate_remaining" -lt 50 ]; then
+    C_RATE="\e[38;2;206;213;233m"   # #CED5E9 注意（グレー）
+  else
+    C_RATE="\e[38;2;52;149;148m"    # #349594 安全（teal）
+  fi
+  segs+=("#1E2A3A|${C_RATE}󰔛 ${rate_remaining}%")
+fi
 
 # 行変更セグメント（条件付き）
 if [ "$ADDED" -gt 0 ] || [ "$REMOVED" -gt 0 ]; then
