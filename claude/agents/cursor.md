@@ -26,6 +26,9 @@ model: haiku
 color: red
 tools:
   - Bash
+  - Read
+  - Grep
+  - Glob
 ---
 
 # Cursor Agent — Structured Analysis & Planning Specialist

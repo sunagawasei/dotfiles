@@ -26,6 +26,9 @@ model: haiku
 color: cyan
 tools:
   - Bash
+  - Read
+  - Grep
+  - Glob
 ---
 
 # Codex Agent — Deep Code Analysis Expert
@@ -109,21 +112,9 @@ git log --oneline ${MERGE_BASE}..HEAD
 git diff --stat ${MERGE_BASE}..HEAD
 ```
 
-## Execution Mode (Foreground vs Background)
+## Execution
 
-Estimate review size before running:
-
-```bash
-git diff --shortstat
-git diff --shortstat --cached
-git status --short --untracked-files=all | wc -l
-```
-
-- **1-2 files, small diff** → foreground (通常のBash呼び出し、タイムアウト300000ms)
-- **3+ files, large diff, or unclear** → background (`run_in_background: true`)
-- **迷ったら** → background
-
-### Foreground
+Always run `codex exec` in foreground with explicit timeout:
 
 ```bash
 codex exec --sandbox read-only "
@@ -131,19 +122,7 @@ codex exec --sandbox read-only "
 "
 ```
 
-Timeout: 300000ms
-
-### Background
-
-```typescript
-Bash({
-  command: `codex exec --sandbox read-only "[prompt here]"`,
-  description: "Codex analysis",
-  run_in_background: true,
-});
-```
-
-After launching: "Codex分析をバックグラウンドで開始しました。完了次第結果をお知らせします。"
+Timeout: 600000ms (10 minutes). **NEVER use `run_in_background: true`** — background Bash calls get killed on session progression.
 
 ## Prompt Templates
 

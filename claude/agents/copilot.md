@@ -26,6 +26,9 @@ model: haiku
 color: green
 tools:
   - Bash
+  - Read
+  - Grep
+  - Glob
 ---
 
 # Copilot Agent — Quick Review & Suggestion Specialist
