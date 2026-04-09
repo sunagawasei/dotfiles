@@ -12,6 +12,10 @@ eval "$(echo "$input" | jq -r '
   @sh "RATE_USED=\(.rate_limits.five_hour.used_percentage // "")"
 ')"
 
+# モデル名を短縮（例: "claude-sonnet-4-6" → "sonnet", "Claude Sonnet 4.6" → "sonnet"）
+MODEL_SHORT=$(echo "$MODEL" | sed -E 's/[Cc]laude[- ]+//g; s/[- ]*[0-9]+(\.[0-9]+)*//g; s/[- ]+$//; s/^ +//; s/ +$//' | tr '[:upper:]' '[:lower:]')
+[ -n "$MODEL_SHORT" ] && MODEL="$MODEL_SHORT"
+
 # ディレクトリ名
 DIR_NAME="${DIR##*/}"
 [ -z "$DIR_NAME" ] && DIR_NAME="~"
@@ -58,14 +62,7 @@ else
   C_PCT="\e[38;2;52;149;148m"    # #349594
 fi
 
-# セグメント: "bg_hex|content" 形式
-segs=()
-segs+=("#1F3451|${C_MODEL}${MODEL}")
-segs+=("#152A2B|${C_DIR}${DIR_NAME}")
-[ -n "$GIT_BRANCH" ] && segs+=("#1E1E24|${C_GIT}${GIT_BRANCH}")
-segs+=("#2B2D32|${C_PCT}${pct}%")
-
-# リミット残量セグメント（データがある場合のみ）
+# リミット残量の色
 if [ -n "$RATE_USED" ]; then
   rate_used_int=${RATE_USED%.*}
   rate_used_int=${rate_used_int:-0}
@@ -77,45 +74,57 @@ if [ -n "$RATE_USED" ]; then
   else
     C_RATE="\e[38;2;52;149;148m"    # #349594 安全（teal）
   fi
-  segs+=("#1E2A3A|${C_RATE}󰔛 ${rate_remaining}%")
 fi
 
-# 行変更セグメント（条件付き）
+# Powerlineバーを構築するヘルパー関数
+build_bar() {
+  local -n _segs=$1
+  local n=${#_segs[@]}
+  local out=""
+  for i in "${!_segs[@]}"; do
+    local bg_hex="${_segs[$i]%%|*}"
+    local content="${_segs[$i]#*|}"
+    local BG_CUR FG_CUR
+    BG_CUR=$(hex2bg "$bg_hex")
+    FG_CUR=$(hex2fg "$bg_hex")
+
+    if [ "$i" -eq 0 ]; then
+      out+="${RST}${FG_CUR}${L_CAP}"
+    else
+      local prev_bg_hex="${_segs[$((i-1))]%%|*}"
+      local FG_PREV
+      FG_PREV=$(hex2fg "$prev_bg_hex")
+      out+="${BG_CUR}${FG_PREV}${SEG_SEP}"
+    fi
+    out+="${BG_CUR} ${content} "
+  done
+  local last_bg_hex="${_segs[$((n-1))]%%|*}"
+  local FG_LAST
+  FG_LAST=$(hex2fg "$last_bg_hex")
+  out+="${RST}${FG_LAST}${R_CAP}${RST}"
+  printf '%b' "$out"
+}
+
+# --- 1段目: モデル / コンテキスト使用率 / レート制限残量 ---
+row1=()
+row1+=("#1F3451|${C_MODEL}${MODEL}")
+row1+=("#2B2D32|${C_PCT}󰍛 ${pct}%")
+if [ -n "$RATE_USED" ]; then
+  row1+=("#1E2A3A|${C_RATE}󰔛 ${rate_remaining}%")
+fi
+
+# --- 2段目: ディレクトリ / Gitブランチ / 行変更 ---
+row2=()
+row2+=("#152A2B|${C_DIR}${DIR_NAME}")
+[ -n "$GIT_BRANCH" ] && row2+=("#1E1E24|${C_GIT}${GIT_BRANCH}")
 if [ "$ADDED" -gt 0 ] || [ "$REMOVED" -gt 0 ]; then
   lines=""
-  [ "$ADDED" -gt 0 ]   && lines+="${C_ADD}+${ADDED}"
-  [ "$ADDED" -gt 0 ] && [ "$REMOVED" -gt 0 ] && lines+=" "
-  [ "$REMOVED" -gt 0 ] && lines+="${C_DEL}-${REMOVED}"
-  segs+=("#44363B|${lines}")
+  [ "$ADDED" -gt 0 ]                               && lines+="${C_ADD}+${ADDED}"
+  [ "$ADDED" -gt 0 ] && [ "$REMOVED" -gt 0 ]       && lines+=" "
+  [ "$REMOVED" -gt 0 ]                             && lines+="${C_DEL}-${REMOVED}"
+  row2+=("#44363B|${lines}")
 fi
 
-# 出力構築: 左キャップ → セクション遷移ループ → 右キャップ
-n=${#segs[@]}
-out=""
-
-for i in "${!segs[@]}"; do
-  bg_hex="${segs[$i]%%|*}"
-  content="${segs[$i]#*|}"
-  BG_CUR=$(hex2bg "$bg_hex")
-  FG_CUR=$(hex2fg "$bg_hex")
-
-  if [ "$i" -eq 0 ]; then
-    # 左丸キャップ: 背景なし、前景=最初のセクション背景色
-    out+="${RST}${FG_CUR}${L_CAP}"
-  else
-    # Powerline遷移: 前セクション背景色が前景、現セクション背景色が背景
-    prev_bg_hex="${segs[$((i-1))]%%|*}"
-    FG_PREV=$(hex2fg "$prev_bg_hex")
-    out+="${BG_CUR}${FG_PREV}${SEG_SEP}"
-  fi
-
-  # セクション本体
-  out+="${BG_CUR} ${content} "
-done
-
-# 右丸キャップ: reset後、前景=最後のセクション背景色
-last_bg_hex="${segs[$((n-1))]%%|*}"
-FG_LAST=$(hex2fg "$last_bg_hex")
-out+="${RST}${FG_LAST}${R_CAP}${RST}"
-
-printf '%b' "$out"
+build_bar row1
+printf '\n'
+build_bar row2
