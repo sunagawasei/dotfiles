@@ -10,7 +10,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 darwin-rebuild switch --flake ~/.config#CA-20021145
 ```
 
-`zsh.nix` に `nswitch` エイリアスが定義されているため、シェルからは `nswitch` でも実行可。
+`zsh.nix` にエイリアスが定義されているため、シェルからは以下も使用可：
+- `nswitch` — `darwin-rebuild switch`（設定の適用のみ）
+- `nupdate` — `nix flake update` + `darwin-rebuild switch`（パッケージ更新 + 適用）
 
 > home-manager は nix-darwin の darwinModule として統合されているため、単独の `home-manager switch` は使わない。
 

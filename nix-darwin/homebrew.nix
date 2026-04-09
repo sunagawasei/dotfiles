@@ -68,6 +68,7 @@ in
   # HOMEBREW_GITHUB_API_TOKEN を外部から渡せない。
   # gh auth token で動的に取得して env コマンドに注入する。
   # 上書き元: nix-darwin modules/homebrew.nix lines 941-955
+  # 注意: nix-darwin バージョンアップ時はアップストリームの変更を確認してこのスクリプトを更新すること
   system.activationScripts.homebrew.text = lib.mkForce ''
     echo >&2 "Homebrew bundle..."
     if [ -f "${cfg.prefix}/bin/brew" ]; then

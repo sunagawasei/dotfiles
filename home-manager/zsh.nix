@@ -37,7 +37,8 @@
       vtmp = ''nvim "''${TMPDIR%/}/$(date "+%Y%m%d_%H%M%S").md"'';
       ssh = ''TERM=xterm-256color \ssh'';
       delta = "delta --dark --paging=never --line-numbers --syntax-theme base16-256 -s";
-      nswitch = "sudo darwin-rebuild switch --flake ~/.config";
+      nswitch = "darwin-rebuild switch --flake ~/.config#CA-20021145";
+      nupdate = "nix flake update --flake ~/.config && darwin-rebuild switch --flake ~/.config#CA-20021145";
     };
 
     # Zinit の zsh-completions が compinit より前にロードされるため

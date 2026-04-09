@@ -1,5 +1,5 @@
 {
-  description = "Home Manager configuration of s23159";
+  description = "macOS system configuration (nix-darwin + home-manager + nix-homebrew)";
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
@@ -11,7 +11,7 @@
       url = "github:nix-darwin/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
     };
- nix-homebrew.url = "github:zhaofengli/nix-homebrew";
+    nix-homebrew.url = "github:zhaofengli/nix-homebrew";
   };
 
   outputs =
@@ -20,7 +20,7 @@
       nixpkgs,
       home-manager,
       nix-darwin,
- nix-homebrew,
+      nix-homebrew,
       ...
     }:
     {
@@ -29,7 +29,7 @@
         modules = [
           ./nix-darwin/configuration.nix
           home-manager.darwinModules.home-manager
-nix-homebrew.darwinModules.nix-homebrew
+          nix-homebrew.darwinModules.nix-homebrew
         ];
       };
     };
