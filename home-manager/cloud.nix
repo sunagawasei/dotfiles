@@ -2,6 +2,7 @@
 {
   home.packages = with pkgs; [
     awscli2
+    aws-sam-cli
     google-cloud-sdk
     terraform
     kubectl
