@@ -43,7 +43,7 @@ in
       "homerow"
       # アプリケーション
       "chatgpt"
-      "claude-code"
+      "claude-code@latest"
       "codex"
       "copilot-cli"
       "kindle"
