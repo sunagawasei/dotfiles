@@ -17,6 +17,9 @@ description: |
   - 3つのエージェントすべてがフォアグラウンドで完了するまで待機し、結果を統合すること
 - **codexエージェント固有:**
   - `codex exec` 実行時は必ず `timeout: 600000` を指定する
+  - `< /dev/null` を末尾に付けること（stdinハング防止）
+  - `-c approval_policy="never"` を付けること（対話承認待ちハング防止）
+  - 詳細な canonical form は `claude/agents/codex.md` §Execution を参照
 
 ## 手順
 

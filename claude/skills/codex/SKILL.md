@@ -13,8 +13,19 @@ description: |
 
 ## 重要な制約
 
-- codexサブエージェント内では必ず `codex exec --sandbox read-only "プロンプト"` 形式を使用すること
-- 引数なしの `codex` や `codex "プロンプト"` （exec なし）は**絶対に禁止**（インタラクティブモードになりstdinハングする）
+- **canonical form を必ず使うこと**（hang防止 + 安定実行に必要なフラグをすべて含む）:
+  ```bash
+  codex exec \
+    --sandbox read-only \
+    -c approval_policy="never" \
+    --skip-git-repo-check \
+    --color never \
+    --cd "$(pwd)" \
+    "<prompt>" \
+    < /dev/null
+  ```
+- `< /dev/null` は**必須**（省略するとstdinブロックでhangする）
+- 引数なしの `codex` や `exec` なしの `codex "..."` は**絶対に禁止**（TUI起動でstdinハング）
 - 引数（プロンプト）が空の場合はcodexを起動せずユーザーに確認を求めること
 - **Bashツールでcodex execを実行する際は必ず `timeout: 600000`（10分）を指定すること**（デフォルト120秒ではタイムアウトする）
 - **`run_in_background: true` は絶対に使用しないこと**（バックグラウンド実行するとセッション終了時にkillされる）

@@ -60,14 +60,43 @@ config.toml で設定:
 hide_agent_reasoning = true
 ```
 
-## セッション継続できない
+## stdinハング / プロセスがkillされる
+
+**症状**: `codex exec` がそのまま止まる、または `< stdin >` と表示されて入力待ちになる
+
+**原因と修正**:
+
+| 原因 | 修正 |
+|------|------|
+| `< /dev/null` なし → EOF待ちでハング | 常に末尾に `< /dev/null` を追加 |
+| `codex "..."` (`exec` なし) → TUI起動 | 必ず `codex exec` を使う |
+| approval_policy が対話承認要求 | `-c approval_policy="never"` を追加 |
+| 認証未完了 → パスワード入力待ち | `codex login` を先に実行 |
+| `resume` でセッションID省略 | `--last` フラグを使う |
+
+**canonical form（これ以外を使わない）**:
 
 ```bash
-# 最近のセッション一覧
-codex sessions list
+codex exec \
+  --sandbox read-only \
+  -c approval_policy="never" \
+  --skip-git-repo-check \
+  --color never \
+  --cd "$(pwd)" \
+  "<prompt>" \
+  < /dev/null
+```
 
-# セッションを再開
-codex exec resume {SESSION_ID}
+## セッション継続できない
+
+`codex sessions list` は codex-cli 0.122 には存在しない。
+
+```bash
+# 直前のセッションを再開
+codex exec resume --last -c approval_policy="never" --color never < /dev/null
+
+# 特定セッションIDで再開
+codex exec resume {SESSION_ID} -c approval_policy="never" --color never < /dev/null
 ```
 
 ## sandbox 権限エラー

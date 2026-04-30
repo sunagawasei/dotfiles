@@ -114,13 +114,27 @@ git diff --stat ${MERGE_BASE}..HEAD
 
 ## Execution
 
-Always run `codex exec` in foreground with explicit timeout:
+Always run `codex exec` in foreground with explicit timeout. The canonical hang-safe form:
 
 ```bash
-codex exec --sandbox read-only "
-[prompt here]
-"
+codex exec \
+  --sandbox read-only \
+  -c approval_policy="never" \
+  --skip-git-repo-check \
+  --color never \
+  --cd "$(pwd)" \
+  "[prompt here]" \
+  < /dev/null
 ```
+
+Hang prevention (mandatory in non-TTY):
+- `< /dev/null`: prevents stdin-block hang when Codex waits for EOF
+- `-c approval_policy="never"`: prevents interactive approval prompts
+
+Stable execution (recommended):
+- `--color never`: strips ANSI codes from output
+- `--skip-git-repo-check`: avoids Git-repo-required errors in non-repo directories
+- `--cd "$(pwd)"`: ensures Codex runs in the correct working directory
 
 Timeout: 600000ms (10 minutes). **NEVER use `run_in_background: true`** — background Bash calls get killed on session progression.
 
@@ -333,28 +347,23 @@ codex exec --sandbox read-only -m <model> "..."
 
 ## Session-Aware Workflow
 
-Before starting a new analysis for a follow-up request:
-
-```bash
-codex sessions list
-```
-
-- If the user's request is a follow-up ("続きを", "もっと深く", "resume", "that issue"), use `codex exec resume <SESSION_ID>` instead of a fresh run
+- If the user's request is a follow-up ("続きを", "もっと深く", "resume", "that issue"), resume the previous session instead of a fresh run
 - If ambiguous, ask the user: continue previous session or start fresh?
 
-After Codex completes, extract and report the session ID:
-"セッションID: `<id>` — 続きの分析には `codex exec resume <id>` を使えます"
+After Codex completes, extract and report the session ID shown in the output so the user can resume later.
 
 ```bash
-# Resume a previous session
-codex exec resume <SESSION_ID>
+# Resume most recent session (no session ID needed)
+codex exec resume --last -c approval_policy="never" --color never < /dev/null
+
+# Resume a specific session by ID
+codex exec resume <SESSION_ID> -c approval_policy="never" --color never < /dev/null
 
 # Fork from a session
-codex exec fork <SESSION_ID>
-
-# List recent sessions
-codex sessions list
+codex exec fork <SESSION_ID> -c approval_policy="never" --color never < /dev/null
 ```
+
+Note: `codex sessions list` does **not** exist in codex-cli 0.122. Use `codex exec resume --last` to continue the most recent session.
 
 ## Result Handling Contract
 
@@ -397,9 +406,10 @@ codex sessions list
 | Sandbox permission denied | Expected in read-only — do NOT switch to workspace-write |
 | Network timeout           | Check VPN/proxy; narrow scope to specific files          |
 | Git repo required         | Add `--skip-git-repo-check` flag                         |
-| Timeout (300s exceeded)   | Narrow scope, or switch to background execution          |
-| Stdin hang / killed       | `codex` was invoked without `exec` subcommand — always use `codex exec "prompt"` |
-| "Reading additional input from stdin..." | Same as above — bare `codex` started interactive mode |
+| Timeout (600s exceeded)   | Narrow scope to specific files; do NOT use background execution |
+| Stdin hang / killed       | Missing `< /dev/null` or bare `codex` without `exec` — always use canonical form with `< /dev/null` |
+| "Reading additional input from stdin..." | Same as above — add `< /dev/null` to redirect stdin |
+| Interactive approval prompt | `approval_policy` not set — add `-c approval_policy="never"` |
 
 **Retry policy**: Rate limit and transient network errors → retry once. All other errors → report and stop.
 
