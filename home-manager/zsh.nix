@@ -37,8 +37,8 @@
       vtmp = ''nvim "''${TMPDIR%/}/$(date "+%Y%m%d_%H%M%S").md"'';
       ssh = ''TERM=xterm-256color \ssh'';
       delta = "delta --dark --paging=never --line-numbers --syntax-theme base16-256 -s";
-      nswitch = "darwin-rebuild switch --flake ~/.config#CA-20021145";
-      nupdate = "nix flake update --flake ~/.config && darwin-rebuild switch --flake ~/.config#CA-20021145";
+      nswitch = "sudo darwin-rebuild switch --flake ~/.config#CA-20021145";
+      nupdate = "nix flake update --flake ~/.config && sudo darwin-rebuild switch --flake ~/.config#CA-20021145";
     };
 
     # Zinit の zsh-completions が compinit より前にロードされるため
@@ -200,8 +200,20 @@
 
         # zsh-autosuggestions 部分適用
         bindkey '^[f' forward-word
-        bindkey '^[[1;5C' forward-word
         bindkey '^[[C' forward-char
+
+        # 1文字ずつ受諾（Ctrl+F）— デフォルトの forward-char(全受諾) より細かい粒度
+        partial-accept-char() { zle .forward-char }
+        zle -N partial-accept-char
+        bindkey '^f' partial-accept-char
+
+        # 非英数字（/・空白・.・-等）を区切りに受諾（Ctrl+O）
+        partial-accept-subword() {
+          local WORDCHARS=""
+          zle .forward-word
+        }
+        zle -N partial-accept-subword
+        bindkey '^o' partial-accept-subword
 
         # 補完用
         bindkey '^y' accept-and-menu-complete
@@ -256,15 +268,7 @@
         zinit ice wait"0b" lucid atinit'__setup_completions'
         zinit light Aloxaf/fzf-tab
 
-        # wait"0c": autosuggestions, zeno（fzf-tab の後）
-        zinit ice wait"0c" lucid atload'
-          _zsh_autosuggest_start
-          ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#7A869A"
-          ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-word)
-          ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-char vi-forward-char)
-        '
-        zinit light zsh-users/zsh-autosuggestions
-
+        # wait"0c": zeno（fzf-tab の後）
         zinit ice wait"0c" lucid atload'
           __zeno_space_wrapper() {
             local orig_buffer="$BUFFER"
@@ -281,7 +285,7 @@
         '
         zinit light yuki-yano/zeno.zsh
 
-        # wait"0d": syntax-highlighting（最後）
+        # wait"0d": syntax-highlighting（autosuggestions より先に読み込む）
         zinit ice wait"0d" lucid atload'
           typeset -A ZSH_HIGHLIGHT_STYLES
           ZSH_HIGHLIGHT_STYLES[default]="fg=#CEF5F2"
@@ -299,6 +303,13 @@
           ZSH_HIGHLIGHT_STYLES[comment]="fg=#7A869A"
         '
         zinit light zsh-users/zsh-syntax-highlighting
+
+        # autosuggestions: 同期ロード（turbo だと初回プロンプトで widget がバインドされない）
+        zinit ice lucid atload'
+          ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#7A869A"
+          ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-word partial-accept-char partial-accept-subword)
+        '
+        zinit light zsh-users/zsh-autosuggestions
 
         # ---- ローカル設定 ----
         if [ -f ~/.zshrc.local ]; then source ~/.zshrc.local; fi
