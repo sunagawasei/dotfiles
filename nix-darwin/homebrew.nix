@@ -1,4 +1,10 @@
-{ nix-homebrew, lib, pkgs, config, ... }:
+{
+  nix-homebrew,
+  lib,
+  pkgs,
+  config,
+  ...
+}:
 let
   cfg = config.homebrew;
 in
@@ -42,7 +48,6 @@ in
       "azookey"
       "homerow"
       # アプリケーション
-      "chatgpt"
       "claude-code@latest"
       "codex"
       "copilot-cli"
