@@ -13,9 +13,6 @@
   programs.zsh.shellInit = ''
     export ZDOTDIR="$HOME/.config/zsh"
   '';
-  system.defaults.NSGlobalDomain.AppleShowAllExtensions = true; # ファイル拡張子を常に表示
-  system.defaults.finder.AppleShowAllFiles = true; # 隠しファイルを表示
-  system.defaults.finder.ShowPathbar = true; # パスバーを表示
   programs.zsh.enableGlobalCompInit = false;
   users.users."s23159".home = "/Users/s23159";
   system.primaryUser = "s23159";
@@ -24,6 +21,82 @@
     builtins.elem (lib.getName pkg) [
       "terraform"
     ];
+
+  # ── NSGlobalDomain（外観・入力・単位） ─────────────────────────────
+  system.defaults.NSGlobalDomain.AppleShowAllExtensions = true;
+  system.defaults.NSGlobalDomain.AppleInterfaceStyleSwitchesAutomatically = true;
+  system.defaults.NSGlobalDomain.AppleKeyboardUIMode = 2;
+  system.defaults.NSGlobalDomain.AppleMeasurementUnits = "Centimeters";
+  system.defaults.NSGlobalDomain.AppleMetricUnits = 1;
+  system.defaults.NSGlobalDomain.AppleTemperatureUnit = "Celsius";
+  system.defaults.NSGlobalDomain.AppleSpacesSwitchOnActivate = false;
+  system.defaults.NSGlobalDomain.NSAutomaticCapitalizationEnabled = false;
+  system.defaults.NSGlobalDomain.NSAutomaticPeriodSubstitutionEnabled = false;
+  system.defaults.NSGlobalDomain.NSAutomaticSpellingCorrectionEnabled = false;
+  system.defaults.NSGlobalDomain.NSTableViewDefaultSizeMode = 2;
+  system.defaults.NSGlobalDomain."com.apple.sound.beep.feedback" = 1;
+  system.defaults.NSGlobalDomain."com.apple.trackpad.scaling" = 2.0;
+  system.defaults.NSGlobalDomain.KeyRepeat = 2;
+  system.defaults.NSGlobalDomain.InitialKeyRepeat = 15;
+  system.defaults.NSGlobalDomain.ApplePressAndHoldEnabled = false;
+
+  # ── Dock ────────────────────────────────────────────────────────────
+  system.defaults.dock.autohide = true;
+  system.defaults.dock.orientation = "left";
+  system.defaults.dock.tilesize = 27;
+  system.defaults.dock.magnification = false;
+  system.defaults.dock.minimize-to-application = false;
+  system.defaults.dock.mru-spaces = false;
+  system.defaults.dock.show-recents = false;
+  system.defaults.dock.expose-group-apps = false;
+  system.defaults.dock.wvous-br-corner = 1;
+  system.defaults.dock.persistent-apps = [
+    "/System/Applications/Apps.app"
+    "/System/Applications/Calendar.app"
+    "/System/Applications/System Settings.app"
+    "/Applications/FortiClient.app"
+    "/Applications/Slack.app"
+  ];
+
+  # ── Finder ──────────────────────────────────────────────────────────
+  system.defaults.finder.AppleShowAllFiles = true;
+  system.defaults.finder.ShowPathbar = true;
+  system.defaults.finder.FXPreferredViewStyle = "Nlsv";
+  system.defaults.finder.FXRemoveOldTrashItems = true;
+  system.defaults.finder.NewWindowTarget = "Recents";
+  system.defaults.finder.ShowHardDrivesOnDesktop = false;
+  system.defaults.finder.ShowExternalHardDrivesOnDesktop = true;
+  system.defaults.finder.ShowRemovableMediaOnDesktop = true;
+
+  # ── WindowManager（Stage Manager） ──────────────────────────────────
+  system.defaults.WindowManager.GloballyEnabled = false;
+  system.defaults.WindowManager.AutoHide = false;
+  system.defaults.WindowManager.EnableStandardClickToShowDesktop = false;
+  system.defaults.WindowManager.EnableTiledWindowMargins = false;
+  system.defaults.WindowManager.EnableTopTilingByEdgeDrag = true;
+  system.defaults.WindowManager.AppWindowGroupingBehavior = true;
+  system.defaults.WindowManager.HideDesktop = false;
+  system.defaults.WindowManager.StageManagerHideWidgets = true;
+  system.defaults.WindowManager.StandardHideDesktopIcons = true;
+  system.defaults.WindowManager.StandardHideWidgets = true;
+
+  # ── Control Center（メニューバー表示） ──────────────────────────────
+  system.defaults.controlcenter.BatteryShowPercentage = true;
+  system.defaults.controlcenter.Bluetooth = true;
+  system.defaults.controlcenter.FocusModes = true;
+  system.defaults.controlcenter.Sound = true;
+
+  # ── メニューバー時計 ─────────────────────────────────────────────────
+  system.defaults.menuExtraClock.Show24Hour = true;
+  system.defaults.menuExtraClock.ShowDayOfWeek = true;
+  system.defaults.menuExtraClock.ShowDate = 0;
+
+  # ── iCal ────────────────────────────────────────────────────────────
+  system.defaults.iCal."first day of week" = "Sunday";
+  system.defaults.iCal.CalendarSidebarShown = false;
+
+  # ── スクリーンショット ───────────────────────────────────────────────
+  system.defaults.screencapture.location = "/Users/s23159/.Trash";
 
   imports = [
     ./home_manager.nix
