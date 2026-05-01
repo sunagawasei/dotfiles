@@ -51,7 +51,6 @@ in
       "claude-code@latest"
       "codex"
       "copilot-cli"
-      "kindle"
       "linear-linear"
       "microsoft-remote-desktop"
       "notion"
