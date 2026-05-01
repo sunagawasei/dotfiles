@@ -32,5 +32,13 @@
           nix-homebrew.darwinModules.nix-homebrew
         ];
       };
+      darwinConfigurations."CA-20038442" = nix-darwin.lib.darwinSystem {
+        specialArgs = { inherit self nix-homebrew; };
+        modules = [
+          ./nix-darwin/configuration.nix
+          home-manager.darwinModules.home-manager
+          nix-homebrew.darwinModules.nix-homebrew
+        ];
+      };
     };
 }
