@@ -129,6 +129,38 @@
   # ── スクリーンショット ───────────────────────────────────────────────
   system.defaults.screencapture.location = "/Users/s23159/.Trash";
 
+  # ── 電源管理（ディスプレイスリープ） ─────────────────────────────────
+  system.activationScripts.pmset.text = ''
+    /usr/bin/pmset -c displaysleep 30
+    /usr/bin/pmset -c sleep 0
+    /usr/bin/pmset -c ttyskeepawake 1
+    /usr/bin/pmset -b displaysleep 30
+    /usr/bin/pmset -b lessbright 0
+    /usr/bin/pmset -b ttyskeepawake 1
+  '';
+
+  # ── キーボードショートカット（Spotlight無効化） ───────────────────────
+  system.defaults.CustomUserPreferences."com.apple.symbolichotkeys".AppleSymbolicHotKeys = {
+    "64" = {
+      enabled = false;
+      value = {
+        parameters = [ 262144 4294705151 ];
+        type = "modifier";
+      };
+    };
+    "65" = {
+      enabled = false;
+      value = {
+        parameters = [ 65535 49 1572864 ];
+        type = "standard";
+      };
+    };
+  };
+
+  system.activationScripts.activateHotkeys.text = ''
+    /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+  '';
+
   imports = [
     ./home_manager.nix
     ./homebrew.nix
