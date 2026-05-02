@@ -39,7 +39,7 @@
   system.defaults.NSGlobalDomain."com.apple.trackpad.forceClick" = 1;
   system.defaults.NSGlobalDomain."com.apple.springing.enabled" = 1;
   system.defaults.NSGlobalDomain._HIHideMenuBar = true;
-  system.defaults.NSGlobalDomain.AppleActionOnDoubleClick = "None";
+  system.defaults.CustomUserPreferences.NSGlobalDomain.AppleActionOnDoubleClick = "None";
 
   # ── Trackpad ────────────────────────────────────────────────────────
   system.defaults.trackpad.Clicking = true;
