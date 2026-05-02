@@ -117,7 +117,7 @@
   };
 
   # ── Safari ──────────────────────────────────────────────────────────
-  system.defaults.safari.ShowFullURLInSmartSearchField = true;
+  system.defaults.CustomUserPreferences."com.apple.Safari".ShowFullURLInSmartSearchField = 1;
 
   # ── TextEdit ─────────────────────────────────────────────────────────
   system.defaults.CustomUserPreferences."com.apple.TextEdit".RichText = 0;
