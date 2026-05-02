@@ -37,7 +37,7 @@
   system.defaults.NSGlobalDomain."com.apple.sound.beep.feedback" = 1;
   system.defaults.NSGlobalDomain."com.apple.trackpad.scaling" = 2.0;
   system.defaults.NSGlobalDomain."com.apple.trackpad.forceClick" = 1;
-  system.defaults.NSGlobalDomain."com.apple.springing.enabled" = 1;
+  system.defaults.NSGlobalDomain."com.apple.springing.enabled" = true;
   system.defaults.NSGlobalDomain._HIHideMenuBar = true;
   system.defaults.CustomUserPreferences.NSGlobalDomain.AppleActionOnDoubleClick = "None";
 
