@@ -116,6 +116,12 @@
     JIMPrefShiftKeyActionKey = 1;
   };
 
+  # ── Safari ──────────────────────────────────────────────────────────
+  system.defaults.safari.ShowFullURLInSmartSearchField = true;
+
+  # ── TextEdit ─────────────────────────────────────────────────────────
+  system.defaults.CustomUserPreferences."com.apple.TextEdit".RichText = 0;
+
   # ── iCal ────────────────────────────────────────────────────────────
   system.defaults.iCal."first day of week" = "Sunday";
   system.defaults.iCal.CalendarSidebarShown = false;
