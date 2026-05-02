@@ -102,6 +102,20 @@
   system.defaults.menuExtraClock.ShowDayOfWeek = true;
   system.defaults.menuExtraClock.ShowDate = 0;
 
+  # ── カスタムキーボードショートカット ────────────────────────────────
+  system.defaults.CustomUserPreferences.NSGlobalDomain.NSUserKeyEquivalents."タブを複製" = "^t";
+
+  # ── 日本語IME（Kotoeri）────────────────────────────────────────────
+  system.defaults.CustomUserPreferences."com.apple.inputmethod.Kotoeri" = {
+    JIMPrefLiveConversionKey = 0;
+    JIMPrefPredictiveCandidateKey = 0;
+    JIMPrefAutocorrectionKey = 0;
+    JIMPrefCapsLockActionKey = 0;
+    JIMPrefCharacterForSlashKey = 1;
+    JIMPrefCharacterForYenKey = 1;
+    JIMPrefShiftKeyActionKey = 1;
+  };
+
   # ── iCal ────────────────────────────────────────────────────────────
   system.defaults.iCal."first day of week" = "Sunday";
   system.defaults.iCal.CalendarSidebarShown = false;
