@@ -36,6 +36,17 @@
   system.defaults.NSGlobalDomain.NSTableViewDefaultSizeMode = 2;
   system.defaults.NSGlobalDomain."com.apple.sound.beep.feedback" = 1;
   system.defaults.NSGlobalDomain."com.apple.trackpad.scaling" = 2.0;
+  system.defaults.NSGlobalDomain."com.apple.trackpad.forceClick" = 1;
+  system.defaults.NSGlobalDomain."com.apple.springing.enabled" = 1;
+  system.defaults.NSGlobalDomain._HIHideMenuBar = true;
+  system.defaults.NSGlobalDomain.AppleActionOnDoubleClick = "None";
+
+  # ── Trackpad ────────────────────────────────────────────────────────
+  system.defaults.trackpad.Clicking = true;
+  system.defaults.trackpad.TrackpadRightClick = true;
+  system.defaults.trackpad.FirstClickThreshold = 0;
+  system.defaults.trackpad.SecondClickThreshold = 0;
+  system.defaults.NSGlobalDomain."com.apple.mouse.tapBehavior" = 1;
   system.defaults.NSGlobalDomain.KeyRepeat = 2;
   system.defaults.NSGlobalDomain.InitialKeyRepeat = 15;
   system.defaults.NSGlobalDomain.ApplePressAndHoldEnabled = false;
