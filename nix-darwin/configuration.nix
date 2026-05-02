@@ -94,7 +94,7 @@
   # ── Control Center（メニューバー表示） ──────────────────────────────
   system.defaults.controlcenter.BatteryShowPercentage = true;
   system.defaults.controlcenter.Bluetooth = true;
-  system.defaults.controlcenter.FocusModes = true;
+  system.defaults.controlcenter.FocusModes = false;
   system.defaults.controlcenter.Sound = true;
 
   # ── メニューバー時計 ─────────────────────────────────────────────────
