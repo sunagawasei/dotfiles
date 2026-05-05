@@ -98,9 +98,12 @@
   system.defaults.controlcenter.Sound = true;
 
   # ── メニューバー時計 ─────────────────────────────────────────────────
+  system.defaults.NSGlobalDomain.AppleICUForce24HourTime = true;
   system.defaults.menuExtraClock.Show24Hour = true;
+  system.defaults.menuExtraClock.ShowAMPM = false;
   system.defaults.menuExtraClock.ShowDayOfWeek = true;
   system.defaults.menuExtraClock.ShowDate = 0;
+  system.defaults.CustomUserPreferences."com.apple.menuextra.clock".DateFormat = "EEE H:mm";
 
   # ── カスタムキーボードショートカット ────────────────────────────────
   system.defaults.CustomUserPreferences.NSGlobalDomain.NSUserKeyEquivalents."タブを複製" = "^t";
@@ -114,6 +117,12 @@
     JIMPrefCharacterForSlashKey = 1;
     JIMPrefCharacterForYenKey = 1;
     JIMPrefShiftKeyActionKey = 1;
+  };
+
+  # ── azooKeyMac ──────────────────────────────────────────────────────
+  system.defaults.CustomUserPreferences."dev.ensan.inputmethod.azooKeyMac" = {
+    "dev.ensan.inputmethod.azooKeyMac.preference.typeBackSlash" = 1;
+    "dev.ensan.inputmethod.azooKeyMac.preference.typeHalfSpace" = 1;
   };
 
   # ── Safari ──────────────────────────────────────────────────────────
@@ -139,8 +148,29 @@
     /usr/bin/pmset -b ttyskeepawake 1
   '';
 
-  # ── キーボードショートカット（Spotlight無効化） ───────────────────────
+  # ── キーボードショートカット無効化 ──────────────────────────────────
   system.defaults.CustomUserPreferences."com.apple.symbolichotkeys".AppleSymbolicHotKeys = {
+    "52" = {
+      enabled = false;
+      value = {
+        parameters = [ 100 2 1572864 ];
+        type = "standard";
+      };
+    };
+    "60" = {
+      enabled = false;
+      value = {
+        parameters = [ 32 49 262144 ];
+        type = "standard";
+      };
+    };
+    "61" = {
+      enabled = false;
+      value = {
+        parameters = [ 32 49 786432 ];
+        type = "standard";
+      };
+    };
     "64" = {
       enabled = false;
       value = {
