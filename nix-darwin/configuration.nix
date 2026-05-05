@@ -148,8 +148,104 @@
     /usr/bin/pmset -b ttyskeepawake 1
   '';
 
-  # ── キーボードショートカット無効化 ──────────────────────────────────
+  # ── Mission Control・キーボードショートカット設定 ───────────────────
   system.defaults.CustomUserPreferences."com.apple.symbolichotkeys".AppleSymbolicHotKeys = {
+    # ── Mission Control ─────────────────────────────────────────────
+    "32" = {
+      enabled = true;
+      value = {
+        parameters = [ 65535 126 8650752 ]; # ^↑ Mission Control
+        type = "standard";
+      };
+    };
+    "33" = {
+      enabled = false;
+      value = {
+        parameters = [ 65535 125 8650752 ]; # ^↓ アプリケーションウインドウ（無効）
+        type = "standard";
+      };
+    };
+    "36" = {
+      enabled = false;
+      value = {
+        parameters = [ 65535 103 8388608 ]; # F11 デスクトップを表示（無効）
+        type = "standard";
+      };
+    };
+    # ── 操作スペース移動（有効） ─────────────────────────────────────
+    "79" = {
+      enabled = true;
+      value = {
+        parameters = [ 65535 123 8650752 ]; # ^← 左の操作スペースに移動
+        type = "standard";
+      };
+    };
+    "80" = {
+      enabled = true;
+      value = {
+        parameters = [ 65535 123 8781824 ]; # ^⇧← 左の操作スペースに移動（Shift）
+        type = "standard";
+      };
+    };
+    "81" = {
+      enabled = true;
+      value = {
+        parameters = [ 65535 124 8650752 ]; # ^→ 右の操作スペースに移動
+        type = "standard";
+      };
+    };
+    "82" = {
+      enabled = true;
+      value = {
+        parameters = [ 65535 124 8781824 ]; # ^⇧→ 右の操作スペースに移動（Shift）
+        type = "standard";
+      };
+    };
+    # ── デスクトップ切替（無効） ─────────────────────────────────────
+    "118" = {
+      enabled = false;
+      value = {
+        parameters = [ 65535 18 262144 ]; # ^1 デスクトップ1へ切り替え（無効）
+        type = "standard";
+      };
+    };
+    "119" = {
+      enabled = false;
+      value = {
+        parameters = [ 65535 19 262144 ]; # ^2 デスクトップ2へ切り替え（無効）
+        type = "standard";
+      };
+    };
+    # ── その他（無効） ───────────────────────────────────────────────
+    "175" = {
+      enabled = false;
+      value = {
+        parameters = [ 65535 65535 0 ];
+        type = "standard";
+      };
+    };
+    "190" = {
+      enabled = false;
+      value = {
+        parameters = [ 113 12 8388608 ]; # ⌘Q クイックメモ（無効）
+        type = "standard";
+      };
+    };
+    "222" = {
+      enabled = false;
+      value = {
+        parameters = [ 65535 65535 0 ]; # ゲームオーバーレイ（無効）
+        type = "standard";
+      };
+    };
+    "260" = {
+      enabled = false;
+      value = {
+        parameters = [ 65535 53 1048576 ];
+        type = "standard";
+      };
+    };
+    # ── Spotlight（無効） ────────────────────────────────────────────
     "52" = {
       enabled = false;
       value = {
