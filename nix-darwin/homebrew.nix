@@ -27,6 +27,7 @@ in
 
     taps = [
       "cycloud-io/tap"
+      "datadog-labs/pack"
       "perman/tap"
     ];
 
@@ -37,6 +38,7 @@ in
       # nixpkgs で問題があるもの
       "aws-cdk" # nodePackages 版が不安定
       "mysql-client" # nixpkgs にスタンドアロン版なし
+      "datadog-labs/pack/pup" # Datadog CLI
       "oauth2l" # macOS 認証統合
       "oxfmt" # brew 版が大幅に新しい (0.41 vs 0.27)
       "zsh" # /etc/shells 統合が必要なシステムシェル
@@ -55,7 +57,6 @@ in
       "microsoft-remote-desktop"
       "notion"
       "raycast"
-      "spotify"
       # ターミナル
       "wezterm@nightly"
       # フォント
@@ -78,7 +79,7 @@ in
     if [ -f "${cfg.prefix}/bin/brew" ]; then
       _BREW_TOKEN=""
       _GH_BIN=""
-      for _p in "${cfg.prefix}/bin/gh" "/Users/${cfg.user}/.nix-profile/bin/gh" "/run/current-system/sw/bin/gh"; do
+      for _p in "${cfg.prefix}/bin/gh" "/Users/${cfg.user}/.nix-profile/bin/gh" "/run/current-system/sw/bin/gh" "/etc/profiles/per-user/${cfg.user}/bin/gh"; do
         [ -x "$_p" ] && { _GH_BIN="$_p"; break; }
       done
       if [ -n "$_GH_BIN" ]; then

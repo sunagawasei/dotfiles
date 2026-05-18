@@ -283,6 +283,11 @@
     };
   };
 
+  # ── Nix バイナリの quarantine 属性を除去 ───────────────────────────
+  system.activationScripts.removeQuarantine.text = ''
+    /usr/bin/xattr -r -d com.apple.quarantine /nix 2>/dev/null || true
+  '';
+
   system.activationScripts.activateHotkeys.text = ''
     /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
   '';
