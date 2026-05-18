@@ -146,6 +146,13 @@ vim.api.nvim_create_autocmd("TermOpen", {
       vim.cmd("stopinsert")
       Snacks.picker.explorer()
     end, vim.tbl_extend("force", opts, { desc = "Explorer (from terminal)" }))
+
+    vim.keymap.set("t", "<leader>tc", function()
+      local sb = vim.bo.scrollback
+      vim.bo.scrollback = 1
+      vim.bo.scrollback = sb
+      vim.api.nvim_chan_send(vim.b.terminal_job_id, "clear\n")
+    end, vim.tbl_extend("force", opts, { desc = "Clear terminal screen and scrollback" }))
   end,
   desc = "Enable leader key mappings in toggleterm terminal mode",
 })

@@ -11,9 +11,17 @@ return {
         local opts = { buffer = bufnr }
         -- Insert mode: Enterでリスト自動継続（リスト外では通常のEnter）
         map("i", "<CR>", "<cmd>MDListItemBelow<cr>", opts)
-        -- Normal mode: o/Oでリスト自動継続
-        map("n", "o", "<cmd>MDListItemBelow<cr>", opts)
-        map("n", "O", "<cmd>MDListItemAbove<cr>", opts)
+        -- Normal mode: o/Oでリスト自動継続、リスト外では通常動作にフォールバック
+        map("n", "o", function()
+          if not require("markdown.list").insert_list_item_below() then
+            vim.cmd("normal! o")
+          end
+        end, opts)
+        map("n", "O", function()
+          if not require("markdown.list").insert_list_item_above() then
+            vim.cmd("normal! O")
+          end
+        end, opts)
       end,
     },
   },
