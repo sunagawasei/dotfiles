@@ -12,6 +12,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
+    gws-cli.url = "github:googleworkspace/cli";
   };
 
   outputs =
@@ -21,11 +22,12 @@
       home-manager,
       nix-darwin,
       nix-homebrew,
+      gws-cli,
       ...
     }:
     {
       darwinConfigurations."CA-20021145" = nix-darwin.lib.darwinSystem {
-        specialArgs = { inherit self nix-homebrew; };
+        specialArgs = { inherit self nix-homebrew gws-cli; };
         modules = [
           ./nix-darwin/configuration.nix
           home-manager.darwinModules.home-manager
@@ -33,7 +35,7 @@
         ];
       };
       darwinConfigurations."CA-20038442" = nix-darwin.lib.darwinSystem {
-        specialArgs = { inherit self nix-homebrew; };
+        specialArgs = { inherit self nix-homebrew gws-cli; };
         modules = [
           ./nix-darwin/configuration.nix
           home-manager.darwinModules.home-manager

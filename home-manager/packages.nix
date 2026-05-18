@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, gws, ... }:
 {
   home.packages = with pkgs; [
     nixfmt
@@ -23,6 +23,9 @@
 
     # その他
     terminal-notifier zoxide
+
+    # Google Workspace CLI
+    gws
   ];
 
   # direnv: シェル統合を HM に任せる
