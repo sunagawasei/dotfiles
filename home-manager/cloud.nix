@@ -3,6 +3,7 @@
   home.packages = with pkgs; [
     awscli2
     aws-sam-cli
+    ssm-session-manager-plugin
     google-cloud-sdk
     terraform
     kubectl
