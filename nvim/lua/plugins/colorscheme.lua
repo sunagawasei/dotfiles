@@ -150,56 +150,48 @@ return {
         ["@markup.heading.4"] = { fg = colors.operator, bold = true },
         ["@markup.heading.5"] = { fg = colors.light_gray, bold = true },
         ["@markup.heading.6"] = { fg = colors.mid_gray, bold = true },
-        -- md-render.nvim 用: 強調背景スタイル (teal グラデーション)
-        -- source バッファは @markup.heading.<N>.markdown を treesitter が直接使用
+        -- Markdown 見出し背景: teal グラデーション（treesitter + render-markdown.nvim 共有）
         ["@markup.heading.1.markdown"] = { bg = colors.bright_cyan,    fg = colors.bg, bold = true },
         ["@markup.heading.2.markdown"] = { bg = colors.cyan,           fg = colors.bg, bold = true },
         ["@markup.heading.3.markdown"] = { bg = colors.operator,       fg = colors.bg, bold = true },
         ["@markup.heading.4.markdown"] = { bg = colors.fg,             fg = colors.bg, bold = true },
         ["@markup.heading.5.markdown"] = { bg = colors.bright_magenta, fg = colors.bg, bold = true },
         ["@markup.heading.6.markdown"] = { bg = colors.light_gray,     fg = colors.bg, bold = true },
-        -- preview バッファは extmark で MdRenderH<N> 固定名を使う仕様。md-render 側は
-        -- default=true で登録するため、ここで link 定義して確実に優先させる（単一ソース）
-        MdRenderH1 = { link = "@markup.heading.1.markdown" },
-        MdRenderH2 = { link = "@markup.heading.2.markdown" },
-        MdRenderH3 = { link = "@markup.heading.3.markdown" },
-        MdRenderH4 = { link = "@markup.heading.4.markdown" },
-        MdRenderH5 = { link = "@markup.heading.5.markdown" },
-        MdRenderH6 = { link = "@markup.heading.6.markdown" },
-        -- md-render.nvim: Obsidian ==highlight== マーカー（init.lua:92 の固定値を上書き）
-        MdRenderHighlight = { bg = colors.bright_cyan, fg = colors.bg },
-        -- md-render.nvim: Alert / Callout グループ（abyssal-teal テーマ統一）
-        -- テキスト/アイコン色: 重要度に応じた teal/magenta グラデーション
-        MdRenderAlertNote      = { fg = colors.bright_cyan,    bold = true },
-        MdRenderAlertTip       = { fg = colors.cyan,           bold = true },
-        MdRenderAlertImportant = { fg = colors.lavender,       bold = true },
-        MdRenderAlertWarning   = { fg = colors.bright_magenta, bold = true },
-        MdRenderAlertCaution   = { fg = colors.magenta,        bold = true },
-        -- Obsidian 拡張アラート
-        MdRenderAlertAbstract  = { fg = colors.cyan,           bold = true },
-        MdRenderAlertTodo      = { fg = colors.bright_cyan,    bold = true },
-        MdRenderAlertSuccess   = { fg = colors.success,        bold = true },
-        MdRenderAlertQuestion  = { fg = colors.bright_magenta, bold = true },
-        MdRenderAlertFailure   = { fg = colors.magenta,        bold = true },
-        MdRenderAlertDanger    = { fg = colors.magenta,        bold = true },
-        MdRenderAlertBug       = { fg = colors.magenta,        bold = true },
-        MdRenderAlertExample   = { fg = colors.lavender,       bold = true },
-        MdRenderAlertQuote     = { fg = colors.comment_gray,   bold = true },
-        -- Alert 背景: dark_shadow で統一（auto-blend より明確なパネル感を出す）
-        MdRenderAlertNoteBg      = { bg = colors.dark_shadow },
-        MdRenderAlertTipBg       = { bg = colors.dark_shadow },
-        MdRenderAlertImportantBg = { bg = colors.dark_shadow },
-        MdRenderAlertWarningBg   = { bg = colors.dark_shadow },
-        MdRenderAlertCautionBg   = { bg = colors.dark_shadow },
-        MdRenderAlertAbstractBg  = { bg = colors.dark_shadow },
-        MdRenderAlertTodoBg      = { bg = colors.dark_shadow },
-        MdRenderAlertSuccessBg   = { bg = colors.dark_shadow },
-        MdRenderAlertQuestionBg  = { bg = colors.dark_shadow },
-        MdRenderAlertFailureBg   = { bg = colors.dark_shadow },
-        MdRenderAlertDangerBg    = { bg = colors.dark_shadow },
-        MdRenderAlertBugBg       = { bg = colors.dark_shadow },
-        MdRenderAlertExampleBg   = { bg = colors.dark_shadow },
-        MdRenderAlertQuoteBg     = { bg = colors.dark_shadow },
+        -- render-markdown.nvim: インライン編集レンダリング用ハイライト
+        -- 見出し行背景: @markup.heading.<N>.markdown.bg と同じ teal グラデーション（palette 参照）
+        RenderMarkdownH1Bg = { bg = colors.bright_cyan },
+        RenderMarkdownH2Bg = { bg = colors.cyan },
+        RenderMarkdownH3Bg = { bg = colors.operator },
+        RenderMarkdownH4Bg = { bg = colors.fg },
+        RenderMarkdownH5Bg = { bg = colors.bright_magenta },
+        RenderMarkdownH6Bg = { bg = colors.light_gray },
+        -- 見出しアイコン: teal 背景上で読みやすい黒
+        RenderMarkdownH1 = { fg = colors.bg, bold = true },
+        RenderMarkdownH2 = { fg = colors.bg, bold = true },
+        RenderMarkdownH3 = { fg = colors.bg, bold = true },
+        RenderMarkdownH4 = { fg = colors.bg, bold = true },
+        RenderMarkdownH5 = { fg = colors.bg, bold = true },
+        RenderMarkdownH6 = { fg = colors.bg, bold = true },
+        -- コードブロック
+        RenderMarkdownCode       = { bg = colors.panel_bg },
+        RenderMarkdownCodeInline = { bg = colors.dark_shadow, fg = colors.fg },
+        -- テーブル
+        RenderMarkdownTableHead = { fg = colors.bright_cyan, bold = true },
+        RenderMarkdownTableRow  = { fg = colors.fg },
+        -- リスト・チェックボックス
+        RenderMarkdownBullet    = { fg = colors.punctuation_gray },
+        RenderMarkdownChecked   = { fg = colors.ansi_green },
+        RenderMarkdownUnchecked = { fg = colors.light_gray },
+        RenderMarkdownTodo      = { fg = colors.magenta },
+        -- リンク・クォート
+        RenderMarkdownLink  = { fg = colors.cyan, underline = true },
+        RenderMarkdownQuote = { fg = colors.light_gray, italic = true },
+        -- アラート（Info=bright_cyan / Warn=bright_magenta / Error=magenta）
+        RenderMarkdownInfo    = { fg = colors.bright_cyan,    bold = true },
+        RenderMarkdownHint    = { fg = colors.cyan,           bold = true },
+        RenderMarkdownSuccess = { fg = colors.success,        bold = true },
+        RenderMarkdownWarn    = { fg = colors.bright_magenta, bold = true },
+        RenderMarkdownError   = { fg = colors.magenta,        bold = true },
         ["@markup.list"] = { fg = colors.light_gray },
         ["@markup.list.markdown"] = { fg = colors.light_gray },
         ["@markup.list.checked"] = { fg = colors.cyan },
