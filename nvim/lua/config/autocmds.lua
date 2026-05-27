@@ -157,6 +157,26 @@ vim.api.nvim_create_autocmd("TermOpen", {
   desc = "Enable leader key mappings in toggleterm terminal mode",
 })
 
+-- golangci-lint の cwd を go.mod の親ディレクトリに固定
+-- go.mod なしのディレクトリから Neovim を起動すると nvim-lint が golangci-lint を
+-- 誤ったディレクトリで実行してエラーになるため、バッファから go.mod を探してcwdを補正する
+vim.api.nvim_create_autocmd("User", {
+  pattern = "VeryLazy",
+  once = true,
+  callback = function()
+    local ok, lint = pcall(require, "lint")
+    if not ok then return end
+    local golangcilint = lint.linters.golangcilint
+    if not golangcilint then return end
+    golangcilint.cwd = function()
+      local buf = vim.api.nvim_buf_get_name(0)
+      if buf == "" then return nil end
+      local gomod = vim.fs.find("go.mod", { upward = true, path = vim.fs.dirname(buf) })[1]
+      return gomod and vim.fs.dirname(gomod) or nil
+    end
+  end,
+})
+
 -- which-key トリガー復旧ワークアラウンド
 -- which-keyのBufEnterハンドラはBuf.get()のみ呼ぶがclear()を呼ばないため、
 -- staleなtriggerが残留する場合がある。clear({ buf = ev.buf })を補完する。
