@@ -73,8 +73,8 @@ return {
         SnacksPickerPrompt = { bg = "none" },
         SnacksPickerMatch = { bg = "none", fg = colors.cyan },
         SnacksPickerList = { bg = "none" },
-        SnacksPickerListCursorLine = { bg = colors.dark_shadow, fg = colors.highlight_white },
-        SnacksPickerSelection = { bg = colors.dark_shadow, fg = colors.highlight_white, bold = true },
+        SnacksPickerListCursorLine = { bg = colors.selection, fg = colors.selection_fg, bold = true },
+        SnacksPickerSelection      = { bg = colors.selection, fg = colors.selection_fg, bold = true },
         SnacksPickerPathIgnored = { bg = "none" },
 
         -- 一般的なサイドバー関連のハイライトグループ
@@ -439,10 +439,10 @@ return {
         end
 
         -- Snacks Picker選択項目のハイライトを明示的に設定
-        vim.api.nvim_set_hl(0, "SnacksPickerListCursorLine", { bg = colors.dark_shadow, fg = colors.highlight_white })
-        vim.api.nvim_set_hl(0, "SnacksPickerSelection", { bg = colors.dark_shadow, fg = colors.highlight_white, bold = true })
-        vim.api.nvim_set_hl(0, "SnacksPickerCursor", { bg = colors.dark_shadow, fg = colors.highlight_white })
-        vim.api.nvim_set_hl(0, "SnacksPickerCursorLine", { bg = colors.dark_shadow, fg = colors.highlight_white })
+        vim.api.nvim_set_hl(0, "SnacksPickerListCursorLine", { bg = colors.selection, fg = colors.selection_fg, bold = true })
+        vim.api.nvim_set_hl(0, "SnacksPickerSelection",      { bg = colors.selection, fg = colors.selection_fg, bold = true })
+        vim.api.nvim_set_hl(0, "SnacksPickerCursor",         { bg = colors.selection, fg = colors.selection_fg })
+        vim.api.nvim_set_hl(0, "SnacksPickerCursorLine",     { bg = colors.selection, fg = colors.selection_fg, bold = true })
 
         -- ClaudeCode関連のハイライトグループ
         local claudecode_groups = vim.fn.getcompletion("ClaudeCode", "highlight")
