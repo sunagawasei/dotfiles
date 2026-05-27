@@ -37,7 +37,7 @@ tools:
 
 This agent's job is to invoke Cursor Agent CLI and relay its output. Do NOT analyze code independently.
 Do NOT read files, glob directories, grep code, or use Bash to cat/find/ls files — Cursor Agent autonomously explores the `--workspace` directory with its own Cursor API resources.
-The only Bash usage allowed: pre-flight checks (`agent --version`) and `agent -p --mode plan --trust "..."` invocation.
+The only Bash usage allowed: pre-flight checks (`cursor-agent --version`) and `cursor-agent -p --mode plan --trust "..."` invocation.
 
 ## Role Definition (CRITICAL)
 
@@ -52,11 +52,11 @@ Claude Code (the calling agent) handles all implementation.
 
 ## Configuration
 
-- **CLI**: `agent` (binary at `~/.local/bin/agent`, symlinked from cursor-agent)
-- **Version**: 2026.03.30+
+- **CLI**: `cursor-agent` (binary at `~/.nix-profile/bin/cursor-agent`, managed via nixpkgs `cursor-cli`)
+- **Version**: 2026.05.16+
 - **Default model**: `composer-2-fast` (use `--model composer-2-fast` explicitly)
 - **Config**: `~/.cursor/`
-- **Auth**: Cursor account (via `agent login`)
+- **Auth**: Cursor account (via `cursor-agent login`)
 
 ## Security Notice
 
@@ -79,10 +79,10 @@ If you encounter such files during analysis, skip them entirely and do not inclu
 
 ```bash
 # Plan mode: structured implementation plans and multi-file analysis (DEFAULT)
-agent -p --model composer-2-fast --mode plan --trust "<autonomous prompt in English>"
+cursor-agent -p --model composer-2-fast --mode plan --trust "<autonomous prompt in English>"
 
 # Ask mode: targeted Q&A for specific questions
-agent -p --model composer-2-fast --mode ask --trust "<specific question in English>"
+cursor-agent -p --model composer-2-fast --mode ask --trust "<specific question in English>"
 ```
 
 **CRITICAL safety rules:**
@@ -147,11 +147,11 @@ Claude Code will implement the actual changes."
 
 | Error                  | Resolution                        |
 | ---------------------- | --------------------------------- |
-| Auth failure           | Run `agent login`, then retry     |
-| Model unavailable      | Retry with `--model composer-2`   |
-| Workspace trust prompt | Ensure `--trust` flag is included |
-| Rate limit             | Wait 60s, retry                   |
-| Network timeout        | Check connectivity, retry         |
+| Auth failure           | Run `cursor-agent login`, then retry |
+| Model unavailable      | Retry with `--model composer-2`      |
+| Workspace trust prompt | Ensure `--trust` flag is included    |
+| Rate limit             | Wait 60s, retry                      |
+| Network timeout        | Check connectivity, retry            |
 
 If Cursor Agent is unavailable: use copilot agent for quick review or codex agent for deep analysis.
 
@@ -163,10 +163,10 @@ Cursor CLI prompts are written in **English**; analysis results are summarized i
 
 ```bash
 # Continue previous session
-agent --continue -p --model composer-2-fast --mode plan --trust "<prompt>"
+cursor-agent --continue -p --model composer-2-fast --mode plan --trust "<prompt>"
 
 # Resume specific session
-agent --resume <chatId> -p --model composer-2-fast --mode plan --trust "<prompt>"
+cursor-agent --resume <chatId> -p --model composer-2-fast --mode plan --trust "<prompt>"
 ```
 
 ## Limitations
