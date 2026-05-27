@@ -246,6 +246,35 @@
         type = "standard";
       };
     };
+    # ── スクリーンショット（macOSネイティブ無効化 → Shottrに委譲） ───────
+    "28" = {
+      enabled = false;
+      value = {
+        parameters = [ 51 20 1179648 ]; # ⌘⇧3 画面全体をファイルに保存（無効）
+        type = "standard";
+      };
+    };
+    "29" = {
+      enabled = false;
+      value = {
+        parameters = [ 51 20 1441792 ]; # ⌘⇧⌃3 画面全体をクリップボードにコピー（無効）
+        type = "standard";
+      };
+    };
+    "30" = {
+      enabled = false;
+      value = {
+        parameters = [ 52 21 1179648 ]; # ⌘⇧4 選択範囲をファイルに保存（無効）
+        type = "standard";
+      };
+    };
+    "31" = {
+      enabled = false;
+      value = {
+        parameters = [ 52 21 1441792 ]; # ⌘⇧⌃4 選択範囲をクリップボードにコピー（無効）
+        type = "standard";
+      };
+    };
     # ── Spotlight（無効） ────────────────────────────────────────────
     "52" = {
       enabled = false;
