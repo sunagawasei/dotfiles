@@ -4,6 +4,9 @@ return {
     opts = {
       preset = "lazy",
       enabled = true, -- 編集時インラインレンダリングをデフォルト有効
+      heading = {
+        width = "block", -- 背景を見出し文字幅に制限（デフォルト "full" = 画面右端まで）
+      },
     },
     ft = { "markdown", "gitcommit" },
     keys = {
