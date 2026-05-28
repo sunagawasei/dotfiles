@@ -6,11 +6,16 @@ return {
     require("toggleterm").setup({
       size = function(term)
         if term.direction == "horizontal" then
-          return 15
+          return vim.o.lines - vim.o.cmdheight - 2
         elseif term.direction == "vertical" then
-          return vim.o.columns * 0.4
+          return vim.o.columns
         end
       end,
+      float_opts = {
+        border = "curved",
+        width = function() return math.floor(vim.o.columns * 0.95) end,
+        height = function() return math.floor(vim.o.lines * 0.95) end,
+      },
       open_mapping = nil, -- カスタムキーバインド使用
       hide_numbers = true,
       shade_terminals = true,
