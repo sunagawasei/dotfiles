@@ -1,5 +1,6 @@
 return {
   "folke/snacks.nvim",
+  dependencies = { "delphinus/md-render.nvim" },
   opts = {
     dashboard = {
       enabled = false,  -- oil.nvim起動のためdashboardを無効化
@@ -20,6 +21,14 @@ return {
         files = {
           hidden = true,
           ignored = true,
+          preview = function(ctx)
+            require("md-render.snacks").preview()(ctx)
+          end,
+        },
+        grep = {
+          preview = function(ctx)
+            require("md-render.snacks").preview()(ctx)
+          end,
         },
       },
       -- カスタムアクションの定義
