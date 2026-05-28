@@ -42,7 +42,6 @@ git:
   autoFetch: true # 自動fetchを有効化
   autoRefresh: true # 自動リフレッシュを有効化してgit操作を即座に反映
   fetchAll: false # git fetch --allを避けて必要なremoteのみ取得（パフォーマンス改善）
-  ignoreWhitespaceInDiffView: true
   log:
     showGraph: "always"
     showWholeGraph: true # git log --all を有効化（全ブランチ表示）
