@@ -53,7 +53,7 @@ in
       "claude-code@latest"
       "codex"
       "copilot-cli"
-      "linear-linear"
+      "linear"
       "microsoft-remote-desktop"
       "notion"
       "raycast"
