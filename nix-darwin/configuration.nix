@@ -52,6 +52,14 @@
   system.defaults.NSGlobalDomain.InitialKeyRepeat = 15;
   system.defaults.NSGlobalDomain.ApplePressAndHoldEnabled = false;
 
+  # ── Mouse ────────────────────────────────────────────────────────────
+  # nix-darwin の typed option にない mouse キーは CustomUserPreferences で設定
+  system.defaults.CustomUserPreferences.NSGlobalDomain."com.apple.mouse.scaling" = 2.0;              # 軌跡の速さ
+  system.defaults.CustomUserPreferences.NSGlobalDomain."com.apple.mouse.doubleClickThreshold" = 0.2; # ダブルクリックの間隔
+  system.defaults.CustomUserPreferences.NSGlobalDomain."com.apple.swipescrolldirection" = true;      # ナチュラルなスクロール（ON）
+  # スクロールの速さ: scrollwheel.scaling は実機未設定（OS既定）のためピン留め不要
+  # 副ボタン=右側: 標準マウスのハード既定、pinできるuserdefaultsキーが存在しないため省略
+
   # ── Dock ────────────────────────────────────────────────────────────
   system.defaults.dock.autohide = true;
   system.defaults.dock.orientation = "left";
