@@ -35,7 +35,7 @@ in
     colima docker qemu
 
     # その他
-    terminal-notifier zoxide
+    zoxide
 
     # Google Workspace CLI
     gws

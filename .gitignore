@@ -149,6 +149,7 @@ claude/*
 !claude/hooks/
 claude/hooks/*
 !claude/hooks/add_newline.go
+!claude/hooks/claude-notify.go
 !claude/skills/
 claude/skills/*
 !claude/skills/add-rule/
