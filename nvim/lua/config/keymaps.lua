@@ -272,6 +272,17 @@ vim.keymap.set("n", "<leader>uh", function()
   vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
 end, { desc = "Toggle Inlay Hints" })
 
+-- LSP定義ジャンプ（別バッファ）
+vim.keymap.set("n", "gvd", function()
+  vim.cmd("vsplit")
+  vim.lsp.buf.definition()
+end, { desc = "Go to definition (vsplit)" })
+
+vim.keymap.set("n", "ghd", function()
+  vim.cmd("split")
+  vim.lsp.buf.definition()
+end, { desc = "Go to definition (split)" })
+
 -- ウィンドウZoom（全画面化トグル）
 vim.keymap.set({ "n", "t" }, "<C-w>z", function()
   Snacks.zen.zoom()

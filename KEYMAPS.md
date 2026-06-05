@@ -1,5 +1,11 @@
 # Neovim
 
+## LSP定義ジャンプ
+
+- gd: 定義へジャンプ（カレントバッファ）
+- gvd: 定義へジャンプ（垂直split）
+- ghd: 定義へジャンプ（水平split）
+
 ## 診断全般のジャンプ（warning/error/info含む）
 
 - ]d: 次の診断へ移動
