@@ -25,13 +25,14 @@ import (
 
 // InputData は hook から渡される stdin JSON の必要フィールドを表します。
 type InputData struct {
-	HookEventName       string `json:"hook_event_name"`
-	NotificationType    string `json:"notification_type"`
-	Message             string `json:"message"`
-	Cwd                 string `json:"cwd"`
-	SessionID           string `json:"session_id"`
-	TranscriptPath      string `json:"transcript_path"`
+	HookEventName        string `json:"hook_event_name"`
+	NotificationType     string `json:"notification_type"`
+	Message              string `json:"message"`
+	Cwd                  string `json:"cwd"`
+	SessionID            string `json:"session_id"`
+	TranscriptPath       string `json:"transcript_path"`
 	LastAssistantMessage string `json:"last_assistant_message"`
+	StopHookActive       bool   `json:"stop_hook_active"`
 }
 
 // notification は組み立てた通知内容を表します。
@@ -386,6 +387,10 @@ func resolve(in InputData) (notification, bool) {
 
 	switch in.HookEventName {
 	case "Stop":
+		// stop_hook_active=true はループ継続中の中間発火なので通知しない
+		if in.StopHookActive {
+			return notification{}, false
+		}
 		body := firstNonEmpty(truncate(getUserPrompt(), 100), "タスクが完了しました")
 		return notification{withProject("完了"), body, "Glass"}, true
 
@@ -413,7 +418,12 @@ func resolve(in InputData) (notification, bool) {
 			return notification{withProject("許可待ち"), body, "Submarine"}, true
 
 		case "idle_prompt":
-			// Claude の最後の発言（何を求めているか）を表示
+			// pending tool_use がなければタスク完了後のアイドルなので通知しない
+			// （Stop 通知で既に完了を伝えており、追加通知は不要）
+			if txPath != "" && extractPendingToolUse(txPath) == "" {
+				return notification{}, false
+			}
+			// Claude が明示的に応答を求めている（AskUserQuestion 等）ケースのみ通知
 			body := firstNonEmpty(getAssistantText(), in.Message, "入力を待機しています")
 			return notification{withProject("入力待ち"), body, "Submarine"}, true
 
