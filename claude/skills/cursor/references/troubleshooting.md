@@ -19,12 +19,11 @@ agent status             # 認証確認
 ## モデル関連
 
 ```bash
-# composer-2 が利用不可の場合
-agent -p --model composer-2-fast --mode plan --trust "<prompt>"
-
 # 利用可能モデルを確認
 agent models
 ```
+
+- モデルが利用不可の場合はエラーをそのまま提示して終了する（フォールバックしない）
 
 ## バイナリ関連
 
@@ -41,10 +40,10 @@ ls -la ~/.local/bin/agent  # シンボリックリンク確認
 
 ```bash
 # 正しい
-agent -p --model composer-2 --mode plan --trust "<prompt>"
+agent -p --model grok-4.3 --mode plan --trust "<prompt>"
 
 # NG: --trust なしでは対話プロンプトで止まる可能性
-agent -p --model composer-2 --mode plan "<prompt>"
+agent -p --model grok-4.3 --mode plan "<prompt>"
 ```
 
 ## `--mode` フラグの省略禁止
@@ -54,10 +53,10 @@ agent -p --model composer-2 --mode plan "<prompt>"
 
 ```bash
 # NG: write権限が有効になる
-agent -p --model composer-2 --trust "<prompt>"
+agent -p --model grok-4.3 --trust "<prompt>"
 
 # OK
-agent -p --model composer-2 --mode plan --trust "<prompt>"
+agent -p --model grok-4.3 --mode plan --trust "<prompt>"
 ```
 
 ## タイムアウト
@@ -67,7 +66,7 @@ agent -p --model composer-2 --mode plan --trust "<prompt>"
 
 ```bash
 # スコープを絞る
-agent -p --model composer-2 --mode plan --trust "
+agent -p --model grok-4.3 --mode plan --trust "
 Analyze only src/auth/ directory. Focus on ...
 "
 ```
@@ -76,10 +75,10 @@ Analyze only src/auth/ directory. Focus on ...
 
 ```bash
 # 直前のセッションを再開
-agent --continue -p --model composer-2 --mode plan --trust "<prompt>"
+agent --continue -p --model grok-4.3 --mode plan --trust "<prompt>"
 
 # 特定セッションを再開
-agent --resume <chatId> -p --model composer-2 --mode plan --trust "<prompt>"
+agent --resume <chatId> -p --model grok-4.3 --mode plan --trust "<prompt>"
 ```
 
 ## Cursor IDE との混同について
