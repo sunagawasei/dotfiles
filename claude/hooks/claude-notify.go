@@ -15,6 +15,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"io"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -24,12 +25,13 @@ import (
 
 // InputData は hook から渡される stdin JSON の必要フィールドを表します。
 type InputData struct {
-	HookEventName    string `json:"hook_event_name"`
-	NotificationType string `json:"notification_type"`
-	Message          string `json:"message"`
-	Cwd              string `json:"cwd"`
-	SessionID        string `json:"session_id"`
-	TranscriptPath   string `json:"transcript_path"`
+	HookEventName       string `json:"hook_event_name"`
+	NotificationType    string `json:"notification_type"`
+	Message             string `json:"message"`
+	Cwd                 string `json:"cwd"`
+	SessionID           string `json:"session_id"`
+	TranscriptPath      string `json:"transcript_path"`
+	LastAssistantMessage string `json:"last_assistant_message"`
 }
 
 // notification は組み立てた通知内容を表します。
@@ -147,8 +149,10 @@ type transcriptMsg struct {
 }
 
 type contentBlock struct {
-	Type string `json:"type"`
-	Text string `json:"text"`
+	Type  string          `json:"type"`
+	Text  string          `json:"text"`
+	Name  string          `json:"name"`  // tool_use
+	Input json.RawMessage `json:"input"` // tool_use
 }
 
 // extractTextFromContent は content（string または []block）からテキストを取り出します。
@@ -239,6 +243,86 @@ func extractLastAssistantText(path string) string {
 	return ""
 }
 
+// toolInputSummary はツール名と input JSON からサマリ文字列を組み立てます。
+func toolInputSummary(name string, input json.RawMessage) string {
+	var m map[string]json.RawMessage
+	if json.Unmarshal(input, &m) != nil {
+		return name
+	}
+	getString := func(key string) string {
+		v, ok := m[key]
+		if !ok {
+			return ""
+		}
+		var s string
+		if json.Unmarshal(v, &s) == nil {
+			return s
+		}
+		return ""
+	}
+	switch name {
+	case "Bash":
+		if d := getString("description"); d != "" {
+			return name + ": " + d
+		}
+		if c := getString("command"); c != "" {
+			// コマンド先頭だけ表示（改行前まで）
+			if idx := strings.IndexByte(c, '\n'); idx > 0 {
+				c = c[:idx]
+			}
+			return name + ": " + c
+		}
+	case "AskUserQuestion":
+		// questions[0].question を取り出す
+		if raw, ok := m["questions"]; ok {
+			var qs []struct {
+				Question string `json:"question"`
+			}
+			if json.Unmarshal(raw, &qs) == nil && len(qs) > 0 && qs[0].Question != "" {
+				return name + ": " + qs[0].Question
+			}
+		}
+	case "Read", "Write", "Edit", "MultiEdit":
+		if fp := getString("file_path"); fp != "" {
+			return name + ": " + filepath.Base(fp)
+		}
+	case "WebFetch":
+		if u := getString("url"); u != "" {
+			return name + ": " + u
+		}
+	case "WebSearch":
+		if q := getString("query"); q != "" {
+			return name + ": " + q
+		}
+	}
+	return name
+}
+
+// extractPendingToolUse はトランスクリプトの最後の assistant ターンから
+// 許可待ちの tool_use のサマリを返します。
+func extractPendingToolUse(path string) string {
+	lines := readLinesReverse(path, 50)
+	for _, raw := range lines {
+		var tl transcriptLine
+		if json.Unmarshal([]byte(raw), &tl) != nil {
+			continue
+		}
+		if tl.Type != "assistant" || tl.IsSidechain {
+			continue
+		}
+		var blocks []contentBlock
+		if json.Unmarshal(tl.Message.Content, &blocks) != nil {
+			continue
+		}
+		for _, b := range blocks {
+			if b.Type == "tool_use" && b.Name != "" {
+				return toolInputSummary(b.Name, b.Input)
+			}
+		}
+	}
+	return ""
+}
+
 // truncate は s を max rune 数に制限し、超過時は末尾に … を付けます。
 func truncate(s string, max int) string {
 	runes := []rune(s)
@@ -278,7 +362,7 @@ func resolve(in InputData) (notification, bool) {
 		if txPath == "" {
 			return ""
 		}
-		return truncate(extractLastUserPrompt(txPath), 100)
+		return extractLastUserPrompt(txPath)
 	}
 
 	getAssistantText := func() string {
@@ -288,9 +372,21 @@ func resolve(in InputData) (notification, bool) {
 		return truncate(extractLastAssistantText(txPath), 100)
 	}
 
+	getPendingTool := func() string {
+		if txPath == "" {
+			return ""
+		}
+		return extractPendingToolUse(txPath)
+	}
+
+	// permission_prompt の message が汎用テキストか否かを判定する
+	isGenericMessage := func(msg string) bool {
+		return strings.EqualFold(strings.TrimSpace(msg), "claude needs your permission")
+	}
+
 	switch in.HookEventName {
 	case "Stop":
-		body := firstNonEmpty(getUserPrompt(), "タスクが完了しました")
+		body := firstNonEmpty(truncate(getUserPrompt(), 100), "タスクが完了しました")
 		return notification{withProject("完了"), body, "Glass"}, true
 
 	case "StopFailure":
@@ -300,8 +396,20 @@ func resolve(in InputData) (notification, bool) {
 	case "Notification":
 		switch in.NotificationType {
 		case "permission_prompt":
-			// message（許可対象の説明）を優先し、なければ Claude の最後の発言
-			body := firstNonEmpty(in.Message, getAssistantText(), "権限の確認が必要です")
+			// 「どの会話か → 何のツールか」形式で組み立て
+			userPrompt := getUserPrompt()
+			toolSummary := getPendingTool()
+			var body string
+			switch {
+			case userPrompt != "" && toolSummary != "":
+				body = truncate(userPrompt+" → "+toolSummary, 100)
+			case toolSummary != "":
+				body = truncate(toolSummary, 100)
+			case !isGenericMessage(in.Message) && in.Message != "":
+				body = in.Message
+			default:
+				body = firstNonEmpty(getAssistantText(), "権限の確認が必要です")
+			}
 			return notification{withProject("許可待ち"), body, "Submarine"}, true
 
 		case "idle_prompt":
@@ -330,22 +438,25 @@ func escapeAppleScript(s string) string {
 }
 
 func main() {
-	var input InputData
-	decoder := json.NewDecoder(os.Stdin)
-
-	// JSON デコードに失敗しても静かに終了（non-blocking hook）
-	if err := decoder.Decode(&input); err != nil {
+	// 生バイトを先に全部読む（デバッグで未知フィールドを捨てないため）
+	rawBytes, err := io.ReadAll(os.Stdin)
+	if err != nil {
 		return
 	}
 
-	// デバッグ用: CLAUDE_NOTIFY_DEBUG が設定されていれば raw 値をログに残す
-	// （フィールド名の実機検証用。通常運用では未設定）
+	// デバッグ用: CLAUDE_NOTIFY_DEBUG が設定されていれば生 JSON をログに残す
+	// （未知フィールドを含む実ペイロードを確認するため。通常運用では未設定）
 	if os.Getenv("CLAUDE_NOTIFY_DEBUG") != "" {
-		if f, err := os.OpenFile("/tmp/claude-notify.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644); err == nil {
-			raw, _ := json.Marshal(input)
-			fmt.Fprintf(f, "%s\n", raw)
+		if f, ferr := os.OpenFile("/tmp/claude-notify.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644); ferr == nil {
+			fmt.Fprintf(f, "%s\n", rawBytes)
 			f.Close()
 		}
+	}
+
+	var input InputData
+	// JSON デコードに失敗しても静かに終了（non-blocking hook）
+	if err := json.Unmarshal(rawBytes, &input); err != nil {
+		return
 	}
 
 	n, ok := resolve(input)
