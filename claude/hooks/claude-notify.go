@@ -333,6 +333,30 @@ func truncate(s string, max int) string {
 	return string(runes[:max-1]) + "…"
 }
 
+// truncateLine は s から改行を除去し、max rune 数に制限します。
+func truncateLine(s string, max int) string {
+	s = strings.Join(strings.Fields(strings.ReplaceAll(s, "\n", " ")), " ")
+	return truncate(s, max)
+}
+
+// formatMultiline はテキストを最大 maxLines 行・各行 maxRunes 文字に制限して返します。
+// 空行はスキップします。
+func formatMultiline(s string, maxLines, maxRunes int) string {
+	lines := strings.Split(strings.TrimSpace(s), "\n")
+	var result []string
+	for _, line := range lines {
+		line = strings.TrimSpace(line)
+		if line == "" {
+			continue
+		}
+		result = append(result, truncate(line, maxRunes))
+		if len(result) >= maxLines {
+			break
+		}
+	}
+	return strings.Join(result, "\n")
+}
+
 // firstNonEmpty は空白でない最初の値を返します。
 func firstNonEmpty(values ...string) string {
 	for _, v := range values {
@@ -391,7 +415,7 @@ func resolve(in InputData) (notification, bool) {
 		if in.StopHookActive {
 			return notification{}, false
 		}
-		body := firstNonEmpty(truncate(getUserPrompt(), 100), "タスクが完了しました")
+		body := firstNonEmpty(truncateLine(getUserPrompt(), 80), "タスクが完了しました")
 		return notification{withProject("完了"), body, "Glass"}, true
 
 	case "StopFailure":
@@ -401,15 +425,15 @@ func resolve(in InputData) (notification, bool) {
 	case "Notification":
 		switch in.NotificationType {
 		case "permission_prompt":
-			// 「どの会話か → 何のツールか」形式で組み立て
+			// 「どの会話か（1行目）→ 何のツールか（2行目）」の2行形式で組み立て
 			userPrompt := getUserPrompt()
 			toolSummary := getPendingTool()
 			var body string
 			switch {
 			case userPrompt != "" && toolSummary != "":
-				body = truncate(userPrompt+" → "+toolSummary, 100)
+				body = truncateLine(userPrompt, 45) + "\n→ " + truncateLine(toolSummary, 45)
 			case toolSummary != "":
-				body = truncate(toolSummary, 100)
+				body = truncateLine(toolSummary, 80)
 			case !isGenericMessage(in.Message) && in.Message != "":
 				body = in.Message
 			default:
@@ -424,7 +448,12 @@ func resolve(in InputData) (notification, bool) {
 				return notification{}, false
 			}
 			// Claude が明示的に応答を求めている（AskUserQuestion 等）ケースのみ通知
-			body := firstNonEmpty(getAssistantText(), in.Message, "入力を待機しています")
+			// 最大2行・各行45文字で表示
+			assistantText := ""
+			if txPath != "" {
+				assistantText = formatMultiline(extractLastAssistantText(txPath), 2, 45)
+			}
+			body := firstNonEmpty(assistantText, in.Message, "入力を待機しています")
 			return notification{withProject("入力待ち"), body, "Submarine"}, true
 
 		default:
@@ -438,12 +467,14 @@ func resolve(in InputData) (notification, bool) {
 }
 
 // escapeAppleScript は AppleScript の文字列リテラルに安全に埋め込めるよう
-// バックスラッシュ・ダブルクォートをエスケープし、改行をスペースに変換します。
+// バックスラッシュ・ダブルクォートをエスケープします。
+// 改行は & return & 連結に変換して複数行通知を実現します。
 func escapeAppleScript(s string) string {
 	s = strings.ReplaceAll(s, "\\", "\\\\")
 	s = strings.ReplaceAll(s, "\"", "\\\"")
-	s = strings.ReplaceAll(s, "\n", " ")
-	s = strings.ReplaceAll(s, "\r", " ")
+	s = strings.ReplaceAll(s, "\r\n", "\" & return & \"")
+	s = strings.ReplaceAll(s, "\n", "\" & return & \"")
+	s = strings.ReplaceAll(s, "\r", "\" & return & \"")
 	return s
 }
 
