@@ -30,7 +30,7 @@ Relevant code:
 
 Recent changes:
 {git_diff}
-" --no-ask-user -s
+" --no-ask-user -s --model gemini-3.1-pro-preview
 ```
 
 ## Example 1: Runtime Error
@@ -61,7 +61,7 @@ Diagnose:
 3. How to prevent this in the future?
 
 Provide fix with code examples.
-" --no-ask-user -s --effort high
+" --no-ask-user -s --effort high --model gemini-3.1-pro-preview
 ```
 
 ## Example 2: Build/Compile Error
@@ -86,7 +86,7 @@ Identify:
 4. Related issues to check
 
 Provide diagnostic with fix examples.
-" --no-ask-user -s
+" --no-ask-user -s --model gemini-3.1-pro-preview
 ```
 
 ## Example 3: Plugin Error
@@ -110,7 +110,7 @@ Diagnose:
 4. Correct configuration
 
 Provide solution with corrected config example.
-" --no-ask-user -s
+" --no-ask-user -s --model gemini-3.1-pro-preview
 ```
 
 ## Example 4: Performance Issue
@@ -134,7 +134,7 @@ Analyze:
 4. Recommended changes
 
 Provide performance fixes with examples.
-" --no-ask-user -s
+" --no-ask-user -s --model gemini-3.1-pro-preview
 ```
 
 ## Integration Workflow

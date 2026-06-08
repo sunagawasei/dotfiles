@@ -28,7 +28,7 @@ Code:
 
 Documentation format: {format}
 Target audience: {audience}
-" --no-ask-user -s
+" --no-ask-user -s --model gemini-3.1-pro-preview
 ```
 
 ## Example 1: Function Documentation
@@ -56,7 +56,7 @@ Provide:
 3. Return value description
 4. Usage example
 5. Complete docstring in LuaDoc format
-" --no-ask-user -s
+" --no-ask-user -s --model gemini-3.1-pro-preview
 ```
 
 ## Example 2: Module Documentation
@@ -86,7 +86,7 @@ Suggest:
 Format: Markdown with LuaDoc comments
 
 Provide comprehensive module documentation.
-" --no-ask-user -s
+" --no-ask-user -s --model gemini-3.1-pro-preview
 ```
 
 ## Tips

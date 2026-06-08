@@ -27,7 +27,7 @@ Code to test:
 
 Testing framework: {framework}
 Language: {language}
-" --no-ask-user -s
+" --no-ask-user -s --model gemini-3.1-pro-preview
 ```
 
 ## Example 1: Function Test Suggestions
@@ -51,7 +51,7 @@ Provide:
 2. Expected inputs and outputs
 3. Example test code using plenary.nvim
 4. Additional test scenarios to consider
-" --no-ask-user -s
+" --no-ask-user -s --model gemini-3.1-pro-preview
 ```
 
 ## Example 2: Module Test Plan
@@ -78,7 +78,7 @@ Suggest:
 Test framework: plenary.nvim (Neovim)
 
 Provide comprehensive test specifications.
-" --no-ask-user -s
+" --no-ask-user -s --model gemini-3.1-pro-preview
 ```
 
 ## Example 3: Integration Test Suggestions
@@ -105,7 +105,7 @@ Suggest:
 Framework: plenary.nvim
 
 Provide test design with examples.
-" --no-ask-user -s
+" --no-ask-user -s --model gemini-3.1-pro-preview
 ```
 
 ## Tips

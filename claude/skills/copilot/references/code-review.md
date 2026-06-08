@@ -29,7 +29,7 @@ Code:
 
 Context:
 {relevant_context}
-" --no-ask-user -s
+" --no-ask-user -s --model gemini-3.1-pro-preview
 ```
 
 ## Example 1: Full File Review
@@ -51,7 +51,7 @@ Focus on:
 4. Plugin integration issues
 
 Provide specific recommendations with code examples.
-" --no-ask-user -s
+" --no-ask-user -s --model gemini-3.1-pro-preview
 ```
 
 ## Example 2: Function Review
@@ -75,7 +75,7 @@ Check for:
 4. Better implementation patterns
 
 Provide concrete improvements with code examples.
-" --no-ask-user -s
+" --no-ask-user -s --model gemini-3.1-pro-preview
 ```
 
 ## Example 3: Security-Focused Review
@@ -97,7 +97,7 @@ Specifically check for:
 5. Authentication/authorization flaws
 
 Provide security recommendations with secure code examples.
-" --no-ask-user -s --effort high
+" --no-ask-user -s --effort high --model gemini-3.1-pro-preview
 ```
 
 ## Example 4: Pre-Commit Review
@@ -118,7 +118,7 @@ Identify:
 4. Code quality concerns
 
 Provide quick feedback with specific line references.
-" --no-ask-user -s --effort low
+" --no-ask-user -s --effort low --model gemini-3.1-pro-preview
 ```
 
 ## Integration with Claude Code

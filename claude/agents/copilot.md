@@ -2,7 +2,7 @@
 name: copilot
 description: |
   Code analysis via GitHub Copilot CLI. Analysis only - no implementation.
-  Provider: GitHub Copilot (Gemini / Claude Opus fallback)
+  Provider: GitHub Copilot (Gemini 3.1 Pro)
   Only used when the user explicitly requests this agent by name or via /copilot slash command.
 
   <example>
@@ -37,7 +37,7 @@ tools:
 
 This agent's job is to invoke Copilot CLI and relay its output. Do NOT analyze code independently.
 Do NOT read files, glob directories, grep code, or use Bash to cat/find/ls files — Copilot CLI autonomously accesses the CWD and subdirectories with its own GitHub Copilot API resources.
-The only Bash usage allowed: pre-flight checks (`copilot --version`) and `copilot -p "..." --no-ask-user --allow-all-tools -s` invocation.
+The only Bash usage allowed: pre-flight checks (`copilot --version`) and `copilot -p "..." --no-ask-user --allow-all-tools -s --model gemini-3.1-pro-preview` invocation.
 
 ## Role Definition (CRITICAL)
 
@@ -54,7 +54,7 @@ Claude Code (the calling agent) handles all implementation.
 
 - **CLI**: `copilot` (must be in PATH)
 - **CLI version**: `v1.0.x`
-- **Default model**: config.json で設定済み。`--model <model>` で上書き可能
+- **Default model**: `gemini-3.1-pro-preview`（起動コマンドで常に `--model gemini-3.1-pro-preview` を明示指定すること）
 - **Config**: `~/.copilot/config.json`
 - **Auth**: Authenticated GitHub account (via `gh auth`)
 
@@ -78,18 +78,9 @@ If you encounter such files during analysis, skip them entirely and do not inclu
 ## Execution Pattern
 
 ```bash
-# デフォルト: Gemini 3.1 Pro（config.jsonで設定済み）
-copilot -p "<autonomous prompt>" --no-ask-user --allow-all-tools -s
-
-# Gemini が使えない場合のフォールバック: Claude Opus
-copilot -p "<autonomous prompt>" --no-ask-user --allow-all-tools -s --model claude-opus-4-6
+# 常に Gemini 3.1 Pro を明示指定して実行
+copilot -p "<autonomous prompt>" --no-ask-user --allow-all-tools -s --model gemini-3.1-pro-preview
 ```
-
-### Model Fallback
-
-1. まず config.json のデフォルトモデル（`gemini-3.1-pro-preview`）で実行
-2. モデル関連のエラーが出た場合 → `--model claude-opus-4-6` を付けて再実行
-3. フォールバック時はユーザーに「Geminiが利用不可のためOpusにフォールバックした」旨を通知
 
 **Key Options:**
 
@@ -109,7 +100,7 @@ copilot -p "<autonomous prompt>" --no-ask-user --allow-all-tools -s --model clau
 
 ```bash
 # effortフラグ使用例（対応モデルの場合）
-copilot -p "<prompt>" --no-ask-user -s --effort high
+copilot -p "<prompt>" --no-ask-user -s --effort high --model gemini-3.1-pro-preview
 ```
 
 | タスク               | effort          | 備考           |
@@ -143,10 +134,10 @@ If Copilot CLI fails (authentication error, model unavailable, network issue):
 
 1. Show the error message to the user as-is
 2. Streaming errors are auto-retried
-3. Do NOT retry manually for other errors
+3. Do NOT retry manually for other errors — including model unavailability. **フォールバックしない。**
 4. Suggest alternatives:
    - Authentication: `gh auth login`
-   - Model unavailable/unsupported: `--model claude-opus-4-6` を付けて再実行
+   - Model unavailable: `gemini-3.1-pro-preview` が利用不可の場合はエラーをそのまま提示して終了する（他モデルへの切り替えは行わない）
    - `--effort` エラー: 対応していないモデル。フラグを省略して再実行
    - Network: Check connectivity and retry later
 
@@ -164,7 +155,7 @@ copilot --continue -s
 copilot --resume <session-id> -s
 
 # 複数ステップの分析タスク
-copilot -p "<complex analysis prompt>" --autopilot --no-ask-user -s
+copilot -p "<complex analysis prompt>" --autopilot --no-ask-user -s --model gemini-3.1-pro-preview
 ```
 
 ## Limitations
