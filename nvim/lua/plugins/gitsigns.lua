@@ -6,7 +6,7 @@ return {
     signcolumn = true,   -- Git差分記号を表示
     numhl = false,       -- 行番号ハイライトはOFF
     linehl = false,      -- 行ハイライトはOFF
-    word_diff = false,   -- 単語差分はOFF
+    word_diff = true,    -- 単語差分をON（行内の変更箇所をハイライト）
     current_line_blame = true, -- Blame表示をON
 
     -- Blame表示のオプション設定
