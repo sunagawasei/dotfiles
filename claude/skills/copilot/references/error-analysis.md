@@ -76,9 +76,6 @@ Build failed with:
 Relevant files:
 {file_list}
 
-Recent changes:
-$(git diff HEAD~1)
-
 Identify:
 1. What's causing the build failure?
 2. Which file/line is the problem?
@@ -88,6 +85,9 @@ Identify:
 Provide diagnostic with fix examples.
 " --no-ask-user -s --model gemini-3.1-pro-preview
 ```
+
+<!-- NOTE: Do NOT embed git diff output via $(git diff HEAD~1) in the prompt.
+     Pass relevant file paths and let Copilot CLI inspect the repo autonomously. -->
 
 ## Example 3: Plugin Error
 

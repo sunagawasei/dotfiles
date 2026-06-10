@@ -35,9 +35,7 @@ Goals:
 codex exec --sandbox read-only "
 Simplification refactoring task:
 
-Refactor this complex function:
-
-$(cat nvim/lua/config/autocmds.lua | grep -A 50 'function complex_handler')
+Refactor the 'complex_handler' function in nvim/lua/config/autocmds.lua
 
 Goals:
 - Reduce complexity
@@ -53,6 +51,9 @@ Provide:
 You are proposing only - Claude Code will refactor.
 "
 ```
+
+<!-- NOTE: Do NOT embed file contents via $(cat ... | grep ...) in the prompt.
+     Pass the file PATH and function name; let Codex CLI locate and read it autonomously. -->
 
 ## Example 2: Pattern Application
 

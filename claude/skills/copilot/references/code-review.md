@@ -42,8 +42,6 @@ Review this entire file for quality issues:
 
 File: nvim/lua/plugins/lualine.lua
 
-$(cat nvim/lua/plugins/lualine.lua)
-
 Focus on:
 1. Configuration correctness
 2. Performance optimizations
@@ -53,6 +51,9 @@ Focus on:
 Provide specific recommendations with code examples.
 " --no-ask-user -s --model gemini-3.1-pro-preview
 ```
+
+<!-- NOTE: Do NOT embed file contents via $(cat ...) in the prompt.
+     Pass the file PATH and let Copilot CLI read it autonomously. -->
 
 ## Example 2: Function Review
 
@@ -107,9 +108,7 @@ Provide security recommendations with secure code examples.
 copilot -p "
 Pre-commit review task:
 
-Review these staged changes before commit:
-
-$(git diff --cached)
+Review the staged changes in the current working directory.
 
 Identify:
 1. Obvious bugs or issues
@@ -120,6 +119,9 @@ Identify:
 Provide quick feedback with specific line references.
 " --no-ask-user -s --effort low --model gemini-3.1-pro-preview
 ```
+
+<!-- NOTE: Do NOT embed git diff output via $(git diff --cached) in the prompt.
+     Tell Copilot CLI to review staged changes; it accesses the repo autonomously. -->
 
 ## Integration with Claude Code
 

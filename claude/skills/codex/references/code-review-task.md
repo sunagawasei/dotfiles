@@ -56,8 +56,6 @@ Review this complete Neovim plugin configuration:
 
 File: nvim/lua/plugins/lualine.lua
 
-$(cat nvim/lua/plugins/lualine.lua)
-
 Analyze:
 1. Configuration structure and organization
 2. Performance implications
@@ -71,6 +69,9 @@ Include code examples for recommended changes.
 Remember: Analysis only, Claude Code will implement changes.
 "
 ```
+
+<!-- NOTE: Do NOT embed file contents via $(cat ...) in the prompt.
+     Pass the file PATH and let Codex CLI read it autonomously in its sandbox. -->
 
 ## Integration with Other Tools
 
