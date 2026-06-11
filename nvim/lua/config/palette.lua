@@ -58,6 +58,9 @@ M.colors = {
   diff_add_bg = "#0D1F1F",      -- Diff Add背景 [nvim.diff_add_bg]
   diff_change_bg = "#1A141A",   -- Diff Change背景 [nvim.diff_change_bg]
   diff_delete_bg = "#151515",   -- Diff Delete背景 [nvim.diff_delete_bg]
+  diff_add_inline_bg = "#1E4A40",     -- Word-diff add背景 [nvim.diff_add_inline_bg]
+  diff_change_inline_bg = "#3D2C42",  -- Word-diff change背景 [nvim.diff_change_inline_bg]
+  diff_delete_inline_bg = "#4A2328",  -- Word-diff delete背景 [nvim.diff_delete_inline_bg]
 }
 
 return M

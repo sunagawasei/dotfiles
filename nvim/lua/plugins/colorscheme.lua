@@ -106,7 +106,12 @@ return {
         DiffAdd = { fg = colors.cyan, bg = colors.diff_add_bg },
         DiffChange = { fg = colors.magenta, bg = colors.diff_change_bg },
         DiffDelete = { fg = colors.light_gray, bg = colors.diff_delete_bg },
-        DiffText = { fg = colors.bright_cyan, bold = true },
+        DiffText = { fg = colors.highlight_white, bg = colors.diff_change_inline_bg, bold = true }, -- bg明示で変更語の可読性確保
+
+        -- word_diff（行内差分）ハイライト - 行背景より明るいtint＋明色文字で可読性確保
+        GitSignsAddInline = { fg = colors.highlight_white, bg = colors.diff_add_inline_bg },
+        GitSignsChangeInline = { fg = colors.highlight_white, bg = colors.diff_change_inline_bg },
+        GitSignsDeleteInline = { fg = colors.highlight_white, bg = colors.diff_delete_inline_bg },
 
         -- 構文ハイライト（Cyber Glitch Teal - ネオン系配色）
         ["@keyword"] = { fg = colors.purple_accent },
