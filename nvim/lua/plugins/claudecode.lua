@@ -50,7 +50,27 @@ return {
 
   },
   config = function(_, opts)
-    -- setup()を呼び出す
+    -- closeAllDiffTabs が Diffview など「自分で開いた diff」まで閉じてしまう問題への対処。
+    -- 元ハンドラは diff モードの全ウィンドウを無差別に閉じるため、Diffview の左右ペイン
+    -- （vim ネイティブの diff モード）が Claude Code の submit のたびに巻き込まれて閉じる。
+    -- claudecode が追跡する diff のみを閉じるハンドラに差し替える。
+    -- setup() 内の register_all() は登録時にモジュールの .handler をコピーするため、
+    -- setup() の「前」にモジュール側を差し替えれば、登録時（再接続での再登録も含む）に確実に拾われる。
+    local cad_ok, close_all = pcall(require, "claudecode.tools.close_all_diff_tabs")
+    if cad_ok then
+      close_all.handler = function(_)
+        local closed = 0
+        local diff_ok, diff = pcall(require, "claudecode.diff")
+        if diff_ok then
+          closed = diff.close_all_diffs("closeAllDiffTabs tool") or 0
+        end
+        return {
+          content = { { type = "text", text = "CLOSED_" .. closed .. "_DIFF_TABS" } },
+        }
+      end
+    end
+
+    -- setup()を呼び出す（この時点で上記の差し替え済みハンドラが登録される）
     require("claudecode").setup(opts)
 
     -- 差分表示バッファで行折り返しを有効化
