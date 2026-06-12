@@ -309,7 +309,10 @@
 
         # autosuggestions: 同期ロード（turbo だと初回プロンプトで widget がバインドされない）
         zinit ice lucid atload'
-          ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#7A869A"
+          # hexは小文字必須: zsh 5.9はregion_highlightを読み戻し時に小文字へ正規化し、
+          # autosuggestionsのhighlight_resetは完全一致でエントリを除去するため、
+          # 大文字(#7A869A)だと右矢印受け入れ後もグレーが残る (zsh-autosuggestions#698と同根)
+          ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#7a869a"
           ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-word partial-accept-char partial-accept-subword)
         '
         zinit light zsh-users/zsh-autosuggestions
