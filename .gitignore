@@ -145,6 +145,7 @@ raycast/extensions/
 claude/*
 !claude/CLAUDE.md
 !claude/statusline.sh
+!claude/keybindings.json
 !claude/rules/
 !claude/hooks/
 claude/hooks/*
