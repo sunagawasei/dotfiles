@@ -23,6 +23,10 @@ in
       autoUpdate = true;
       upgrade = true;
       cleanup = "uninstall";
+      # Homebrew 新仕様により `brew bundle --cleanup` は確認フラグを要求する。
+      # 非対話の activation では --force-cleanup を渡して従来動作を維持する
+      # (これが無いと "requires --force, --force-cleanup or $HOMEBREW_ASK" で activation が中断)
+      extraFlags = [ "--force-cleanup" ];
     };
 
     taps = [
