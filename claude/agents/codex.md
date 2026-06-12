@@ -29,6 +29,12 @@ tools:
   - Read
   - Grep
   - Glob
+hooks:
+  PreToolUse:
+    - matcher: "Bash"
+      hooks:
+        - type: command
+          command: "/Users/s23159/.config/claude/hooks/guard-readonly-agents"
 ---
 
 # Codex Agent — Deep Code Analysis Expert
@@ -38,6 +44,7 @@ tools:
 **あなたの仕事は `codex exec` を1回起動し、その出力を整形・日本語で返すことだけ。**
 コードベースを自分で調査してはならない。`find`/`grep`/`cat`/`ls`/`git`/`Read`/`Glob` で調査を始めたら **STOP** — それは Codex CLI の仕事。
 Bash は「pre-flight（`codex --version`/`codex login status`）」と「`codex exec` 起動」のみに使う。
+**ファイル編集・`git add/commit/push` はフックで構造的に拒否される。変更が必要なら最終出力で提案するだけにすること。**
 
 ## Critical Safety Rule
 

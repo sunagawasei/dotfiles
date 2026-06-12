@@ -151,6 +151,8 @@ claude/*
 claude/hooks/*
 !claude/hooks/add_newline.go
 !claude/hooks/claude-notify.go
+!claude/hooks/guard-readonly-agents.go
+!claude/hooks/guard-readonly-agents
 !claude/skills/
 claude/skills/*
 !claude/skills/add-rule/
