@@ -21,7 +21,10 @@ in
 
     onActivation = {
       autoUpdate = true;
-      upgrade = true;
+      # 自動 upgrade は無効。upstream cask のバージョン巻き戻り (例: font-geist 1.8.0→1.7.2)
+      # で `brew bundle` の upgrade が失敗し activation 全体が中断するのを防ぐ。
+      # パッケージ更新が必要なときは手動で `brew upgrade` する。
+      upgrade = false;
       cleanup = "uninstall";
       # Homebrew 新仕様により `brew bundle --cleanup` は確認フラグを要求する。
       # 非対話の activation では --force-cleanup を渡して従来動作を維持する
