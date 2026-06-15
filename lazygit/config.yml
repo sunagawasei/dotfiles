@@ -56,7 +56,7 @@ git:
     - master
 refresher:
   refreshInterval: 1 # リフレッシュ間隔を短縮（外部変更の迅速な検出）
-  fetchInterval: 60 # fetch interval
+  fetchInterval: 10 # fetch interval（外部git操作をパネル3/4に自動反映）
 keybinding:
   commits:
     moveDownCommit: '<c-d>'
