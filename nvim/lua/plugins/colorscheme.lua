@@ -179,7 +179,7 @@ return {
         RenderMarkdownH6 = { fg = colors.bg, bold = true },
         -- コードブロック
         RenderMarkdownCode       = { bg = colors.panel_bg },
-        RenderMarkdownCodeInline = { bg = colors.dark_shadow, fg = colors.fg },
+        RenderMarkdownCodeInline = { bg = colors.panel_bg, fg = colors.fg },
         -- テーブル
         RenderMarkdownTableHead = { fg = colors.bright_cyan, bold = true },
         RenderMarkdownTableRow  = { fg = colors.fg },
