@@ -27,7 +27,7 @@ in
     gnupg pinentry_mac git-crypt bitwarden-cli
 
     # 開発ツール
-    gh lazygit neovim deno bun luarocks hadolint markdownlint-cli
+    gh lazygit neovim deno bun luarocks lua-language-server hadolint markdownlint-cli
     grpcurl gitui imagemagick gifski pwgen tmux ansifilter
     ripgrep oxlint unzip
 
