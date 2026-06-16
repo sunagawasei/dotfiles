@@ -1,5 +1,13 @@
 // guard-readonly-agents は read-only 分析エージェント（codex/copilot/cursor）の
 // PreToolUse フックとして動作し、CLI 起動と preflight 以外の生 Bash を拒否する。
+//
+// シェル合成の判定はクォートを認識して行う:
+//   - シングルクォート内: 完全に literal（評価されない）→ 無害として無視
+//   - ダブルクォート内: コマンド置換 `$(` / バッククォートのみ危険（bash が評価する）。
+//     `|` `;` `&&` 等はダブルクォート内では literal なので無視
+//   - クォート外: `;` `&&` `|` `$(` バッククォートはすべて危険
+// これにより、プロンプト引数に含まれるメタ文字（| ; $() など）の誤検知を防ぎつつ、
+// 実際のコマンド連結・インジェクションは確実に拒否する。
 package main
 
 import (
@@ -104,21 +112,126 @@ func isEnvName(s string) bool {
 	return true
 }
 
-// hasShellComposition returns true if cmd contains shell composition operators
-// that would allow running arbitrary secondary commands.
-func hasShellComposition(cmd string) bool {
-	// Remove known-safe constructs before checking
-	safe := []string{"$(pwd)", "< /dev/null", "2>&1", ">/dev/null", "> /dev/null"}
-	clean := cmd
-	for _, s := range safe {
-		clean = strings.ReplaceAll(clean, s, "")
-	}
-	// Shell operators that chain or substitute commands
-	dangerous := []string{";", "&&", " || ", " | ", "`", "$("}
-	for _, d := range dangerous {
-		if strings.Contains(clean, d) {
-			return true
+// splitQuoting walks cmd and returns:
+//   - unquoted: the concatenation of all text outside any quotes
+//   - dquoted:  the concatenation of all text inside double quotes
+//
+// Single-quoted segments are dropped entirely (literal, never evaluated).
+// `$(pwd)` は事前に除去しておくこと（唯一許可するコマンド置換）。
+func splitQuoting(cmd string) (unquoted, dquoted string) {
+	var u, d strings.Builder
+	i, n := 0, len(cmd)
+	for i < n {
+		c := cmd[i]
+		switch c {
+		case '\\':
+			// escaped char outside quotes: bash treats `\X` as a literal X and
+			// `\"` does NOT open a quote. Consume both bytes and emit a space so
+			// the escaped char neither opens a quote nor reads as a metacharacter.
+			i += 2
+			u.WriteByte(' ')
+		case '\'':
+			// single-quoted: literal, skip to next single quote
+			j := strings.IndexByte(cmd[i+1:], '\'')
+			if j < 0 {
+				i = n
+			} else {
+				i = i + 1 + j + 1
+			}
+		case '"':
+			// double-quoted: capture until next unescaped double quote
+			i++
+			for i < n {
+				if cmd[i] == '\\' && i+1 < n {
+					i += 2
+					continue
+				}
+				if cmd[i] == '"' {
+					i++
+					break
+				}
+				d.WriteByte(cmd[i])
+				i++
+			}
+		default:
+			u.WriteByte(c)
+			i++
 		}
+	}
+	return u.String(), d.String()
+}
+
+// removeAllQuoted strips both single- and double-quoted segments, leaving only
+// the unquoted skeleton (command + flags). Used for token/flag inspection so
+// that prompt text never trips the flag allow/deny rules.
+func removeAllQuoted(cmd string) string {
+	var b strings.Builder
+	i, n := 0, len(cmd)
+	for i < n {
+		c := cmd[i]
+		switch c {
+		case '\\':
+			// escaped char outside quotes: literal, never opens a quote.
+			i += 2
+			b.WriteByte(' ')
+		case '\'':
+			j := strings.IndexByte(cmd[i+1:], '\'')
+			if j < 0 {
+				i = n
+			} else {
+				i = i + 1 + j + 1
+			}
+			b.WriteByte(' ')
+		case '"':
+			i++
+			for i < n {
+				if cmd[i] == '\\' && i+1 < n {
+					i += 2
+					continue
+				}
+				if cmd[i] == '"' {
+					i++
+					break
+				}
+				i++
+			}
+			b.WriteByte(' ')
+		default:
+			b.WriteByte(c)
+			i++
+		}
+	}
+	return b.String()
+}
+
+// hasShellComposition reports whether cmd contains shell composition / command
+// substitution that would let it run secondary commands. Quote-aware: metachars
+// inside the (quoted) prompt argument are not flagged.
+func hasShellComposition(cmd string) bool {
+	// Remove the allowlisted constructs the canonical commands legitimately use,
+	// so their `<`, `>`, `&`, `$(` do not trip the strict metachar check below.
+	// Order matters: strip the more specific forms before the bare ones.
+	for _, s := range []string{
+		"$(pwd)",
+		"2>&1",
+		"2>/dev/null", "2> /dev/null",
+		"< /dev/null", "</dev/null",
+		">/dev/null", "> /dev/null",
+	} {
+		cmd = strings.ReplaceAll(cmd, s, " ")
+	}
+
+	unquoted, dquoted := splitQuoting(cmd)
+
+	// Outside quotes: any shell-active character can start a second command,
+	// background a job, or redirect to a file. Read-only guard → fail closed.
+	// Set: ; | & < > $ ( ) { } backtick(\x60) newline carriage-return
+	if strings.ContainsAny(unquoted, ";|&<>$(){}\x60\n\r") {
+		return true
+	}
+	// Inside double quotes only command substitution is evaluated by bash.
+	if strings.Contains(dquoted, "$(") || strings.Contains(dquoted, "\x60") {
+		return true
 	}
 	return false
 }
@@ -187,21 +300,25 @@ func isAllowed(rawCmd string) bool {
 	if cmd == "" {
 		return true
 	}
+	// Composition check is quote-aware (operates on the full command).
 	if hasShellComposition(cmd) {
 		return false
 	}
-	if isPreflight(cmd) {
+	stripped := stripEnvPrefix(cmd)
+	if isPreflight(stripped) {
 		return true
 	}
-	stripped := stripEnvPrefix(cmd)
-	tok := firstToken(stripped)
+	// Token + flag checks run on the quote-stripped skeleton so prompt text
+	// (which may mention flag-like strings) cannot trip the allow/deny rules.
+	bare := removeAllQuoted(stripped)
+	tok := firstToken(bare)
 	switch tok {
 	case "codex":
-		return isCodexSafe(stripped)
+		return isCodexSafe(bare)
 	case "copilot":
-		return isCopilotSafe(stripped)
+		return isCopilotSafe(bare)
 	case "cursor-agent":
-		return isCursorSafe(stripped)
+		return isCursorSafe(bare)
 	default:
 		return false
 	}

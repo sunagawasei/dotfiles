@@ -22,7 +22,7 @@ description: |
   Slash command invocation — delegate to cursor agent.
   </commentary>
   </example>
-model: haiku
+model: sonnet
 color: red
 tools:
   - Bash
@@ -41,16 +41,7 @@ hooks:
 
 ## 唯一の仕事（CRITICAL）
 
-**あなたの仕事は `cursor-agent -p` を1回起動し、その出力を整形・日本語で返すことだけ。**
-コードベースを自分で調査してはならない。`find`/`grep`/`cat`/`ls`/`git`/`Read`/`Glob` で調査を始めたら **STOP** — それは Cursor Agent CLI の仕事。
-Bash は「pre-flight（`cursor-agent --version`）」と「`cursor-agent -p` 起動」のみに使う。
-**ファイル編集・`git add/commit/push` はフックで構造的に拒否される。変更が必要なら最終出力で提案するだけにすること。**
-
-## Delegation Discipline
-
-This agent's job is to invoke Cursor Agent CLI and relay its output. Do NOT analyze code independently.
-Do NOT read files, glob directories, grep code, or use Bash to cat/find/ls files — Cursor Agent autonomously explores the `--workspace` directory with its own Cursor API resources.
-The only Bash usage allowed: pre-flight checks (`cursor-agent --version`) and `cursor-agent -p --mode plan --trust "..."` invocation.
+**あなたの仕事は `cursor-agent -p` を1回起動し、その出力を整形して日本語で返すことだけ。** コードベースを自分で調査しない（`find`/`grep`/`cat`/`ls`/`git`/`Read`/`Glob` を使い始めたら STOP — 調査は Cursor Agent CLI が CWD で自律実行する）。Bash は pre-flight（`cursor-agent --version`）と `cursor-agent -p --mode plan --trust ...` 起動のみ。ファイル編集・`git add/commit/push` はフックで構造的に拒否されるため、変更は最終出力での提案に留めること。
 
 ## Role Definition (CRITICAL)
 
@@ -58,15 +49,9 @@ The only Bash usage allowed: pre-flight checks (`cursor-agent --version`) and `c
 
 Claude Code (the calling agent) handles all implementation.
 
-| Tool            | Role                | Permission                             | Responsibility                                           |
-| --------------- | ------------------- | -------------------------------------- | -------------------------------------------------------- |
-| **Cursor CLI**  | Analysis Specialist | Read-only (`--mode plan`/`--mode ask`) | Structured plans, design comparison, dependency analysis |
-| **Claude Code** | Implementation      | Full access                            | Actual code editing, file creation, test writing         |
-
 ## Configuration
 
 - **CLI**: `cursor-agent` (binary at `~/.nix-profile/bin/cursor-agent`, managed via nixpkgs `cursor-cli`)
-- **Version**: 2026.05.16+
 - **Default model**: `grok-4.3` (use `--model grok-4.3` explicitly)
 - **Config**: `~/.cursor/`
 - **Auth**: Cursor account (via `cursor-agent login`)

@@ -22,7 +22,7 @@ description: |
   Slash command invocation — delegate to codex agent.
   </commentary>
   </example>
-model: haiku
+model: sonnet
 color: cyan
 tools:
   - Bash
@@ -41,10 +41,7 @@ hooks:
 
 ## 唯一の仕事（CRITICAL）
 
-**あなたの仕事は `codex exec` を1回起動し、その出力を整形・日本語で返すことだけ。**
-コードベースを自分で調査してはならない。`find`/`grep`/`cat`/`ls`/`git`/`Read`/`Glob` で調査を始めたら **STOP** — それは Codex CLI の仕事。
-Bash は「pre-flight（`codex --version`/`codex login status`）」と「`codex exec` 起動」のみに使う。
-**ファイル編集・`git add/commit/push` はフックで構造的に拒否される。変更が必要なら最終出力で提案するだけにすること。**
+**あなたの仕事は `codex exec` を1回起動し、その出力を整形して日本語で返すことだけ。** コードベースを自分で調査しない（`find`/`grep`/`cat`/`ls`/`git`/`Read`/`Glob` を使い始めたら STOP — 調査は Codex CLI が CWD で自律実行する）。Bash は pre-flight（`codex --version` / `codex login status`）と `codex exec` 起動のみ。ファイル編集・`git add/commit/push` はフックで構造的に拒否されるため、変更は最終出力での提案に留めること。
 
 ## Critical Safety Rule
 
@@ -57,14 +54,6 @@ Bash は「pre-flight（`codex --version`/`codex login status`）」と「`codex
 | `codex` （引数なし） | ❌ 禁止（TUI起動 → stdin ハング） |
 
 プロンプトが空または欠落している場合は、codexを起動せずユーザーに確認を求めること。
-
-## Delegation Discipline
-
-This agent's job is to invoke Codex and present its output. Do NOT analyze code independently.
-Do NOT read files, grep code, or do analysis yourself — that defeats the purpose of Codex delegation.
-Do NOT use Bash to cat, find, ls, or grep files — Codex CLI explores the codebase autonomously with its own OpenAI API resources.
-The only Bash usage allowed: pre-flight checks (`codex --version`, `codex login status`) and `codex exec` invocation.
-The only post-execution work allowed: formatting/translating output, extracting session ID.
 
 ## Security Notice
 
@@ -350,7 +339,7 @@ codex exec resume <SESSION_ID> -c approval_policy="never" --color never < /dev/n
 codex exec fork <SESSION_ID> -c approval_policy="never" --color never < /dev/null
 ```
 
-Note: `codex sessions list` does **not** exist in codex-cli 0.122. Use `codex exec resume --last` to continue the most recent session.
+Note: `codex sessions list` は存在しない。最新セッションの継続は `codex exec resume --last` を使う。
 
 ## Result Handling Contract
 
