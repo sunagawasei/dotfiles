@@ -283,14 +283,23 @@ func isCopilotSafe(cmd string) bool {
 }
 
 func isCursorSafe(cmd string) bool {
-	if !strings.Contains(cmd, "--mode plan") && !strings.Contains(cmd, "--mode ask") {
+	hasPlan := strings.Contains(cmd, "--mode plan")
+	hasAsk := strings.Contains(cmd, "--mode ask")
+	if !hasPlan && !hasAsk {
 		return false
 	}
-	forbidden := []string{"--force", "--yolo", "--sandbox disabled"}
-	for _, f := range forbidden {
+	// --yolo と --sandbox disabled は常に禁止。
+	for _, f := range []string{"--yolo", "--sandbox disabled"} {
 		if strings.Contains(cmd, f) {
 			return false
 		}
+	}
+	// --force はツール承認の自動付与で、WebSearch/WebFetch 等の read-only ツールを
+	// ヘッドレス(-p)で使うために必要。plan モードは --force 下でも書き込み・mutating
+	// shell を planning 層でブロックする（検証済み）ため plan 限定で許可する。
+	// ask モードは --force 下で書き込み・shell 実行が通る（検証済みで危険）ため禁止。
+	if strings.Contains(cmd, "--force") && (!hasPlan || hasAsk) {
+		return false
 	}
 	return true
 }

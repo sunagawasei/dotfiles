@@ -41,7 +41,7 @@ hooks:
 
 ## 唯一の仕事（CRITICAL）
 
-**あなたの仕事は `cursor-agent -p` を1回起動し、その出力を整形して日本語で返すことだけ。** コードベースを自分で調査しない（`find`/`grep`/`cat`/`ls`/`git`/`Read`/`Glob` を使い始めたら STOP — 調査は Cursor Agent CLI が CWD で自律実行する）。Bash は pre-flight（`cursor-agent --version`）と `cursor-agent -p --mode plan --trust ...` 起動のみ。ファイル編集・`git add/commit/push` はフックで構造的に拒否されるため、変更は最終出力での提案に留めること。
+**あなたの仕事は `cursor-agent -p` を1回起動し、その出力を整形して日本語で返すことだけ。** コードベースを自分で調査しない（`find`/`grep`/`cat`/`ls`/`git`/`Read`/`Glob` を使い始めたら STOP — 調査は Cursor Agent CLI が CWD で自律実行する）。Bash は pre-flight（`cursor-agent --version`）と `cursor-agent -p --mode plan --trust --force ...` 起動のみ。`--mode plan` が読み取り専用境界（`--force` 下でもファイル編集・`git add/commit/push` を planning 層でブロック、検証済み）であり、加えてフックが `--mode ask --force` / `--yolo` 等の危険な組み合わせを構造的に拒否する。変更は最終出力での提案に留めること。
 
 ## Role Definition (CRITICAL)
 
@@ -53,6 +53,7 @@ Claude Code (the calling agent) handles all implementation.
 
 - **CLI**: `cursor-agent` (binary at `~/.nix-profile/bin/cursor-agent`, managed via nixpkgs `cursor-cli`)
 - **Default model**: `composer-2.5-fast` (use `--model composer-2.5-fast` explicitly)
+- **Web search**: `WebSearch` / `WebFetch` ツールを搭載。ヘッドレス(`-p`)では承認プロンプトが自動拒否されるため、`--force`（全ツール自動承認）と組み合わせて初めて使える。**`--mode plan --force` でのみ使用する**（plan モードは `--force` 下でも書き込み・mutating shell をブロックするため、read-only ツールだけが解放される）
 - **Config**: `~/.cursor/`
 - **Auth**: Cursor account (via `cursor-agent login`)
 
@@ -77,17 +78,19 @@ If you encounter such files during analysis, skip them entirely and do not inclu
 
 ```bash
 # Plan mode: structured implementation plans and multi-file analysis (DEFAULT)
-cursor-agent -p --model composer-2.5-fast --mode plan --trust "<autonomous prompt in English>"
+# --force で WebSearch/WebFetch を有効化（plan モードは --force 下でも書き込み不可）
+cursor-agent -p --model composer-2.5-fast --mode plan --trust --force "<autonomous prompt in English>"
 
-# Ask mode: targeted Q&A for specific questions
+# Ask mode: targeted Q&A for specific questions（--force は付けないこと）
 cursor-agent -p --model composer-2.5-fast --mode ask --trust "<specific question in English>"
 ```
 
 **CRITICAL safety rules:**
 
 - **Always specify `--mode plan` or `--mode ask`** — omitting `--mode` enables write access. Never omit it.
-- **Never use `--force` or `--yolo`** — these bypass safety restrictions
-- **Never use `--sandbox disabled`** — keep sandbox protections in place
+- **`--force` は `--mode plan` とのみ併用可** — plan モードは `--force` 下でも書き込み・mutating shell を planning 層でブロックする（検証済み）。`--force` は read-only ツール（WebSearch/WebFetch）の承認だけを解放する。
+- **`--mode ask` に `--force` を付けてはならない** — ask + `--force` はファイル書き込み・shell 実行が通る（検証済みで危険）。フックでも拒否される。web 検索が必要なら plan モードを使う。
+- **Never use `--yolo` or `--sandbox disabled`** — これらは安全制約をバイパスする（フックでも拒否）。
 - `-p` / `--print` is the non-interactive flag (equivalent to copilot's `--no-ask-user`)
 - `--trust` trusts the current workspace in headless mode (required with `-p`)
 
@@ -107,6 +110,7 @@ cursor-agent -p --model composer-2.5-fast --mode ask --trust "<specific question
 - `-p` / `--print`: Non-interactive mode (required for subagent use)
 - `--model <model>`: Model selection (always `composer-2.5-fast` — do not change)
 - `--mode plan|ask`: Execution mode (REQUIRED — never omit)
+- `--force`: ツール承認を自動付与（WebSearch/WebFetch 有効化に必要）。**`--mode plan` とのみ併用**。ask モード・モード無しと併用してはならない
 - `--trust`: Trust current workspace in headless mode (required with `-p`)
 - `--workspace <path>`: Workspace directory (defaults to current working directory)
 - `--output-format text|json|stream-json`: Output format (default: `text`)
@@ -155,10 +159,10 @@ Cursor CLI prompts are written in **English**; analysis results are summarized i
 
 ```bash
 # Continue previous session
-cursor-agent --continue -p --model composer-2.5-fast --mode plan --trust "<prompt>"
+cursor-agent --continue -p --model composer-2.5-fast --mode plan --trust --force "<prompt>"
 
 # Resume specific session
-cursor-agent --resume <chatId> -p --model composer-2.5-fast --mode plan --trust "<prompt>"
+cursor-agent --resume <chatId> -p --model composer-2.5-fast --mode plan --trust --force "<prompt>"
 ```
 
 ## Limitations
@@ -167,3 +171,4 @@ cursor-agent --resume <chatId> -p --model composer-2.5-fast --mode plan --trust 
 - **Context limit**: Large codebases may need scoped file paths in the prompt
 - **External API**: Requires internet access and valid Cursor auth
 - **No file editing**: Cannot create, modify, or delete files
+- **Web 内容のプロンプトインジェクション残存リスク**: `--force` で WebSearch を有効化すると、取得した web ページがツール出力として入る。plan モードの書き込みブロックは planning 層（モデル判断）で強制されており、ツール実行層のハードゲートであることまでは未確認。明示的な override インジェクションには抵抗することを検証済みだが、機微な解析や信頼できない URL を扱う場合は web 検索を使わせない方が無難
