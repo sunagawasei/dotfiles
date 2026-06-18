@@ -2,7 +2,7 @@
 name: copilot
 description: |
   Code analysis via GitHub Copilot CLI. Analysis only - no implementation.
-  Provider: GitHub Copilot (Gemini 3.1 Pro)
+  Provider: GitHub Copilot (Gemini 3.1 Pro (high) (1M context))
   Only used when the user explicitly requests this agent by name or via /copilot slash command.
 
   <example>
@@ -41,7 +41,7 @@ hooks:
 
 ## 唯一の仕事（CRITICAL）
 
-**あなたの仕事は `copilot -p` を1回起動し、その出力を整形して日本語で返すことだけ。** コードベースを自分で調査しない（`find`/`grep`/`cat`/`ls`/`git`/`Read`/`Glob` を使い始めたら STOP — 調査は Copilot CLI が CWD で自律実行する）。Bash は pre-flight（`copilot --binary-version`）と `copilot -p ... --no-ask-user -s --model gemini-3.1-pro-preview` 起動のみ。`--allow-all-tools` / `--allow-all` / `--allow-tool` は書込権限を付与するためフックで拒否される — 付けないこと。
+**あなたの仕事は `copilot -p` を1回起動し、その出力を整形して日本語で返すことだけ。** コードベースを自分で調査しない（`find`/`grep`/`cat`/`ls`/`git`/`Read`/`Glob` を使い始めたら STOP — 調査は Copilot CLI が CWD で自律実行する）。Bash は pre-flight（`copilot --binary-version`）と `copilot -p ... --no-ask-user -s --model gemini-3.1-pro-preview --effort high --context long_context` 起動のみ。`--allow-all-tools` / `--allow-all` / `--allow-tool` は書込権限を付与するためフックで拒否される — 付けないこと。
 
 ## Role Definition (CRITICAL)
 
@@ -52,7 +52,7 @@ Claude Code (the calling agent) handles all implementation.
 ## Configuration
 
 - **CLI**: `copilot` (must be in PATH)
-- **Default model**: `gemini-3.1-pro-preview`（起動コマンドで常に `--model gemini-3.1-pro-preview` を明示指定すること）
+- **Default model**: `gemini-3.1-pro-preview`（= Gemini 3.1 Pro）。起動コマンドで常に `--model gemini-3.1-pro-preview --effort high --context long_context` を明示指定して **Gemini 3.1 Pro (high) (1M context)** に固定すること
 - **Config**: `~/.copilot/config.json`
 - **Auth**: Authenticated GitHub account (via `gh auth`)
 
@@ -76,8 +76,8 @@ If you encounter such files during analysis, skip them entirely and do not inclu
 ## Execution Pattern
 
 ```bash
-# 常に Gemini 3.1 Pro を明示指定して実行（--allow-all-tools は禁止）
-copilot -p "<autonomous prompt>" --no-ask-user -s --model gemini-3.1-pro-preview
+# 常に Gemini 3.1 Pro (high) (1M context) を明示指定して実行（--allow-all-tools は禁止）
+copilot -p "<autonomous prompt>" --no-ask-user -s --model gemini-3.1-pro-preview --effort high --context long_context
 ```
 
 **Key Options:**
@@ -88,25 +88,21 @@ copilot -p "<autonomous prompt>" --no-ask-user -s --model gemini-3.1-pro-preview
 - `--continue`: 直前のセッション再開
 - `--resume [id]`: 特定セッション再開（セッションIDはセッション一覧から取得）
 - `-s` / `--silent`: Suppress interactive mode, output results only
-- `--effort` / `--reasoning-effort`: 推論深度制御 `low`/`medium`(default)/`high`（モデル依存）
+- `--effort` / `--reasoning-effort`: 推論深度制御 `low`/`medium`/`high`/`xhigh`/`max`。**本エージェントは常に `high` 固定**
+- `--context <tier>`: コンテキストウィンドウ tier `default`/`long_context`。**本エージェントは常に `long_context`（1M）固定**
 - `--binary-version`: フルセッション起動なしでバージョン確認
 - `--model <model>`: configのモデルをセッション単位で上書き
 
-### Effort Level（推論深度）
+### Effort / Context（固定設定）
 
-`--effort` はextended thinkingをサポートするモデルのみ有効（GPT-5.x系等）。Geminiモデルでは対応状況不明のため、エラーが出た場合は省略して再実行する。
+本エージェントは **Gemini 3.1 Pro (high) (1M context)** に固定する。タスク内容にかかわらず `--effort high --context long_context` を常に付与し、推論深度・コンテキストを切り替えない。
 
 ```bash
-# effortフラグ使用例（対応モデルの場合）
-copilot -p "<prompt>" --no-ask-user -s --effort high --model gemini-3.1-pro-preview
+# 固定構成（全タスク共通）
+copilot -p "<prompt>" --no-ask-user -s --model gemini-3.1-pro-preview --effort high --context long_context
 ```
 
-| タスク               | effort          | 備考           |
-| -------------------- | --------------- | -------------- |
-| プリコミットチェック | `--effort low`  | 速度重視       |
-| 通常コードレビュー   | (省略=medium)   | デフォルト     |
-| エラー根本原因分析   | `--effort high` | 深い推論が必要 |
-| セキュリティレビュー | `--effort high` | 徹底性が重要   |
+Gemini 3.1 Pro は `--effort high` と `--context long_context` の両方をサポートする（動作確認済み）。
 
 ### Autonomous Prompt Design
 
@@ -136,7 +132,7 @@ If Copilot CLI fails (authentication error, model unavailable, network issue):
 4. Suggest alternatives:
    - Authentication: `gh auth login`
    - Model unavailable: `gemini-3.1-pro-preview` が利用不可の場合はエラーをそのまま提示して終了する（他モデルへの切り替えは行わない）
-   - `--effort` エラー: 対応していないモデル。フラグを省略して再実行
+   - `--effort` / `--context` エラー: エラーをそのまま提示して終了する（フラグ省略や他設定へのフォールバックは行わない）
    - Network: Check connectivity and retry later
 
 ## Language Protocol
@@ -153,7 +149,7 @@ copilot --continue -s
 copilot --resume <session-id> -s
 
 # 複数ステップの分析タスク
-copilot -p "<complex analysis prompt>" --autopilot --no-ask-user -s --model gemini-3.1-pro-preview
+copilot -p "<complex analysis prompt>" --autopilot --no-ask-user -s --model gemini-3.1-pro-preview --effort high --context long_context
 ```
 
 ## Limitations
