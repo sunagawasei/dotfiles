@@ -1,6 +1,5 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
-local agent = require("agent")
 
 -- WEZTERM_BUSY user varで判定。未設定("0"以外)は安全側=busy扱い
 local function is_pane_busy(pane)
@@ -62,30 +61,8 @@ wezterm.on("update-right-status", function(window, pane)
 
 		window:set_right_status(wezterm.format(elements))
 	else
-		-- キーテーブル非アクティブ時: エージェント状態を表示
-		local agents = agent.scan()
-		if #agents == 0 then
-			window:set_right_status("")
-		else
-			local running = 0
-			for _, a in ipairs(agents) do
-				if a.status == "running" then
-					running = running + 1
-				end
-			end
-			local workspace = window:active_workspace()
-			local elements = {}
-			-- running数/total数に応じて色を変える
-			local bg = running > 0 and "#6CD8D3" or "#304D4F" -- Vibrant Teal / dark teal accent
-			local fg = running > 0 and "#111E16" or "#92A2AB" -- Darkest / dim text
-			local icon = running > 0 and "▶" or "●"
-			table.insert(elements, { Background = { Color = bg } })
-			table.insert(elements, { Foreground = { Color = fg } })
-			table.insert(elements, {
-				Text = string.format(" %s %d/%d %s ", icon, running, #agents, workspace),
-			})
-			window:set_right_status(wezterm.format(elements))
-		end
+		-- キーテーブル非アクティブ時はステータスをクリア
+		window:set_right_status("")
 	end
 end)
 
@@ -227,11 +204,6 @@ return {
 		{ key = "r", mods = "SHIFT|CTRL", action = act.ReloadConfiguration },
 		-- キーテーブル用
 		{ key = "s", mods = "LEADER", action = act.ActivateKeyTable({ name = "resize_pane", one_shot = false }) },
-		{
-			key = "a",
-			mods = "LEADER",
-			action = agent.dashboard_action(),
-		},
 
 		-- バックスラッシュ入力用 (¥の代わりに\を入力)
 		{ key = "¥", mods = "NONE", action = act.SendString("\\") },
