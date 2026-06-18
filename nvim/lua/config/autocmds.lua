@@ -177,6 +177,31 @@ vim.api.nvim_create_autocmd("User", {
   end,
 })
 
+-- diffview:// / octo:// などの「非ファイルバッファ」に LSP がアタッチすると、
+-- gopls が "DocumentURI scheme is not 'file'" (-32700 JSON RPC parse error) を返す。
+-- diff を開くたびに semantic tokens / diagnostics / document highlight 等の
+-- リクエストが飛んでエラーが大量に出るため、file:// 以外のスキームを持つ
+-- バッファからは LSP クライアントをデタッチして抑止する。
+-- 注: LspAttach は didOpen の後に発火するため、diff オープン直後の
+-- 初回リクエスト分（1〜2 件）は残ることがある。継続的なスパムは止まる。
+vim.api.nvim_create_autocmd("LspAttach", {
+  group = vim.api.nvim_create_augroup("detach_lsp_from_non_file_buffers", { clear = true }),
+  callback = function(args)
+    local bufname = vim.api.nvim_buf_get_name(args.buf)
+    -- バッファ名からスキームを抽出 (例: "diffview", "octo", "fugitive")。
+    -- 通常のファイルパス (例: /Users/...) は nil になりデタッチ対象外。
+    local scheme = bufname:match("^(%a[%w+.-]*)://")
+    if scheme and scheme ~= "file" then
+      vim.schedule(function()
+        if vim.api.nvim_buf_is_valid(args.buf) then
+          pcall(vim.lsp.buf_detach_client, args.buf, args.data.client_id)
+        end
+      end)
+    end
+  end,
+  desc = "Detach LSP from non-file:// buffers (diffview/octo/etc.) to silence gopls scheme errors",
+})
+
 -- which-key トリガー復旧ワークアラウンド
 -- which-keyのBufEnterハンドラはBuf.get()のみ呼ぶがclear()を呼ばないため、
 -- staleなtriggerが残留する場合がある。clear({ buf = ev.buf })を補完する。
