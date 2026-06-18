@@ -150,10 +150,15 @@ config.window_frame = {
 	inactive_titlebar_bg = "none",
 	-- アクティブ時のタイトルバー背景（透明）
 	active_titlebar_bg = "none",
-	-- タイトルバーのフォント
-	font = wezterm.font("Geist Mono"),
-	-- タイトルバーのフォントサイズ（通常のフォントサイズと同期）
-	font_size = config.font_size,
+	-- タブバーのフォント（本体と同じGeistMono NF。小さめで細く見えるため太字に）
+	font = wezterm.font_with_fallback({
+		{ family = "GeistMono NF", weight = "Bold" },
+		{ family = "GeistMono NF", weight = "Bold", assume_emoji_presentation = true },
+		{ family = "Osaka" }, -- 日本語フォント（本体と同じフォールバック）
+		{ family = "Hiragino Kaku Gothic ProN" },
+	}),
+	-- タブバーのフォントサイズ（本体15より少し小さく。fancyタブバーで有効）
+	font_size = 13.0,
 }
 -- ウィンドウ背景のグラデーション設定（モノクロ背景）
 config.window_background_gradient = {
@@ -170,16 +175,16 @@ config.window_padding = {
 config.enable_tab_bar = true
 -- タブバーを下に配置
 config.tab_bar_at_bottom = true
--- レトロなタブバースタイルを使用（カスタマイズ性が高い）
-config.use_fancy_tab_bar = false
+-- fancyタブバーを使用（タブバー専用フォントサイズ指定のため。format-tab-titleは引き続き有効）
+config.use_fancy_tab_bar = true
 -- タブが1つの時もタブバーを表示
 config.hide_tab_bar_if_only_one_tab = false
 -- タブバーの新規タブボタンを非表示
 config.show_new_tab_button_in_tab_bar = false
 -- タブインデックス番号を非表示
 config.show_tab_index_in_tab_bar = false
--- タブの最大幅を60文字に設定
-config.tab_max_width = 60
+-- タブの最大幅（見切れ防止のため広め）
+config.tab_max_width = 100
 -- タブの閉じるボタンを非表示
 config.show_close_tab_button_in_tabs = false
 
@@ -309,53 +314,86 @@ local function get_fg_for_bg(bg_color)
 	return "#0B0C0C" -- Main Background（高コントラスト）
 end
 
--- Claude Code状態に応じたインジケータを返す
-local function get_claude_status(tab_title)
-	if tab_title:find("%[完了%]") then
-		return { icon = "✓", color = "#349594" } -- Deep Sea Teal (Success)
-	elseif tab_title:find("%[許可待ち%]") then
-		return { icon = "!", color = "#A37AA7" } -- Muted Purple (Error/Warning, WCAG AA)
-	elseif tab_title:find("%[入力待ち%]") then
-		return { icon = "●", color = "#6CD8D3" } -- Vibrant Teal (Info)
-	elseif tab_title:find("%[実行中%]") then
-		return { icon = "▶", color = "#CEF5F2" } -- Main Foreground
+-- 稼働中に表示する点字スピナーのコマ（純正と同じ点字系・U+280B..）。
+-- Claude Code はタイトルのスピナーをコマ送り更新しないため、wezterm側で自前にアニメーションさせる。
+local spinner_cps = { 0x280B, 0x2819, 0x2839, 0x2838, 0x283C, 0x2834, 0x2826, 0x2827, 0x2807, 0x280F }
+local spinner_idx = 0
+
+-- Claude Code 純正タイトル(OSC 2)の先頭グリフから状態インジケータを返す。
+-- Claude Code はタイトルを「<グリフ> <タスク要約>」形式で設定する:
+--   稼働中    = 点字スピナー U+2800–U+28FF (UTF-8: E2 A0–A3 xx)
+--   待機/完了 = ✳ 等の Dingbats (UTF-8: E2 9C/9D/9E xx)
+-- 誤検出を抑えるため「E2先頭 ＋ グリフ直後が空白(=要約区切り) ＋ 点字/Dingbats」のみ採用し、
+-- 矢印・罫線・bullet 等の他E2記号(vim/lazygit/btop 等)は Claude 状態とみなさない。
+-- 待機は ✓ を表示、稼働は自前の点字スピナーをアニメーション表示する。
+local function get_claude_status(pane_title)
+	local b1, b2 = pane_title:byte(1, 2)
+	if b1 ~= 0xE2 or b2 == nil then
+		return nil -- 先頭が3バイトUTF-8シンボル(Claudeのグリフ)でなければ対象外
 	end
-	return nil
+	local b4 = pane_title:byte(4)
+	if b4 ~= nil and b4 ~= 0x20 then
+		return nil -- グリフ直後が空白でない(=「<グリフ> <要約>」形式でない)なら対象外
+	end
+	if b2 >= 0xA0 and b2 <= 0xA3 then
+		-- 稼働中: 自前スピナーをコマ送り（update-statusで全タブ同期。非アクティブタブも動く）
+		local frame = utf8.char(spinner_cps[(spinner_idx % #spinner_cps) + 1])
+		return { icon = frame, color = "#6CD8D3" } -- Vibrant Teal
+	end
+	if b2 == 0x9C or b2 == 0x9D or b2 == 0x9E then
+		return { icon = "✓", color = "#B1F4ED" } -- 待機/完了: Dingbats(✳ 等) → チェックマーク
+	end
+	return nil -- それ以外のE2記号は Claude 状態とみなさない
 end
 
--- cwdを取得して短縮表示するヘルパー関数
-local function get_short_cwd(tab, max_len)
-	local cwd_uri = tab.active_pane.current_working_dir
+-- Claude Code 純正タイトルから先頭グリフ(3バイト)と続く空白を除いた要約を返す
+local function strip_claude_glyph(pane_title)
+	return (pane_title:sub(4):gsub("^%s+", ""))
+end
+
+-- paneのcwdを取得して短縮表示するヘルパー関数
+local function short_cwd(pane, max_len)
+	local cwd_uri = pane.current_working_dir
 	if not cwd_uri or not cwd_uri.file_path then
 		return nil
 	end
 	local path = cwd_uri.file_path
 	local home = os.getenv("HOME")
 	local title
-	if path == home then
+	if home and path == home then
 		title = "~"
-	elseif path:sub(1, #home) == home then
+	elseif home and path:sub(1, #home) == home then
 		title = "~" .. path:sub(#home + 1)
 	else
 		title = path
 	end
-	if #title > max_len then
-		title = title:sub(1, max_len) .. "…"
-	end
-	return title
+	return wezterm.truncate_right(title, max_len)
 end
 
--- タブタイトルのカスタマイズ処理（斜めシェイプの適用）
+-- 1つのpaneの表示セグメントを返す: アイコン(非Claudeはnil), アイコン色, テキスト
+local function pane_segment(pane, max_text)
+	local ptitle = pane.title or ""
+	local status = get_claude_status(ptitle)
+	if status then
+		local summary = strip_claude_glyph(ptitle)
+		if summary == "" then
+			summary = short_cwd(pane, max_text) or "~"
+		end
+		return status.icon, status.color, wezterm.truncate_right(summary, max_text)
+	end
+	return nil, nil, short_cwd(pane, max_text) or wezterm.truncate_right(ptitle, max_text)
+end
+
+-- タブタイトルのカスタマイズ処理（斜めシェイプ＋このタブの全paneの状態を併記）
 wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover)
 	-- 背景色の定義
 	local bar_bg = "none"
-	local inactive_bg = "none"
 	local hover_bg = "#152A2B"
 
 	-- タブIDに基づく色の取得
 	local id_color = tab_id_to_color(tab.tab_id)
 
-	local bg = inactive_bg
+	local bg = "none"
 	local fg = "#8A97AD" -- inactive_tab.fg_color (Git Blame Gray)
 
 	if tab.is_active then
@@ -366,52 +404,74 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover)
 		fg = "#CEF5F2" -- inactive_tab_hover.fg_color
 	end
 
-	-- Claude Code状態を確認
-	local tab_title = tab.tab_title or ""
-	local claude_status = get_claude_status(tab_title)
+	-- このタブの全paneを対象に（分割時は全paneのタイトルを併記）
+	local tab_panes = tab.panes or { tab.active_pane }
+	-- pane数で要約幅を配分（単一は長め、複数は短く）。tab_max_width が最終的な上限
+	local per = (#tab_panes > 1) and math.max(18, math.floor(80 / #tab_panes)) or 84
 
-	if claude_status then
-		-- アイコンにclaude_status.colorを適用し、cwdを別色で表示
-		local cwd_title = get_short_cwd(tab, 30) or "~"
-		return {
-			{ Background = { Color = bar_bg } },
-			{ Foreground = { Color = bg } },
-			{ Text = "" }, -- 左端の斜めシェイプ
-			{ Background = { Color = bg } },
-			{ Foreground = { Color = claude_status.color } },
-			{ Text = " " .. claude_status.icon },
-			{ Foreground = { Color = fg } },
-			{ Text = " " .. cwd_title .. " " },
-			{ Background = { Color = bar_bg } },
-			{ Foreground = { Color = bg } },
-			{ Text = "" }, -- 右端の斜めシェイプ
-		}
-	end
-
-	local title = ""
-	local cwd_uri = tab.active_pane.current_working_dir
-	if cwd_uri and cwd_uri.file_path then
-		local path = cwd_uri.file_path
-		local home = os.getenv("HOME")
-		title = (path == home) and "~" or (path:sub(1, #home) == home and "~" .. path:sub(#home + 1) or path)
-	else
-		title = tab.active_pane.title
-	end
-	if #title > 50 then
-		title = title:sub(1, 50) .. "…"
-	end
-
-	return {
+	local items = {
 		{ Background = { Color = bar_bg } },
 		{ Foreground = { Color = bg } },
-		{ Text = "" }, -- 左端の斜めシェイプ
+		{ Text = "" }, -- 左端の斜めシェイプ
 		{ Background = { Color = bg } },
 		{ Foreground = { Color = fg } },
-		{ Text = " " .. title .. " " },
-		{ Background = { Color = bar_bg } },
-		{ Foreground = { Color = bg } },
-		{ Text = "" }, -- 右端の斜めシェイプ
+		{ Text = " " },
 	}
+
+	for i, p in ipairs(tab_panes) do
+		if i > 1 then
+			table.insert(items, { Foreground = { Color = fg } })
+			table.insert(items, { Text = " │ " }) -- pane区切り
+		end
+		local icon, icon_color, text = pane_segment(p, per)
+		if icon then
+			-- アクティブタブは背景が色付きで状態色と被るため、高コントラストのfgで描画
+			local ic = tab.is_active and fg or icon_color
+			table.insert(items, { Foreground = { Color = ic } })
+			table.insert(items, { Text = icon .. " " })
+		end
+		table.insert(items, { Foreground = { Color = fg } })
+		table.insert(items, { Text = text })
+	end
+
+	table.insert(items, { Foreground = { Color = fg } })
+	table.insert(items, { Text = " " })
+	table.insert(items, { Background = { Color = bar_bg } })
+	table.insert(items, { Foreground = { Color = bg } })
+	table.insert(items, { Text = "" }) -- 右端の斜めシェイプ
+	return items
+end)
+
+-- 稼働中(点字スピナー)のpaneが1つでも存在するか走査する。
+-- 無ければスピナーを進めず、format-tab-title の出力が不変になるため
+-- wezterm が GPU 再描画をスキップでき、待機時の常時再描画コストを抑えられる。
+local function any_pane_working()
+	local ok, found = pcall(function()
+		for _, w in ipairs(wezterm.mux.all_windows()) do
+			for _, t in ipairs(w:tabs()) do
+				for _, p in ipairs(t:panes()) do
+					local b1, b2 = (p:get_title() or ""):byte(1, 2)
+					if b1 == 0xE2 and b2 ~= nil and b2 >= 0xA0 and b2 <= 0xA3 then
+						return true
+					end
+				end
+			end
+		end
+		return false
+	end)
+	if not ok then
+		return true -- 走査失敗時は安全側（アニメ継続）
+	end
+	return found
+end
+
+-- タブバーを定期再描画し、稼働中スピナーをアニメーションさせる。
+-- 稼働paneが在るときだけ spinner_idx を進める（待機時は出力不変＝再描画スキップ）。
+config.status_update_interval = 200
+wezterm.on("update-status", function(window, pane)
+	if any_pane_working() then
+		spinner_idx = spinner_idx + 1
+	end
 end)
 
 -- ==========================================

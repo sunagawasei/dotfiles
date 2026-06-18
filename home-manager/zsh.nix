@@ -184,10 +184,15 @@
           }
           __wezterm_preexec() { __wezterm_set_user_var WEZTERM_BUSY 1; }
           __wezterm_precmd_busy() { __wezterm_set_user_var WEZTERM_BUSY 0; }
+          # Claude Code 終了後にpaneタイトル(OSC 2)へ残る状態グリフを消去する。
+          # プロンプト復帰時のみ発火する(claude動作中はzshがブロックされ発火しない)ため、
+          # claude終了直後にタブがcwd表示へ戻り、状態インジケータの残留を防ぐ。
+          __wezterm_reset_title() { printf '\e]2;\e\\'; }
           autoload -Uz add-zsh-hook
           add-zsh-hook precmd __wezterm_osc7
           add-zsh-hook preexec __wezterm_preexec
           add-zsh-hook precmd  __wezterm_precmd_busy
+          add-zsh-hook precmd  __wezterm_reset_title
         fi
 
         # ---- キーバインド ----
