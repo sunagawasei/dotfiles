@@ -2,7 +2,7 @@
 name: cursor
 description: |
   Code analysis via Cursor Agent CLI in read-only mode.
-  Provider: Cursor (Grok 4.3)
+  Provider: Cursor (Composer 2.5 Fast)
   Only used when the user explicitly requests this agent by name or via /cursor slash command.
 
   <example>
@@ -52,7 +52,7 @@ Claude Code (the calling agent) handles all implementation.
 ## Configuration
 
 - **CLI**: `cursor-agent` (binary at `~/.nix-profile/bin/cursor-agent`, managed via nixpkgs `cursor-cli`)
-- **Default model**: `grok-4.3` (use `--model grok-4.3` explicitly)
+- **Default model**: `composer-2.5-fast` (use `--model composer-2.5-fast` explicitly)
 - **Config**: `~/.cursor/`
 - **Auth**: Cursor account (via `cursor-agent login`)
 
@@ -77,10 +77,10 @@ If you encounter such files during analysis, skip them entirely and do not inclu
 
 ```bash
 # Plan mode: structured implementation plans and multi-file analysis (DEFAULT)
-cursor-agent -p --model grok-4.3 --mode plan --trust "<autonomous prompt in English>"
+cursor-agent -p --model composer-2.5-fast --mode plan --trust "<autonomous prompt in English>"
 
 # Ask mode: targeted Q&A for specific questions
-cursor-agent -p --model grok-4.3 --mode ask --trust "<specific question in English>"
+cursor-agent -p --model composer-2.5-fast --mode ask --trust "<specific question in English>"
 ```
 
 **CRITICAL safety rules:**
@@ -105,7 +105,7 @@ cursor-agent -p --model grok-4.3 --mode ask --trust "<specific question in Engli
 **Key Options:**
 
 - `-p` / `--print`: Non-interactive mode (required for subagent use)
-- `--model <model>`: Model selection (always `grok-4.3` — do not change)
+- `--model <model>`: Model selection (always `composer-2.5-fast` — do not change)
 - `--mode plan|ask`: Execution mode (REQUIRED — never omit)
 - `--trust`: Trust current workspace in headless mode (required with `-p`)
 - `--workspace <path>`: Workspace directory (defaults to current working directory)
@@ -140,7 +140,7 @@ Claude Code will implement the actual changes."
 | Error                  | Resolution                        |
 | ---------------------- | --------------------------------- |
 | Auth failure           | Run `cursor-agent login`, then retry                                     |
-| Model unavailable      | `grok-4.3` 利用不可の場合はエラーを提示して終了（フォールバックしない） |
+| Model unavailable      | `composer-2.5-fast` 利用不可の場合はエラーを提示して終了（フォールバックしない） |
 | Workspace trust prompt | Ensure `--trust` flag is included                                        |
 | Rate limit             | Wait 60s, retry                                                          |
 | Network timeout        | Check connectivity, retry                                                |
@@ -155,10 +155,10 @@ Cursor CLI prompts are written in **English**; analysis results are summarized i
 
 ```bash
 # Continue previous session
-cursor-agent --continue -p --model grok-4.3 --mode plan --trust "<prompt>"
+cursor-agent --continue -p --model composer-2.5-fast --mode plan --trust "<prompt>"
 
 # Resume specific session
-cursor-agent --resume <chatId> -p --model grok-4.3 --mode plan --trust "<prompt>"
+cursor-agent --resume <chatId> -p --model composer-2.5-fast --mode plan --trust "<prompt>"
 ```
 
 ## Limitations
