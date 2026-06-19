@@ -150,15 +150,15 @@ config.window_frame = {
 	inactive_titlebar_bg = "none",
 	-- アクティブ時のタイトルバー背景（透明）
 	active_titlebar_bg = "none",
-	-- タブバーのフォント（本体と同じGeistMono NF。小さめで細く見えるため太字に）
+	-- タブバーのフォント（本体と同じGeistMono NF。視認性のため太字に）
 	font = wezterm.font_with_fallback({
 		{ family = "GeistMono NF", weight = "Bold" },
 		{ family = "GeistMono NF", weight = "Bold", assume_emoji_presentation = true },
 		{ family = "Osaka" }, -- 日本語フォント（本体と同じフォールバック）
 		{ family = "Hiragino Kaku Gothic ProN" },
 	}),
-	-- タブバーのフォントサイズ（本体15より少し小さく。fancyタブバーで有効）
-	font_size = 13.0,
+	-- タブバーのフォントサイズ（本体15.0より大きい17.0。リテラル固定なので本体 config.font_size とは連動しない）
+	font_size = 17.0,
 }
 -- ウィンドウ背景のグラデーション設定（モノクロ背景）
 config.window_background_gradient = {
@@ -286,33 +286,9 @@ config.colors = {
 -- ==========================================
 -- タブのカスタマイズ
 -- ==========================================
--- タブIDから決定論的に色を生成（タブ識別用）
-local function tab_id_to_color(tab_id)
-	local colors = {
-		"#6CD8D3", -- Vibrant Teal
-		"#A37AA7", -- Muted Purple (WCAG AA)
-		"#64BBBE", -- Clear Teal
-		"#CED5E9", -- Lavender
-		"#326787", -- Ocean Blue
-		"#8A99BD", -- Sky Slate (WCAG AA)
-		"#9DDCD9", -- Heading Cyan
-		"#A4ABCB", -- Sky Slate Light
-	}
-	return colors[(tab_id % #colors) + 1]
-end
-
--- 背景色に応じて最適なテキスト色を返す（WCAG AA準拠）
-local function get_fg_for_bg(bg_color)
-	-- 暗い背景色には明るいfgを使用
-	local light_fg_bgs = {
-		["#326787"] = true, -- Ocean Blue（暗色）
-		["#8A99BD"] = true, -- Sky Slate（中間色、白文字が見やすい）
-	}
-	if light_fg_bgs[bg_color] then
-		return "#F2FFFF" -- Purest Highlight
-	end
-	return "#0B0C0C" -- Main Background（高コントラスト）
-end
+-- アクティブタブの固定色（abyssal-teal: slate_dark / bright）
+local ACTIVE_TAB_BG = "#1F3451" -- Distinct Ocean Blue
+local ACTIVE_TAB_FG = "#B1F4ED" -- Brightest highlight
 
 -- 稼働中に表示する点字スピナーのコマ（純正と同じ点字系・U+280B..）。
 -- Claude Code はタイトルのスピナーをコマ送り更新しないため、wezterm側で自前にアニメーションさせる。
@@ -390,15 +366,12 @@ wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover)
 	local bar_bg = "none"
 	local hover_bg = "#152A2B"
 
-	-- タブIDに基づく色の取得
-	local id_color = tab_id_to_color(tab.tab_id)
-
 	local bg = "none"
 	local fg = "#8A97AD" -- inactive_tab.fg_color (Git Blame Gray)
 
 	if tab.is_active then
-		bg = id_color
-		fg = get_fg_for_bg(id_color) -- 背景色に応じて動的にfgを決定（WCAG AA準拠）
+		bg = ACTIVE_TAB_BG
+		fg = ACTIVE_TAB_FG
 	elseif hover then
 		bg = hover_bg
 		fg = "#CEF5F2" -- inactive_tab_hover.fg_color
