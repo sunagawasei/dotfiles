@@ -264,11 +264,11 @@ config.colors = {
 			intensity = "Bold",
 		},
 		inactive_tab = {
-			bg_color = "none",
+			bg_color = "#152A2B", -- Panel: pill化でタブ境界を明確化（旧 none は透明で境界不可視）
 			fg_color = "#8A97AD", -- Git Blame Gray (6.63:1 contrast, WCAG AA)
 		},
 		inactive_tab_hover = {
-			bg_color = "#152A2B",
+			bg_color = "#304D4F", -- Dark Accent: inactive(#152A2B)より一段持ち上げhoverを区別
 			fg_color = "#CEF5F2",
 		},
 		new_tab = {
@@ -364,9 +364,11 @@ end
 wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover)
 	-- 背景色の定義
 	local bar_bg = "none"
-	local hover_bg = "#152A2B"
+	local hover_bg = "#304D4F" -- colors.tab_bar.inactive_tab_hover と一致
 
-	local bg = "none"
+	-- 非アクティブもpill背景にして境界を明確化（colors.tab_bar.inactive_tab と一致）。
+	-- 旧 "none" では左右パワーライン形状が透明で描かれ境界が消えていた。
+	local bg = "#152A2B"
 	local fg = "#8A97AD" -- inactive_tab.fg_color (Git Blame Gray)
 
 	if tab.is_active then
