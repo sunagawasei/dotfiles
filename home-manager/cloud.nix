@@ -7,6 +7,7 @@
     google-cloud-sdk
     terraform
     kubectl
+    kubernetes-helm
     kubeseal
     kind
     s3cmd
