@@ -10,6 +10,9 @@ notion/
 # アプリケーション設定ストア
 configstore/
 
+# Homebrew（trust.json等の自動生成状態ファイル）
+homebrew/
+
 # キャッシュ・一時ファイル
 *.zwc
 .zsh_history
