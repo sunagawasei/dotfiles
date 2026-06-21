@@ -136,6 +136,33 @@ func extractLastUserPrompt(path string) string {
 	return extractLastUserTurn(lines)
 }
 
+// customTitleEntry は JSONL の "custom-title" タイプエントリを表します。
+type customTitleEntry struct {
+	Type        string `json:"type"`
+	CustomTitle string `json:"customTitle"`
+}
+
+// extractCustomTitle はトランスクリプトから会話タイトル(customTitle)を返します。
+// これは Claude Code が OSC 2 端末タイトルに設定する要約と同一で、
+// WezTerm のタブバーに表示される文字列に一致します（先頭グリフは含まない）。
+func extractCustomTitle(path string) string {
+	lines := readLinesReverse(path, 300)
+	for _, raw := range lines {
+		var entry customTitleEntry
+		if err := json.Unmarshal([]byte(raw), &entry); err != nil {
+			continue
+		}
+		if entry.Type != "custom-title" {
+			continue
+		}
+		title := strings.TrimSpace(entry.CustomTitle)
+		if title != "" {
+			return title
+		}
+	}
+	return ""
+}
+
 // transcriptLine は JSONL の user/assistant ターンを表す最小構造体です。
 type transcriptLine struct {
 	Type        string         `json:"type"`
@@ -369,19 +396,25 @@ func firstNonEmpty(values ...string) string {
 
 // resolve はイベント種別から通知内容を決定します。
 func resolve(in InputData) (notification, bool) {
-	project := ""
-	if in.Cwd != "" {
-		project = filepath.Base(in.Cwd)
+	txPath := transcriptFilePath(in)
+
+	// サブタイトル右側の識別子。WezTerm タブバーと同じ会話タイトル(customTitle)を
+	// 優先し、無ければ cwd のディレクトリ名にフォールバックする。
+	// （新規/直後の /clear セッションは custom-title 未生成のため空になりうる）
+	context := ""
+	if txPath != "" {
+		context = truncate(extractCustomTitle(txPath), 40)
+	}
+	if context == "" && in.Cwd != "" {
+		context = filepath.Base(in.Cwd)
 	}
 
 	withProject := func(label string) string {
-		if project == "" {
+		if context == "" {
 			return label
 		}
-		return label + " · " + project
+		return label + " · " + context
 	}
-
-	txPath := transcriptFilePath(in)
 
 	getUserPrompt := func() string {
 		if txPath == "" {
