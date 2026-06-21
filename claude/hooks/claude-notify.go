@@ -1,12 +1,9 @@
 // claude-notify は Claude Code の hook として動作し、
 // stdin の JSON を解析して macOS のデスクトップ通知を出します。
 //
-// 通知本文にトランスクリプトから抽出したコンテキストを含めることで、
-// 複数セッション並行時でもどの作業の通知かを判別できます。
-//
-//   - Stop        : 直前のユーザープロンプト（「何を頼んだか」）を本文に表示
-//   - idle_prompt : Claude の最後の発言（「何を求めているか」）を本文に表示
-//   - permission  : message（許可対象）→ Claude の最後の発言 の順で表示
+// 通知は「状態」と「会話タイトル」の2点だけを表示します:
+//   - サブタイトル: 状態（完了 / 入力待ち / 許可待ち / エラー）
+//   - 本文        : 会話タイトル（= WezTerm タブバー表示。未生成時はプロジェクト名）
 //
 // hook 用途のため non-blocking（エラーは握りつぶして常に exit 0）。
 package main
@@ -19,31 +16,26 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
-	"regexp"
 	"strings"
 )
 
 // InputData は hook から渡される stdin JSON の必要フィールドを表します。
 type InputData struct {
-	HookEventName        string `json:"hook_event_name"`
-	NotificationType     string `json:"notification_type"`
-	Message              string `json:"message"`
-	Cwd                  string `json:"cwd"`
-	SessionID            string `json:"session_id"`
-	TranscriptPath       string `json:"transcript_path"`
-	LastAssistantMessage string `json:"last_assistant_message"`
-	StopHookActive       bool   `json:"stop_hook_active"`
+	HookEventName    string `json:"hook_event_name"`
+	NotificationType string `json:"notification_type"`
+	Message          string `json:"message"`
+	Cwd              string `json:"cwd"`
+	SessionID        string `json:"session_id"`
+	TranscriptPath   string `json:"transcript_path"`
+	StopHookActive   bool   `json:"stop_hook_active"`
 }
 
 // notification は組み立てた通知内容を表します。
 type notification struct {
-	subtitle string
-	body     string
+	subtitle string // 状態ラベル
+	body     string // 会話タイトル
 	sound    string
 }
-
-// imageTagRe は [Image #N] / [Image: ...] マーカーを除去するための正規表現です。
-var imageTagRe = regexp.MustCompile(`(?i)\[Image[^\]]*\]\s*`)
 
 // transcriptFilePath はトランスクリプトファイルのパスを解決します。
 // in.TranscriptPath が空の場合は session_id + cwd から再構成します。
@@ -99,236 +91,61 @@ func min(a, b int) int {
 	return b
 }
 
-// lastPromptEntry は JSONL の "last-prompt" タイプエントリを表します。
-type lastPromptEntry struct {
-	Type       string `json:"type"`
-	LastPrompt string `json:"lastPrompt"`
-}
-
-// extractLastUserPrompt はトランスクリプトから最後のユーザープロンプトを返します。
-// "last-prompt" エントリを優先し、なければ user ターンを直接解析します。
-func extractLastUserPrompt(path string) string {
-	lines := readLinesReverse(path, 300)
-
-	// まず "last-prompt" タイプのエントリを探す（最も信頼性が高い）
-	for _, raw := range lines {
-		var entry lastPromptEntry
-		if err := json.Unmarshal([]byte(raw), &entry); err != nil {
-			continue
-		}
-		if entry.Type != "last-prompt" {
-			continue
-		}
-		text := strings.TrimSpace(entry.LastPrompt)
-		if text == "" {
-			continue
-		}
-		// [Image #N] / [Image: ...] マーカーを除去
-		text = imageTagRe.ReplaceAllString(text, "")
-		text = strings.TrimSpace(text)
-		if text == "" {
-			continue
-		}
-		return text
-	}
-
-	// フォールバック: user ターンを直接解析
-	return extractLastUserTurn(lines)
-}
-
-// customTitleEntry は JSONL の "custom-title" タイプエントリを表します。
-type customTitleEntry struct {
+// titleEntry は JSONL の会話タイトルエントリを表します。
+// Claude Code はバージョン/設定により以下のいずれかの形式で記録します:
+//   - {"type":"ai-title","aiTitle":"..."}         AI 自動生成タイトル（現行の既定）
+//   - {"type":"custom-title","customTitle":"..."}  ユーザー設定/ブランチ由来タイトル
+//
+// 両者は同一セッション内では相互排他的で、どちらも Claude Code が
+// OSC 2 端末タイトルに設定する文字列（= WezTerm タブバー表示）と一致します。
+type titleEntry struct {
 	Type        string `json:"type"`
+	AITitle     string `json:"aiTitle"`
 	CustomTitle string `json:"customTitle"`
 }
 
-// extractCustomTitle はトランスクリプトから会話タイトル(customTitle)を返します。
-// これは Claude Code が OSC 2 端末タイトルに設定する要約と同一で、
-// WezTerm のタブバーに表示される文字列に一致します（先頭グリフは含まない）。
-func extractCustomTitle(path string) string {
-	lines := readLinesReverse(path, 300)
+// extractConversationTitle はトランスクリプトから最新の会話タイトルを返します。
+// ai-title / custom-title のどちらの形式にも対応し、末尾（最新）を優先します。
+// タイトルは毎ターン末尾付近へ再出力されますが、巨大な単一ターンで
+// 末尾から押し出される稀なケースに備え全行を走査します。
+func extractConversationTitle(path string) string {
+	lines := readLinesReverse(path, 1<<30)
 	for _, raw := range lines {
-		var entry customTitleEntry
+		var entry titleEntry
 		if err := json.Unmarshal([]byte(raw), &entry); err != nil {
 			continue
 		}
-		if entry.Type != "custom-title" {
+		var title string
+		switch entry.Type {
+		case "ai-title":
+			title = entry.AITitle
+		case "custom-title":
+			title = entry.CustomTitle
+		default:
 			continue
 		}
-		title := strings.TrimSpace(entry.CustomTitle)
-		if title != "" {
+		if title = strings.TrimSpace(title); title != "" {
 			return title
 		}
 	}
 	return ""
 }
 
-// transcriptLine は JSONL の user/assistant ターンを表す最小構造体です。
+// transcriptLine / contentBlock は pending tool_use 検出に必要な最小フィールドです。
 type transcriptLine struct {
-	Type        string         `json:"type"`
-	IsMeta      bool           `json:"isMeta"`
-	IsSidechain bool           `json:"isSidechain"`
-	Message     transcriptMsg  `json:"message"`
-}
-
-type transcriptMsg struct {
-	Role    string          `json:"role"`
-	Content json.RawMessage `json:"content"`
+	Type        string          `json:"type"`
+	IsSidechain bool            `json:"isSidechain"`
+	Message     json.RawMessage `json:"message"`
 }
 
 type contentBlock struct {
-	Type  string          `json:"type"`
-	Text  string          `json:"text"`
-	Name  string          `json:"name"`  // tool_use
-	Input json.RawMessage `json:"input"` // tool_use
+	Type string `json:"type"`
+	Name string `json:"name"`
 }
 
-// extractTextFromContent は content（string または []block）からテキストを取り出します。
-// hasToolResult は tool_result ブロックが存在するかを示します。
-func extractTextFromContent(raw json.RawMessage) (text string, hasToolResult bool) {
-	if len(raw) == 0 {
-		return "", false
-	}
-	// string として試みる
-	var s string
-	if json.Unmarshal(raw, &s) == nil {
-		return s, false
-	}
-	// []block として試みる
-	var blocks []contentBlock
-	if json.Unmarshal(raw, &blocks) != nil {
-		return "", false
-	}
-	for _, b := range blocks {
-		switch b.Type {
-		case "text":
-			text += b.Text
-		case "tool_result":
-			hasToolResult = true
-		}
-	}
-	return text, hasToolResult
-}
-
-// isCommandMessage はスラッシュコマンド合成ターンのテキストかを判定します。
-func isCommandMessage(text string) bool {
-	return strings.Contains(text, "<command-name>") ||
-		strings.Contains(text, "<command-message>") ||
-		strings.Contains(text, "<local-command-stdout>")
-}
-
-// extractLastUserTurn は逆順行リストから最後の人間入力ターンのテキストを返します。
-// "last-prompt" エントリが見つからない場合のフォールバックです。
-func extractLastUserTurn(lines []string) string {
-	for _, raw := range lines {
-		var tl transcriptLine
-		if err := json.Unmarshal([]byte(raw), &tl); err != nil {
-			continue
-		}
-		if tl.Type != "user" {
-			continue
-		}
-		if tl.IsMeta || tl.IsSidechain {
-			continue
-		}
-		if tl.Message.Role != "user" {
-			continue
-		}
-		text, hasToolResult := extractTextFromContent(tl.Message.Content)
-		if hasToolResult {
-			continue
-		}
-		text = strings.TrimSpace(text)
-		if text == "" || isCommandMessage(text) {
-			continue
-		}
-		text = imageTagRe.ReplaceAllString(text, "")
-		text = strings.TrimSpace(text)
-		if text != "" {
-			return text
-		}
-	}
-	return ""
-}
-
-// extractLastAssistantText はトランスクリプトから最後の assistant テキストを返します。
-func extractLastAssistantText(path string) string {
-	lines := readLinesReverse(path, 200)
-	for _, raw := range lines {
-		var tl transcriptLine
-		if err := json.Unmarshal([]byte(raw), &tl); err != nil {
-			continue
-		}
-		if tl.Type != "assistant" || tl.IsSidechain {
-			continue
-		}
-		text, _ := extractTextFromContent(tl.Message.Content)
-		text = strings.TrimSpace(text)
-		if text != "" {
-			return text
-		}
-	}
-	return ""
-}
-
-// toolInputSummary はツール名と input JSON からサマリ文字列を組み立てます。
-func toolInputSummary(name string, input json.RawMessage) string {
-	var m map[string]json.RawMessage
-	if json.Unmarshal(input, &m) != nil {
-		return name
-	}
-	getString := func(key string) string {
-		v, ok := m[key]
-		if !ok {
-			return ""
-		}
-		var s string
-		if json.Unmarshal(v, &s) == nil {
-			return s
-		}
-		return ""
-	}
-	switch name {
-	case "Bash":
-		if d := getString("description"); d != "" {
-			return name + ": " + d
-		}
-		if c := getString("command"); c != "" {
-			// コマンド先頭だけ表示（改行前まで）
-			if idx := strings.IndexByte(c, '\n'); idx > 0 {
-				c = c[:idx]
-			}
-			return name + ": " + c
-		}
-	case "AskUserQuestion":
-		// questions[0].question を取り出す
-		if raw, ok := m["questions"]; ok {
-			var qs []struct {
-				Question string `json:"question"`
-			}
-			if json.Unmarshal(raw, &qs) == nil && len(qs) > 0 && qs[0].Question != "" {
-				return name + ": " + qs[0].Question
-			}
-		}
-	case "Read", "Write", "Edit", "MultiEdit":
-		if fp := getString("file_path"); fp != "" {
-			return name + ": " + filepath.Base(fp)
-		}
-	case "WebFetch":
-		if u := getString("url"); u != "" {
-			return name + ": " + u
-		}
-	case "WebSearch":
-		if q := getString("query"); q != "" {
-			return name + ": " + q
-		}
-	}
-	return name
-}
-
-// extractPendingToolUse はトランスクリプトの最後の assistant ターンから
-// 許可待ちの tool_use のサマリを返します。
-func extractPendingToolUse(path string) string {
+// hasPendingToolUse は最新の assistant ターンに許可待ちの tool_use があるかを返します。
+// idle_prompt がタスク完了後の単なるアイドルか、Claude が応答を求めているかの判別に使います。
+func hasPendingToolUse(path string) bool {
 	lines := readLinesReverse(path, 50)
 	for _, raw := range lines {
 		var tl transcriptLine
@@ -338,17 +155,27 @@ func extractPendingToolUse(path string) string {
 		if tl.Type != "assistant" || tl.IsSidechain {
 			continue
 		}
+		// 末尾から最初に見つかった assistant ターンだけを評価し、これより古いターンは
+		// 遡らない。完了後の `assistant(tool_use) → user(tool_result) → assistant(text)`
+		// で古い tool_use を拾い、誤って true（＝完了後アイドルを通知）にしないため。
+		var msg struct {
+			Content json.RawMessage `json:"content"`
+		}
+		if json.Unmarshal(tl.Message, &msg) != nil {
+			return false
+		}
 		var blocks []contentBlock
-		if json.Unmarshal(tl.Message.Content, &blocks) != nil {
-			continue
+		if json.Unmarshal(msg.Content, &blocks) != nil {
+			return false
 		}
 		for _, b := range blocks {
 			if b.Type == "tool_use" && b.Name != "" {
-				return toolInputSummary(b.Name, b.Input)
+				return true
 			}
 		}
+		return false
 	}
-	return ""
+	return false
 }
 
 // truncate は s を max rune 数に制限し、超過時は末尾に … を付けます。
@@ -360,86 +187,20 @@ func truncate(s string, max int) string {
 	return string(runes[:max-1]) + "…"
 }
 
-// truncateLine は s から改行を除去し、max rune 数に制限します。
-func truncateLine(s string, max int) string {
-	s = strings.Join(strings.Fields(strings.ReplaceAll(s, "\n", " ")), " ")
-	return truncate(s, max)
-}
-
-// formatMultiline はテキストを最大 maxLines 行・各行 maxRunes 文字に制限して返します。
-// 空行はスキップします。
-func formatMultiline(s string, maxLines, maxRunes int) string {
-	lines := strings.Split(strings.TrimSpace(s), "\n")
-	var result []string
-	for _, line := range lines {
-		line = strings.TrimSpace(line)
-		if line == "" {
-			continue
-		}
-		result = append(result, truncate(line, maxRunes))
-		if len(result) >= maxLines {
-			break
-		}
-	}
-	return strings.Join(result, "\n")
-}
-
-// firstNonEmpty は空白でない最初の値を返します。
-func firstNonEmpty(values ...string) string {
-	for _, v := range values {
-		if strings.TrimSpace(v) != "" {
-			return strings.TrimSpace(v)
-		}
-	}
-	return ""
-}
-
 // resolve はイベント種別から通知内容を決定します。
+// サブタイトルに状態、本文に会話タイトルを載せます。
 func resolve(in InputData) (notification, bool) {
 	txPath := transcriptFilePath(in)
 
-	// サブタイトル右側の識別子。WezTerm タブバーと同じ会話タイトル(customTitle)を
-	// 優先し、無ければ cwd のディレクトリ名にフォールバックする。
-	// （新規/直後の /clear セッションは custom-title 未生成のため空になりうる）
-	context := ""
+	// 本文に表示する会話タイトル。WezTerm タブバーと同一の文字列を優先し、
+	// 無ければ cwd のディレクトリ名にフォールバックする。
+	// （新規/直後の /clear セッションはタイトル未生成のため空になりうる）
+	title := ""
 	if txPath != "" {
-		context = truncate(extractCustomTitle(txPath), 40)
+		title = truncate(extractConversationTitle(txPath), 60)
 	}
-	if context == "" && in.Cwd != "" {
-		context = filepath.Base(in.Cwd)
-	}
-
-	withProject := func(label string) string {
-		if context == "" {
-			return label
-		}
-		return label + " · " + context
-	}
-
-	getUserPrompt := func() string {
-		if txPath == "" {
-			return ""
-		}
-		return extractLastUserPrompt(txPath)
-	}
-
-	getAssistantText := func() string {
-		if txPath == "" {
-			return ""
-		}
-		return truncate(extractLastAssistantText(txPath), 100)
-	}
-
-	getPendingTool := func() string {
-		if txPath == "" {
-			return ""
-		}
-		return extractPendingToolUse(txPath)
-	}
-
-	// permission_prompt の message が汎用テキストか否かを判定する
-	isGenericMessage := func(msg string) bool {
-		return strings.EqualFold(strings.TrimSpace(msg), "claude needs your permission")
+	if title == "" && in.Cwd != "" {
+		title = filepath.Base(in.Cwd)
 	}
 
 	switch in.HookEventName {
@@ -448,51 +209,28 @@ func resolve(in InputData) (notification, bool) {
 		if in.StopHookActive {
 			return notification{}, false
 		}
-		body := firstNonEmpty(truncateLine(getUserPrompt(), 80), "タスクが完了しました")
-		return notification{withProject("完了"), body, "Glass"}, true
+		return notification{"完了", title, "Glass"}, true
 
 	case "StopFailure":
-		body := firstNonEmpty(in.Message, "処理がエラーで中断しました")
-		return notification{withProject("エラー"), body, "Basso"}, true
+		return notification{"エラー", title, "Basso"}, true
 
 	case "Notification":
 		switch in.NotificationType {
 		case "permission_prompt":
-			// 「どの会話か（1行目）→ 何のツールか（2行目）」の2行形式で組み立て
-			userPrompt := getUserPrompt()
-			toolSummary := getPendingTool()
-			var body string
-			switch {
-			case userPrompt != "" && toolSummary != "":
-				body = truncateLine(userPrompt, 45) + "\n→ " + truncateLine(toolSummary, 45)
-			case toolSummary != "":
-				body = truncateLine(toolSummary, 80)
-			case !isGenericMessage(in.Message) && in.Message != "":
-				body = in.Message
-			default:
-				body = firstNonEmpty(getAssistantText(), "権限の確認が必要です")
-			}
-			return notification{withProject("許可待ち"), body, "Submarine"}, true
+			return notification{"許可待ち", title, "Submarine"}, true
 
 		case "idle_prompt":
-			// pending tool_use がなければタスク完了後のアイドルなので通知しない
-			// （Stop 通知で既に完了を伝えており、追加通知は不要）
-			if txPath != "" && extractPendingToolUse(txPath) == "" {
+			// pending tool_use が無ければタスク完了後の単なるアイドル。
+			// 完了は Stop 通知で既に伝えているため追加通知しない。
+			if txPath != "" && !hasPendingToolUse(txPath) {
 				return notification{}, false
 			}
-			// Claude が明示的に応答を求めている（AskUserQuestion 等）ケースのみ通知
-			// 最大2行・各行45文字で表示
-			assistantText := ""
-			if txPath != "" {
-				assistantText = formatMultiline(extractLastAssistantText(txPath), 2, 45)
-			}
-			body := firstNonEmpty(assistantText, in.Message, "入力を待機しています")
-			return notification{withProject("入力待ち"), body, "Submarine"}, true
+			return notification{"入力待ち", title, "Submarine"}, true
 
 		default:
-			// 未知の Notification でも message があれば出す
-			if strings.TrimSpace(in.Message) != "" {
-				return notification{withProject("通知"), in.Message, "Submarine"}, true
+			// 未知の Notification でも message があれば状態として出す
+			if msg := strings.TrimSpace(in.Message); msg != "" {
+				return notification{"通知", title, "Submarine"}, true
 			}
 		}
 	}
