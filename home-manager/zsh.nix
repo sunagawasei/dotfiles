@@ -195,6 +195,64 @@
           add-zsh-hook precmd  __wezterm_reset_title
         fi
 
+        # ---- Kube current context (Pure preprompt セグメント / psvar[21]) ----
+        # kubectl を呼ばず KUBECONFIG が指す kubeconfig の current-context を直接パースし、
+        # Pure 1行目の git 情報塊の直後（exec_time の前）へ表示する。
+        # 表示は KUBECONFIG がセットされている時のみ（direnv 等でプロジェクト単位に出し分ける運用）。
+        # 常時パスは zstat ビルトインのみ（fork なし）。config 変化時だけ awk で再パース。
+        zmodload zsh/stat 2>/dev/null
+        typeset -g __kube_ctx_sig="" __kube_ctx=""
+
+        # Pure の PROMPT へ psvar[21] セグメントを1度だけ差し込む（マーカー %(19V の直前）。
+        # 冪等＆Pure 再 setup 対策として precmd 先頭でも再確認する。glob を避けた split-rejoin 方式。
+        __kube_prompt_patch() {
+          [[ $PROMPT == *'%21v'* ]] && return     # 既にパッチ済み
+          [[ $PROMPT == *'%(19V'* ]] || return    # マーカー無し（Pure 仕様変更等）は no-op
+          local seg='%(21V. %F{#64BBBE}⎈ %21v%f.)'
+          local pre="''${PROMPT%%'%(19V'*}"
+          local suf="''${PROMPT#*'%(19V'}"
+          PROMPT="''${pre}''${seg}%(19V''${suf}"
+        }
+
+        # current-context を mtime+size signature キャッシュ付きでパース（変化時のみ再パース）。
+        __kube_ctx_update() {
+          # 表示は KUBECONFIG セット時のみなので source は KUBECONFIG（colon 区切りで複数可）。
+          local -a files=( "''${(@s.:.)KUBECONFIG}" )
+
+          local sig="" f
+          typeset -A st
+          for f in $files; do
+            [[ -n "$f" && -r "$f" ]] || continue
+            zstat -H st "$f" 2>/dev/null && sig+="$f:$st[mtime]:$st[size];"
+          done
+
+          [[ "$sig" == "$__kube_ctx_sig" ]] && return
+          __kube_ctx_sig="$sig"
+
+          local ctx=""
+          for f in $files; do
+            [[ -n "$f" && -r "$f" ]] || continue
+            ctx=$(awk -F'current-context:[[:space:]]*' '/^current-context:/{print $2; exit}' "$f")
+            [[ -n "$ctx" ]] && break
+          done
+          __kube_ctx="$ctx"
+        }
+
+        __kube_precmd() {
+          __kube_prompt_patch
+          # 判定基準は direnv 等による KUBECONFIG のセットのみ。未セットなら非表示。
+          if [[ -z "$KUBECONFIG" ]]; then
+            psvar[21]=
+            return
+          fi
+          __kube_ctx_update
+          # @ より前で短縮。psvar は %v 描画時に % を再解釈しないためエスケープ不要。
+          [[ -n "$__kube_ctx" ]] && psvar[21]="''${__kube_ctx%%@*}" || psvar[21]=
+        }
+        autoload -Uz add-zsh-hook
+        __kube_prompt_patch
+        add-zsh-hook precmd __kube_precmd
+
         # ---- キーバインド ----
         bindkey '^p' history-search-backward
         bindkey '^n' history-search-forward
