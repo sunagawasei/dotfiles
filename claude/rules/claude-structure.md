@@ -283,7 +283,7 @@ echo **/*.go
 
 ### 既存のRules
 
-- `/Users/s23159/.config/.claude/rules/golang.md` - 基本的なルール
+- `/Users/s23159/.config/claude/rules/golang.md` - 基本的なルール（グローバル）
 - `/Users/s23159/.config/.claude/rules/commit-messages.md` - trigger付きルール
 - `/Users/s23159/.config/.claude/rules/color-system.md` - 複雑なルール
 

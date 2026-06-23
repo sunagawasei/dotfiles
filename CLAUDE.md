@@ -89,4 +89,4 @@ Claude Codeによる変更には `Co-Authored-By: Claude Sonnet 4.6 <noreply@ant
 - `nvim/CLAUDE.md` - Neovim詳細（プラグイン一覧、キーマップ、トラブルシューティング）
 - `COLOR-SYSTEM.md` - カラーパレット全定義と色選択ルール
 - `KEYMAPS.md` - キーバインドリファレンス
-- `.claude/rules/` - ファイル種別ごとの規約（color-system.md, golang.md, neovim.md）
+- `.claude/rules/` - プロジェクト固有の規約（color-system.md, neovim.md, keymaps.md）。汎用ルール（golang/shell-security）は `claude/rules/` を参照
