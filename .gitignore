@@ -17,8 +17,11 @@ homebrew/
 *.zwc
 .zsh_history
 .zcompdump
-zsh/.zcompdump
+zsh/.zcompdump*
 zsh/.zcompcache/
+
+# helm（helm repo add が ~/.config/helm/ に自動生成）
+helm/
 __pycache__/
 *.py[cod]
 *$py.class
