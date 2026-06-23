@@ -48,5 +48,8 @@ in
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
+    # loading/export ログを抑制（direnv>=2.36 では direnv.toml に log_filter="^$" を生成）。
+    # env var DIRENV_LOG_FORMAT は 2.37.1 の export 経路で無視されるため silent を使う。
+    silent = true;
   };
 }
