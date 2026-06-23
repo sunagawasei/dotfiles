@@ -150,6 +150,11 @@ claude/*
 !claude/statusline.sh
 !claude/keybindings.json
 !claude/rules/
+claude/rules/*
+# rules配下はデフォルト非公開。公開してよいものだけ ! で明示する
+!claude/rules/golang.md
+!claude/rules/shell-security.md
+!claude/rules/claude-structure.md
 !claude/hooks/
 claude/hooks/*
 !claude/hooks/add_newline.go

@@ -5,11 +5,12 @@ paths:
   - "**/claude/rules/**"
   - "**/claude/skills/**"
   - "**/claude/docs/**"
+  - "**/claude/agents/**"
 ---
 
 # Claude Code構造規約
 
-このルールは、Claude Code構造ファイル（rules、skills、docs、CLAUDE.md）を編集する際に自動的に適用されます。
+このルールは、Claude Code構造ファイル（rules、skills、agents、docs、CLAUDE.md）を編集する際に自動的に適用されます。
 
 ## クイックリファレンス
 
