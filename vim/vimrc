@@ -102,6 +102,13 @@ highlight Operator guifg=#64BBBE ctermfg=73
 highlight PreProc guifg=#6CD8D3 ctermfg=80
 highlight Special guifg=#525B65 ctermfg=240
 highlight Todo guifg=#6CD8D3 guibg=NONE ctermfg=80 ctermbg=NONE gui=bold cterm=bold
+
+" Markdownのバッククォート（インラインコード `code` / コードフェンス ```）
+" 既定では markdownCodeDelimiter→Delimiter→Special(#525B65) で暗く沈むため、
+" Special自体(Conceal用途)は変えずデリミタだけ視認可能なTeal(Operator色)に上書き
+highlight markdownCodeDelimiter guifg=#64BBBE ctermfg=73
+" 見出しの # も同根（markdownHeadingDelimiter→Delimiter→Special）で沈むため同様に上書き
+highlight markdownHeadingDelimiter guifg=#64BBBE ctermfg=73
 highlight Underlined guifg=#6CD8D3 ctermfg=80 gui=underline cterm=underline
 highlight Conceal guifg=#525B65 ctermfg=240
 
@@ -150,6 +157,9 @@ let g:vim_markdown_folding_disabled = 1
 let g:vim_markdown_conceal = 2
 let g:vim_markdown_conceal_code_blocks = 0
 let g:vim_markdown_fenced_languages = ['bash=sh', 'go', 'python', 'vim', 'lua', 'json', 'yaml', 'toml']
+" 上はvim-markdownプラグイン用（未導入では無効）。組み込みmarkdown syntaxの
+" コードブロック言語ハイライトはこちらの変数を参照する
+let g:markdown_fenced_languages = ['bash=sh', 'go', 'python', 'vim', 'lua', 'json', 'yaml', 'toml']
 let g:vim_markdown_new_list_item_indent = 2
 let g:vim_markdown_no_extensions_in_markdown = 1
 
