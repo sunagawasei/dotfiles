@@ -18,30 +18,35 @@
 
 ## エージェント役割分担
 
-**Claude=唯一の「手」と安全ゲート / cursor=実装前プラン / codex=実装後レビュー**。振り分けはClaudeが判断。狙いは高単価な Opus の出力を「実装」に集中させ、前段の調査・計画は別subscriptionの cursor に、レビューは codex に外注してトークンを節約すること（codex は前段の調査・計画には使わない＝review 専任）。
+**Claude=唯一の「手」と安全ゲート（検証・適用・統括に専念）/ cursor=実装前プラン＋実装ドラフト（完成パッチ）/ codex=実装後レビュー**。振り分けはClaudeが判断。狙いは高単価な Opus の出力を「自分でコードを書くこと」から「外注パッチの検証・適用・安全判断」へ寄せてトークンを節約すること。前段の調査・計画・実装ドラフトは別subscriptionの cursor に、レビューは codex に外注する（codex は review 専任）。
+
+> 別課金プールの cursor/codex に外注することがトークン削減の本質。Claude Code 公式の `agent teams` やサブエージェントは**同一の Anthropic 課金プール（Opus）**を食う＝削減には逆行するので、この目的には使わない（補助として subagent に安いモデル指定はあり得るが本線ではない）。agmsg の `session_team`（既定 ON）は外注先の混線を防ぐ土台で、別物。
 
 | 役 | 担当 | 権限 |
 |---|---|---|
-| **Claude（本セッション）** | 実装・実行・git・権限/sandbox/auto-mode・最終統合・cursor/codex 結果の採否 | write（唯一の実行主体） |
-| **cursor** | 実装**前**の横断調査＋プラン（変更箇所特定・依存把握・パッケージ比較 → file:line 手順＋代替案）。強み=幅 | read-only |
+| **Claude（本セッション）** | cursorパッチの**検証・適用**・実行・git・権限/sandbox/auto-mode・最終統合・cursor/codex 結果の採否（自分でコードを書くのはパッチが不完全・危険・複雑な時のみ） | write（唯一の実行主体） |
+| **cursor** | 実装**前**の横断調査＋プラン＋**実装ドラフト**（変更箇所特定・依存把握・パッケージ比較 → file:line 手順＋代替案＋パッチ＝unified diff 優先・大規模は plan-only。詳細は下記鉄則）。強み=幅 | read-only（ファイルは書かずパッチをテキストで返す） |
 | **codex** | 実装**後**の diff 査読（正しさ・エッジ・回帰リスク → Findings のみ）。強み=深さ | read-only |
 
 振り分け基準:
 - **実装・実行・安全判断** — 本セッション自身（手放さない）
 - **小さな調査（1-2ファイル/明確な grep）** — Explore サブエージェント or Claude 直接
-- **中〜大タスクの計画・横断調査（3+ファイル/新機能/refactor/パッケージ選定/アーキ不明）** — cursor に先行 `ask`
+- **中〜大タスクの計画・横断調査・実装ドラフト（3+ファイル/新機能/refactor/パッケージ選定/アーキ不明）** — cursor に先行 `ask`（プランに加え unified diff のパッチまで出させる。ただし多ファイル/大量行になるなら全文パッチは出させず plan-only に戻す＝全文の往復で Opus が逆に増えるのを防ぐ）
 - **実装後レビュー** — codex に `ask`（下記ループ）
-- **実装で迷う/問題に直面** — cursor（別解・発散の案出し）と codex（候補案の検証・反証）の2視点。codex には計画でなく「この案で問題ないか」の検証を投げる（review の一種で専任と整合）
+- **実装で迷う/問題に直面** — cursor（別解・発散の案出し）と codex（候補案の検証・反証）の2視点。codex には計画でなく「この案で問題ないか」の検証を投げる（review の一種で専任と整合）。ただし codex に渡すのは具体物のみ＝候補パッチ/既存 file:line/失敗ログ。具体物のない抽象相談は cursor へ
 
 トークン節約ガード（中〜大タスク時）:
 - cursor プラン返却まで対象領域の Read/Grep/Glob を控え、実装は cursor が cite したファイルを起点に開く（不足・安全確認に必要なら Claude が追加で開いてよい。最終的な正しさ/安全判断は Claude が持つ）
+- **実装は cursor のパッチ適用が既定**。Claude はゼロから書かず、cursor が返したパッチを適用する。ただし適用は Claude の検証ゲートを必ず通す＝(適用前) scope/差分が意図通りか監査・`git apply --check` 相当で当たるか確認・既存の未コミット変更との衝突確認、(適用後) 当該プロジェクトの test/lint/format 実行。パッチが不完全・危険・複雑すぎる時のみ Claude が自分で書く（最終的な正しさ/安全判断は Claude が持つ。後段の codex レビューはこの検証の代替ではない）
 - cursor/codex の出力は要約してユーザーに転載せず、**採用項目だけ実装に反映**（コンテキスト膨張＝トークン増を防ぐ）
-- 同一 diff を cursor と codex の両方には回さない（例外: 大規模 refactor のみ cursor 事前影響分析 → 実装 → codex 査読）
+- cursor=生成 / codex=査読 と役割が違うので「cursor がドラフトした変更を codex がレビューする」のは標準フロー（二重回しではない）。避けるべきは同一観点の重複依頼（同じ diff のレビューを cursor にも codex にも投げる等）
 
-### cursor 依頼の鉄則（実装前プラン）
+### cursor 依頼の鉄則（実装前プラン＋実装ドラフト）
 
-- cursor は **read-only**。プランを返すだけで**実装は Claude**。cursor に diff レビューを振らない（codex の領域）
-- agmsg: 宛先 cursor・prefix `[plan]`。自己完結パケット = GOAL / CONSTRAINTS / SCOPE（対象パス）/ OUTPUT（手順 file:line・trade-off 2-3案・risks）/ DO NOT implement
+- cursor は **read-only**（ファイルは書けない）。プランと**適用可能なパッチをテキストで返す**だけで、ファイルへの適用＝実装は Claude。cursor に diff レビューを振らない（codex の領域）
+- agmsg: 宛先 cursor・prefix `[plan]`。自己完結パケット = GOAL / CONSTRAINTS / SCOPE（対象パス）/ OUTPUT（手順 file:line・trade-off 2-3案・risks・**パッチは unified diff を優先**。full file content は新規 or 小規模ファイル（目安: 単一ファイル・〜50行）に限定し、複数ファイルや大量行（目安: 数百行規模）になるならパッチは省いて plan-only にする＝全文往復で Opus が逆に増えるのを防ぐ）/ DO NOT write files（パッチはテキストで返す）
+- cursor は実機検証できない（read-only）。返ったパッチは Claude が :40 の検証ゲート（適用前チェック → 適用 → 適用後 test/lint/format）に従って取り込む。codex レビューはその後の追加の査読であって、Claude のローカル検証を省く理由にはしない
+- **インクリメンタル適用**: 大きい計画は一括パッチにせず、cursor に **1 ファイル/1 論理単位ずつ** パッチを出させ、各単位を Claude がクイックレビュー（scope・正しさ・破壊性の即チェック＋適用）してから、次の単位へ cursor を進める。巨大パッチの全面やり直し（トークン浪費）を防ぎ、早期に軌道修正する。codex の深い実装後レビューはこれとは別レイヤー（節目で実施）
 
 ### codex 依頼の鉄則（実装後レビュー）
 
