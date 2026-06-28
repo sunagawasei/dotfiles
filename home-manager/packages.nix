@@ -31,9 +31,6 @@ in
     grpcurl gitui imagemagick gifski pwgen tmux ansifilter
     ripgrep oxlint unzip
 
-    # インフラ
-    colima docker qemu
-
     # その他
     zoxide
 

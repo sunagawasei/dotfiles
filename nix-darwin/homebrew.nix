@@ -44,6 +44,7 @@ in
       "perman-aws-vault" # perman/tap
       # nixpkgs で問題があるもの
       "aws-cdk" # nodePackages 版が不安定
+      "container" # apple/container — Linux コンテナを軽量 VM で実行 (nixpkgs 非提供)
       "mysql-client" # nixpkgs にスタンドアロン版なし
       "datadog-labs/pack/pup" # Datadog CLI
       "oauth2l" # macOS 認証統合
@@ -79,6 +80,9 @@ in
   # nix-darwin の activation は #!/usr/bin/env -i bash で全環境変数をワイプするため
   # HOMEBREW_GITHUB_API_TOKEN を外部から渡せない。
   # gh auth token で動的に取得して env コマンドに注入する。
+  # 同様に XDG_CONFIG_HOME も env -i で消えるため、Homebrew 6.x の tap-trust 検証が
+  # ~/.config/homebrew/trust.json (`brew trust` の書込先) を見失い untrusted tap を拒否する。
+  # env に明示注入して activation の brew に読ませる。
   # 上書き元: nix-darwin modules/homebrew.nix lines 941-955
   # 注意: nix-darwin バージョンアップ時はアップストリームの変更を確認してこのスクリプトを更新すること
   system.activationScripts.homebrew.text = lib.mkForce ''
@@ -106,6 +110,7 @@ in
         --user=${lib.escapeShellArg cfg.user} \
         --set-home \
         env \
+        XDG_CONFIG_HOME="/Users/${cfg.user}/.config" \
         "''${_TOKEN_ENV[@]}" \
         ${cfg.onActivation.brewBundleCmd}
     else
