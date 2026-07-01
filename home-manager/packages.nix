@@ -1,4 +1,4 @@
-{ pkgs, gws, ... }:
+{ pkgs, gws, herdr, ... }:
 let
   sheets = pkgs.buildGoModule {
     pname = "sheets";
@@ -39,6 +39,9 @@ in
 
     # TUI スプレッドシート
     sheets
+
+    # AIエージェント用ターミナルマルチプレクサ
+    herdr
   ];
 
   # direnv: シェル統合を HM に任せる
