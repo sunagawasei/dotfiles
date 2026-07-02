@@ -101,6 +101,24 @@ MacBook内蔵キーボードとroBa（ZMK自作キーボード）の両方で押
   - アクション: `scroll:pageUp` / `scroll:pageDown`
   - 使い方: roBaのARROWレイヤーを保持しながらトラックボールを回す
 
+# WezTerm
+
+## タブ移動
+
+- `Cmd+Shift+]` / `Cmd+Shift+[`: 次/前のタブへ（wezterm自身のタブ）
+- `Ctrl+Tab` / `Ctrl+Shift+Tab`: 次/前のタブへ（外部キーボード互換用）
+  - フォアグラウンドプロセスが`herdr`の時は、この2つはwezterm自身のタブ切り替えではなくherdr側へ素通し（`SendKey`）される
+  - roBaのARROWレイヤー（かな/LANG1ホールド）で `R`/`W` を押すとこのCtrl+Tab系が送出される
+
+# herdr
+
+## タブ移動
+
+- `Ctrl+Tab` / `Ctrl+Shift+Tab`: 次/前のタブへ（wezterm経由でroBaのかな+R/Wから届く）
+- `Cmd+Shift+]` / `Cmd+Shift+[`: 次/前のタブへ（wezterm配下で使う場合、wezterm自身のタブ切り替えに奪われるため実質無効。単体ターミナルやSSH越しでの利用時のみ有効）
+- `Cmd+1`〜`Cmd+9`: タブ番号を直接指定（同上の制約あり）
+- 既存の`prefix+p`/`prefix+n`/`prefix+1..9`（tmux風）は維持
+
 # zsh
 
 ## suspenndを戻すコマンド

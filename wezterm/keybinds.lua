@@ -10,6 +10,23 @@ local function close_pane_smart(window, pane)
 	window:perform_action(act.CloseCurrentPane({ confirm = is_pane_busy(pane) }), pane)
 end
 
+-- herdr使用中はCtrl+Tab/Ctrl+Shift+Tabをherdr自身のタブ切り替えへ委譲する
+-- (herdrが独自のタブ概念を持つため、wezterm側のタブ切り替えより優先させたい)
+local function is_herdr_pane(pane)
+	local process = pane:get_foreground_process_name()
+	return process ~= nil and process:match("herdr$") ~= nil
+end
+
+local function tab_relative_or_passthrough(direction, passthrough_mods)
+	return wezterm.action_callback(function(window, pane)
+		if is_herdr_pane(pane) then
+			window:perform_action(act.SendKey({ key = "Tab", mods = passthrough_mods }), pane)
+		else
+			window:perform_action(act.ActivateTabRelative(direction), pane)
+		end
+	end)
+end
+
 local function close_tab_smart(window, pane)
 	local tab = pane:tab()
 	if not tab then
@@ -146,9 +163,9 @@ return {
 		-- Tab移動
 		{ key = "]", mods = "SUPER|SHIFT", action = act.ActivateTabRelative(1) },
 		{ key = "[", mods = "SUPER|SHIFT", action = act.ActivateTabRelative(-1) },
-		-- Tab移動 (Ctrl+Tab) - 外部キーボード互換用
-		{ key = "Tab", mods = "CTRL", action = act.ActivateTabRelative(1) },
-		{ key = "Tab", mods = "CTRL|SHIFT", action = act.ActivateTabRelative(-1) },
+		-- Tab移動 (Ctrl+Tab) - 外部キーボード互換用。herdrがフォアグラウンドの時はherdr側のタブ切り替えに委譲
+		{ key = "Tab", mods = "CTRL", action = tab_relative_or_passthrough(1, "CTRL") },
+		{ key = "Tab", mods = "CTRL|SHIFT", action = tab_relative_or_passthrough(-1, "CTRL|SHIFT") },
 		-- Tab入れ替え
 		{ key = "{", mods = "LEADER", action = act({ MoveTabRelative = -1 }) },
 		-- Tab新規作成
