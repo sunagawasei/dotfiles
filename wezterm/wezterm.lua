@@ -177,8 +177,8 @@ config.enable_tab_bar = true
 config.tab_bar_at_bottom = true
 -- fancyタブバーを使用（タブバー専用フォントサイズ指定のため。format-tab-titleは引き続き有効）
 config.use_fancy_tab_bar = true
--- タブが1つの時もタブバーを表示
-config.hide_tab_bar_if_only_one_tab = false
+-- タブが1つの時はタブバーを非表示
+config.hide_tab_bar_if_only_one_tab = true
 -- タブバーの新規タブボタンを非表示
 config.show_new_tab_button_in_tab_bar = false
 -- タブインデックス番号を非表示
