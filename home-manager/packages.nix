@@ -3,10 +3,14 @@ let
   # アクティブpane枠=白 / 非アクティブ=青（デフォルトは逆）にするための上流パッチ。
   # レガシー制御バイト31(US)の逆デコードがCtrl+-になっておりCtrl+_/Ctrl+/が
   # kittyキーボードプロトコル配下（例: Neovim）で別キーに化けるバグの修正。
+  # pane削除(prefix+x)時、フォーカスpane内でshell以外のプロセス（neovim等）が
+  # 実行中なら閉じる前に確認ダイアログを出す機能追加（wezterm skip_close_confirmation
+  # _for_processes_named の逆相当）。config `confirm_close_running_process`(既定true)。
   herdrPatched = herdr.overrideAttrs (old: {
     patches = (old.patches or [ ]) ++ [
       ./patches/herdr-active-pane-border-white.patch
       ./patches/herdr-ctrl-underscore-decode.patch
+      ./patches/herdr-confirm-close-running-process.patch
     ];
   });
 
