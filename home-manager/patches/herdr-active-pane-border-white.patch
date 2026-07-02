@@ -1,0 +1,28 @@
+diff --git a/src/ui/panes.rs b/src/ui/panes.rs
+index e62936c..d1a48ce 100644
+--- a/src/ui/panes.rs
++++ b/src/ui/panes.rs
+@@ -394,9 +394,9 @@ fn render_pane_borders(app: &AppState, ws: &crate::workspace::Workspace, frame:
+         let cell = &mut buf[(x, y)];
+         cell.set_symbol(symbol);
+         let color = if focused {
+-            app.palette.accent
+-        } else {
+             app.palette.overlay0
++        } else {
++            app.palette.accent
+         };
+         cell.set_style(Style::default().fg(color));
+     }
+@@ -555,9 +555,9 @@ fn render_pane_border_titles(app: &AppState, ws: &crate::workspace::Workspace, f
+             continue;
+         }
+         let color = if info.is_focused {
+-            app.palette.accent
+-        } else {
+             app.palette.overlay0
++        } else {
++            app.palette.accent
+         };
+         let mut style = Style::default().fg(color);
+         if info.is_focused {

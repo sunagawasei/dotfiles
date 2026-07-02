@@ -1,0 +1,13 @@
+diff --git a/src/input/parse.rs b/src/input/parse.rs
+index bf377e8..831c63f 100644
+--- a/src/input/parse.rs
++++ b/src/input/parse.rs
+@@ -109,7 +109,7 @@ fn parse_legacy_ctrl_char(ch: char) -> Option<TerminalKey> {
+         28 => Some(TerminalKey::new(KeyCode::Char('\\'), KeyModifiers::CONTROL)),
+         29 => Some(TerminalKey::new(KeyCode::Char(']'), KeyModifiers::CONTROL)),
+         30 => Some(TerminalKey::new(KeyCode::Char('^'), KeyModifiers::CONTROL)),
+-        31 => Some(TerminalKey::new(KeyCode::Char('-'), KeyModifiers::CONTROL)),
++        31 => Some(TerminalKey::new(KeyCode::Char('_'), KeyModifiers::CONTROL)),
+         _ => None,
+     }
+ }

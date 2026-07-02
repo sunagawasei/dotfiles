@@ -1,5 +1,15 @@
 { pkgs, gws, herdr, ... }:
 let
+  # アクティブpane枠=白 / 非アクティブ=青（デフォルトは逆）にするための上流パッチ。
+  # レガシー制御バイト31(US)の逆デコードがCtrl+-になっておりCtrl+_/Ctrl+/が
+  # kittyキーボードプロトコル配下（例: Neovim）で別キーに化けるバグの修正。
+  herdrPatched = herdr.overrideAttrs (old: {
+    patches = (old.patches or [ ]) ++ [
+      ./patches/herdr-active-pane-border-white.patch
+      ./patches/herdr-ctrl-underscore-decode.patch
+    ];
+  });
+
   sheets = pkgs.buildGoModule {
     pname = "sheets";
     version = "unstable-a5af8b3";
@@ -41,7 +51,7 @@ in
     sheets
 
     # AIエージェント用ターミナルマルチプレクサ
-    herdr
+    herdrPatched
   ];
 
   # direnv: シェル統合を HM に任せる
