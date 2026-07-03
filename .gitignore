@@ -129,6 +129,7 @@ agents/
 crush/
 goose/
 opencode/
+herdr/
 
 # Cursor CLI (local configuration)
 cursor/
