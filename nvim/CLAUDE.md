@@ -57,35 +57,8 @@ Conform.nvimで管理。設定されているフォーマッター：
 フォーマット実行:
 - `<leader>cf`: 現在のファイルをフォーマット（LazyVimデフォルト）
 
-### LSP操作
-基本的なLSPナビゲーション：
-- `gd`: 定義へジャンプ
-- `gr`: 参照箇所を検索（関数が使われている場所を表示）
-- `gI`: 実装へジャンプ
-- `gy`: 型定義へジャンプ
-- `gD`: 宣言へジャンプ
-- `K`: ホバー情報表示（定義・ドキュメントをフローティングウィンドウで表示）
-- `gK`: シグネチャヘルプ
-
-診断関連：
-- `<leader>cd`: 診断を表示
-- `gl` / `<leader>ld`: 行の診断をフローティングで表示
-- `[d` / `]d`: 前/次の診断へ移動
-- `[e` / `]e`: 前/次のエラーへ移動
-
-コード操作：
-- `<leader>ca`: コードアクション
-- `<leader>cr`: リネーム
-- `<leader>cl`: LSP情報表示
-
-VSCode互換：
-- VSCodeの`gh`（定義をフローティング表示）は、Neovimでは`K`キーが同等の機能を提供
-
-### ファイル検索・エクスプローラー
-Snacks.nvimベース：
-- `<leader>fe`: ファイルエクスプローラーを開く
-- `<leader>ff`: ファイル検索
-- 隠しファイルとgitignoreファイルもデフォルトで表示
+### LSP操作・ファイル検索
+LSPナビゲーション（`gd`定義ジャンプ等）、診断表示、コードアクション、Snacks.nvimベースのファイル検索・エクスプローラー（`<leader>fe`/`<leader>ff`）を提供。キーバインド詳細は`../KEYMAPS.md`参照。
 
 ## 設定の特徴
 
@@ -125,25 +98,8 @@ Snacks.nvimベース：
 
 ### コーディング支援
 - **copilot.vim**: GitHub Copilot（AIコード補完、Tabキーで補完）
-- **CopilotChat.nvim**: Copilotとの対話型チャット（日本語対応）
-  - `<leader>cc`: チャットを開く
-  - `<leader>cE`: コード説明（選択モード）
-  - `<leader>cR`: コードレビュー（選択モード）
-  - **選択範囲の渡し方**:
-    - ビジュアルモード（`v`/`V`/`<C-v>`）で選択 → キーマップ実行
-    - 選択がない場合は自動的にバッファ全体が対象
-  - **ファイル・コンテキストの渡し方**（チャット内で使用）:
-    - `#file:path/to/file` - 特定ファイルを追加
-    - `#buffer:current` - 現在のバッファ
-    - `#buffers:visible` - 表示中の全バッファ
-    - `#gitdiff` - Git差分
-    - `#diagnostics:current` - 診断情報
-    - `#glob:*.lua` - パターンマッチするファイル一覧
-    - `#grep:TODO` - ワークスペース内検索
-- **claudecode.nvim**: Claude Code統合
-  - `<leader>aI`: Claude Code起動
-  - `<leader>aS`: Claude Code停止
-  - `<leader>ai`: Claude Codeステータス確認
+- **CopilotChat.nvim**: Copilotとの対話型チャット（日本語対応）。キーバインド・コンテキスト指定構文は`../KEYMAPS.md`参照
+- **claudecode.nvim**: Claude Code統合。キーバインドは`../KEYMAPS.md`参照
 - **blink.cmp**: 補完エンジン（LazyVimデフォルト）
 - **conform.nvim**: コードフォーマッター
 - **nvim-lint**: リンター統合
@@ -151,86 +107,17 @@ Snacks.nvimベース：
 
 ### テスト実行（Neotest）
 - **neotest**: テスト実行フレームワーク（VSCode Test Explorer相当）
-- **neotest-golang**: Go言語テストアダプタ（サブテスト、テーブルテスト対応）
+- **neotest-golang**: Go言語テストアダプタ（サブテスト、テーブルテスト、レース検出、カバレッジ、DAP連携対応）
 
-#### 基本テスト実行キーバインド：
-- `<leader>tr`: カーソル位置のテストを実行（最も近いテスト）
-- `<leader>tt`: 現在のファイルのすべてのテストを実行
-- `<leader>tT`: プロジェクト全体のテストを実行
-- `<leader>tl`: 最後に実行したテストを再実行
-- `<leader>td`: カーソル位置のテストをデバッグ実行
-
-#### 拡張テスト実行キーバインド：
-- `<leader>tp`: パッケージ/ディレクトリ単位でテスト実行
-- `<leader>tf`: 失敗したテストのみ再実行（詳細出力付き）
-- `<leader>ta`: プロジェクト全体のテスト実行（詳細出力付き）
-- `<leader>tA`: プロジェクト全体のテスト実行（レース検出付き）
-- `<leader>tc`: 最寄りのテストをカバレッジ測定付きで実行
-- `<leader>tC`: 現在ファイルをカバレッジ測定付きで実行
-
-#### テスト結果・出力操作：
-- `<leader>ts`: テスト結果サマリーを表示/非表示
-- `<leader>to`: テスト出力を表示
-- `<leader>tO`: テスト出力パネルを切り替え
-- `<leader>tx`: 実行中のテストを停止
-- `<leader>tq`: テストquickfixウィンドウを閉じる
-- `<leader>t?`: テストステータスを開く
-- `<leader>tw`: テストウォッチモード切り替え
-
-#### Go言語テスト機能：
-- **サブテスト実行**: `t.Run("subtest", ...)`の個別実行
-- **テーブルテスト対応**: テストケース単位での実行
-- **レース検出**: `-race`フラグによる並行処理バグ検出
-- **カバレッジ測定**: `-cover`フラグによるコードカバレッジ
-- **詳細出力**: `-v`フラグによるテスト実行詳細表示
-- **Testifyサポート**: Testifyフレームワークのテストスイート対応
-- **デバッグ統合**: DAP（Debug Adapter Protocol）連携
-
-#### テスト結果の視覚表示：
-- **インラインマーカー**: テスト関数の横に成功/失敗アイコン表示
-- **カラーコード**: カスタムカラーによる状態表示
-  - ✓ 成功（緑）、✗ 失敗（赤）、◐ 実行中（青）、○ スキップ（黄）
-- **サマリーパネル**: ツリー形式でのテスト構造・結果表示
-- **出力パネル**: テスト実行ログとエラー詳細
+キーバインド一覧は`../KEYMAPS.md`参照。「No tests found」等のトラブルシューティングは`../.claude/docs/nvim-troubleshooting.md`参照。
 
 ### Git連携
 - **gitsigns.nvim**: Git差分表示
 
 ### エディタ機能
-- **toggleterm.nvim**: 統合ターミナル（最も人気のあるプラグイン）
-  - **基本操作**:
-    - `<leader>t1/t2/t3`: 番号付きターミナル
-    - `<C-/>`: 最後のターミナルトグル
-    - `<leader>ta`: 全ターミナル一括トグル
-  - **モード・方向切り替え**:
-    - `<leader>tm`: モード切り替え（Single/Side-by-Side）
-    - `<leader>th`: Horizontal（下部横分割）
-    - `<leader>tv`: Vertical（右側縦分割）
-    - `<leader>tf`: Float（フローティング）
-    - `<leader>tD`: 方向をサイクル切り替え（H→V→F）
-  - **サイズ変更**:
-    - `<M-k>` / `<M-j>`: 高さを1行ずつ増減（Alt + k/j）
-    - `<M-K>` / `<M-J>`: 高さを5行ずつ増減（Alt + Shift + k/j）
-    - `<leader>t+`: 最大化
-    - `<leader>t-`: 小サイズ（10行）
-  - **REPL機能（選択範囲送信）**:
-    - `<leader>ts`: 選択範囲をターミナルに送信（ビジュアル/ノーマル）
-    - `<leader>tl`: 選択行をターミナルに送信（ビジュアル）
-  - **管理機能**:
-    - `<leader>tn`: ターミナルに名前を付ける
-    - `<leader>tS`: ターミナル選択UI
-  - **Git統合**:
-    - `<leader>gg`: LazyGit（フローティング）
-  - **ターミナル内操作**:
-    - `<Esc><Esc>` / `<C-q>` / `jk`: ノーマルモードへ
-    - `<C-h/j/k/l>`: ウィンドウ移動
+- **toggleterm.nvim**: 統合ターミナル（最も人気のあるプラグイン）。番号付きターミナル、方向切り替え、サイズ変更、REPL選択範囲送信、LazyGit統合など。キーバインドは`../KEYMAPS.md`参照
 - **render-markdown.nvim**: Markdownプレビュー強化（カスタムカラー適用）
-- **flash.nvim**: 高速移動・検索
-  - `s`: Flash jump（ラベル付きジャンプ）
-  - `S`: Flash Treesitter（構文要素ジャンプ）
-  - `f`/`F`: 前方/後方文字検索（`t`/`T`は無効化済み）
-  - `;`/`,`: 文字検索の繰り返し/逆方向
-  - **注意**: `t`/`T`キーは無効化（Neotestキーバインドとの競合回避）
+- **flash.nvim**: 高速移動・検索。`t`/`T`キーはNeotestキーバインドとの競合回避のため無効化済み（設定: `lua/plugins/flash-config.lua`）。キーバインドは`../KEYMAPS.md`参照
 - **which-key.nvim**: キーバインドヘルプ表示
 - **mini.ai**: テキストオブジェクト拡張
 - **mini.pairs**: 括弧の自動ペアリング
@@ -262,84 +149,4 @@ Snacks.nvimベース：
 :messages             # エラーメッセージ履歴
 ```
 
-### キーマップの競合確認
-```vim
-:map <leader>tr       # 特定のキーマップを確認
-:nmap <leader>t       # ノーマルモードのキーマップを確認
-:verbose map s        # キーマップの詳細情報を確認
-```
-
-### テスト実行の問題
-
-#### "No tests found" エラーの対処法
-```vim
-:TSInstall go gomod gosum gowork  # Treesitterパーサーを再インストール
-:checkhealth treesitter           # Treesitterの状態確認
-:checkhealth neotest              # Neotestの診断
-:lua print(vim.inspect(require("neotest").summary.get_adapters())) # アダプター確認
-```
-
-#### キーマップが動作しない場合
-- `<leader>tr`が動作しない場合：Flash.nvimの`t`キー設定を確認
-- 設定ファイル：`lua/plugins/flash-config.lua`で`t`/`T`キーを無効化済み
-- 遅延読み込みが原因の場合：プラグインが読み込まれているか確認
-
-#### Goテスト検出の問題
-- **プロジェクトルート**: `go.mod`ファイルがプロジェクトルートに存在するか確認
-- **ファイル名**: `*_test.go`パターンに従っているか確認
-- **関数名**: `Test*`または`Benchmark*`で始まっているか確認
-- **作業ディレクトリ**: Neovimをプロジェクトルートから起動しているか確認
-
-#### デバッグコマンド
-```vim
-:messages                          # 起動時のデバッグメッセージを確認
-:lua vim.print(require("neotest").state.get_adapters()) # アダプター一覧
-:lua vim.print(require("neotest").state.adapter_id("neotest-golang")) # 特定アダプタID
-:checkhealth neotest              # Neotestヘルスチェック
-:Neotest summary                  # テストサマリーを表示
-```
-
-#### 起動時の確認事項
-Neovimを起動後、`:messages`で以下のメッセージが表示されるかを確認：
-```
-neotest-golang loaded successfully
-Neotest configured with 1 adapter(s)
-Adapter 1: neotest-golang
-```
-
-メッセージが表示されない場合は、アダプタの読み込みに失敗しています。
-
-#### 段階的な動作確認手順
-1. **Neovimの再起動**
-   ```bash
-   # プロジェクトルートから起動（go.modがあるディレクトリ）
-   cd /path/to/go/project
-   nvim
-   ```
-
-2. **アダプタ読み込みの確認**
-   ```vim
-   :messages  # 起動メッセージを確認
-   ```
-
-3. **Goテストファイルを開く**
-   ```vim
-   :e *_test.go  # テストファイルを開く
-   ```
-
-4. **テスト関数にカーソルを移動**
-   - `Test*`で始まる関数の中にカーソルを置く
-
-5. **テスト実行**
-   ```vim
-   <leader>tr  # 最寄りのテストを実行
-   ```
-
-6. **結果確認**
-   - 「No tests found」が表示されなければ成功
-   - テストが実行され、結果が表示される
-
-### プラグイン設定の確認
-- Go言語サポート：`lua/config/lazy.lua`で`extras.lang.go`が有効
-- テスト設定：`lua/plugins/neotest.lua`でneotest-golang設定
-- Flash設定：`lua/plugins/flash-config.lua`でキーマップカスタマイズ
+キーマップ競合確認は`:map`/`:nmap`/`:verbose map`。Neotestの「No tests found」等、テスト実行関連の詳細なトラブルシューティング手順は`../.claude/docs/nvim-troubleshooting.md`参照。

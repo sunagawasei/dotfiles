@@ -24,7 +24,6 @@ paths:
 paths:
   - "**/*.ext"
   - "**/pattern/**"
-trigger: "optional-keyword"
 ---
 
 # ルール名

@@ -2,7 +2,6 @@
 paths:
   - "**/*.ext"
   - "**/pattern/**"
-trigger: "optional-keyword"
 ---
 
 # [Rule Name]
