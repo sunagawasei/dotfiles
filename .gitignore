@@ -177,6 +177,7 @@ claude/skills/*
 !claude/skills/copilot/
 !claude/skills/init-project/
 !claude/skills/issue-draft/
+!claude/skills/session-harvest/
 !claude/skills/session-verify/
 !claude/skills/team-collab/
 !claude/docs/
