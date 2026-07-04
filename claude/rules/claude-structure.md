@@ -285,8 +285,9 @@ echo **/*.go
 ### 既存のRules
 
 - `/Users/s23159/.config/claude/rules/golang.md` - 基本的なルール（グローバル）
-- `/Users/s23159/.config/.claude/rules/commit-messages.md` - trigger付きルール
-- `/Users/s23159/.config/.claude/rules/color-system.md` - 複雑なルール
+- `/Users/s23159/.config/claude/rules/datadog.md` - ローカル限定ルール（`.gitignore`で非公開）
+- `/Users/s23159/.config/.claude/rules/color-system.md` - 複雑なルール（プロジェクト固有）
+- `/Users/s23159/.config/.claude/rules/keymaps.md` - シンプルなルール（プロジェクト固有）
 
 ### 既存のSkills
 

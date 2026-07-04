@@ -223,38 +223,29 @@ paths:
 - テストファイル: `*_test.go`パターンに従う
 ```
 
-### 実例2: コミットメッセージ規約（プロジェクト固有）
+### 実例2: キーマップ規約（プロジェクト固有）
 
-場所: `/Users/s23159/.config/.claude/rules/commit-messages.md`
+場所: `/Users/s23159/.config/.claude/rules/keymaps.md`
 
 ```yaml
 ---
 paths:
-  - "**/*"
-trigger: "commit"
+  - "**/nvim/lua/config/keymaps.lua"
+  - "**/wezterm/keybinds.lua"
+  - "**/KEYMAPS.md"
 ---
 
-# コミットメッセージ規約
+# キーマップ規約
 
-## 基本形式
+## ドキュメント更新必須
 
-Conventional Commits形式に従います：
+**キーバインドや操作を追加した場合は必ず`KEYMAPS.md`に記録する**
 
-```
-<type>(<scope>): <subject>
-```
+## 更新ワークフロー
 
-## Type
-- `feat`: 新機能追加
-- `fix`: バグ修正
-- `docs`: ドキュメント変更
-
-## 実例
-
-```
-feat(nvim): Snacksターミナル設定を拡張
-fix(wezterm): キーバインドの競合を修正
-```
+1. 新しいキーバインドを設定ファイルに追加
+2. 動作確認
+3. `KEYMAPS.md`にエントリを追加
 ```
 
 ## トラブルシューティング

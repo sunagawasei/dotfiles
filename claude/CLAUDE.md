@@ -8,6 +8,8 @@
 
 - **Go言語規約**: 詳細は `claude/rules/golang.md` を参照
 - **セキュリティガイドライン**: 詳細は `claude/rules/shell-security.md` を参照
+- **Claude Code構造規約**: 詳細は `claude/rules/claude-structure.md` を参照
+- **Datadogプロジェクト規約**: 詳細は `claude/rules/datadog.md` を参照（社内情報を含むためローカル限定・非公開）
 
 これらのルールは、該当するファイルを編集する際に自動的に適用されます。
 
@@ -20,7 +22,7 @@
 
 **Claude=唯一の「手」と安全ゲート（検証・適用・統括に専念）/ cursor=実装前プラン＋実装ドラフト（完成パッチ）/ codex=実装後レビュー**。振り分けはClaudeが判断。狙いは高単価な Opus の出力を「自分でコードを書くこと」から「外注パッチの検証・適用・安全判断」へ寄せてトークンを節約すること。前段の調査・計画・実装ドラフトは別subscriptionの cursor に、レビューは codex に外注する（codex は review 専任）。
 
-> 別課金プールの cursor/codex に外注することがトークン削減の本質。Claude Code 公式の `agent teams` やサブエージェントは**同一の Anthropic 課金プール（Opus）**を食う＝削減には逆行するので、この目的には使わない（補助として subagent に安いモデル指定はあり得るが本線ではない）。agmsg の `session_team`（既定 ON）は外注先の混線を防ぐ土台で、別物。
+> 別課金プールの cursor/codex に外注することがトークン削減の本質。Claude Code 公式の `agent teams` やサブエージェントは**同一の Anthropic 課金プール（Opus）**を食う＝削減には逆行するので、この目的には使わない（補助として subagent に安いモデル指定はあり得るが本線ではない）。agmsg の `session_team`（コード既定はOFF・この環境では有効化済み）は外注先の混線を防ぐ土台で、別物。
 
 | 役 | 担当 | 権限 |
 |---|---|---|

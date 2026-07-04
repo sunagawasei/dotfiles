@@ -223,7 +223,7 @@ allowed-tools: Tool(*)    # オプション: ツール制限
 
 ### 実例1: シンプルなワークフロースキル
 
-場所: `/Users/s23159/.config/claude/skills/config-change/SKILL.md`
+場所: `/Users/s23159/.config/.claude/skills/config-change/SKILL.md`
 
 ```yaml
 ---
