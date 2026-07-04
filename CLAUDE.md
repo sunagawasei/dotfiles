@@ -26,7 +26,15 @@ cd scripts && go run validate-colors.go
 
 # Raycast拡張機能
 cd raycast/extensions/<name> && npm run lint && npm run build
+
+# nix-darwin / home-manager の反映
+sudo darwin-rebuild switch --flake ~/.config#CA-20021145
 ```
+
+### darwin-rebuild の既知事象
+
+- **新規ファイル（`home-manager/patches/` 等）は `git add` してから rebuild する** — flakeはgit追跡ファイルしか見ないため、未追跡だと "Path ... is not tracked by Git" でNix評価が失敗する
+- brew bundle の untrusted tap 警告（社内tap `cycloud-io/*` 等）と `--cleanup` 非推奨警告は**無害・無視してよい**
 
 ## コード規約
 
