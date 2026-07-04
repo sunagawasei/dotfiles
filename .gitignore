@@ -94,7 +94,10 @@ yarn-error.log*
 *.pem
 
 # Claude Code プロジェクト設定（ローカル環境固有）
-.claude/
+.claude/*
+!.claude/skills/
+.claude/skills/*
+!.claude/skills/claude-audit/
 
 # MCP Serena設定・キャッシュ（ローカル環境固有）
 .serena/
@@ -170,9 +173,14 @@ claude/hooks/*
 claude/skills/*
 !claude/skills/add-rule/
 !claude/skills/add-skill/
+!claude/skills/commit/
 !claude/skills/copilot/
 !claude/skills/init-project/
+!claude/skills/issue-draft/
+!claude/skills/session-verify/
+!claude/skills/team-collab/
 !claude/docs/
 !claude/agents/
 claude/agents/*
+!claude/agents/commit.md
 !claude/agents/copilot.md
