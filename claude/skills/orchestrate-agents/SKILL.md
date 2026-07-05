@@ -49,6 +49,8 @@ cursorはCLAUDE.mdの方針転換(2026-07-04〜)により**横断調査・デー
 ~/.agents/skills/agmsg/scripts/send.sh $TEAM $AGENT codex "[review] <git diff or file:line> / 意図: ... / 前回指摘→対応: ..."
 ```
 
+diff同梱など長文・quoting事故が起きやすいパケットは、本文を4番目の引数で渡さず、ファイルに組み立ててから `send.sh <team> <from> <to> --stdin < packet.txt` で標準入力から渡す(実例: 2026-07-05のcodexレビュー依頼)。
+
 `$TEAM`/`$AGENT`はこのセッションの既知の値(agmsgスキルのIdentityで確認済みのもの)を使う。
 
 ### 3. ターンを終えるか、他の独立作業を続ける
