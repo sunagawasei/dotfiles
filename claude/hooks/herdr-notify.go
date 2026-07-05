@@ -1,10 +1,8 @@
-// claude-notify は Claude Code の hook として動作し、
-// stdin の JSON を解析して macOS のデスクトップ通知を出します。
-//
-// 通知は「状態」と「会話タイトル」の2点だけを表示します:
-//   - サブタイトル: 状態（完了 / 入力待ち / 許可待ち / エラー）
-//   - 本文        : 会話タイトル（= WezTerm タブバー表示。未生成時はプロジェクト名）
-//
+// herdr-notify は Claude Code の hook として動作し、herdr の通知（delivery=terminal）が
+// カバーしない2つのギャップ — エラー終了と入力待ち放置 — だけを herdr の通知API
+// （herdr notification show）で補います。herdr が使えない場合は旧実装
+// claude-notify.go と同じ osascript 経路にフォールバックします。
+// Stop / permission_prompt は herdr 純正の通知が担当するため、ここでは配線しません。
 // hook 用途のため non-blocking（エラーは握りつぶして常に exit 0）。
 package main
 
@@ -23,19 +21,13 @@ import (
 type InputData struct {
 	HookEventName    string `json:"hook_event_name"`
 	NotificationType string `json:"notification_type"`
-	Message          string `json:"message"`
 	Cwd              string `json:"cwd"`
 	SessionID        string `json:"session_id"`
 	TranscriptPath   string `json:"transcript_path"`
-	StopHookActive   bool   `json:"stop_hook_active"`
 }
 
-// notification は組み立てた通知内容を表します。
-type notification struct {
-	subtitle string // 状態ラベル
-	body     string // 会話タイトル
-	sound    string
-}
+// debugLogPath は HERDR_NOTIFY_DEBUG 有効時のログ出力先です。
+const debugLogPath = "/tmp/herdr-notify.log"
 
 // transcriptFilePath はトランスクリプトファイルのパスを解決します。
 // in.TranscriptPath が空の場合は session_id + cwd から再構成します。
@@ -187,56 +179,6 @@ func truncate(s string, max int) string {
 	return string(runes[:max-1]) + "…"
 }
 
-// resolve はイベント種別から通知内容を決定します。
-// サブタイトルに状態、本文に会話タイトルを載せます。
-func resolve(in InputData) (notification, bool) {
-	txPath := transcriptFilePath(in)
-
-	// 本文に表示する会話タイトル。WezTerm タブバーと同一の文字列を優先し、
-	// 無ければ cwd のディレクトリ名にフォールバックする。
-	// （新規/直後の /clear セッションはタイトル未生成のため空になりうる）
-	title := ""
-	if txPath != "" {
-		title = truncate(extractConversationTitle(txPath), 60)
-	}
-	if title == "" && in.Cwd != "" {
-		title = filepath.Base(in.Cwd)
-	}
-
-	switch in.HookEventName {
-	case "Stop":
-		// stop_hook_active=true はループ継続中の中間発火なので通知しない
-		if in.StopHookActive {
-			return notification{}, false
-		}
-		return notification{"完了", title, "Glass"}, true
-
-	case "StopFailure":
-		return notification{"エラー", title, "Basso"}, true
-
-	case "Notification":
-		switch in.NotificationType {
-		case "permission_prompt":
-			return notification{"許可待ち", title, "Submarine"}, true
-
-		case "idle_prompt":
-			// pending tool_use が無ければタスク完了後の単なるアイドル。
-			// 完了は Stop 通知で既に伝えているため追加通知しない。
-			if txPath != "" && !hasPendingToolUse(txPath) {
-				return notification{}, false
-			}
-			return notification{"入力待ち", title, "Submarine"}, true
-
-		default:
-			// 未知の Notification でも message があれば状態として出す
-			if msg := strings.TrimSpace(in.Message); msg != "" {
-				return notification{"通知", title, "Submarine"}, true
-			}
-		}
-	}
-	return notification{}, false
-}
-
 // escapeAppleScript は AppleScript の文字列リテラルに安全に埋め込めるよう
 // バックスラッシュ・ダブルクォートをエスケープします。
 // 改行は & return & 連結に変換して複数行通知を実現します。
@@ -249,6 +191,82 @@ func escapeAppleScript(s string) string {
 	return s
 }
 
+// resolveBody は通知本文（会話タイトル、無ければ cwd のディレクトリ名）を返します。
+func resolveBody(in InputData) string {
+	title := ""
+	if txPath := transcriptFilePath(in); txPath != "" {
+		title = truncate(extractConversationTitle(txPath), 60)
+	}
+	if title == "" && in.Cwd != "" {
+		title = filepath.Base(in.Cwd)
+	}
+	return title
+}
+
+// tryHerdr は herdr notification show で通知を出します。herdr が未インストール、
+// 実行エラー、または応答に "shown":true が含まれない場合は false を返し、
+// 呼び出し元に osascript フォールバックを促します。
+func tryHerdr(title, body string) bool {
+	if _, err := exec.LookPath("herdr"); err != nil {
+		return false
+	}
+	out, err := exec.Command("herdr", "notification", "show", title, "--body", body, "--sound", "request").Output()
+	if err != nil {
+		return false
+	}
+	return strings.Contains(string(out), `"shown":true`)
+}
+
+// notifyViaOsascript は旧実装 claude-notify.go と同じ経路で macOS 通知を出します
+// （herdr が使えない場合のフォールバック）。
+func notifyViaOsascript(label, body, sound string) {
+	script := fmt.Sprintf(
+		`display notification "%s" with title "Claude Code" subtitle "%s" sound name "%s"`,
+		escapeAppleScript(body),
+		escapeAppleScript(label),
+		escapeAppleScript(sound),
+	)
+	_ = exec.Command("osascript", "-e", script).Run()
+}
+
+// notify は herdr → osascript の2段構えで通知を配送します。
+func notify(in InputData, label, sound string, debug bool) {
+	title := "claude " + label
+	body := resolveBody(in)
+
+	if tryHerdr(title, body) {
+		logResult(debug, "herdr ok")
+		return
+	}
+	logResult(debug, "herdr failed→osascript fallback")
+	notifyViaOsascript(label, body, sound)
+}
+
+// logRaw はデバッグ時に生の stdin JSON をログへ追記します。
+func logRaw(debug bool, raw []byte) {
+	if !debug {
+		return
+	}
+	appendLog(fmt.Sprintf("stdin: %s", bytes.TrimRight(raw, "\n")))
+}
+
+// logResult はデバッグ時に配送結果をログへ追記します。
+func logResult(debug bool, format string, args ...any) {
+	if !debug {
+		return
+	}
+	appendLog(fmt.Sprintf(format, args...))
+}
+
+func appendLog(line string) {
+	f, err := os.OpenFile(debugLogPath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644)
+	if err != nil {
+		return
+	}
+	defer f.Close()
+	fmt.Fprintf(f, "%s\n", line)
+}
+
 func main() {
 	// 生バイトを先に全部読む（デバッグで未知フィールドを捨てないため）
 	rawBytes, err := io.ReadAll(os.Stdin)
@@ -256,14 +274,8 @@ func main() {
 		return
 	}
 
-	// デバッグ用: CLAUDE_NOTIFY_DEBUG が設定されていれば生 JSON をログに残す
-	// （未知フィールドを含む実ペイロードを確認するため。通常運用では未設定）
-	if os.Getenv("CLAUDE_NOTIFY_DEBUG") != "" {
-		if f, ferr := os.OpenFile("/tmp/claude-notify.log", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0o644); ferr == nil {
-			fmt.Fprintf(f, "%s\n", rawBytes)
-			f.Close()
-		}
-	}
+	debug := os.Getenv("HERDR_NOTIFY_DEBUG") != ""
+	logRaw(debug, rawBytes)
 
 	var input InputData
 	// JSON デコードに失敗しても静かに終了（non-blocking hook）
@@ -271,18 +283,25 @@ func main() {
 		return
 	}
 
-	n, ok := resolve(input)
-	if !ok {
-		return
+	switch input.HookEventName {
+	case "StopFailure":
+		notify(input, "エラー", "Basso", debug)
+
+	case "Notification":
+		if input.NotificationType != "idle_prompt" {
+			logResult(debug, "ignored event (notification_type=%s)", input.NotificationType)
+			return
+		}
+		// pending tool_use が無ければタスク完了後の単なるアイドル。
+		// herdr純正/Stop通知で完了は既に伝わっているため通知しない。
+		if txPath := transcriptFilePath(input); txPath != "" && !hasPendingToolUse(txPath) {
+			logResult(debug, "suppressed (idle_prompt without pending tool_use)")
+			return
+		}
+		notify(input, "入力待ち", "Submarine", debug)
+
+	default:
+		// Stop / permission_prompt 等は herdr 純正の通知が担当するため配線しない
+		logResult(debug, "ignored event (hook_event_name=%s)", input.HookEventName)
 	}
-
-	script := fmt.Sprintf(
-		`display notification "%s" with title "Claude Code" subtitle "%s" sound name "%s"`,
-		escapeAppleScript(n.body),
-		escapeAppleScript(n.subtitle),
-		escapeAppleScript(n.sound),
-	)
-
-	// エラーがあっても静かに終了（non-blocking hook）
-	_ = exec.Command("osascript", "-e", script).Run()
 }
