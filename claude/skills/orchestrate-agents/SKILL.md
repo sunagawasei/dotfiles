@@ -24,6 +24,7 @@ cursorはCLAUDE.mdの方針転換(2026-07-04〜)により**横断調査・デー
 
 - このセッションのagmsg Monitor(`watch.sh ... --team s-<このセッションのUUID>`)がSessionStartから常駐している(追加設定不要)。
 - cursor/codexは、既存のCLAUDE.md運用と同じくこのセッションのteamに参加済みであること。
+- cursor/codexのbridgeプロセスが稼働していること。遅延spawnは自動では発火しない(下記手順2で確認・起動する)。
 - CLAUDE.mdの役割分担(cursor=横断調査・データ収集専任・read-only、codex=実装後レビュー・read-only、Claude=唯一の適用者/実装を書く者/最終判断者)は変更しない。
 
 ## ワークフロー
@@ -34,7 +35,11 @@ cursorはCLAUDE.mdの方針転換(2026-07-04〜)により**横断調査・デー
 
 ### 2. 非同期でパケットを送る(ask ではなく send)
 
-パケットの中身は下記「依頼パケットの鉄則」と同じ自己完結フォーマットを使う。送信は`--wait`を付けない素の`send.sh`で行う:
+パケットの中身は下記「依頼パケットの鉄則」と同じ自己完結フォーマットを使う。送信は`--wait`を付けない素の`send.sh`で行うが、**送る前に宛先のbridgeが起きているか確認する**:
+
+- **codex宛**: 必ず先に `~/.agents/skills/agmsg/scripts/ensure-codex.sh <project>` を実行して遅延spawnを発火させる(起動済みならno-op。`CLAUDE_CODE_SESSION_ID`が環境に無ければセッションUUIDを明示して渡す)。`send.sh`自体は一方向送信やctrl系がdespawn済みworkerを蘇生させないよう、意図的にこの入口へ配線されていない
+- **cursor宛**: `pgrep -f "cursor-bridge.*<team>"`でbridge稼働を確認し、いなければ`spawn.sh`で起動してから送る
+- 怠ると依頼は未読のままDBに滞留し、返信が永遠に来ない(実例: 2026-07-05)
 
 ```bash
 # cursorへの調査依頼(ブロックしない、prefixは [research])
