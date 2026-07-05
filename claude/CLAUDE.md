@@ -52,16 +52,16 @@
 | 役 | 担当 | 権限 |
 |---|---|---|
 | **Claude（本セッション）** | 実装を自分で書く・検証・適用・実行・git・権限/sandbox/auto-mode・最終統合・cursor/codex 結果の採否 | write（唯一の実行主体） |
-| **cursor** | 横断調査・外部情報収集専任（コードベース内の使用箇所・依存関係の棚卸し、外部Web/ドキュメント・ライブラリ仕様調査 → file:line一覧や構造化データとして返す。パッチは作らない＝実装はClaude自身が書く。依頼パケットの鉄則は `claude/skills/team-collab/SKILL.md` を参照）。強み=幅 | read-only（ファイルは書かず調査結果/データをテキストで返す） |
+| **cursor** | 横断調査・外部情報収集専任（コードベース内の使用箇所・依存関係の棚卸し、外部Web/ドキュメント・ライブラリ仕様調査 → file:line一覧や構造化データとして返す。パッチは作らない＝実装はClaude自身が書く。依頼パケットの鉄則は `claude/skills/orchestrate-agents/SKILL.md` を参照）。強み=幅 | read-only（ファイルは書かず調査結果/データをテキストで返す） |
 | **codex** | レビュー全般＝実装**後**の diff 査読（正しさ・エッジ・回帰リスク → Findings のみ）に加え、プラン・issue/PR文面のレビューも可。強み=深さ | read-only |
 
 振り分け基準:
 - **実装・実行・安全判断** — 本セッション自身（手放さない）
 - **小さな調査（1-2ファイル/明確な grep）** — Explore サブエージェント or Claude 直接
 - **中〜大タスクの計画・横断調査・外部情報収集（3+ファイル/新機能/refactor/パッケージ選定/アーキ不明/外部API・ライブラリ調査）** — cursor に先行 `ask`（横断調査・データ収集を任せ、file:line一覧や構造化データとして返させる。パッチは作らせない＝実装はClaude自身が書く）
-- **実装後レビュー** — codex に `ask`（収束条件は `claude/skills/team-collab/SKILL.md` を参照）
+- **実装後レビュー** — codex に `ask`（収束条件は `claude/skills/orchestrate-agents/SKILL.md` を参照）
 - **実装で迷う/問題に直面** — cursor（別解・発散の案出し／調査）と codex（候補案の検証・反証）の2視点。codex には計画でなく「この案で問題ないか」の検証を投げる（review の一種で専任と整合）。ただし codex に渡すのは具体物のみ＝候補パッチ/既存 file:line/失敗ログ。具体物のない抽象相談は cursor へ
-- **複数タスクを cursor/codex に同時並行で投げたい**（ユーザーが明示的に要求した時のみ） — `ask`（--wait のブロック待機）ではなく `/team-collab` skill（`send` の非同期送信＋このセッションの agmsg Monitor による自動再開）。役割分担・パケット書式・適用ゲートは変わらない。詳細は `claude/skills/team-collab/SKILL.md`
+- **複数タスクを cursor/codex に同時並行で投げたい**（ユーザーが明示的に要求した時のみ） — `ask`（--wait のブロック待機）ではなく `/orchestrate-agents` skill（`send` の非同期送信＋このセッションの agmsg Monitor による自動再開）。役割分担・パケット書式・適用ゲートは変わらない。詳細は `claude/skills/orchestrate-agents/SKILL.md`
 
 ### sonnetサブエージェント運用（Anthropicプール内の実働力）
 
@@ -81,4 +81,4 @@
 
 レビュー運用:
 - 実質的な実装をしたら codex にレビューを `ask`（1行修正等の些細な編集は除く）。**最大2巡で収束**させる（Low/nitのみなら1巡で閉じる）。無限ループ禁止
-- cursor/codex への依頼パケットの書式・検品手順・収束条件の詳細は `claude/skills/team-collab/SKILL.md` を参照
+- cursor/codex への依頼パケットの書式・検品手順・収束条件の詳細は `claude/skills/orchestrate-agents/SKILL.md` を参照

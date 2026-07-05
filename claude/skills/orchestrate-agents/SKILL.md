@@ -1,5 +1,5 @@
 ---
-name: team-collab
+name: orchestrate-agents
 description: cursor(調査/データ収集)とcodex(レビュー)への委譲をagmsgの非同期send+Monitor自動再開で並行実行する協業ワークフロー
 ---
 
