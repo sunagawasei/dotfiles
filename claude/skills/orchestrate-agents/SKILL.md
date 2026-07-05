@@ -59,6 +59,8 @@ cursorはCLAUDE.mdの方針転換(2026-07-04〜)により**横断調査・デー
 
 Monitor通知でcursor/codexからの返信を受け取ったら、下記「依頼パケットの鉄則」のゲートをそのまま適用する:
 
+Monitor通知は長い返信を途中で切り詰める。全文は `sqlite3 ~/.agents/skills/agmsg/db/messages.db "SELECT body FROM messages WHERE team='<team>' AND from_agent='<agent>' ORDER BY id DESC LIMIT 1;"` で読む(bridgeログより確実)。
+
 - **cursorの調査結果**: 「cursor依頼パケットの鉄則」に従って検品する。不足があれば具体的に指摘して差し戻し、検品を通ったら、その調査結果を起点に**Claude自身が実装を書く**
 - **codexのfindings**: 「レビュー収束条件」に従って採用/見送り/別タスク化を判断
 
