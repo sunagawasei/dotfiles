@@ -58,10 +58,11 @@
 振り分け基準:
 - **実装・実行・安全判断** — 本セッション自身（手放さない）
 - **小さな調査（1-2ファイル/明確な grep）** — Explore サブエージェント or Claude 直接
-- **中〜大タスクの計画・横断調査・外部情報収集（3+ファイル/新機能/refactor/パッケージ選定/アーキ不明/外部API・ライブラリ調査）** — cursor に先行 `ask`（横断調査・データ収集を任せ、file:line一覧や構造化データとして返させる。パッチは作らせない＝実装はClaude自身が書く）
-- **実装後レビュー** — codex に `ask`（収束条件は `claude/skills/orchestrate-agents/SKILL.md` を参照）
+- **中〜大タスクの計画・横断調査・外部情報収集（3+ファイル/新機能/refactor/パッケージ選定/アーキ不明/外部API・ライブラリ調査）** — cursor に先行依頼（横断調査・データ収集を任せ、file:line一覧や構造化データとして返させる。パッチは作らせない＝実装はClaude自身が書く）
+- **送信方式の既定は非同期**（2026-07-05〜）: cursor/codex への依頼は単発でも `send`（非同期送信）で送り、返信はこのセッションの agmsg Monitor の自動再開で受け取る。`ask`（`send.sh --wait` のブロック待機）は WezTerm タブの busy 表示を維持したい単発依頼だけのオプション（codex は ask 往復が機能しない実績があるため対象外）。送信前の bridge 確認・パケット書式は `claude/skills/orchestrate-agents/SKILL.md` を参照
+- **実装後レビュー** — codex に依頼（収束条件は `claude/skills/orchestrate-agents/SKILL.md` を参照）
 - **実装で迷う/問題に直面** — cursor（別解・発散の案出し／調査）と codex（候補案の検証・反証）の2視点。codex には計画でなく「この案で問題ないか」の検証を投げる（review の一種で専任と整合）。ただし codex に渡すのは具体物のみ＝候補パッチ/既存 file:line/失敗ログ。具体物のない抽象相談は cursor へ
-- **複数タスクを cursor/codex に同時並行で投げたい**（ユーザーが明示的に要求した時のみ） — `ask`（--wait のブロック待機）ではなく `/orchestrate-agents` skill（`send` の非同期送信＋このセッションの agmsg Monitor による自動再開）。役割分担・パケット書式・適用ゲートは変わらない。詳細は `claude/skills/orchestrate-agents/SKILL.md`
+- **複数タスクを cursor/codex に同時並行で投げたい**（ユーザーが明示的に要求した時のみ） — `/orchestrate-agents` skill のテンプレートでタスクを分解し並行送信する。役割分担・パケット書式・適用ゲートは変わらない。詳細は `claude/skills/orchestrate-agents/SKILL.md`
 
 ### sonnetサブエージェント運用（Anthropicプール内の実働力）
 
@@ -80,5 +81,5 @@
 - cursor=調査 / codex=査読 と役割が違うので「Claude が書いた実装を codex がレビューする」のが標準フロー
 
 レビュー運用:
-- 実質的な実装をしたら codex にレビューを `ask`（1行修正等の些細な編集は除く）。**最大2巡で収束**させる（Low/nitのみなら1巡で閉じる）。無限ループ禁止
+- 実質的な実装をしたら codex にレビューを依頼（既定は非同期 `send`。1行修正等の些細な編集は除く）。**最大2巡で収束**させる（Low/nitのみなら1巡で閉じる）。無限ループ禁止
 - cursor/codex への依頼パケットの書式・検品手順・収束条件の詳細は `claude/skills/orchestrate-agents/SKILL.md` を参照
