@@ -129,6 +129,23 @@ cursorの返信到着(Monitor通知)→検品→Claudeが実装 → 直後にcod
 - 非同期化してもClaudeが唯一の書き込み主体である原則は変わらない。cursorの出力を無検証で適用しない(そもそもcursorはパッチを作らない)。
 - 大量のタスクを一度に並行させすぎない。依存関係の見落としは収束を遅らせるだけ。
 
+## 返信が来ない時の診断（2026-07-06実例）
+
+1. **bridgeログ確認**: `~/.agents/skills/agmsg/run/<type>-bridge.<team>.<name>.log` を見る。`rc=124`（CLIタイムアウト）+「leaving message unread」なら依頼は未読滞留しており、bridgeプロセス自体も死んでいることが多い
+2. **stale pidfile**: bridgeが死んでいるのに `spawn.sh` が「already running (pid N)」と言う場合は、`despawn.sh <team> <from> <name> --force` で登録を掃除してから再spawnする。再spawnしたbridgeは未読メッセージを自動で再処理する
+3. **Monitor(watch.sh)が常駐していない場合のfallback**: 返信はDB直読みで取得できる — `sqlite3 ~/.agents/skills/agmsg/db/messages.db "SELECT body FROM messages WHERE team='<team>' AND from_agent='<agent>' ORDER BY id DESC LIMIT 1;"`。到着待ちはバックグラウンドのポーリングループ（10秒間隔でCOUNTを見て、>0で即exit・15分でタイムアウト）にすると、到着時に通知で拾える
+
+## codex-research（調査用codexワーカー）
+
+codexの既定role（`spawn-roles/codex.codex.md`）はreview専任で、どう頼んでも調査を拒否する（2026-07-06実証）。調査をcodex課金プールに流したい場合は、調査用roleで**別名ワーカー**を立てる（review役の`codex`とは共存）:
+
+```bash
+~/.agents/skills/agmsg/scripts/spawn.sh codex codex-research --team <team> --project <project> \
+  --role-file ~/.agents/skills/agmsg/db/spawn-roles/research.codex.md
+```
+
+role file `research.codex.md` は作成済み（read-only調査専任・ghはGET/検索系のみ可・issue/PR作成禁止・URL/番号の捏造禁止）。依頼パケットの書式はcursorの`[research]`鉄則と同じものを使う。
+
 ## 関連スキル
 
 - `/agmsg` - inbox確認・送信・履歴
