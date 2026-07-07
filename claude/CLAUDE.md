@@ -45,20 +45,21 @@
 
 ## エージェント役割分担
 
-**Claude=唯一の「手」（実装を書く・検証・適用・統括）/ cursor=横断調査・外部情報収集専任（構造化データを返すだけ、パッチは作らない）/ codex=実装後レビュー**。振り分けはClaudeが判断。2026-07-04〜: 従来は cursor のパッチ適用でトークンを節約していたが、[agmsg-demo-fable5-x-constellation](https://github.com/fujibee/agmsg-demo-fable5-x-constellation)のデモ構成（Fable=設計/レビューのみ・grok=データ収集専任・opus=実装）に倣い、cursor を grok 相当の調査/データ収集専任へ転換し、実装はClaude自身が書く方針に変更した（Opusの出力を「書くこと」に戻すトレードオフを承知の上で採用）。レビューは引き続き別subscriptionのcodexに外注する（codex は review 専任）。
+**Claude=唯一の「手」（実装を書く・検証・適用・統括）/ cursor=コードベース内横断調査専任（コード構造・使用箇所・依存関係の棚卸し→構造化データを返すだけ、パッチは作らない）/ codex=実装後レビュー**。振り分けはClaudeが判断。2026-07-04〜: 従来は cursor のパッチ適用でトークンを節約していたが、[agmsg-demo-fable5-x-constellation](https://github.com/fujibee/agmsg-demo-fable5-x-constellation)のデモ構成（Fable=設計/レビューのみ・grok=データ収集専任・opus=実装）に倣い、cursor を grok 相当の調査/データ収集専任へ転換し、実装はClaude自身が書く方針に変更した（Opusの出力を「書くこと」に戻すトレードオフを承知の上で採用）。レビューは引き続き別subscriptionのcodexに外注する（codex は review 専任）。
 
 > 別課金プールの cursor/codex に外注することがトークン削減の本質。Claude Code 公式の `agent teams` やサブエージェントは、モデル無指定だと**同一の Anthropic 課金プールの高単価モデルを継承**して食うので注意。ただし **`model: sonnet` を明示したサブエージェント並列は安価な実働力として本線で使う**（下記「sonnetサブエージェント運用」）。agmsg の `session_team`（コード既定はOFF・この環境では有効化済み）は外注先の混線を防ぐ土台で、別物。
 
 | 役 | 担当 | 権限 |
 |---|---|---|
 | **Claude（本セッション）** | 実装を自分で書く・検証・適用・実行・git・権限/sandbox/auto-mode・最終統合・cursor/codex 結果の採否 | write（唯一の実行主体） |
-| **cursor** | 横断調査・外部情報収集専任（コードベース内の使用箇所・依存関係の棚卸し、外部Web/ドキュメント・ライブラリ仕様調査 → file:line一覧や構造化データとして返す。パッチは作らない＝実装はClaude自身が書く。依頼パケットの鉄則は `claude/skills/orchestrate-agents/SKILL.md` を参照）。強み=幅 | read-only（ファイルは書かず調査結果/データをテキストで返す） |
+| **cursor** | コードベース内横断調査専任（使用箇所・依存関係の棚卸し、コード構造調査 → file:line一覧や構造化データとして返す。パッチは作らない＝実装はClaude/sonnetが書く。依頼パケットの鉄則は `claude/skills/orchestrate-agents/SKILL.md` を参照）。**外部Web/ライブラリ仕様/GitHub API調査は不可**（agmsg headless制約: WebFetch/WebSearchは承認者不在で自動拒否、GitHubはShell deny＝read-only設計由来。2026-07-07検証）→ 外部情報収集はsonnet班/メインへ。強み=幅（コードベース内） | read-only（ファイルは書かず調査結果/データをテキストで返す） |
 | **codex** | レビュー全般＝実装**後**の diff 査読（正しさ・エッジ・回帰リスク → Findings のみ）に加え、プラン・issue/PR文面のレビューも可。強み=深さ | read-only |
 
 振り分け基準:
 - **実装・実行・安全判断** — 本セッション自身（手放さない）
 - **小さな調査（1-2ファイル/明確な grep）** — Explore サブエージェント or Claude 直接
-- **中〜大タスクの計画・横断調査・外部情報収集（3+ファイル/新機能/refactor/パッケージ選定/アーキ不明/外部API・ライブラリ調査）** — cursor に先行依頼（横断調査・データ収集を任せ、file:line一覧や構造化データとして返させる。パッチは作らせない＝実装はClaude自身が書く）
+- **中〜大タスクのコードベース内横断調査（3+ファイル/新機能/refactor/アーキ不明の使用箇所・依存関係の棚卸し）** — cursor に先行依頼（コードベース内の調査・データ収集を任せ、file:line一覧や構造化データとして返させる。パッチは作らせない＝実装はClaude/sonnetが書く）
+- **外部情報収集（外部Web/ドキュメント/ライブラリ仕様/GitHub API/パッケージ選定）** — **sonnetサブエージェント（WebFetch/WebSearch標準装備）またはメイン（gh CLI）が担当**。cursorはheadless制約で外部Webもgh経由GitHubも不可なので使わない。ライブラリドキュメントはcontext7 MCP、深い調査はdeep-research skillも活用
 - **送信方式の既定は非同期**（2026-07-05〜）: cursor/codex への依頼は単発でも `send`（非同期送信）で送り、返信はこのセッションの agmsg Monitor の自動再開で受け取る。`ask`（`send.sh --wait` のブロック待機）は WezTerm タブの busy 表示を維持したい単発依頼だけのオプション（codex は ask 往復が機能しない実績があるため対象外）。送信前の bridge 確認・パケット書式は `claude/skills/orchestrate-agents/SKILL.md` を参照
 - **実装後レビュー** — codex に依頼（収束条件は `claude/skills/orchestrate-agents/SKILL.md` を参照）
 - **実装で迷う/問題に直面** — cursor（別解・発散の案出し／調査）と codex（候補案の検証・反証）の2視点。codex には計画でなく「この案で問題ないか」の検証を投げる（review の一種で専任と整合）。ただし codex に渡すのは具体物のみ＝候補パッチ/既存 file:line/失敗ログ。具体物のない抽象相談は cursor へ
@@ -67,7 +68,7 @@
 ### sonnetサブエージェント運用（Anthropicプール内の実働力）
 
 - **メイン（Fable/Opus）はファイルの編集・作成を自分で行わない。Edit/Writeが必要な作業はすべてsonnetサブエージェントに委譲し、メインは指揮（指示設計）・検証・判断に徹する**（2026-07-04ユーザー指示）
-- **調査・データ収集も自分で行わない**: pup/gh等のCLI・APIでのメトリクス/ログ/現状照会、コードベース横断調査、Web/GitHub調査もsonnetサブエージェント（外部プールに流す場合はcursor/codex-research）に委譲する（2026-07-06ユーザー指示・**全プロジェクト常時適用**）。メインが直接実行してよいのは、sonnet報告のスポット検証（1〜2コマンドの再現・grep・存在確認）と単発の事実確認のみ。この結果、**メイン=計画・指示パケット設計・スポット検証・統合・安全判断 / sonnet=調査・データ収集・編集の実働**という役割分担を全セッションで維持する
+- **調査・データ収集も自分で行わない**: pup/gh等のCLI・APIでのメトリクス/ログ/現状照会、コードベース横断調査、Web/GitHub調査もsonnetサブエージェントに委譲する（2026-07-06ユーザー指示・**全プロジェクト常時適用**）。コードベース内横断調査は別課金プールのcursorに流してよいが、Web/GitHub API調査はcursorのheadless制約で不可なのでsonnet(WebFetch/WebSearch装備)またはメイン(gh)が担当する。メインが直接実行してよいのは、sonnet報告のスポット検証（1〜2コマンドの再現・grep・存在確認）と単発の事実確認のみ。この結果、**メイン=計画・指示パケット設計・スポット検証・統合・安全判断 / sonnet=調査・データ収集・編集の実働**という役割分担を全セッションで維持する
 - Agent tool は**既定で `model: sonnet` を明示**する（メインモデルを継承させない）。統括役（指示・検証・判断）は **Fable または Opus** が担い、実働はsonnet班に委譲する。2026-07-07〜: `~/.config/claude/settings.json` の `env.CLAUDE_CODE_SUBAGENT_MODEL=sonnet` で全サブエージェントをsonnetへ環境変数レベルで強制済み（呼び出し漏れの保険）。この環境変数は**呼び出し時の`model`パラメータより優先される**ため、`model: opus`等を指定しても無効化され常にsonnetになる
 - **委譲してよい作業は調査に限らない**: 棚卸し・一括修正・セッション履歴抽出・issue一括登録など、指示を自己完結パケット化できる定型作業は実装・編集までsonnetにやらせる
 - 並列班分け: 作業量のバランスでグループ化（大きい対象は単独班）。プロンプトには担当範囲の絶対パス・作業観点・安全ルール（git commit/push禁止・対象外ファイル変更禁止・迷ったら報告）・報告フォーマットを必ず含める
