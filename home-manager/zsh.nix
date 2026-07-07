@@ -332,8 +332,6 @@
 
         # wait"0c": zeno（fzf-tab の後）
         zinit ice wait"0c" lucid \
-          atclone'sed -i "" "s/local initial_scope=global/local initial_scope=directory/" shells/zsh/widgets/zeno-smart-history-selection && sed -i "" "s/tail -n +2; fi/tail -n +2 | jq -r .command; fi/" shells/zsh/widgets/zeno-smart-history-selection && sed -i "" "s/  \"right\"$/  \"right:wrap\"/" shells/zsh/widgets/zeno-smart-history-selection' \
-          atpull'%atclone' \
           atload'
           __zeno_space_wrapper() {
             local orig_buffer="$BUFFER"
