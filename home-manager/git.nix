@@ -29,12 +29,16 @@
       };
       init.defaultBranch = "main";
       diff.wordRegex = "[a-zA-Z0-9_]+|[ぁ-ん]+|[ァ-ヶー]+|[一-龥々〇〆]+|.";
+      diff.tool = "hunk";
+      difftool.hunk.cmd = ''hunk difftool "$LOCAL" "$REMOTE" "$MERGED"'';
+      difftool.prompt = false;
       merge.conflictstyle = "zdiff3";
     };
   };
 
+  # lazygitのpager用（core.pagerはhunkのまま。deltaはlazygit/config.ymlのpagersからのみ呼ばれる）
   programs.delta = {
     enable = true;
-    enableGitIntegration = true;
+    enableGitIntegration = false;
   };
 }
