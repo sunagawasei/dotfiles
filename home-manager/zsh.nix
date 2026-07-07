@@ -36,7 +36,6 @@
       ls = "ls --color=auto";
       vtmp = ''nvim "''${TMPDIR%/}/$(date "+%Y%m%d_%H%M%S").md"'';
       ssh = ''TERM=xterm-256color \ssh'';
-      delta = "hunk pager --mode split --line-numbers";
       nswitch = "sudo darwin-rebuild switch --flake ~/.config#CA-20021145";
       nupdate = "nix flake update --flake ~/.config && sudo darwin-rebuild switch --flake ~/.config#CA-20021145";
     };
