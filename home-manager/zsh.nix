@@ -293,9 +293,9 @@
           --color=border:#4D8F9E,gutter:-1
         '
 
-        # fzf キーバインド: Ctrl+T (ファイル選択), Alt+C (ディレクトリ移動)
-        # Ctrl+R は後続の zeno keybindings で上書きされる
-        [[ -f "''${HOME}/.nix-profile/share/fzf/key-bindings.zsh" ]] && source "''${HOME}/.nix-profile/share/fzf/key-bindings.zsh"
+        # fzf キーバインド: Ctrl+T (ファイル選択), Alt+C (ディレクトリ移動), Ctrl+R (履歴検索)
+        # Ctrl+R は fzf-history-widget が担当(HISTFILE=矢印キーと同一ソース)。zeno は ^R を奪わない
+        [[ -f "${pkgs.fzf}/share/fzf/key-bindings.zsh" ]] && source "${pkgs.fzf}/share/fzf/key-bindings.zsh"
 
         # Worklog CLI completion
         fpath=(${config.home.homeDirectory}/.local/share/zsh/site-functions $fpath)
@@ -345,7 +345,8 @@
           zle -N __zeno_space_wrapper
           bindkey " " __zeno_space_wrapper
           bindkey "^m" zeno-auto-snippet-and-accept-line
-          bindkey "^r" zeno-smart-history-selection
+          # Ctrl+R は zeno の smart-history(別SQLite DB・書き込み停止済み)ではなく
+          # fzf-history-widget(HISTFILE=矢印キーと同一ソース)を使う
           bindkey "^x^s" zeno-insert-snippet
         '
         zinit light yuki-yano/zeno.zsh
