@@ -34,7 +34,8 @@ sudo darwin-rebuild switch --flake ~/.config#CA-20021145
 ### darwin-rebuild の既知事象
 
 - **新規ファイル（`home-manager/patches/` 等）は `git add` してから rebuild する** — flakeはgit追跡ファイルしか見ないため、未追跡だと "Path ... is not tracked by Git" でNix評価が失敗する
-- brew bundle の untrusted tap 警告（社内tap `cycloud-io/*` 等）と `--cleanup` 非推奨警告は**無害・無視してよい**
+- `--cleanup` 非推奨警告は無害・無視してよい。**brew bundle の untrusted tap `Error: Refusing to load formula ...`は無害ではない** — `darwin-rebuild switch`全体をそこで中断させ、home-manager側の変更（activation）が一切適用されないまま終わる（2026-07-07実例）。`/run/current-system`のリンク先ハッシュが更新されているかで検知できる。`brew trust <tap>`（または`brew trust --formula <formula>`）で解消してから再実行する
+- **sudo不要で評価・ビルドのみ検証できる**: `darwin-rebuild build --flake ~/.config#CA-20021145` — システムには適用せず、Nix評価エラーやビルド失敗を先に潰せる。実際に適用する前の下調べに使う
 
 ## コード規約
 

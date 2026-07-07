@@ -21,13 +21,14 @@ sudo darwin-rebuild switch --flake ~/.config#CA-20021145
 
 ### モジュール構成
 
-`home.nix` がエントリポイントで、以下の7モジュールを import：
+`home.nix` がエントリポイントで、以下の8モジュールを import：
 
 | ファイル | 役割 |
 |----------|------|
 | `packages.nix` | 一般ツール群 + `programs.direnv` (nix-direnv) |
 | `dev.nix` | 言語ツールチェーン (Go, Node.js 22, pnpm, Python/uv) |
-| `git.nix` | Git 設定 + `programs.delta` |
+| `git.nix` | Git 設定 + `programs.delta`（lazygitのpager専用、`enableGitIntegration=false`） + `diff.tool`/`difftool.hunk`（git difftool） |
+| `hunk.nix` | `programs.hunk`（AIエージェント差分レビューTUI）。`enableGitIntegration=true`で`core.pager`はhunk側、`enableClaudeIntegration=true`で`~/.claude/skills/hunk-review`を自動リンク。custom_themeはabyssal-teal.toml準拠。パッケージ本体はflake input `hunk`の`homeManagerModules.default`を`nix-darwin/home_manager.nix`でimportして提供（`home.packages`への直接追加はしない） |
 | `shell.nix` | 環境変数・PATH (XDG Base Dir, EDITOR, CLAUDE_CONFIG_DIR 等) |
 | `zsh.nix` | Zinit プラグイン管理、Pure プロンプト、カラー設定 (304行、最大モジュール) |
 | `fzf.nix` | fzf 有効化のみ (ZSH 統合は無効化) |
