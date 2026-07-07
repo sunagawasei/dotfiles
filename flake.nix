@@ -14,6 +14,10 @@
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
     gws-cli.url = "github:googleworkspace/cli";
     herdr.url = "github:ogulcancelik/herdr";
+    hunk = {
+      url = "github:modem-dev/hunk";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -25,11 +29,12 @@
       nix-homebrew,
       gws-cli,
       herdr,
+      hunk,
       ...
     }:
     {
       darwinConfigurations."CA-20021145" = nix-darwin.lib.darwinSystem {
-        specialArgs = { inherit self nix-homebrew gws-cli herdr; };
+        specialArgs = { inherit self nix-homebrew gws-cli herdr hunk; };
         modules = [
           ./nix-darwin/configuration.nix
           home-manager.darwinModules.home-manager
@@ -37,7 +42,7 @@
         ];
       };
       darwinConfigurations."CA-20038442" = nix-darwin.lib.darwinSystem {
-        specialArgs = { inherit self nix-homebrew gws-cli herdr; };
+        specialArgs = { inherit self nix-homebrew gws-cli herdr hunk; };
         modules = [
           ./nix-darwin/configuration.nix
           home-manager.darwinModules.home-manager

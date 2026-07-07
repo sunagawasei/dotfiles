@@ -9,6 +9,7 @@
     ./dev.nix
     ./shell.nix
     ./zsh.nix
+    ./hunk.nix
   ];
 
   home.username = "s23159";

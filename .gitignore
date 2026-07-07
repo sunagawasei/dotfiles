@@ -124,6 +124,12 @@ zsh/.zshenv
 zsh/.zprofile
 zsh/.zshrc
 
+# darwin-rebuild build / nix build が生成するシンボリックリンク
+result
+
+# hunk CLIのローカル状態キャッシュ（バージョン確認等、リポジトリルートで`hunk diff`実行時に自動生成）
+hunk/
+
 zsh/.zsh_sessions/
 
 # AI Agent Tools (temporary/local files)
