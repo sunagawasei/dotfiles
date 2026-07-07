@@ -170,6 +170,35 @@ return {
       lazygit:toggle()
     end
 
+    -- Hunk統合(AIエージェント差分レビュー用TUI)
+    local hunk = Terminal:new({
+      cmd = "hunk diff",
+      direction = "float",
+      env = {
+        NVIM = vim.v.servername,
+      },
+      float_opts = {
+        border = "curved",
+        width = function() return math.floor(vim.o.columns * 0.95) end,
+        height = function() return math.floor(vim.o.lines * 0.95) end,
+      },
+      on_open = function(term)
+        vim.cmd("startinsert!")
+        vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", { noremap = true, silent = true })
+      end,
+      on_close = function(term)
+        vim.schedule(function()
+          if vim.bo.buftype == "terminal" then
+            vim.cmd("startinsert!")
+          end
+        end)
+      end,
+    })
+
+    _G.hunk_toggle = function()
+      hunk:toggle()
+    end
+
     -- ターミナルウィンドウのサイズを変更
     _G.resize_terminal = function(delta)
       local current_win = vim.api.nvim_get_current_win()
@@ -319,6 +348,16 @@ return {
       end,
       mode = { "n" },
       desc = "LazyGit",
+    },
+
+    -- Hunk (diff review)
+    {
+      "<leader>gr",
+      function()
+        _G.hunk_toggle()
+      end,
+      mode = { "n" },
+      desc = "Hunk (diff review)",
     },
 
     -- ターミナルサイクル切り替え
