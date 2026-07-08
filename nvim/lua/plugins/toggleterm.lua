@@ -176,6 +176,9 @@ return {
       direction = "float",
       env = {
         NVIM = vim.v.servername,
+        -- Hunkの`e`キー(open file in $EDITOR)を、lazygitのnvim-remoteプリセット同様
+        -- 既存Neovimインスタンスへの新規タブ表示にリダイレクトする
+        EDITOR = vim.fn.stdpath("config") .. "/bin/hunk-nvim-editor/nvim",
       },
       float_opts = {
         border = "curved",

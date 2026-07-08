@@ -1,0 +1,31 @@
+#!/bin/sh
+# Hunk's "open file in $EDITOR" invokes $EDITOR as: [+<line>] <file>
+# Basename must stay "nvim" -- Hunk only appends +<line> for vim/nvim/vi.
+# Mirrors lazygit's nvim-remote editAtLine preset: send the file to the
+# existing Neovim instance (via $NVIM) instead of spawning a nested one.
+# Unlike lazygit's preset, this skips sending "q" first -- in a plain
+# normal-mode buffer that starts macro recording and hangs the instance
+# waiting for a register name (verified against a headless nvim).
+
+line=""
+case "$1" in
+  +[0-9]*) line="${1#+}"; shift ;;
+esac
+file="$1"
+
+if [ -z "$NVIM" ]; then
+  if [ -n "$line" ]; then
+    exec nvim "+$line" -- "$file"
+  fi
+  exec nvim -- "$file"
+fi
+
+# --remote-tab silently falls back to a local interactive nvim (hanging
+# this process) when $NVIM is stale. Probe with --remote-expr first --
+# it fails cleanly instead of falling back, since there is no local
+# result to return.
+nvim --server "$NVIM" --remote-expr "1" >/dev/null 2>&1 </dev/null || exit 1
+nvim --server "$NVIM" --remote-tab "$file" || exit 1
+if [ -n "$line" ]; then
+  nvim --server "$NVIM" --remote-send ":${line}<CR>"
+fi
