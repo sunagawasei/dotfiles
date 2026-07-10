@@ -228,3 +228,23 @@ vim.api.nvim_create_autocmd("FileType", {
   end,
   desc = "Disable cursorline in file explorers for performance",
 })
+
+-- lazygit(editPreset: nvim-remote)やHunkエディタが `nvim --remote-tab` でファイルを
+-- 開くと、:tab drop が既存のfiletype空バッファをそのまま表示し filetype が付かない
+-- ことがある。ft空の実ファイルバッファに限り filetype detect で補正する（BufWinEnterで拾う）。
+local fix_ft_group = vim.api.nvim_create_augroup("fix_remote_open_filetype", { clear = true })
+vim.api.nvim_create_autocmd("BufWinEnter", {
+  group = fix_ft_group,
+  callback = function(args)
+    local buf = args.buf
+    if not vim.api.nvim_buf_is_valid(buf) then return end
+    if vim.bo[buf].filetype ~= "" then return end
+    if vim.bo[buf].buftype ~= "" then return end
+    if not vim.bo[buf].buflisted then return end
+    local name = vim.api.nvim_buf_get_name(buf)
+    if name == "" or vim.fn.filereadable(name) ~= 1 then return end
+    vim.api.nvim_buf_call(buf, function()
+      vim.cmd("filetype detect")
+    end)
+  end,
+})
