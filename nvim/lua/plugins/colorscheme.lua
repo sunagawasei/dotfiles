@@ -141,6 +141,11 @@ return {
         ["@punctuation.bracket"] = { fg = colors.punctuation_gray },
         ["@punctuation.delimiter"] = { fg = colors.punctuation_gray },
         ["@punctuation.delimiter.yaml"] = { fg = colors.light_gray }, -- YAML list marker visibility
+        -- YAML: 値の型で色分け（キー=cyan / 数値=lavender / 真偽・null=purple。文字列は@string既定を維持）
+        ["@property.yaml"] = { fg = colors.cyan },
+        ["@boolean.yaml"] = { fg = colors.purple_accent },
+        ["@number.yaml"] = { fg = colors.lavender },
+        ["@constant.builtin.yaml"] = { fg = colors.purple_accent },
         ["@namespace"] = { fg = colors.fg },
         ["@module"] = { fg = colors.fg },
         ["@tag"] = { fg = colors.cyan },
