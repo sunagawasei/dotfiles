@@ -86,5 +86,6 @@
 - cursor=調査 / codex=査読 と役割が違うので「Claude が書いた実装を codex がレビューする」のが標準フロー
 
 レビュー運用:
+- **レビュー（成果物・diff・完成度の査読）は codex に出す。advisor ツールをレビューの代用にしない**（2026-07-11ユーザー指示）。agents協業の役割分担では review は codex 専任（別課金プール）。advisor は着手前のアプローチ点検・行き詰まり時の相談に留め、実装後の「正しいか/完成したか」の査読は codex へ回す（advisor を成果物レビューに使うのは役割分担違反＋Anthropicプール消費）
 - 実質的な実装をしたら codex にレビューを依頼（既定は非同期 `send`。1行修正等の些細な編集は除く）。**最大2巡で収束**させる（Low/nitのみなら1巡で閉じる）。無限ループ禁止
 - cursor/codex への依頼パケットの書式・検品手順・収束条件の詳細は `claude/skills/orchestrate-agents/SKILL.md` を参照
