@@ -248,3 +248,6 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
     end)
   end,
 })
+
+-- キーバインド・プラグイン使用状況トラッカー（1ヶ月分の実使用データを収集し未使用棚卸しに使う）
+require("config.usage-tracker").setup()
