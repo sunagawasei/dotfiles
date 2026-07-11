@@ -25,7 +25,6 @@ require("lazy").setup({
     -- { import = "lazyvim.plugins.extras.lang.markdown" }, -- markdownlintを無効化するため無効化
     { import = "lazyvim.plugins.extras.ui.mini-indentscope" },
     { import = "lazyvim.plugins.extras.ai.copilot" },
-    { import = "lazyvim.plugins.extras.ai.copilot-chat" },
     { import = "plugins" },
   },
   defaults = {
