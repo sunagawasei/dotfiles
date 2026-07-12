@@ -48,44 +48,47 @@
 
 ## エージェント役割分担
 
-**Claude=唯一の「手」（実装を書く・検証・適用・統括）/ cursor=コードベース内横断調査専任（コード構造・使用箇所・依存関係の棚卸し→構造化データを返すだけ、パッチは作らない）/ codex=実装後レビュー**。振り分けはClaudeが判断。2026-07-04〜: 従来は cursor のパッチ適用でトークンを節約していたが、[agmsg-demo-fable5-x-constellation](https://github.com/fujibee/agmsg-demo-fable5-x-constellation)のデモ構成（Fable=設計/レビューのみ・grok=データ収集専任・opus=実装）に倣い、cursor を grok 相当の調査/データ収集専任へ転換し、実装はClaude自身が書く方針に変更した（Opusの出力を「書くこと」に戻すトレードオフを承知の上で採用）。レビューは引き続き別subscriptionのcodexに外注する（codex は review 専任）。
+**Fable/Opus（メイン）=起案者（要件壁打ち・プラン化・実装中の相談対応・検収・実行・安全判断・統括）/ codex-impl=実質的な機能実装の自走担当（対象repoに直接書く・迷ったら起案者に質問）/ codex-research=コードベース内横断調査・データ収集 / codex（review役）=オンデマンド査読**。振り分けはClaudeが判断。2026-07-12〜: Torishima構成（Fable 5と要件を壁打ち→完成プランをCodex+GPT-5.6 Solが自走実装→実装中はagmsgで起案者に随時質問→完成後にFableが要件充足・ブレを検収）に倣い、従来（2026-07-04〜）の「実装=Claude自身・レビュー=codex専任」を反転した。実装の実働を別課金プールのcodex-impl（gpt-5.6-sol、agmsg implementer layout=cwd対象repo+workspace-write）へ移し、Fableはユーザーの生の指示コンテキストを持つ唯一の起案者として、プラン・質問応答・検収に徹する（設計意図からの逸脱防止）。同日、**cursorをオーケストレーションから外し、Claude+codex系で完結する構成に変更**（調査はcodex-researchへ。agmsgのcursor統合自体は機能として残存）。
 
-> 別課金プールの cursor/codex に外注することがトークン削減の本質。Claude Code 公式の `agent teams` やサブエージェントは、モデル無指定だと**同一の Anthropic 課金プールの高単価モデルを継承**して食うので注意。ただし **`model: sonnet` を明示したサブエージェント並列は安価な実働力として本線で使う**（下記「sonnetサブエージェント運用」）。agmsg の `session_team`（コード既定はOFF・この環境では有効化済み）は外注先の混線を防ぐ土台で、別物。
+> 別課金プールの codex に外注することがトークン削減の本質。Claude Code 公式の `agent teams` やサブエージェントは、モデル無指定だと**同一の Anthropic 課金プールの高単価モデルを継承**して食うので注意。ただし **`model: sonnet` を明示したサブエージェント並列は安価な実働力として本線で使う**（下記「sonnetサブエージェント運用」）。agmsg の `session_team`（コード既定はOFF・この環境では有効化済み）は外注先の混線を防ぐ土台で、別物。
 
 | 役 | 担当 | 権限 |
 |---|---|---|
-| **Claude（本セッション）** | 実装を自分で書く・検証・適用・実行・git・権限/sandbox/auto-mode・最終統合・cursor/codex 結果の採否 | write（唯一の実行主体） |
-| **cursor** | コードベース内横断調査専任（使用箇所・依存関係の棚卸し、コード構造調査 → file:line一覧や構造化データとして返す。パッチは作らない＝実装はClaude/sonnetが書く。依頼パケットの鉄則は `claude/skills/orchestrate-agents/SKILL.md` を参照）。**外部Web/ライブラリ仕様/GitHub API調査は不可**（agmsg headless制約: WebFetch/WebSearchは承認者不在で自動拒否、GitHubはShell deny＝read-only設計由来。2026-07-07検証）→ 外部情報収集はsonnet班/メインへ。強み=幅（コードベース内） | read-only（ファイルは書かず調査結果/データをテキストで返す） |
-| **codex** | レビュー全般＝実装**後**の diff 査読（正しさ・エッジ・回帰リスク → Findings のみ）に加え、プラン・issue/PR文面のレビューも可。強み=深さ | read-only |
+| **Claude（本セッション・Fable/Opus）** | 要件壁打ち→プラン化・[implement]パケット設計・実装中の質問に即応（ユーザー判断が要る論点はAskUserQuestion）・検収（要件適合＋diff査読＋git log確認）・実行・git・権限/sandbox/auto-mode・最終統合 | write（適用・commitの唯一の主体） |
+| **codex-impl** | 実質的な機能実装の自走（[implement]パケット=プラン契約。ブロック時は起案者へ質問、完了時[done]報告）。モデルはgpt-5.6-sol | 対象repoへwrite（implementer layout=cwd対象repo+workspace-write）。**commit/push禁止** |
+| **codex-research** | コードベース内横断調査・データ収集（プラン前の棚卸し。file:line一覧・構造化データを返す。パッチは作らない）。モデルはgpt-5.6-terra | read-only運用（書けるのはagmsg配下のみ） |
+| **codex（review役）** | オンデマンド査読のみ（標準フロー外。検収はFable。大規模diffの第二意見等、明示的に必要な時だけ） | read-only |
 
 振り分け基準:
-- **実装・実行・安全判断** — 本セッション自身（手放さない）
+- **壁打ち・プラン化・検収・適用・実行・安全判断** — 本セッション自身（手放さない）
+- **実質的な機能実装**（新機能・refactor・複数ファイル変更） — codex-implへ[implement]パケットで委譲。手順・パケット書式・検収ゲートは `claude/skills/orchestrate-agents/SKILL.md` の「codex-impl自走実装ワークフロー」
+- **些細な編集**（1行config・typo等） — 従来どおりsonnetサブエージェント（既定）かメイン直接。codex往復のコストに見合わない
 - **小さな調査（1-2ファイル/明確な grep）** — Explore サブエージェント or Claude 直接
-- **中〜大タスクのコードベース内横断調査（3+ファイル/新機能/refactor/アーキ不明の使用箇所・依存関係の棚卸し）** — cursor に先行依頼（コードベース内の調査・データ収集を任せ、file:line一覧や構造化データとして返させる。パッチは作らせない＝実装はClaude/sonnetが書く）
-- **外部情報収集（外部Web/ドキュメント/ライブラリ仕様/GitHub API/パッケージ選定）** — **sonnetサブエージェント（WebFetch/WebSearch標準装備）またはメイン（gh CLI）が担当**。cursorはheadless制約で外部Webもgh経由GitHubも不可なので使わない。ライブラリドキュメントはcontext7 MCP、深い調査はdeep-research skillも活用
-- **送信方式の既定は非同期**（2026-07-05〜）: cursor/codex への依頼は単発でも `send`（非同期送信）で送り、返信はこのセッションの agmsg Monitor の自動再開で受け取る。`ask`（`send.sh --wait` のブロック待機）は WezTerm タブの busy 表示を維持したい単発依頼だけのオプション（codex は ask 往復が機能しない実績があるため対象外）。送信前の bridge 確認・パケット書式は `claude/skills/orchestrate-agents/SKILL.md` を参照
-- **実装後レビュー** — codex に依頼（収束条件は `claude/skills/orchestrate-agents/SKILL.md` を参照）
-- **実装で迷う/問題に直面** — cursor（別解・発散の案出し／調査）と codex（候補案の検証・反証）の2視点。codex には計画でなく「この案で問題ないか」の検証を投げる（review の一種で専任と整合）。ただし codex に渡すのは具体物のみ＝候補パッチ/既存 file:line/失敗ログ。具体物のない抽象相談は cursor へ
-- **複数タスクを cursor/codex に同時並行で投げたい**（ユーザーが明示的に要求した時のみ） — `/orchestrate-agents` skill のテンプレートでタスクを分解し並行送信する。役割分担・パケット書式・適用ゲートは変わらない。詳細は `claude/skills/orchestrate-agents/SKILL.md`
+- **中〜大タスクのコードベース内横断調査（3+ファイル/新機能/refactor/アーキ不明の使用箇所・依存関係の棚卸し）** — codex-research に先行依頼（コードベース内の調査・データ収集を任せ、file:line一覧や構造化データとして返させる。パッチは作らせない）
+- **外部情報収集（外部Web/ドキュメント/ライブラリ仕様/GitHub API/パッケージ選定）** — **sonnetサブエージェント（WebFetch/WebSearch標準装備）またはメイン（gh CLI）が担当**。ライブラリドキュメントはcontext7 MCP、深い調査はdeep-research skillも活用
+- **調査はsonnet班とcodex-researchの併走を推奨**（2026-07-12ユーザー指示）: 中〜大の調査テーマは、コードベース内をcodex-research・外部Web/GitHubをsonnetに**同時に**投げて両面から掘る（別課金プール併用で速度と裏取りを両立）。Claudeが両者の結果を突き合わせて検品する。小さな調査は単独で足りる
+- **送信方式の既定は非同期**（2026-07-05〜）: codex系への依頼は単発でも `send`（非同期送信）で送り、返信はこのセッションのagmsg Monitorの自動再開で受け取る。送信前のbridge確認・パケット書式は `claude/skills/orchestrate-agents/SKILL.md` を参照
+- **実装中の判断・問題** — まずcodex-implからの質問として起案者に上がる（即答またはAskUserQuestion）。起案者側が迷うときはcodex-research（調査・裏取り・別解の材料集め）やadvisor（着手前点検・行き詰まり相談）を使う。具体物（候補パッチ/file:line/失敗ログ）の検証はcodex査読（オンデマンド）へ
+- **複数タスクを同時並行で投げたい**（ユーザーが明示的に要求した時のみ） — `/orchestrate-agents` skill のテンプレートでタスクを分解し並行送信する
 
 ### sonnetサブエージェント運用（Anthropicプール内の実働力）
 
-- **メイン（Fable/Opus）はファイルの編集・作成を自分で行わない。Edit/Writeが必要な作業はすべてsonnetサブエージェントに委譲し、メインは指揮（指示設計）・検証・判断に徹する**（2026-07-04ユーザー指示）
-- **調査・データ収集も自分で行わない**: pup/gh等のCLI・APIでのメトリクス/ログ/現状照会、コードベース横断調査、Web/GitHub調査もsonnetサブエージェントに委譲する（2026-07-06ユーザー指示・**全プロジェクト常時適用**）。コードベース内横断調査は別課金プールのcursorに流してよいが、Web/GitHub API調査はcursorのheadless制約で不可なのでsonnet(WebFetch/WebSearch装備)またはメイン(gh)が担当する。メインが直接実行してよいのは、sonnet報告のスポット検証（1〜2コマンドの再現・grep・存在確認）と単発の事実確認のみ。この結果、**メイン=計画・指示パケット設計・スポット検証・統合・安全判断 / sonnet=調査・データ収集・編集の実働**という役割分担を全セッションで維持する
+- **メイン（Fable/Opus）はファイルの編集・作成を自分で行わない**（2026-07-04ユーザー指示）。**実質的な機能実装はcodex-implへ**（2026-07-12〜）、それ以外のEdit/Writeが必要な作業（些細〜定型編集・棚卸し・一括修正等）はsonnetサブエージェントに委譲し、メインは指揮（指示設計）・検証・判断に徹する
+- **調査・データ収集も自分で行わない**: pup/gh等のCLI・APIでのメトリクス/ログ/現状照会、コードベース横断調査、Web/GitHub調査もsonnetサブエージェントに委譲する（2026-07-06ユーザー指示・**全プロジェクト常時適用**）。コードベース内横断調査は別課金プールのcodex-researchに流してよい。Web/GitHub API調査はsonnet(WebFetch/WebSearch装備)またはメイン(gh)が担当する（中〜大の調査は両者の併走を推奨）。メインが直接実行してよいのは、sonnet報告のスポット検証（1〜2コマンドの再現・grep・存在確認）と単発の事実確認のみ。この結果、**メイン=計画・指示パケット設計・スポット検証・統合・安全判断 / sonnet=調査・データ収集・編集の実働**という役割分担を全セッションで維持する
 - Agent tool は**既定で `model: sonnet` を明示**する（メインモデルを継承させない）。統括役（指示・検証・判断）は **Fable または Opus** が担い、実働はsonnet班に委譲する。2026-07-07〜: `~/.config/claude/settings.json` の `env.CLAUDE_CODE_SUBAGENT_MODEL=sonnet` で全サブエージェントをsonnetへ環境変数レベルで強制済み（呼び出し漏れの保険）。この環境変数は**呼び出し時の`model`パラメータより優先される**ため、`model: opus`等を指定しても無効化され常にsonnetになる
-- **委譲してよい作業は調査に限らない**: 棚卸し・一括修正・セッション履歴抽出・issue一括登録など、指示を自己完結パケット化できる定型作業は実装・編集までsonnetにやらせる
+- **委譲してよい作業は調査に限らない**: 棚卸し・一括修正・セッション履歴抽出・issue一括登録など、指示を自己完結パケット化できる定型作業は実装・編集までsonnetにやらせる（ただし実質的な機能実装はcodex-implが先。2026-07-12〜）
 - 並列班分け: 作業量のバランスでグループ化（大きい対象は単独班）。プロンプトには担当範囲の絶対パス・作業観点・安全ルール（git commit/push禁止・対象外ファイル変更禁止・迷ったら報告）・報告フォーマットを必ず含める
 - **メイン（Fable/Opus）の仕事は指示設計・報告の実物検証・統合・安全判断**。sonnetの「編集した」報告は鵜呑みにせず、grep/存在確認で必ずスポットチェックする（「修正したと報告したが未適用」の実例: 2026-07-04）
 - **（2026-07-07〜廃止）** 重要な最終検証・判断だけ `model: opus` をピンポイント投入、という例外運用は上記の環境変数強制により機能しない。opusでの検証が必要な局面はサブエージェントに委譲せず、メインセッション自身（Fable/Opus）が直接判断する（詳細はメモリ feedback_subagent_model_sonnet）
 - 例外: ごく軽微な操作（1行のconfig値変更等）でsonnet往復の方が高くつく場合はメインが直接編集してよいが、既定は委譲
 
 トークン節約ガード（中〜大タスク時）:
-- cursor 調査結果返却まで対象領域の Read/Grep/Glob を控え、実装は cursor が cite したファイル/データを起点に開く（不足・安全確認に必要なら Claude が追加で開いてよい。最終的な正しさ/安全判断は Claude が持つ）
-- **実装は Claude 自身が書く**（2026-07-04〜: cursor のパッチ適用から方針転換。cursor は調査・データ収集専任でパッチは作らない）。cursor の調査結果が SCHEMA・検品観点を満たさない場合は不足箇所を具体的に指摘して差し戻し、通ったものだけを実装の起点にする
-- cursor/codex の出力は要約してユーザーに転載せず、**採用項目だけ実装に反映**（コンテキスト膨張＝トークン増を防ぐ）
-- cursor=調査 / codex=査読 と役割が違うので「Claude が書いた実装を codex がレビューする」のが標準フロー
+- codex-research 調査結果返却まで対象領域の Read/Grep/Glob を控え、実装は codex-research が cite したファイル/データを起点に開く（不足・安全確認に必要なら Claude が追加で開いてよい。最終的な正しさ/安全判断は Claude が持つ）
+- **実質的な実装は codex-impl が書く**（2026-07-12〜。2026-07-04〜の「Claude自身が書く」を更新。調査役（codex-research）がパッチを作らない点は不変）。codex-research の調査結果が SCHEMA・検品観点を満たさない場合は不足箇所を具体的に指摘して差し戻し、通ったものだけをプラン・[implement]パケットの起点にする
+- codex系の出力は要約してユーザーに転載せず、**採用項目だけプラン・検収・報告に反映**（コンテキスト膨張＝トークン増を防ぐ）
+- codex-research=調査 / codex-impl=実装 / Fable=検収 が標準フロー（2026-07-12〜）。codex（review役）査読はオンデマンド
 
-レビュー運用:
-- **レビュー（成果物・diff・完成度の査読）は codex に出す。advisor ツールをレビューの代用にしない**（2026-07-11ユーザー指示）。agents協業の役割分担では review は codex 専任（別課金プール）。advisor は着手前のアプローチ点検・行き詰まり時の相談に留め、実装後の「正しいか/完成したか」の査読は codex へ回す（advisor を成果物レビューに使うのは役割分担違反＋Anthropicプール消費）
-- 実質的な実装をしたら codex にレビューを依頼（既定は非同期 `send`。1行修正等の些細な編集は除く）。**最大2巡で収束**させる（Low/nitのみなら1巡で閉じる）。無限ループ禁止
-- cursor/codex への依頼パケットの書式・検品手順・収束条件の詳細は `claude/skills/orchestrate-agents/SKILL.md` を参照
+検収・レビュー運用:
+- **codex-implの成果物はFable（メイン）が単独検収する**（2026-07-12〜）: [done]報告を鵜呑みにせず`git status`/`git diff`の実物を読み、(1)要件適合・プラン逸脱 (2)正しさ・エッジ・回帰リスク (3)`git log`で勝手commitがないこと、を確認し、報告された検証を1-2コマンドでスポット再現する。差し戻しは「指摘→対応」対応表付き・収束は目安最大2巡（詳細は `claude/skills/orchestrate-agents/SKILL.md` の検収ゲート）
+- **codex（review役）への査読外注は標準フローから外れた**（2026-07-12〜。2026-07-11の「レビューはcodex専任」を役割反転により置き換え）。同モデル系が自分の実装を査読する構図を避けるため検収はFableが担い、codex査読は大規模diffの第二意見等、明示的に必要と判断した時だけオンデマンドで使う
+- **advisor をレビューの代用にしない**（不変）: advisorは着手前のアプローチ点検・行き詰まり時の相談のみ。成果物・diff・完成度の査読には使わない
