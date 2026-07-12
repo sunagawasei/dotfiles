@@ -61,7 +61,7 @@
 
 振り分け基準:
 - **壁打ち・プラン化・検収・適用・実行・安全判断** — 本セッション自身（手放さない）
-- **実質的な機能実装**（新機能・refactor・複数ファイル変更） — codex-implへ[implement]パケットで委譲。手順・パケット書式・検収ゲートは `claude/skills/orchestrate-agents/SKILL.md` の「codex-impl自走実装ワークフロー」
+- **実質的な機能実装**（新機能・refactor・複数ファイル変更） — プランを固めて**ユーザー承認を得てから**codex-implへ[implement]パケットで委譲する（承認前に送らない。2026-07-12ユーザー指示）。手順・パケット書式・検収ゲートは `claude/skills/orchestrate-agents/SKILL.md` の「codex-impl自走実装ワークフロー」
 - **些細な編集**（1行config・typo等） — 従来どおりsonnetサブエージェント（既定）かメイン直接。codex往復のコストに見合わない
 - **小さな調査（1-2ファイル/明確な grep）** — Explore サブエージェント or Claude 直接
 - **中〜大タスクのコードベース内横断調査（3+ファイル/新機能/refactor/アーキ不明の使用箇所・依存関係の棚卸し）** — codex-research に先行依頼（コードベース内の調査・データ収集を任せ、file:line一覧や構造化データとして返させる。パッチは作らせない）
