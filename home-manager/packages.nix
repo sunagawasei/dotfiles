@@ -6,11 +6,14 @@ let
   # pane削除(prefix+x)時、フォーカスpane内でshell以外のプロセス（neovim等）が
   # 実行中なら閉じる前に確認ダイアログを出す機能追加（wezterm skip_close_confirmation
   # _for_processes_named の逆相当）。config `confirm_close_running_process`(既定true)。
+  # 非フォーカスpaneをターミナルモード中も暗く(SGR DIM)する。上流は should_dim を
+  # !terminal_active でナビゲートモード限定にしていたのを外し、作業中もフォーカスを明示。
   herdrPatched = herdr.overrideAttrs (old: {
     patches = (old.patches or [ ]) ++ [
       ./patches/herdr-active-pane-border-white.patch
       ./patches/herdr-ctrl-underscore-decode.patch
       ./patches/herdr-confirm-close-running-process.patch
+      ./patches/herdr-dim-unfocused-in-terminal.patch
     ];
   });
 
