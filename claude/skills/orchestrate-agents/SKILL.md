@@ -75,7 +75,7 @@ codex系ワーカーの出力そのものは転載せず、採用した内容と
 
 ## codex-impl自走実装ワークフロー（2026-07-12〜）
 
-実質的な機能実装(新機能・refactor・複数ファイル変更)はcodex-implに自走させ、メイン(Fable)は起案者として質問対応と検収を担う。codex-implはimplementer layout(cwd=対象repo+workspace-write=repo書き込み可・network off)のheadless codexワーカー(gpt-5.6-sol)。些細な編集(1行config・typo等)はこのフローに乗せない(従来どおりsonnet/メイン直接)。
+実質的な機能実装(新機能・refactor・複数ファイル変更)はcodex-implに自走させ、メイン(Fable)は起案者として質問対応と検収を担う。codex-implはimplementer layout(cwd=対象repo・permission profileでrepo書き込み可・network遮断)のheadless codexワーカー(gpt-5.6-sol)。些細な編集(1行config・typo等)はこのフローに乗せない(従来どおりsonnet/メイン直接)。
 
 ### 1. 壁打ち→プラン確定
 
@@ -130,9 +130,10 @@ codex系ワーカーへ送るパケットの書式、Claude側の検品・収束
 
 ### [research]パケットの鉄則（codex-research宛）
 
-- codex-research は**調査専任**(consultant layout: repoはread、書けるのはagmsg配下のみ=実質read-only)。返すのは file:line 一覧や構造化データだけ。**パッチは作らせない**＝実装は codex-impl が書く。role file は `db/spawn-roles/codex-research.codex.md`(gh はGET/検索系のみ可・issue/PR作成禁止・URL/番号の捏造禁止)
+- codex-research は**調査専任**(reviewer layout: repoはread、書けるのはagmsg配下のみ=実質read-only。**networkは全開**=外部web・ghを自力取得可、2026-07-14〜)。返すのは file:line 一覧や構造化データだけ。**パッチは作らせない**＝実装は codex-impl が書く。role file は `db/spawn-roles/codex-research.codex.md`(gh はGET/検索系のみ可・issue/PR作成禁止・URL/番号の捏造禁止)
 - agmsg: 宛先 codex-research・prefix `[research]`。自己完結パケット = GOAL / CONSTRAINTS / SCOPE / SCHEMA(期待する出力の構造・項目を明示) / 検品観点(Claude が何を確認するか) / DO NOT write files・DO NOT パッチ生成
-- **sonnet班との併走を推奨**(2026-07-12ユーザー指示): 中〜大の調査テーマは、コードベース内をcodex-research・外部Web/GitHub/ライブラリ仕様をsonnetサブエージェントに同時に投げて両面から掘り、Claudeが突き合わせて検品する
+- **codex-researchも外部Web/GitHub/gh取得が可能**(2026-07-14〜、networkが全開になったため): 従来の「コードベース内=codex-research/外部Web=sonnet」という棲み分けは前提でなくなり、codex-research単独でも外部調査を進められる
+- **sonnet班との併走は維持**(2026-07-12ユーザー指示): 中〜大の調査テーマは、コードベース内をcodex-research・外部Web/GitHub/ライブラリ仕様をsonnetサブエージェントに同時に投げて両面から掘り、Claudeが突き合わせて検品する(別課金プール併用による裏取り・速度両立が目的)
 - Claude は返答を**検品**する。SCHEMA を満たさない・情報が不足している場合は「◯件中◯件で△△が不足」のように対象を具体的に指摘して**差し戻す**。検品を通った調査結果/データを起点にプラン・[implement]パケットを組む
 - **インクリメンタル調査**: 大きい調査は一括で丸投げにせず、**1トピック/1論理単位ずつ**調査させ、各単位を検品(SCHEMA充足・過不足の即チェック)してから次の単位へ進める。巨大な調査のやり直し(トークン浪費)を防ぎ、早期に軌道修正する
 
@@ -142,7 +143,8 @@ codex系ワーカーへ送るパケットの書式、Claude側の検品・収束
 - DO NOTを明記: git commit/push禁止・対象repo外の変更禁止・無断の設計変更禁止・未検証の完了報告禁止
 - 長文は`--stdin`で送る(quoting事故防止)
 - turn timeoutは3600秒(config済み)。「区切りの良いところまで進めて途中経過を報告してよい」と書くと長タスクの往復が安定する
-- networkはoff(workspace-write既定)。外部情報が要る作業は、必要な情報をパケットに同梱するか、事前にsonnet班で収集して渡す
+- networkはoff(implementer=codex-implは遮断。reviewer系(codex-research/codex-deep/codex)はnetwork全開だが、実装役は外部送信リスクを断つため遮断のまま、2026-07-14〜)。外部情報が要る作業は、必要な情報をパケットに同梱するか、事前にsonnet班またはcodex-research(network全開)で収集して渡す(web_searchはcodexサーバー側実行のためnetwork offでも使えるが、込み入った外部情報収集はsonnet/codex-researchに任せる)
+- **ビルド系タスク(Go等)の事前準備**(2026-07-13、natural-japanese Go移植で確立): network off環境へビルドを伴う実装を委譲する前に、起案者側で (a)依存をvendor等でrepo内に焼き込み、オフラインビルド(`GOPROXY=off`等)が通ることを事前検証する (b)cwd外に書くビルドキャッシュの退避先(Goなら`GOCACHE=${TMPDIR:-/tmp}/...`)をパケットの検証コマンドに明記する (c)移植・書き換えでは旧実装の出力(比較基準)を事前生成してtestdata等に同梱する(旧ランタイムは委譲先で動かせない前提で) (d)呼び出しコマンド・cwdなど実行形態まで指定する(マルチモジュール構成の要否はこの指定から決まる。例: cwd=親dirの`go run ./scripts`指定はgo.work構成を生む)
 
 ### codex依頼パケットの鉄則
 
@@ -216,7 +218,7 @@ agmsg configのper-workerキー（`spawn.codex_model.<name>` / `spawn.codex_effo
 
 | タスク | 宛先ワーカー | モデル/effort |
 |---|---|---|
-| 実質的な機能実装の自走 | codex-impl | gpt-5.6-sol / xhigh（global継承）・turn_timeout 3600s・implementer layout（cwd=対象repo+workspace-write） |
+| 実質的な機能実装の自走 | codex-impl | gpt-5.6-sol / xhigh（global継承）・turn_timeout 3600s・implementer layout（cwd=対象repo・permission profileでrepo書き込み可） |
 | 実装後レビュー（オンデマンド） | codex | gpt-5.6-sol / xhigh（global継承） |
 | 調査・軽微な確認・大量列挙 | codex-research | gpt-5.6-terra / xhigh（global継承。遅いと感じたら `spawn.codex_effort.codex-research: high` へ下げる） |
 | 大規模・設計横断の節目レビュー | codex-deep（一時spawn→使い捨て） | gpt-5.6-sol / max（configキー設定済み） |
