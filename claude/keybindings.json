@@ -135,8 +135,9 @@
     {
       "context": "Task",
       "bindings": {
-        "ctrl+x ctrl+b": "task:background",
-        "ctrl+b": "task:background"
+        "ctrl+x ctrl+b": null,
+        "ctrl+b": null,
+        "ctrl+w": "task:background"
       }
     },
     {
