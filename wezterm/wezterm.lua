@@ -223,18 +223,18 @@ config.colors = {
 	-- ANSI色
 	ansi = {
 		"#111E16", -- black (Darkest)
-		"#A37AA7", -- red (Muted Purple, WCAG AA 5.50:1)
+		"#AD6D8B", -- red (Mauve Rose, WCAG AA 4.98:1)
 		"#349594", -- green (Deep Sea)
-		"#CED5E9", -- yellow (Lavender)
+		"#C4B37A", -- yellow (Muted Gold, WCAG AA 9.40:1)
 		"#326787", -- blue (Ocean Blue)
-		"#8A99BD", -- magenta (Sky Slate, WCAG AA 6.88:1)
+		"#7A71BA", -- magenta (Periwinkle, WCAG AA 4.57:1)
 		"#6CD8D3", -- cyan (Vibrant Teal)
 		"#CEF5F2", -- white (Main Text)
 	},
 	-- 明るいANSI色
 	brights = {
 		"#525B65", -- bright black (Slate Mid)
-		"#865F7B", -- bright red (Muted Rose)
+		"#BB7899", -- bright red (Dusty Rose, WCAG AA 5.84:1)
 		"#64BBBE", -- bright green (Clear Teal)
 		"#B1F4ED", -- bright yellow (Brightest Text)
 		"#A4ABCB", -- bright blue (Sky Slate)
@@ -250,7 +250,7 @@ config.colors = {
 	copy_mode_inactive_highlight_fg = { Color = "#CEF5F2" },
 
 	-- クイックセレクト色設定
-	quick_select_label_bg = { Color = "#A37AA7" },
+	quick_select_label_bg = { Color = "#AD6D8B" },
 	quick_select_label_fg = { Color = "#F2FFFF" },
 	quick_select_match_bg = { Color = "#6CD8D3" },
 	quick_select_match_fg = { Color = "#0B0C0C" },

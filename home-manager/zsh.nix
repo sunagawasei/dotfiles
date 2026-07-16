@@ -166,7 +166,7 @@
 
         # ERROR: ❯ は常に統一色。rootログイン時のみ警告色
         zstyle ':prompt:pure:prompt:error' color '#CEF5F2'
-        zstyle ':prompt:pure:user:root' color '#A37AA7'
+        zstyle ':prompt:pure:user:root' color '#AD6D8B'
 
         zinit ice compile'(pure|async).zsh' pick'async.zsh' src'pure.zsh'
         zinit light sindresorhus/pure

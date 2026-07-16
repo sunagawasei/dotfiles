@@ -52,11 +52,11 @@
 
 ```
  0: #111E16 (Black)           8: #525B65 (Bright Black)
- 1: #936997 (Red)             9: #865F7B (Bright Red)
+ 1: #AD6D8B (Red)             9: #BB7899 (Bright Red)
  2: #349594 (Green)          10: #64BBBE (Bright Green)
- 3: #CED5E9 (Yellow)         11: #B1F4ED (Bright Yellow)
+ 3: #C4B37A (Yellow)         11: #B1F4ED (Bright Yellow)
  4: #326787 (Blue)           12: #A4ABCB (Bright Blue)
- 5: #584EA2 (Magenta)        13: #B4B7CD (Bright Magenta)
+ 5: #7A71BA (Magenta)        13: #B4B7CD (Bright Magenta)
  6: #6CD8D3 (Cyan)           14: #9DDCD9 (Bright Cyan)
  7: #CEF5F2 (White)          15: #F2FFFF (Bright White)
 ```

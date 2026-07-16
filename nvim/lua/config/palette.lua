@@ -37,13 +37,14 @@ M.colors = {
   lavender = "#CED5E9",      -- Lavender (Constant) [purples.lavender]
 
   -- ANSI/Terminal (normal)
-  ansi_red = "#936997",
+  ansi_red = "#AD6D8B",
   ansi_green = "#349594",
-  ansi_yellow = "#CED5E9",
+  ansi_yellow = "#C4B37A",
   ansi_blue = "#326787",
+  ansi_magenta = "#7A71BA",    -- ansi.magenta専用キー（`magenta`はerrorアクセントとしてUIハイライトに共有されているため分離）
 
   -- ANSI Bright [ansi section] — Step 1: 未定義 terminal_color の修正
-  bright_red = "#865F7B",      -- ansi.bright_red (Soft Magenta)
+  bright_red = "#BB7899",      -- ansi.bright_red (Dusty Rose)
   bright_green = "#64BBBE",    -- ansi.bright_green (Clear Teal)
   bright_yellow = "#B1F4ED",   -- ansi.bright_yellow (Bright Text)
   bright_blue = "#A4ABCB",     -- ansi.bright_blue (Sky Slate)

@@ -87,16 +87,16 @@ constant = "#CED5E9"
 # --------------------------------
 [ansi]
 black = "#111E16"
-red = "#A37AA7"                # Bright Purple Enhanced - WCAG AA compliant
+red = "#AD6D8B"                # Mauve Rose (WCAG AA 4.98:1)
 green = "#349594"
-yellow = "#CED5E9"
+yellow = "#C4B37A"             # Muted Gold (WCAG AA 9.40:1)
 blue = "#326787"
-magenta = "#584EA2"
+magenta = "#7A71BA"            # Periwinkle (WCAG AA 4.57:1)
 cyan = "#6CD8D3"
 white = "#CEF5F2"
 
 bright_black = "#525B65"      # More visible than background
-bright_red = "#865F7B"
+bright_red = "#BB7899"        # Dusty Rose (WCAG AA 5.84:1)
 bright_green = "#64BBBE"
 bright_yellow = "#B1F4ED"
 bright_blue = "#A4ABCB"

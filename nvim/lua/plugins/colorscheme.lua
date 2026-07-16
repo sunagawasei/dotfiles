@@ -404,7 +404,7 @@ return {
       vim.g.terminal_color_2 = colors.ansi_green      -- Green → gray
       vim.g.terminal_color_3 = colors.ansi_yellow     -- Yellow → gray
       vim.g.terminal_color_4 = colors.ansi_blue       -- Blue → gray
-      vim.g.terminal_color_5 = colors.magenta         -- Magenta: グリッチ紫（アクセント）
+      vim.g.terminal_color_5 = colors.ansi_magenta    -- Magenta: ANSI専用色（colors.magentaはerrorアクセント共有のため分離）
       vim.g.terminal_color_6 = colors.cyan            -- Cyan: ネオン青緑（アクセント）
       vim.g.terminal_color_7 = colors.fg              -- White: 前景
       vim.g.terminal_color_8 = colors.dark_shadow     -- Bright Black: 濃い影
