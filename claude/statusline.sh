@@ -2,15 +2,25 @@
 
 input=$(cat)
 
+# jq失敗時も既存バーを描画できるようデフォルト値を設定
+MODEL="?"
+DIR=""
+USED_PCT=0
+ADDED=0
+REMOVED=0
+RATE_USED=""
+SESSION_ID=""
+
 # jqで一括抽出
-eval "$(echo "$input" | jq -r '
+eval "$(printf '%s' "$input" | jq -r '
   @sh "MODEL=\(.model.display_name // "?")",
   @sh "DIR=\(.workspace.current_dir // "")",
   @sh "USED_PCT=\(.context_window.used_percentage // 0)",
   @sh "ADDED=\(.cost.total_lines_added // 0)",
   @sh "REMOVED=\(.cost.total_lines_removed // 0)",
-  @sh "RATE_USED=\(.rate_limits.five_hour.used_percentage // "")"
-')"
+  @sh "RATE_USED=\(.rate_limits.five_hour.used_percentage // "")",
+  @sh "SESSION_ID=\(.session_id // "")"
+' 2>/dev/null)" 2>/dev/null
 
 # モデル名を短縮（例: "claude-sonnet-4-6" → "sonnet", "Claude Sonnet 4.6" → "sonnet"）
 MODEL_SHORT=$(echo "$MODEL" | sed -E 's/[Cc]laude[- ]+//g; s/[- ]*[0-9]+(\.[0-9]+)*//g; s/[- ]+$//; s/^ +//; s/ +$//' | tr '[:upper:]' '[:lower:]')
@@ -26,6 +36,109 @@ if cd "$DIR" 2>/dev/null && git rev-parse --is-inside-work-tree &>/dev/null; the
   GIT_BRANCH=$(git branch --show-current 2>/dev/null)
   [ -z "$GIT_BRANCH" ] && GIT_BRANCH="HEAD:$(git rev-parse --short HEAD 2>/dev/null)"
 fi
+
+# herdr用busyマーカーの状態判定
+AGMSG_TEAM=""
+CODEX_PENDING=0
+if [[ -n "$SESSION_ID" && "$SESSION_ID" =~ ^[0-9a-fA-F-]+$ ]]; then
+  AGMSG_TEAM="s-${SESSION_ID}"
+  AGMSG_DB=~/.agents/skills/agmsg/db/messages.db
+  if [ -r "$AGMSG_DB" ] && command -v sqlite3 >/dev/null 2>&1; then
+    CODEX_PENDING=$(sqlite3 -readonly "$AGMSG_DB" "
+      SELECT EXISTS(
+        SELECT 1 FROM messages m
+        WHERE m.team='${AGMSG_TEAM}' AND m.from_agent='claude' AND m.to_agent LIKE 'codex%'
+          AND m.id > COALESCE((SELECT MAX(r.id) FROM messages r
+            WHERE r.team=m.team AND r.from_agent=m.to_agent AND r.to_agent='claude'), 0)
+      );
+    " 2>/dev/null) || CODEX_PENDING=0
+    [ "$CODEX_PENDING" = "1" ] || CODEX_PENDING=0
+  fi
+fi
+
+# psは1回だけ走査し、bridge生存とClaude配下のバックグラウンドタスクを導出
+BRIDGE_ALIVE=0
+BG_BUSY=0
+PROCESS_STATE=$(ps -ax -o pid=,ppid=,command= 2>/dev/null | awk \
+  -v self_pid="$$" -v team="$AGMSG_TEAM" '
+  {
+    pid = $1 + 0
+    ppid = $2 + 0
+    command = $0
+    sub(/^[[:space:]]*[0-9]+[[:space:]]+[0-9]+[[:space:]]*/, "", command)
+    parents[pid] = ppid
+    commands[pid] = command
+    pids[pid] = 1
+  }
+  END {
+    bridge_signature = "codex" "-bridge"
+    snapshot_signature = "shell-snapshots/" "snapshot-"
+    watch_signature = "agmsg/scripts/" "watch.sh"
+    bridge_alive = 0
+    bg_busy = 0
+
+    if (team != "") {
+      for (pid in pids) {
+        if (index(commands[pid], bridge_signature) && index(commands[pid], team)) {
+          bridge_alive = 1
+          break
+        }
+      }
+    }
+
+    current = self_pid + 0
+    while (current > 0 && !visited[current]) {
+      visited[current] = 1
+      ancestors[current] = 1
+      first_token = commands[current]
+      sub(/[[:space:]].*$/, "", first_token)
+      sub(/^.*\//, "", first_token)
+      if (first_token == "claude") {
+        claude_pid = current
+        break
+      }
+      current = parents[current]
+    }
+
+    if (claude_pid > 0) {
+      for (pid in pids) {
+        if (parents[pid] == claude_pid && !ancestors[pid] &&
+            index(commands[pid], snapshot_signature)) {
+          candidates[pid] = 1
+        }
+      }
+
+      for (candidate in candidates) {
+        is_monitor = 0
+        for (pid in pids) {
+          if (!index(commands[pid], watch_signature)) {
+            continue
+          }
+          current = pid
+          for (depth = 0; current > 0 && depth < 128; depth++) {
+            current = parents[current]
+            if (current == candidate) {
+              is_monitor = 1
+              break
+            }
+          }
+          if (is_monitor) {
+            break
+          }
+        }
+        if (!is_monitor) {
+          bg_busy = 1
+          break
+        }
+      }
+    }
+
+    print bridge_alive, bg_busy
+  }
+' 2>/dev/null) || PROCESS_STATE=""
+read -r BRIDGE_ALIVE BG_BUSY <<< "$PROCESS_STATE"
+[ "$BRIDGE_ALIVE" = "1" ] || BRIDGE_ALIVE=0
+[ "$BG_BUSY" = "1" ] || BG_BUSY=0
 
 RST='\e[0m'
 
@@ -50,6 +163,7 @@ C_DIR="\e[38;2;157;220;217m"     # #9DDCD9 foregrounds.heading
 C_GIT="\e[38;2;108;216;211m"     # #6CD8D3 teals.bright
 C_ADD="\e[38;2;52;149;148m"      # #349594 teals.deep
 C_DEL="\e[38;2;163;122;167m"     # #a37aa7 purples.bright_purple
+C_BUSY="\e[38;2;163;122;167m"    # #a37aa7 purples.bright_purple
 
 # 使用率の色（閾値で変化）
 pct=${USED_PCT%.*}
@@ -124,6 +238,9 @@ if [ "$ADDED" -gt 0 ] || [ "$REMOVED" -gt 0 ]; then
   [ "$REMOVED" -gt 0 ]                             && lines+="${C_DEL}-${REMOVED}"
   row2+=("#44363B|${lines}")
 fi
+
+[ "$CODEX_PENDING" = "1" ] && [ "$BRIDGE_ALIVE" = "1" ] && row2+=("#1E1E24|${C_BUSY}󰚩 codex")
+[ "$BG_BUSY" = "1" ] && row2+=("#1E1E24|${C_BUSY}󰜎 bg")
 
 build_bar row1
 printf '\n'
