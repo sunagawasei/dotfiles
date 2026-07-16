@@ -60,6 +60,7 @@ description: Brief one-line description
 - オプション: `references/`サブディレクトリでテンプレート提供
 - kebab-case命名（例: `init-project`, `add-rule`）
 - ステップバイステップのワークフロー
+- グローバル（`claude/skills/`）への新規追加時は`.gitignore`のallowlist（`!claude/skills/<name>/`）登録が必須。`claude/skills/*`が既定ignoreのため、未登録だと黙って未追跡になる（`git status --short`で`??`と出ることを確認）
 
 ### Docs（ドキュメント）
 
