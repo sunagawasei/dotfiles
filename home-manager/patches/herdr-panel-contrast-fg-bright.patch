@@ -1,0 +1,64 @@
+diff --git a/src/ui/menus.rs b/src/ui/menus.rs
+index 763c0ea..c60bdfc 100644
+--- a/src/ui/menus.rs
++++ b/src/ui/menus.rs
+@@ -6,7 +6,7 @@ use ratatui::{
+     Frame,
+ };
+ 
+-use super::widgets::{panel_contrast_fg, render_panel_shell};
++use super::widgets::{panel_contrast_fg, panel_contrast_fg_dim, render_panel_shell};
+ use crate::app::AppState;
+ 
+ fn prefix_rhs_label(bindings: &crate::config::ActionKeybinds) -> String {
+@@ -263,7 +263,7 @@ pub(super) fn render_resize_overlay(app: &AppState, frame: &mut Frame, area: Rec
+     let dim = Style::default().fg(app.palette.overlay0);
+ 
+     let mode_style = Style::default()
+-        .fg(panel_contrast_fg(&app.palette))
++        .fg(panel_contrast_fg_dim(&app.palette))
+         .bg(app.palette.mauve)
+         .add_modifier(Modifier::BOLD);
+ 
+diff --git a/src/ui/status.rs b/src/ui/status.rs
+index ede38b8..e02382d 100644
+--- a/src/ui/status.rs
++++ b/src/ui/status.rs
+@@ -7,7 +7,7 @@ use ratatui::{
+ };
+ 
+ use super::text::display_width_u16;
+-use super::widgets::panel_contrast_fg;
++use super::widgets::panel_contrast_fg_dim;
+ use crate::{
+     app::state::{CopyFeedback, Palette, ToastKind, ToastNotification},
+     config::{ToastClipboardPosition, ToastHerdrPosition},
+@@ -169,7 +169,7 @@ pub(super) fn render_copy_feedback(
+ 
+ pub(super) fn render_config_diagnostic(frame: &mut Frame, area: Rect, message: &str, p: &Palette) {
+     let style = Style::default()
+-        .fg(panel_contrast_fg(p))
++        .fg(panel_contrast_fg_dim(p))
+         .bg(p.yellow)
+         .add_modifier(Modifier::BOLD);
+ 
+diff --git a/src/ui/widgets.rs b/src/ui/widgets.rs
+index ef41613..28e1840 100644
+--- a/src/ui/widgets.rs
++++ b/src/ui/widgets.rs
+@@ -30,6 +30,15 @@ pub(super) fn render_panel_shell(
+ }
+ 
+ pub(super) fn panel_contrast_fg(p: &Palette) -> Color {
++    match p.panel_bg {
++        Color::Reset => p.overlay1,
++        color => color,
++    }
++}
++
++// Dim variant for badges whose background can be bright in 16-color palettes
++// (mauve resize badge, yellow diagnostics); a light fg would wash out there.
++pub(super) fn panel_contrast_fg_dim(p: &Palette) -> Color {
+     match p.panel_bg {
+         Color::Reset => p.surface_dim,
+         color => color,
