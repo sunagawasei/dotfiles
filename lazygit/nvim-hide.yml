@@ -1,0 +1,9 @@
+# Neovim経由で起動したLazyGitにのみ重ねる上乗せ設定。
+keybinding:
+  universal:
+    quit: <disabled>
+customCommands:
+  - key: q
+    context: global
+    command: nvim --server "$NVIM" --remote-expr 'v:lua.lazygit_hide()'
+    output: none

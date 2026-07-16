@@ -144,6 +144,10 @@ return {
       direction = "float",
       env = {
         NVIM = vim.v.servername, -- $NVIMを明示的に渡してneovim-remoteで開けるようにする
+        LG_CONFIG_FILE = table.concat({
+          vim.fn.expand("~/.config/lazygit/config.yml"),
+          vim.fn.expand("~/.config/lazygit/nvim-hide.yml"),
+        }, ","),
       },
       float_opts = {
         border = "curved",
@@ -168,6 +172,11 @@ return {
 
     _G.lazygit_toggle = function()
       lazygit:toggle()
+    end
+
+    _G.lazygit_hide = function()
+      lazygit:close()
+      return 0
     end
 
     -- Hunk統合(AIエージェント差分レビュー用TUI)
