@@ -1,0 +1,7 @@
+# upstream取り込み記録（skill本体はgist原文のまま。ローカル調整はCLAUDE.md規定側で吸収する）
+# 更新チェック: gh api gists/<gist_id> --jq '.history[0].version' をrevisionと比較（updated_atは更新検知に使えない）
+# 差分確認:    gh gist view <gist_id> -f SKILL.md --raw | diff - SKILL.md
+source: https://gist.github.com/k16shikano/eb2929f13ed19c97188393d297be8432
+gist_id: eb2929f13ed19c97188393d297be8432
+revision: a3b1e26beced71d582e13314fb6f5b179b023c76
+retrieved: 2026-07-16

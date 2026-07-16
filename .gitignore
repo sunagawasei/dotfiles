@@ -186,6 +186,8 @@ claude/skills/*
 !claude/skills/session-harvest/
 !claude/skills/session-verify/
 !claude/skills/orchestrate-agents/
+!claude/skills/japanese-tech-writing/
+!claude/skills/cognitive-rhythm-writing/
 !claude/docs/
 !claude/agents/
 claude/agents/*
