@@ -1,0 +1,92 @@
+diff --git a/src/ui.rs b/src/ui.rs
+index dec8d7a..dfde19d 100644
+--- a/src/ui.rs
++++ b/src/ui.rs
+@@ -981,7 +981,7 @@ mod tests {
+     }
+ 
+     #[test]
+-    fn expanded_sidebar_workspace_rows_show_state_before_name_without_numbers() {
++    fn expanded_sidebar_workspace_rows_show_state_before_name_with_numbers() {
+         let mut app = crate::app::state::AppState::test_new();
+         let mut ws = Workspace::test_new("one");
+         let repo = temp_git_repo("main");
+@@ -1009,9 +1009,8 @@ mod tests {
+         let line1 = buffer_row_text(buffer, card, card.y);
+         let line2 = buffer_row_text(buffer, card, card.y + 1);
+ 
+-        assert!(line1.starts_with(" · one"));
+-        assert!(!line1.contains("1 one"));
+-        assert_eq!(line2, "   main");
++        assert!(line1.starts_with("1 · one"));
++        assert_eq!(line2, "    main");
+ 
+         std::fs::remove_dir_all(repo).ok();
+     }
+diff --git a/src/ui/sidebar.rs b/src/ui/sidebar.rs
+index 687e0ad..ce1a89c 100644
+--- a/src/ui/sidebar.rs
++++ b/src/ui/sidebar.rs
+@@ -877,11 +877,26 @@ fn render_workspace_list(
+ 
+         let (icon, icon_style) = state_dot(agg_state, agg_seen, p);
+         let label = ws.display_name_from(&app.terminals, terminal_runtimes);
+-        let mut line1 = Vec::new();
++        let number = format!("{} ", i + 1);
++        let number_width = number.len();
++        let number_style = if selected {
++            Style::default().fg(p.overlay1)
++        } else if is_active {
++            Style::default().fg(p.text)
++        } else {
++            Style::default().fg(p.overlay0)
++        };
++        let parent_group_state = if card.indented {
++            None
++        } else {
++            workspace_parent_group_state(app, i)
++        };
++        let is_group_parent = parent_group_state.is_some();
++        let mut line1 = vec![Span::styled(number, number_style)];
+         let mut show_workspace_icon = true;
+         if card.indented {
+             line1.push(Span::styled("   ", Style::default()));
+-        } else if let Some((key, collapsed)) = workspace_parent_group_state(app, i) {
++        } else if let Some((key, collapsed)) = parent_group_state {
+             let icon = if collapsed { "▸" } else { "▾" };
+             let (state_icon, state_style) = if collapsed {
+                 let (state, seen) = space_aggregate_state(app, &key);
+@@ -896,8 +911,6 @@ fn render_workspace_list(
+                 show_workspace_icon = false;
+             }
+             line1.push(Span::styled(" ", Style::default()));
+-        } else {
+-            line1.push(Span::styled(" ", Style::default()));
+         }
+         if show_workspace_icon {
+             line1.push(Span::styled(icon, icon_style));
+@@ -937,14 +950,22 @@ fn render_workspace_list(
+                         parts.iter().map(|(label, _)| label.len()).sum::<usize>() + parts.len()
+                     })
+                     .unwrap_or(0);
+-                let max_branch_len = (card.rect.width as usize).saturating_sub(5 + reserved);
++                let max_branch_len = (card.rect.width as usize)
++                    .saturating_sub(number_width + 5 + reserved);
+                 let branch_display = truncate_end(&branch, max_branch_len);
+                 let branch_color = if selected || is_active {
+                     p.mauve
+                 } else {
+                     p.overlay0
+                 };
+-                let branch_indent = if card.indented { "     " } else { "   " };
++                let prefix_width = if card.indented {
++                    5
++                } else if is_group_parent {
++                    4
++                } else {
++                    2
++                };
++                let branch_indent = " ".repeat(number_width + prefix_width);
+                 let mut spans = vec![
+                     Span::styled(branch_indent, Style::default()),
+                     Span::styled(branch_display, Style::default().fg(branch_color)),

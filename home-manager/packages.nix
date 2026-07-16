@@ -11,12 +11,15 @@ let
   # navigator選択行・PREFIX等20箇所が改善。bgが明色になるRESIZEバッジ(mauve=ANSI 7)と
   # config警告(yellow=ANSI 3)の2箇所のみ旧ロジック(_dim)据え置き。
   # [theme.custom]のsurface_dim overrideはsidebar選択行のbgにも波及するため不採用。
+  # expanded sidebarのspaces一覧にもcollapsed railと同じ表示順番号を常時表示
+  # （上流は番号なしを明示テストで固定した意図的設計・configキーなし）。
   herdrPatched = herdr.overrideAttrs (old: {
     patches = (old.patches or [ ]) ++ [
       ./patches/herdr-active-pane-border-white.patch
       ./patches/herdr-ctrl-underscore-decode.patch
       ./patches/herdr-confirm-close-running-process.patch
       ./patches/herdr-panel-contrast-fg-bright.patch
+      ./patches/herdr-expanded-sidebar-space-numbers.patch
     ];
   });
 
