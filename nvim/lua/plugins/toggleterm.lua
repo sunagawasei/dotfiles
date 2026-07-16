@@ -175,8 +175,11 @@ return {
     end
 
     _G.lazygit_hide = function()
-      lazygit:close()
-      return 0
+      if lazygit:is_open() and lazygit:is_focused() then
+        lazygit:close()
+        return 0
+      end
+      error("lazygit is not the focused window")
     end
 
     -- Hunk統合(AIエージェント差分レビュー用TUI)
