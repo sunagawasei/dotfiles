@@ -40,14 +40,14 @@ M.colors = {
   -- ANSI/Terminal (normal)
   ansi_red = "#C67F9E",
   ansi_green = "#2FA5A0",
-  ansi_yellow = "#C9B078",
+  ansi_yellow = "#BBA881",
   ansi_blue = "#6393D7",
   ansi_magenta = "#D96DC0",    -- ansi.magenta専用キー（`magenta`はerrorアクセントとしてUIハイライトに共有されているため分離）
 
   -- ANSI Bright [ansi section] — Step 1: 未定義 terminal_color の修正
   bright_red = "#D38AA6",      -- ansi.bright_red (Dusty Rose)
   bright_green = "#52C4BC",    -- ansi.bright_green (Clear Teal)
-  bright_yellow = "#DCC98E",   -- ansi.bright_yellow (Bright Text)
+  bright_yellow = "#DFBE90",   -- ansi.bright_yellow (Bright Text)
   bright_blue = "#A8B2D6",     -- ansi.bright_blue (Sky Slate)
 
   -- その他

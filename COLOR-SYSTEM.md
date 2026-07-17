@@ -55,7 +55,7 @@
  0: #0E1127 (Black)           8: #5E5A63 (Bright Black)
  1: #C67F9E (Red)             9: #D38AA6 (Bright Red)
  2: #2FA5A0 (Green)          10: #52C4BC (Bright Green)
- 3: #C9B078 (Yellow)         11: #DCC98E (Bright Yellow)
+ 3: #BBA881 (Yellow)         11: #DFBE90 (Bright Yellow)
  4: #6393D7 (Blue)           12: #A8B2D6 (Bright Blue)
  5: #D96DC0 (Magenta)        13: #EBC1F8 (Bright Magenta)
  6: #58CAF8 (Cyan)           14: #9FDBF7 (Bright Cyan)

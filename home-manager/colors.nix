@@ -69,7 +69,7 @@
     black = "#0E1127";
     red = "#C67F9E";
     green = "#2FA5A0";
-    yellow = "#C9B078";
+    yellow = "#BBA881";
     blue = "#6393D7";
     magenta = "#D96DC0";
     cyan = "#58CAF8";
@@ -77,7 +77,7 @@
     bright_black = "#5E5A63";
     bright_red = "#D38AA6";
     bright_green = "#52C4BC";
-    bright_yellow = "#DCC98E";
+    bright_yellow = "#DFBE90";
     bright_blue = "#A8B2D6";
     bright_magenta = "#EBC1F8";
     bright_cyan = "#9FDBF7";
