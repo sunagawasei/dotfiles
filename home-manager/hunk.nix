@@ -1,4 +1,7 @@
 { ... }:
+let
+  colors = import ./colors.nix;
+in
 {
   programs.hunk = {
     enable = true;
@@ -11,59 +14,59 @@
       line_numbers = true;
 
       custom_theme = {
-        label = "Abyssal Teal";
+        label = colors.metadata.name;
 
-        background = "#0b0c0c";
-        panel = "#152a2b";
-        panelAlt = "#1e1e24";
-        border = "#4d8f9e";
-        accent = "#6cd8d3";
-        accentMuted = "#659d9e";
-        text = "#cef5f2";
-        muted = "#92a2ab";
+        background = colors.core.background;
+        panel = colors.core.panel_bg;
+        panelAlt = colors.core.ui_shadow;
+        border = colors.teals.border;
+        accent = colors.teals.bright;
+        accentMuted = colors.teals.standard;
+        text = colors.foregrounds.main;
+        muted = colors.foregrounds.dim;
 
-        addedBg = "#0d1f1f";
-        removedBg = "#151515";
-        movedAddedBg = "#1e4a40";
-        movedRemovedBg = "#4a2328";
-        contextBg = "#0b0c0c";
-        addedContentBg = "#1e4a40";
-        removedContentBg = "#4a2328";
-        contextContentBg = "#0b0c0c";
-        addedSignColor = "#6ab9a8";
-        removedSignColor = "#a37aa7";
+        addedBg = colors.nvim.diff_add_bg;
+        removedBg = colors.nvim.diff_delete_bg;
+        movedAddedBg = colors.nvim.diff_add_inline_bg;
+        movedRemovedBg = colors.nvim.diff_delete_inline_bg;
+        contextBg = colors.core.background;
+        addedContentBg = colors.nvim.diff_add_inline_bg;
+        removedContentBg = colors.nvim.diff_delete_inline_bg;
+        contextContentBg = colors.core.background;
+        addedSignColor = colors.semantic.success;
+        removedSignColor = colors.semantic.error;
 
-        lineNumberBg = "#0b0c0c";
-        lineNumberFg = "#525b65";
-        selectedHunk = "#64bbbe";
+        lineNumberBg = colors.core.background;
+        lineNumberFg = colors.blues_slates.slate_mid;
+        selectedHunk = colors.core.selection_bg;
 
-        badgeAdded = "#6ab9a8";
-        badgeRemoved = "#a37aa7";
-        badgeNeutral = "#7a8599";
+        badgeAdded = colors.semantic.success;
+        badgeRemoved = colors.semantic.error;
+        badgeNeutral = colors.blues_slates.punctuation_gray;
 
-        fileNew = "#6ab9a8";
-        fileDeleted = "#a37aa7";
-        fileRenamed = "#8a99bd";
-        fileModified = "#6cd8d3";
-        fileUntracked = "#92a2ab";
+        fileNew = colors.semantic.success;
+        fileDeleted = colors.semantic.error;
+        fileRenamed = colors.purples.muted_purple;
+        fileModified = colors.teals.bright;
+        fileUntracked = colors.foregrounds.dim;
 
-        noteBorder = "#4d8f9e";
-        noteBackground = "#152a2b";
-        noteTitleBackground = "#304d4f";
-        noteTitleText = "#cef5f2";
+        noteBorder = colors.teals.border;
+        noteBackground = colors.core.panel_bg;
+        noteTitleBackground = colors.teals.dark_accent;
+        noteTitleText = colors.foregrounds.main;
 
         syntax = {
-          default = "#cef5f2";
-          keyword = "#8a99bd";
-          string = "#659d9e";
-          comment = "#7a869a";
-          number = "#b1f4ed";
-          function = "#6cd8d3";
-          property = "#ced5e9";
-          type = "#a4abcb";
-          variable = "#cef5f2";
-          operator = "#64bbbe";
-          punctuation = "#7a8599";
+          default = colors.semantic.variable;
+          keyword = colors.semantic.keyword;
+          string = colors.semantic.string;
+          comment = colors.semantic.comment;
+          number = colors.semantic.number;
+          function = colors.semantic.function;
+          property = colors.semantic.constant;
+          type = colors.semantic.type;
+          variable = colors.semantic.variable;
+          operator = colors.semantic.operator;
+          punctuation = colors.semantic.punctuation;
         };
       };
     };

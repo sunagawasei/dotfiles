@@ -11,7 +11,7 @@ import (
 )
 
 // TOML構造体
-type AbyssalTealPalette struct {
+type GhostVisorPalette struct {
 	Core        map[string]string `toml:"core"`
 	Foregrounds map[string]string `toml:"foregrounds"`
 	Teals       map[string]string `toml:"teals"`
@@ -105,8 +105,8 @@ func evaluateWCAG(ratio float64) (string, string) {
 
 func main() {
 	// 1. TOMLファイル読み込み
-	var palette AbyssalTealPalette
-	tomlPath := "../colors/abyssal-teal.toml"
+	var palette GhostVisorPalette
+	tomlPath := "../colors/ghost-visor.toml"
 	if _, err := toml.DecodeFile(tomlPath, &palette); err != nil {
 		fmt.Fprintf(os.Stderr, "Error loading TOML: %v\n", err)
 		os.Exit(1)
@@ -174,7 +174,7 @@ func main() {
 }
 
 func printResults(checks []ColorCheck, bgColor string, whitelist map[string]bool) {
-	fmt.Println("=== Abyssal Teal 包括的コントラスト比測定 ===")
+	fmt.Println("=== Ghost Visor 包括的コントラスト比測定 ===")
 	fmt.Printf("背景色: #%s (Main Background)\n\n", bgColor)
 
 	// 優先度別にグループ化
@@ -240,12 +240,12 @@ func printResults(checks []ColorCheck, bgColor string, whitelist map[string]bool
 		hex    string
 		status string
 	}{
-		{"@markup.list", "#92A2AB", "✓"},
-		{"@markup.list.markdown", "#92A2AB", "✓"},
-		{"@markup.list.unchecked", "#92A2AB", "✓"},
-		{"@markup.quote", "#92A2AB", "✓"},
-		{"@markup.heading.6", "#525B65", "✗"},
-		{"@punctuation.special.markdown", "#92A2AB", "✓"},
+		{"@markup.list", "#8296AC", "✓"},
+		{"@markup.list.markdown", "#8296AC", "✓"},
+		{"@markup.list.unchecked", "#8296AC", "✓"},
+		{"@markup.quote", "#8296AC", "✓"},
+		{"@markup.heading.6", "#4A4953", "✗"},
+		{"@punctuation.special.markdown", "#8296AC", "✓"},
 	}
 
 	for _, elem := range markdownElements {
@@ -263,7 +263,8 @@ func printResults(checks []ColorCheck, bgColor string, whitelist map[string]bool
 	// 不合格色サマリー
 	fmt.Println("=== 不合格色サマリー ===")
 	if len(failures) > 0 {
-		fmt.Println("以下の色がWCAG基準を満たしていません:\n")
+		fmt.Println("以下の色がWCAG基準を満たしていません:")
+		fmt.Println()
 		for _, failure := range failures {
 			fmt.Println(failure)
 		}
@@ -275,8 +276,8 @@ func printResults(checks []ColorCheck, bgColor string, whitelist map[string]bool
 	// ホワイトリスト表示
 	fmt.Println("=== ホワイトリスト（チェック除外） ===")
 	fmt.Println("以下は意図的に低コントラストで保持:")
-	fmt.Println("  - #525B65: LspCodeLens, Conceal, 非アクティブUI")
-	fmt.Println("  - #111E16, #152A2B, #1E1E24: 背景・シャドウ")
+	fmt.Println("  - #4A4953: LspCodeLens, Conceal, 非アクティブUI")
+	fmt.Println("  - #0E1127, #102337, #191D2B: 背景・シャドウ")
 	fmt.Println()
 
 	// 評価基準

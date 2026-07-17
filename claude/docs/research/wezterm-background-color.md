@@ -8,7 +8,7 @@
 
 ## エグゼクティブサマリー
 
-リファレンス画像の背景色は **`#132018` (RGB: 19, 32, 24)** であり、WezTermの現在の設定値と完全に一致しています。この色は「Abyssal Teal（深淵の青緑）」テーマの一部として意図的に設計されており、緑色の色被りは設計上の特徴です。
+リファレンス画像の背景色は **`#132018` (RGB: 19, 32, 24)** であり、WezTermの現在の設定値と完全に一致しています。この色は「Ghost Visor（深淵の青緑）」テーマの一部として意図的に設計されており、緑色の色被りは設計上の特徴です。
 
 ---
 
@@ -58,9 +58,9 @@ config.colors = {
 
 ## 3. カラーシステムの設計意図
 
-### Abyssal Teal テーマの特徴
+### Ghost Visor テーマの特徴
 
-`COLOR-SYSTEM.md` および `colors/abyssal-teal.toml` によると、この背景色は以下の理由で選択されています。
+`COLOR-SYSTEM.md` および `colors/ghost-visor.toml` によると、この背景色は以下の理由で選択されています。
 
 #### 背景階層構造
 
@@ -148,7 +148,7 @@ config.colors = {
 
 ### 現在の設定を維持する場合
 
-- 緑色の色被りは **意図された設計** であり、Abyssal Tealテーマのアイデンティティ
+- 緑色の色被りは **意図された設計** であり、Ghost Visorテーマのアイデンティティ
 - 他のツール（Neovim、Zsh等）との統一感を維持
 - 色温度が冷色のため、長時間作業に適している
 
@@ -160,7 +160,7 @@ config.colors = {
 
 2. **COLOR-SYSTEM.mdの更新**:
    - テーマ名を「Neutral Dark」等に変更
-   - `colors/abyssal-teal.toml` を新規ファイルとしてバックアップ
+   - `colors/ghost-visor.toml` を新規ファイルとしてバックアップ
 
 3. **バリデーション**:
    ```bash
@@ -171,7 +171,7 @@ config.colors = {
 
 ## 7. 参考資料
 
-- **カラー定義ソース**: `colors/abyssal-teal.toml`
+- **カラー定義ソース**: `colors/ghost-visor.toml`
 - **システムドキュメント**: `COLOR-SYSTEM.md`
 - **設定ファイル**: `wezterm/wezterm.lua` (Line 116, 148)
 - **Gemini分析**: 本レポート冒頭に記載

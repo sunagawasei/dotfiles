@@ -111,7 +111,7 @@ func main() {
 		{"UI Border", "275D62", "境界線"},
 	}
 
-	fmt.Println("=== Abyssal Teal 最適化された色の提案 ===")
+	fmt.Println("=== Ghost Visor 最適化された色の提案 ===")
 	fmt.Printf("背景色: #%s\n", bgColor)
 	fmt.Printf("目標: WCAG AA (%.1f:1) 以上\n\n", targetAA)
 

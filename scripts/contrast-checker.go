@@ -89,7 +89,7 @@ func main() {
 		{"UI Border", "275D62", "3A7680", "境界線"},
 	}
 
-	fmt.Println("=== Abyssal Teal コントラスト比測定 ===")
+	fmt.Println("=== Ghost Visor コントラスト比測定 ===")
 	fmt.Printf("背景色: #%s\n\n", bgColor)
 
 	fmt.Println("| 色名 | 用途 | 変更前HEX | 比率 | AA | AAA | 変更後HEX | 比率 | AA | AAA |")

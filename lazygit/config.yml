@@ -9,32 +9,34 @@ gui:
   showRandomTip: false # ランダムなヒントを無効化してシンプルに
   showBottomLine: false # ステータスバーを非表示にしてカラフルな要素を削除
   theme:
+    # BEGIN GENERATED COLORS
     # ボーダー色
     activeBorderColor:
-      - '#6CD8D3' # Vibrant Teal
+      - '#58CAF8' # Vibrant Teal
       - bold
     inactiveBorderColor:
-      - '#4D8F9E' # UI Border (Visibility improved)
+      - '#45799D' # UI Border (Visibility improved)
     # テキスト色
     optionsTextColor:
-      - '#CEF5F2'
+      - '#CDE9F5'
     defaultFgColor:
-      - '#CEF5F2'
+      - '#CDE9F5'
     # 選択行の背景 (Ocean Blue - 視認性と可読性のバランス)
     selectedLineBgColor:
-      - '#326787'
+      - '#375F98'
     selectedRangeBgColor:
-      - '#326787'
+      - '#375F98'
     # Git関連の色
     unstagedChangesColor:
-      - '#936997' # Glitch Purple
+      - '#B17DCF' # Glitch Purple
     cherryPickedCommitFgColor:
-      - '#6CD8D3'
+      - '#58CAF8'
     cherryPickedCommitBgColor:
-      - '#152A2B' # Dark Teal Panel
+      - '#102337' # Dark Teal Panel
   # 著者色設定
   authorColors:
-    '*': '#8A97AD' # Git Blame Gray (improved visibility)
+    '*': '#8C97B5' # Git Blame Gray (improved visibility)
+    # END GENERATED COLORS
 os:
   editPreset: "nvim-remote" # editAtLineAndWait/openDirInEditorのフォールバック用に維持
   # e/o/editAtLine: lazygitフロートを閉じてからネイティブ--remoteでbufferに開く(新タブを作らない)。

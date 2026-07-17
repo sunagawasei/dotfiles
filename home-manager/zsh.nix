@@ -1,4 +1,7 @@
 { config, lib, pkgs, ... }:
+let
+  colors = import ./colors.nix;
+in
 {
   programs.zsh = {
     enable = true;
@@ -145,28 +148,28 @@
         zstyle ':prompt:pure:git:fetch' only_upstream yes
         zstyle ':prompt:pure:environment:nix-shell' show yes
 
-        # zstyleカラー設定（Abyssal Teal）
-        # MAIN: Main Foreground (#CEF5F2)
-        zstyle ':prompt:pure:path' color '#CEF5F2'
-        zstyle ':prompt:pure:git:arrow' color '#CEF5F2'
-        zstyle ':prompt:pure:git:action' color '#CEF5F2'
-        zstyle ':prompt:pure:prompt:success' color '#CEF5F2'
-        zstyle ':prompt:pure:git:branch' color '#CEF5F2'
-        zstyle ':prompt:pure:git:stash' color '#CEF5F2'
-        zstyle ':prompt:pure:suspended_jobs' color '#CEF5F2'
+        # zstyleカラー設定（Ghost Visor）
+        # MAIN: foregrounds.main
+        zstyle ':prompt:pure:path' color '${colors.foregrounds.main}'
+        zstyle ':prompt:pure:git:arrow' color '${colors.foregrounds.main}'
+        zstyle ':prompt:pure:git:action' color '${colors.foregrounds.main}'
+        zstyle ':prompt:pure:prompt:success' color '${colors.foregrounds.main}'
+        zstyle ':prompt:pure:git:branch' color '${colors.foregrounds.main}'
+        zstyle ':prompt:pure:git:stash' color '${colors.foregrounds.main}'
+        zstyle ':prompt:pure:suspended_jobs' color '${colors.foregrounds.main}'
 
-        # TERTIARY: Comment Gray (#7A869A)
-        zstyle ':prompt:pure:git:branch:cached' color '#7A869A'
-        zstyle ':prompt:pure:git:dirty' color '#7A869A'
-        zstyle ':prompt:pure:execution_time' color '#7A869A'
-        zstyle ':prompt:pure:prompt:continuation' color '#7A869A'
-        zstyle ':prompt:pure:virtualenv' color '#7A869A'
-        zstyle ':prompt:pure:host' color '#7A869A'
-        zstyle ':prompt:pure:user' color '#7A869A'
+        # TERTIARY: blues_slates.comment_gray
+        zstyle ':prompt:pure:git:branch:cached' color '${colors.blues_slates.comment_gray}'
+        zstyle ':prompt:pure:git:dirty' color '${colors.blues_slates.comment_gray}'
+        zstyle ':prompt:pure:execution_time' color '${colors.blues_slates.comment_gray}'
+        zstyle ':prompt:pure:prompt:continuation' color '${colors.blues_slates.comment_gray}'
+        zstyle ':prompt:pure:virtualenv' color '${colors.blues_slates.comment_gray}'
+        zstyle ':prompt:pure:host' color '${colors.blues_slates.comment_gray}'
+        zstyle ':prompt:pure:user' color '${colors.blues_slates.comment_gray}'
 
         # ERROR: ❯ は常に統一色。rootログイン時のみ警告色
-        zstyle ':prompt:pure:prompt:error' color '#CEF5F2'
-        zstyle ':prompt:pure:user:root' color '#AD6D8B'
+        zstyle ':prompt:pure:prompt:error' color '${colors.foregrounds.main}'
+        zstyle ':prompt:pure:user:root' color '${colors.ansi.red}'
 
         zinit ice compile'(pure|async).zsh' pick'async.zsh' src'pure.zsh'
         zinit light sindresorhus/pure
@@ -207,7 +210,7 @@
         __kube_prompt_patch() {
           [[ $PROMPT == *'%21v'* ]] && return     # 既にパッチ済み
           [[ $PROMPT == *'%(19V'* ]] || return    # マーカー無し（Pure 仕様変更等）は no-op
-          local seg='%(21V. %F{#64BBBE}⎈ %21v%f.)'
+          local seg='%(21V. %F{${colors.teals.mid_bright}}⎈ %21v%f.)'
           local pre="''${PROMPT%%'%(19V'*}"
           local suf="''${PROMPT#*'%(19V'}"
           PROMPT="''${pre}''${seg}%(19V''${suf}"
@@ -287,10 +290,10 @@
 
         # FZF カラー設定
         export FZF_DEFAULT_OPTS='
-          --color=bg+:#64BBBE,bg:-1,fg:#CEF5F2,fg+:#0B0C0C
-          --color=hl:#6CD8D3,hl+:#0B0C0C,info:#7A869A,marker:#0B0C0C
-          --color=prompt:#936997,spinner:#936997,pointer:#0B0C0C,header:#7A869A
-          --color=border:#4D8F9E,gutter:-1
+          --color=bg+:${colors.core.selection_bg},bg:-1,fg:${colors.foregrounds.main},fg+:${colors.core.selection_fg}
+          --color=hl:${colors.teals.bright},hl+:${colors.core.selection_fg},info:${colors.blues_slates.comment_gray},marker:${colors.core.selection_fg}
+          --color=prompt:${colors.zsh.error},spinner:${colors.zsh.error},pointer:${colors.core.selection_fg},header:${colors.blues_slates.comment_gray}
+          --color=border:${colors.teals.border},gutter:-1
         '
 
         # fzf キーバインド: Ctrl+T (ファイル選択), Alt+C (ディレクトリ移動), Ctrl+R (履歴検索)
@@ -352,19 +355,19 @@
         # wait"0d": syntax-highlighting（autosuggestions より先に読み込む）
         zinit ice wait"0d" lucid atload'
           typeset -A ZSH_HIGHLIGHT_STYLES
-          ZSH_HIGHLIGHT_STYLES[default]="fg=#CEF5F2"
-          ZSH_HIGHLIGHT_STYLES[arg0]="fg=#CEF5F2"
-          ZSH_HIGHLIGHT_STYLES[command]="fg=#6CD8D3,bold"
-          ZSH_HIGHLIGHT_STYLES[builtin]="fg=#6CD8D3,bold"
-          ZSH_HIGHLIGHT_STYLES[alias]="fg=#6CD8D3,bold"
-          ZSH_HIGHLIGHT_STYLES[function]="fg=#6CD8D3,bold"
-          ZSH_HIGHLIGHT_STYLES[unknown-token]="fg=#936997,bold"
-          ZSH_HIGHLIGHT_STYLES[path]="fg=#9DDCD9,underline"
-          ZSH_HIGHLIGHT_STYLES[single-quoted-argument]="fg=#659D9E"
-          ZSH_HIGHLIGHT_STYLES[double-quoted-argument]="fg=#659D9E"
-          ZSH_HIGHLIGHT_STYLES[single-hyphen-option]="fg=#A4ABCB"
-          ZSH_HIGHLIGHT_STYLES[double-hyphen-option]="fg=#A4ABCB"
-          ZSH_HIGHLIGHT_STYLES[comment]="fg=#7A869A"
+          ZSH_HIGHLIGHT_STYLES[default]="fg=${colors.zsh.default}"
+          ZSH_HIGHLIGHT_STYLES[arg0]="fg=${colors.zsh.default}"
+          ZSH_HIGHLIGHT_STYLES[command]="fg=${colors.zsh.command},bold"
+          ZSH_HIGHLIGHT_STYLES[builtin]="fg=${colors.zsh.command},bold"
+          ZSH_HIGHLIGHT_STYLES[alias]="fg=${colors.zsh.command},bold"
+          ZSH_HIGHLIGHT_STYLES[function]="fg=${colors.zsh.command},bold"
+          ZSH_HIGHLIGHT_STYLES[unknown-token]="fg=${colors.zsh.error},bold"
+          ZSH_HIGHLIGHT_STYLES[path]="fg=${colors.zsh.path},underline"
+          ZSH_HIGHLIGHT_STYLES[single-quoted-argument]="fg=${colors.zsh.string}"
+          ZSH_HIGHLIGHT_STYLES[double-quoted-argument]="fg=${colors.zsh.string}"
+          ZSH_HIGHLIGHT_STYLES[single-hyphen-option]="fg=${colors.zsh.option}"
+          ZSH_HIGHLIGHT_STYLES[double-hyphen-option]="fg=${colors.zsh.option}"
+          ZSH_HIGHLIGHT_STYLES[comment]="fg=${colors.zsh.comment}"
         '
         zinit light zsh-users/zsh-syntax-highlighting
 
@@ -372,8 +375,8 @@
         zinit ice lucid atload'
           # hexは小文字必須: zsh 5.9はregion_highlightを読み戻し時に小文字へ正規化し、
           # autosuggestionsのhighlight_resetは完全一致でエントリを除去するため、
-          # 大文字(#7A869A)だと右矢印受け入れ後もグレーが残る (zsh-autosuggestions#698と同根)
-          ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=#7a869a"
+          # 大文字だと右矢印受け入れ後もグレーが残る (zsh-autosuggestions#698と同根)
+          ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE="fg=${lib.toLower colors.zsh.comment}"
           ZSH_AUTOSUGGEST_PARTIAL_ACCEPT_WIDGETS+=(forward-word partial-accept-char partial-accept-subword)
         '
         zinit light zsh-users/zsh-autosuggestions

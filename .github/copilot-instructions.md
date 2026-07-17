@@ -23,9 +23,9 @@
 
 ### 単一ソース原則
 
-**`colors/abyssal-teal.toml`** が全ツールのカラー定義の唯一のソースです。色を変更または追加する際は、必ずこのファイルを更新してください。
+**`colors/ghost-visor.toml`** が全ツールのカラー定義の唯一のソースです。色を変更または追加する際は、必ずこのファイルを更新してください。
 
-### Abyssal Teal テーマ
+### Ghost Visor テーマ
 
 - **背景**: `#0B0C0C` (純黒に近い)
 - **メインテキスト**: `#CEF5F2` (明るい青緑)
@@ -34,7 +34,7 @@
 
 ### カラー変更のワークフロー
 
-1. `colors/abyssal-teal.toml` を編集
+1. `colors/ghost-visor.toml` を編集
 2. 各設定ファイル (WezTerm, Neovim等) に反映
 3. バリデーションを実行:
    ```bash
@@ -147,7 +147,7 @@ AIアシスタント向けの重要な変更があれば、該当ファイルを
 - **Cursor CLI**: `cursor/cli-config.json`
 
 ### カラーシステム
-- **定義ファイル**: `colors/abyssal-teal.toml` (32色拡張パレット)
+- **定義ファイル**: `colors/ghost-visor.toml` (32色拡張パレット)
 - **バリデーター**: `scripts/validate-colors.go`
 
 ### ドキュメント
@@ -175,7 +175,7 @@ go run validate-colors.go
 ```
 
 **チェック内容:**
-- `colors/abyssal-teal.toml` で定義された色が各設定ファイルで正しく使用されているか
+- `colors/ghost-visor.toml` で定義された色が各設定ファイルで正しく使用されているか
 - 未定義の色が使用されていないか（`#000000`, `#FFFFFF`, `#F2FFFF` は許可）
 - コントラスト比が適切か
 

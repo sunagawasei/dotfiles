@@ -157,23 +157,24 @@ hex2fg() {
   printf '\\e[38;2;%d;%d;%dm' $((16#${h:0:2})) $((16#${h:2:2})) $((16#${h:4:2}))
 }
 
+# BEGIN GENERATED COLORS: ANSI
 # セクション本体テキスト用前景色
-C_MODEL="\e[38;2;206;245;242m"   # #CEF5F2 foregrounds.main
-C_DIR="\e[38;2;157;220;217m"     # #9DDCD9 foregrounds.heading
-C_GIT="\e[38;2;108;216;211m"     # #6CD8D3 teals.bright
-C_ADD="\e[38;2;52;149;148m"      # #349594 teals.deep
-C_DEL="\e[38;2;163;122;167m"     # #a37aa7 purples.bright_purple
-C_BUSY="\e[38;2;163;122;167m"    # #a37aa7 purples.bright_purple
+C_MODEL="\e[38;2;205;233;245m"   # #CDE9F5 foregrounds.main
+C_DIR="\e[38;2;136;203;234m"     # #88CBEA foregrounds.heading
+C_GIT="\e[38;2;88;202;248m"     # #58CAF8 teals.bright
+C_ADD="\e[38;2;46;101;137m"      # #2E6589 teals.deep
+C_DEL="\e[38;2;176;122;224m"     # #b07ae0 purples.bright_purple
+C_BUSY="\e[38;2;176;122;224m"    # #b07ae0 purples.bright_purple
 
 # 使用率の色（閾値で変化）
 pct=${USED_PCT%.*}
 pct=${pct:-0}
 if [ "$pct" -gt 75 ]; then
-  C_PCT="\e[38;2;163;122;167m"   # #a37aa7
+  C_PCT="\e[38;2;176;122;224m"   # #b07ae0
 elif [ "$pct" -gt 50 ]; then
-  C_PCT="\e[38;2;206;213;233m"   # #CED5E9
+  C_PCT="\e[38;2;208;212;240m"   # #D0D4F0
 else
-  C_PCT="\e[38;2;52;149;148m"    # #349594
+  C_PCT="\e[38;2;46;101;137m"    # #2E6589
 fi
 
 # リミット残量の色
@@ -182,14 +183,15 @@ if [ -n "$RATE_USED" ]; then
   rate_used_int=${rate_used_int:-0}
   rate_remaining=$((100 - rate_used_int))
   if [ "$rate_remaining" -lt 25 ]; then
-    C_RATE="\e[38;2;163;122;167m"   # #a37aa7 警告（purple）
+    C_RATE="\e[38;2;176;122;224m"   # #b07ae0 警告（purple）
   elif [ "$rate_remaining" -lt 50 ]; then
-    C_RATE="\e[38;2;206;213;233m"   # #CED5E9 注意（グレー）
+    C_RATE="\e[38;2;208;212;240m"   # #D0D4F0 注意（グレー）
   else
-    C_RATE="\e[38;2;52;149;148m"    # #349594 安全（teal）
+    C_RATE="\e[38;2;46;101;137m"    # #2E6589 安全（teal）
   fi
 fi
 
+# END GENERATED COLORS: ANSI
 # Powerlineバーを構築するヘルパー関数
 build_bar() {
   local -n _segs=$1
@@ -219,29 +221,31 @@ build_bar() {
   printf '%b' "$out"
 }
 
+# BEGIN GENERATED COLORS: SEGMENTS
 # --- 1段目: モデル / コンテキスト使用率 / レート制限残量 ---
 row1=()
-row1+=("#1F3451|${C_MODEL}${MODEL}")
-row1+=("#2B2D32|${C_PCT}󰍛 ${pct}%")
+row1+=("#1F3265|${C_MODEL}${MODEL}")
+row1+=("#252A40|${C_PCT}󰍛 ${pct}%")
 if [ -n "$RATE_USED" ]; then
-  row1+=("#1E2A3A|${C_RATE}󰔛 ${rate_remaining}%")
+  row1+=("#30314B|${C_RATE}󰔛 ${rate_remaining}%")
 fi
 
 # --- 2段目: ディレクトリ / Gitブランチ / 行変更 ---
 row2=()
-row2+=("#152A2B|${C_DIR}${DIR_NAME}")
-[ -n "$GIT_BRANCH" ] && row2+=("#1E1E24|${C_GIT}${GIT_BRANCH}")
+row2+=("#102337|${C_DIR}${DIR_NAME}")
+[ -n "$GIT_BRANCH" ] && row2+=("#191D2B|${C_GIT}${GIT_BRANCH}")
 if [ "$ADDED" -gt 0 ] || [ "$REMOVED" -gt 0 ]; then
   lines=""
   [ "$ADDED" -gt 0 ]                               && lines+="${C_ADD}+${ADDED}"
   [ "$ADDED" -gt 0 ] && [ "$REMOVED" -gt 0 ]       && lines+=" "
   [ "$REMOVED" -gt 0 ]                             && lines+="${C_DEL}-${REMOVED}"
-  row2+=("#44363B|${lines}")
+  row2+=("#3A2A3E|${lines}")
 fi
 
-[ "$CODEX_PENDING" = "1" ] && [ "$BRIDGE_ALIVE" = "1" ] && row2+=("#1E1E24|${C_BUSY}󰚩 codex")
-[ "$BG_BUSY" = "1" ] && row2+=("#1E1E24|${C_BUSY}󰜎 bg")
+[ "$CODEX_PENDING" = "1" ] && [ "$BRIDGE_ALIVE" = "1" ] && row2+=("#191D2B|${C_BUSY}󰚩 codex")
+[ "$BG_BUSY" = "1" ] && row2+=("#191D2B|${C_BUSY}󰜎 bg")
 
+# END GENERATED COLORS: SEGMENTS
 build_bar row1
 printf '\n'
 build_bar row2

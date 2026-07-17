@@ -115,8 +115,8 @@ func main() {
 	}
 
 	fmt.Println("\n=== 推奨事項 ===")
-	fmt.Println("1. **Muted Purple (キーワード)**: #8A99BD - AAレベル達成（5.99:1）")
-	fmt.Println("2. **Success (成功)**: #6AB9A8 - AAレベル達成（6.18:1）")
-	fmt.Println("3. **Punctuation (句読点)**: #7A8599 - AAレベル達成（4.89:1）")
-	fmt.Println("4. **UI Border (境界線)**: #4D8F9E - AAレベル達成（4.77:1）")
+	fmt.Println("1. **Muted Purple (キーワード)**: #8E92C8 - AAレベル達成（6.57:1）")
+	fmt.Println("2. **Success (成功)**: #52C4BC - AAAレベル達成（9.24:1）")
+	fmt.Println("3. **Punctuation (句読点)**: #8892A8 - AAレベル達成（6.22:1）")
+	fmt.Println("4. **UI Border (境界線)**: #45799D - UIコンポーネント基準達成（4.14:1）")
 }

@@ -7,7 +7,7 @@ let
   # 実行中なら閉じる前に確認ダイアログを出す機能追加（wezterm skip_close_confirmation
   # _for_processes_named の逆相当）。config `confirm_close_running_process`(既定true)。
   # accent等の濃色バッジ上の文字色panel_contrast_fg（theme=terminalではDarkGray=ANSI 8で、
-  # abyssal-tealだとbg(ANSI 4)と同化し不可視）をoverlay1（同White）へ変更。active tab・
+  # ghost-visorだとbg(ANSI 4)と同化し不可視）をoverlay1（同White）へ変更。active tab・
   # navigator選択行・PREFIX等20箇所が改善。bgが明色になるRESIZEバッジ(mauve=ANSI 7)と
   # config警告(yellow=ANSI 3)の2箇所のみ旧ロジック(_dim)据え置き。
   # [theme.custom]のsurface_dim overrideはsidebar選択行のbgにも波及するため不採用。

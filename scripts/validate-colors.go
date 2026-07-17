@@ -13,24 +13,24 @@ import (
 
 // ColorPalette represents the TOML color definition file
 type ColorPalette struct {
-	Metadata     map[string]string `toml:"metadata"`
-	Core         map[string]string `toml:"core"`
-	Foregrounds  map[string]string `toml:"foregrounds"`
-	Teals        map[string]string `toml:"teals"`
-	BluesSlates  map[string]string `toml:"blues_slates"`
-	Purples      map[string]string `toml:"purples"`
-	Semantic     map[string]string `toml:"semantic"`
-	ANSI         map[string]string `toml:"ansi"`
-	WezTerm      map[string]string `toml:"wezterm"`
-	Nvim         map[string]string `toml:"nvim"`
-	Zsh          map[string]string `toml:"zsh"`
+	Metadata    map[string]string `toml:"metadata"`
+	Core        map[string]string `toml:"core"`
+	Foregrounds map[string]string `toml:"foregrounds"`
+	Teals       map[string]string `toml:"teals"`
+	BluesSlates map[string]string `toml:"blues_slates"`
+	Purples     map[string]string `toml:"purples"`
+	Semantic    map[string]string `toml:"semantic"`
+	ANSI        map[string]string `toml:"ansi"`
+	WezTerm     map[string]string `toml:"wezterm"`
+	Nvim        map[string]string `toml:"nvim"`
+	Zsh         map[string]string `toml:"zsh"`
 }
 
 // Allowed colors that are not in the palette (common colors)
 var allowedColors = map[string]bool{
 	"#000000": true, // Pure black
 	"#FFFFFF": true, // Pure white
-	"#F2FFFF": true, // Bright white
+	"#F8FCFD": true, // Bright white
 }
 
 func findGitRoot() (string, error) {
@@ -71,7 +71,7 @@ func main() {
 	}
 	fmt.Printf("📁 Using config directory: %s\n", configDir)
 
-	tomlPath := filepath.Join(configDir, "colors", "abyssal-teal.toml")
+	tomlPath := filepath.Join(configDir, "colors", "ghost-visor.toml")
 
 	// Load color palette
 	palette, err := loadPalette(tomlPath)
@@ -82,7 +82,7 @@ func main() {
 
 	// Extract all valid colors
 	validColors := extractValidColors(palette)
-	fmt.Printf("✓ Loaded %d unique colors from colors/abyssal-teal.toml\n", len(validColors))
+	fmt.Printf("✓ Loaded %d unique colors from colors/ghost-visor.toml\n", len(validColors))
 
 	// Files to check
 	filesToCheck := []string{
@@ -109,7 +109,7 @@ func main() {
 		if _, err := os.Stat(filePath); os.IsNotExist(err) {
 			continue
 		}
-		
+
 		if err := checkFile(filePath, validColors); err != nil {
 			fmt.Printf("⚠ Found undefined colors in %s:\n%v\n", relPath, err)
 			hasErrors = true

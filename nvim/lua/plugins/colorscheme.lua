@@ -13,7 +13,7 @@ return {
     lazy = false,
     priority = 1000,
     config = function()
-      -- カラーパレット定義 — TOMLソース: colors/abyssal-teal.toml
+      -- カラーパレット定義 — TOMLソース: colors/ghost-visor.toml
       local colors = require("config.palette").colors
 
       -- ハイライトグループの設定

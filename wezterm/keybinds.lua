@@ -1,5 +1,6 @@
 local wezterm = require("wezterm")
 local act = wezterm.action
+local colors = require("colors")
 
 -- WEZTERM_BUSY user varで判定。未設定("0"以外)は安全側=busy扱い
 local function is_pane_busy(pane)
@@ -48,31 +49,31 @@ wezterm.on("update-right-status", function(window, pane)
 	if name then
 		local elements = {}
 
-		-- モードごとに異なる色とアイコンを設定（abyssal-teal.toml準拠）
+		-- モードごとに異なる色とアイコンを設定（単一ソースTOML準拠）
 		if name == "copy_mode" then
 			-- Copy mode: semantic.comment
-			table.insert(elements, { Background = { Color = "#525B65" } })
-			table.insert(elements, { Foreground = { Color = "#F2FFFF" } }) -- Purest Highlight（テーマ統一）
+			table.insert(elements, { Background = { Color = colors.blues_slates.slate_mid } })
+			table.insert(elements, { Foreground = { Color = colors.ansi.bright_white } })
 			table.insert(elements, { Text = " 󰆏 COPY MODE " }) -- NerdFont copy icon
 		elseif name == "resize_pane" then
 			-- Resize mode: semantic.string
-			table.insert(elements, { Background = { Color = "#659D9E" } })
-			table.insert(elements, { Foreground = { Color = "#111E16" } }) -- Darkest（WCAG AA 5.63:1）
+			table.insert(elements, { Background = { Color = colors.semantic.string } })
+			table.insert(elements, { Foreground = { Color = colors.core.darkest_bg } })
 			table.insert(elements, { Text = "  RESIZE " }) -- NerdFont resize icon
 		elseif name == "pane_navigation" then
 			-- Pane Navigation mode: foregrounds.dim
-			table.insert(elements, { Background = { Color = "#92A2AB" } })
-			table.insert(elements, { Foreground = { Color = "#111E16" } })
+			table.insert(elements, { Background = { Color = colors.foregrounds.dim } })
+			table.insert(elements, { Foreground = { Color = colors.core.darkest_bg } })
 			table.insert(elements, { Text = "  PANE NAV " }) -- NerdFont window icon
 		elseif name == "search_mode" then
 			-- Search mode: semantic.operator
-			table.insert(elements, { Background = { Color = "#64BBBE" } })
-			table.insert(elements, { Foreground = { Color = "#111E16" } })
+			table.insert(elements, { Background = { Color = colors.semantic.operator } })
+			table.insert(elements, { Foreground = { Color = colors.core.darkest_bg } })
 			table.insert(elements, { Text = "  SEARCH " }) -- NerdFont search icon
 		else
 			-- その他のモード: semantic.keyword
-			table.insert(elements, { Background = { Color = "#8A99BD" } })
-			table.insert(elements, { Foreground = { Color = "#111E16" } }) -- Darkest（WCAG AA 6.04:1）
+			table.insert(elements, { Background = { Color = colors.semantic.keyword } })
+			table.insert(elements, { Foreground = { Color = colors.core.darkest_bg } })
 			table.insert(elements, { Text = " TABLE: " .. name .. " " })
 		end
 

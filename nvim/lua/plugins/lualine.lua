@@ -1,4 +1,4 @@
--- Color Mapping: See colors/abyssal-teal.toml [semantic] section
+-- Color Mapping: See colors/ghost-visor.toml [semantic] section
 local p = require("config.palette").colors
 
 local mode_colors = {

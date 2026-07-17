@@ -37,7 +37,7 @@ This repository contains my personal dotfiles for macOS development tools. The c
 
 #### Pure Prompt
 - **Config**: `zsh/.zshrc` (inline configuration)
-- **Theme**: Minimal with Abyssal Teal colors
+- **Theme**: Minimal with Ghost Visor colors
 - **Features**: Git status, async fetch, execution time display, two-line layout
 
 ### Development Tools

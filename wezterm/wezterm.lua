@@ -1,5 +1,6 @@
 -- WezTermモジュールを読み込む
 local wezterm = require("wezterm")
+local colors = require("colors")
 -- マルチプレクサ（ウィンドウ・タブ管理）モジュールを読み込む
 local mux = wezterm.mux
 -- 設定ビルダーを初期化（型安全な設定を作成）
@@ -162,7 +163,7 @@ config.window_frame = {
 }
 -- ウィンドウ背景のグラデーション設定（モノクロ背景）
 config.window_background_gradient = {
-	colors = { "#0B0C0C" },
+	colors = { colors.core.background },
 }
 -- ウィンドウ内側の余白設定
 config.window_padding = {
@@ -199,96 +200,96 @@ config.inactive_pane_hsb = {
 
 config.colors = {
 	-- 基本色
-	foreground = "#CEF5F2", -- Main Foreground
-	background = "#0B0C0C", -- Main Background
+	foreground = colors.foregrounds.main, -- Main Foreground
+	background = colors.wezterm.background, -- Main Background
 
 	-- カーソル色（前景色と統一）
-	cursor_bg = "#CEF5F2", -- Main Foreground
-	cursor_fg = "#0B0C0C",
-	cursor_border = "#CEF5F2",
+	cursor_bg = colors.foregrounds.main, -- Main Foreground
+	cursor_fg = colors.core.background,
+	cursor_border = colors.foregrounds.main,
 
 	-- 選択色
-	selection_fg = "#0B0C0C", -- Background color for text
-	selection_bg = "#64BBBE", -- Clear Teal (1.1%) - High Visibility
+	selection_fg = colors.core.selection_fg, -- Background color for text
+	selection_bg = colors.wezterm.selection_bg, -- High Visibility
 
 	-- スクロールバー・分割線
-	scrollbar_thumb = "#4D8F9E", -- UI Border (Visibility improved)
-	split = "#4D8F9E",           -- Visibility improved
+	scrollbar_thumb = colors.teals.border, -- UI Border
+	split = colors.wezterm.split,
 
 	-- IME入力中カーソル（通常カーソルと統一）
-	compose_cursor = "#CEF5F2",
+	compose_cursor = colors.foregrounds.main,
 	-- ビジュアルベル（控えめフラッシュ）
-	visual_bell = "#304D4F",
+	visual_bell = colors.teals.dark_accent,
 
 	-- ANSI色
 	ansi = {
-		"#111E16", -- black (Darkest)
-		"#AD6D8B", -- red (Mauve Rose, WCAG AA 4.98:1)
-		"#349594", -- green (Deep Sea)
-		"#C4B37A", -- yellow (Muted Gold, WCAG AA 9.40:1)
-		"#326787", -- blue (Ocean Blue)
-		"#7A71BA", -- magenta (Periwinkle, WCAG AA 4.57:1)
-		"#6CD8D3", -- cyan (Vibrant Teal)
-		"#CEF5F2", -- white (Main Text)
+		colors.ansi.black,
+		colors.ansi.red,
+		colors.ansi.green,
+		colors.ansi.yellow,
+		colors.ansi.blue,
+		colors.ansi.magenta,
+		colors.ansi.cyan,
+		colors.ansi.white,
 	},
 	-- 明るいANSI色
 	brights = {
-		"#525B65", -- bright black (Slate Mid)
-		"#BB7899", -- bright red (Dusty Rose, WCAG AA 5.84:1)
-		"#64BBBE", -- bright green (Clear Teal)
-		"#B1F4ED", -- bright yellow (Brightest Text)
-		"#A4ABCB", -- bright blue (Sky Slate)
-		"#B4B7CD", -- bright magenta (Cloud Slate)
-		"#9DDCD9", -- bright cyan (Heading Cyan)
-		"#F2FFFF", -- bright white (Purest Highlight)
+		colors.ansi.bright_black,
+		colors.ansi.bright_red,
+		colors.ansi.bright_green,
+		colors.ansi.bright_yellow,
+		colors.ansi.bright_blue,
+		colors.ansi.bright_magenta,
+		colors.ansi.bright_cyan,
+		colors.ansi.bright_white,
 	},
 
 	-- コピーモード色設定
-	copy_mode_active_highlight_bg = { Color = "#6CD8D3" },
-	copy_mode_active_highlight_fg = { Color = "#0B0C0C" },
-	copy_mode_inactive_highlight_bg = { Color = "#152A2B" },
-	copy_mode_inactive_highlight_fg = { Color = "#CEF5F2" },
+	copy_mode_active_highlight_bg = { Color = colors.teals.bright },
+	copy_mode_active_highlight_fg = { Color = colors.core.background },
+	copy_mode_inactive_highlight_bg = { Color = colors.core.panel_bg },
+	copy_mode_inactive_highlight_fg = { Color = colors.foregrounds.main },
 
 	-- クイックセレクト色設定
-	quick_select_label_bg = { Color = "#AD6D8B" },
-	quick_select_label_fg = { Color = "#F2FFFF" },
-	quick_select_match_bg = { Color = "#6CD8D3" },
-	quick_select_match_fg = { Color = "#0B0C0C" },
+	quick_select_label_bg = { Color = colors.ansi.red },
+	quick_select_label_fg = { Color = colors.ansi.bright_white },
+	quick_select_match_bg = { Color = colors.teals.bright },
+	quick_select_match_fg = { Color = colors.core.background },
 
 	-- タブバー設定
 	tab_bar = {
 		background = "none",
 		active_tab = {
-			bg_color = "#1F3451", -- Distinct Ocean Blue for active
-			fg_color = "#B1F4ED", -- Brightest highlight
+			bg_color = colors.wezterm.active_tab,
+			fg_color = colors.wezterm.active_tab_fg,
 			intensity = "Bold",
 		},
 		inactive_tab = {
-			bg_color = "#152A2B", -- Panel: pill化でタブ境界を明確化（旧 none は透明で境界不可視）
-			fg_color = "#8A97AD", -- Git Blame Gray (6.63:1 contrast, WCAG AA)
+			bg_color = colors.wezterm.inactive_tab, -- pill化でタブ境界を明確化（旧 none は透明で境界不可視）
+			fg_color = colors.wezterm.inactive_tab_fg,
 		},
 		inactive_tab_hover = {
-			bg_color = "#304D4F", -- Dark Accent: inactive(#152A2B)より一段持ち上げhoverを区別
-			fg_color = "#CEF5F2",
+			bg_color = colors.teals.dark_accent,
+			fg_color = colors.foregrounds.main,
 		},
 		new_tab = {
 			bg_color = "none",
-			fg_color = "#8A97AD", -- Git Blame Gray (統一性のため)
+			fg_color = colors.wezterm.inactive_tab_fg,
 		},
 		new_tab_hover = {
-			bg_color = "#152A2B",
-			fg_color = "#CEF5F2",
+			bg_color = colors.wezterm.inactive_tab,
+			fg_color = colors.foregrounds.main,
 		},
-		inactive_tab_edge = "#4D8F9E", -- Visibility improved
+		inactive_tab_edge = colors.teals.border,
 	},
 }
 
 -- ==========================================
 -- タブのカスタマイズ
 -- ==========================================
--- アクティブタブの固定色（abyssal-teal: slate_dark / bright）
-local ACTIVE_TAB_BG = "#1F3451" -- Distinct Ocean Blue
-local ACTIVE_TAB_FG = "#B1F4ED" -- Brightest highlight
+-- アクティブタブの固定色（ghost-visor: slate_dark / bright）
+local ACTIVE_TAB_BG = colors.wezterm.active_tab
+local ACTIVE_TAB_FG = colors.wezterm.active_tab_fg
 
 -- 稼働中に表示する点字スピナーのコマ（純正と同じ点字系・U+280B..）。
 -- Claude Code はタイトルのスピナーをコマ送り更新しないため、wezterm側で自前にアニメーションさせる。
@@ -314,10 +315,10 @@ local function get_claude_status(pane_title)
 	if b2 >= 0xA0 and b2 <= 0xA3 then
 		-- 稼働中: 自前スピナーをコマ送り（update-statusで全タブ同期。非アクティブタブも動く）
 		local frame = utf8.char(spinner_cps[(spinner_idx % #spinner_cps) + 1])
-		return { icon = frame, color = "#6CD8D3" } -- Vibrant Teal
+		return { icon = frame, color = colors.teals.bright }
 	end
 	if b2 == 0x9C or b2 == 0x9D or b2 == 0x9E then
-		return { icon = "✓", color = "#B1F4ED" } -- 待機/完了: Dingbats(✳ 等) → チェックマーク
+		return { icon = "✓", color = colors.foregrounds.bright } -- 待機/完了: Dingbats(✳ 等) → チェックマーク
 	end
 	return nil -- それ以外のE2記号は Claude 状態とみなさない
 end
@@ -364,19 +365,19 @@ end
 wezterm.on("format-tab-title", function(tab, tabs, panes, config, hover)
 	-- 背景色の定義
 	local bar_bg = "none"
-	local hover_bg = "#304D4F" -- colors.tab_bar.inactive_tab_hover と一致
+	local hover_bg = colors.teals.dark_accent
 
 	-- 非アクティブもpill背景にして境界を明確化（colors.tab_bar.inactive_tab と一致）。
 	-- 旧 "none" では左右パワーライン形状が透明で描かれ境界が消えていた。
-	local bg = "#152A2B"
-	local fg = "#8A97AD" -- inactive_tab.fg_color (Git Blame Gray)
+	local bg = colors.wezterm.inactive_tab
+	local fg = colors.wezterm.inactive_tab_fg
 
 	if tab.is_active then
 		bg = ACTIVE_TAB_BG
 		fg = ACTIVE_TAB_FG
 	elseif hover then
 		bg = hover_bg
-		fg = "#CEF5F2" -- inactive_tab_hover.fg_color
+		fg = colors.foregrounds.main
 	end
 
 	-- このタブの全paneを対象に（分割時は全paneのタイトルを併記）
@@ -668,9 +669,8 @@ wezterm.adjust_centering_max_width = adjust_centering_max_width
 wezterm.toggle_centering_fullscreen_only = toggle_centering_fullscreen_only
 
 -- 文字選択UI色設定（config.colorsの外でトップレベルに設定）
-config.char_select_bg_color = "#1F3451"
-config.char_select_fg_color = "#B1F4ED" -- 10:1コントラスト
+config.char_select_bg_color = colors.wezterm.active_tab
+config.char_select_fg_color = colors.wezterm.active_tab_fg
 
 -- 設定をエクスポート
 return config
-
