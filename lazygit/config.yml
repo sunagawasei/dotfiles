@@ -43,7 +43,7 @@ os:
   # filenameは式に埋めず裸のシェル引数で渡す(lazygitのダブルクォート展開との衝突回避)。
   edit: 'if [ -z "$NVIM" ]; then nvim -- {{filename}}; else nvim --server "$NVIM" --remote-expr "v:lua.lazygit_hide()" && nvim --server "$NVIM" --remote {{filename}}; fi'
   editAtLine: 'if [ -z "$NVIM" ]; then nvim +{{line}} -- {{filename}}; else nvim --server "$NVIM" --remote-expr "v:lua.lazygit_hide()" && nvim --server "$NVIM" --remote {{filename}} && nvim --server "$NVIM" --remote-send ":{{line}}<CR>"; fi'
-  open: 'if [ -z "$NVIM" ]; then open -- {{filename}}; else nvim --server "$NVIM" --remote-expr "v:lua.lazygit_hide()" && nvim --server "$NVIM" --remote {{filename}}; fi'
+  open: 'if [ -n "$NVIM" ]; then nvim --server "$NVIM" --remote-expr "v:lua.lazygit_hide()" && nvim --server "$NVIM" --remote {{filename}}; elif [ -n "$HERDR_ACTIVE_WORKSPACE_ID" ]; then ~/.config/herdr/open-in-nvim.sh {{filename}}; else open -- {{filename}}; fi'
 git:
   autoFetch: true # 自動fetchを有効化
   autoRefresh: true # 自動リフレッシュを有効化してgit操作を即座に反映

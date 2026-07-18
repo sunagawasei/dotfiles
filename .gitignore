@@ -140,6 +140,7 @@ goose/
 opencode/
 herdr/*
 !herdr/agent-detection/
+!herdr/open-in-nvim.sh
 
 # Cursor CLI (local configuration)
 cursor/
