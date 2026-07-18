@@ -203,6 +203,7 @@ codex-researchの返信到着(Monitor通知)→検品→プラン確定→codex-
 3. **Monitor(watch.sh)が常駐していない場合のfallback**: 返信はDB直読みで取得できる — `sqlite3 ~/.agents/skills/agmsg/db/messages.db "SELECT body FROM messages WHERE team='<team>' AND from_agent='<agent>' ORDER BY id DESC LIMIT 1;"`。到着待ちはバックグラウンドのポーリングループ（10秒間隔でCOUNTを見て、>0で即exit・15分でタイムアウト）にすると、到着時に通知で拾える
 4. **CLI更新後は必ずdespawn→再spawn**: bridgeは起動時のCLIバイナリを掴み続けるため、codex CLI等を更新しても既存bridgeには反映されない（実例: 2026-07-10、旧CLIが「gpt-5.6-sol requires a newer version of Codex」の400で全turn失敗し続けた。ログ上はturn completed with errorが並ぶ）。`despawn.sh <team> <from> codex --force` → `ensure-codex.sh` で入れ替える。なお `ensure-codex.sh` は生存確認を兼ねる（生きていれば "already running" のno-op）
 5. **既読消化された依頼は再送**: 壊れたbridgeが依頼を既読処理してしまった場合、再spawn後の自動再処理は未読のみが対象なので、該当依頼は `send.sh` で再送する。既読状態は `sqlite3 ~/.agents/skills/agmsg/db/messages.db "SELECT id, read_at IS NOT NULL FROM messages WHERE team='<team>' AND from_agent='claude' ORDER BY id DESC LIMIT 3;"` で確認できる
+6. **返信が空body(length 0)で届く送信事故**: Monitor通知が空・DBの `length(body)=0` でも、workerのthreadには作業結果が生きている(bridgeログ末尾に要約が残っていることも多い)。「直前の最終報告がbody空で届いた(送信事故)。全文をそのまま再送して。長文は2〜3分割で送ってよい」と依頼すれば新規調査なしで回収できる(2026-07-18実例: codex-researchの調査報告を3分割再送で全量回収)
 
 ## codex-research（調査用codexワーカー）
 
