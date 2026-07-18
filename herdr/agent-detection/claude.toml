@@ -32,8 +32,8 @@ priority = 960
 region = "bottom_non_empty_lines(3)"
 visible_working = true
 any = [
-  { contains = ["󰚩 codex"] },
-  { contains = ["󰜎 bg"] },
+  { contains = ["󰚩"] },
+  { contains = ["󰜎"] },
 ]
 
 [[rules]]

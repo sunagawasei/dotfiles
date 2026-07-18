@@ -6,8 +6,6 @@ input=$(cat)
 MODEL="?"
 DIR=""
 USED_PCT=0
-ADDED=0
-REMOVED=0
 RATE_USED=""
 SESSION_ID=""
 
@@ -16,8 +14,6 @@ eval "$(printf '%s' "$input" | jq -r '
   @sh "MODEL=\(.model.display_name // "?")",
   @sh "DIR=\(.workspace.current_dir // "")",
   @sh "USED_PCT=\(.context_window.used_percentage // 0)",
-  @sh "ADDED=\(.cost.total_lines_added // 0)",
-  @sh "REMOVED=\(.cost.total_lines_removed // 0)",
   @sh "RATE_USED=\(.rate_limits.five_hour.used_percentage // "")",
   @sh "SESSION_ID=\(.session_id // "")"
 ' 2>/dev/null)" 2>/dev/null
@@ -39,28 +35,47 @@ fi
 
 # herdr用busyマーカーの状態判定
 AGMSG_TEAM=""
-CODEX_PENDING=0
+CODEX_BUSY=0
+CODEX_BRIDGE_PIDS=()
+CODEX_BRIDGE_NAMES=()
+CODEX_BRIDGE_LOGS=()
 if [[ -n "$SESSION_ID" && "$SESSION_ID" =~ ^[0-9a-fA-F-]+$ ]]; then
   AGMSG_TEAM="s-${SESSION_ID}"
-  AGMSG_DB=~/.agents/skills/agmsg/db/messages.db
-  if [ -r "$AGMSG_DB" ] && command -v sqlite3 >/dev/null 2>&1; then
-    CODEX_PENDING=$(sqlite3 -readonly "$AGMSG_DB" "
-      SELECT EXISTS(
-        SELECT 1 FROM messages m
-        WHERE m.team='${AGMSG_TEAM}' AND m.from_agent='claude' AND m.to_agent LIKE 'codex%'
-          AND m.id > COALESCE((SELECT MAX(r.id) FROM messages r
-            WHERE r.team=m.team AND r.from_agent=m.to_agent AND r.to_agent='claude'), 0)
-      );
-    " 2>/dev/null) || CODEX_PENDING=0
-    [ "$CODEX_PENDING" = "1" ] || CODEX_PENDING=0
-  fi
+  AGMSG_RUN_DIR=/Users/s23159/.agents/skills/agmsg/run
+  for metafile in "$AGMSG_RUN_DIR"/codex-bridge."$AGMSG_TEAM".*.meta; do
+    [ -f "$metafile" ] || continue
+
+    meta_team=""
+    meta_type=""
+    while IFS='=' read -r key value; do
+      case "$key" in
+        team) meta_team="$value" ;;
+        type) meta_type="$value" ;;
+      esac
+    done < "$metafile"
+    [ "$meta_team" = "$AGMSG_TEAM" ] && [ "$meta_type" = "codex" ] || continue
+
+    bridge_name=${metafile#"$AGMSG_RUN_DIR/codex-bridge.${AGMSG_TEAM}."}
+    bridge_name=${bridge_name%.meta}
+    [ -n "$bridge_name" ] || continue
+
+    pidfile=${metafile%.meta}.pid
+    bridge_pid=""
+    [ -r "$pidfile" ] && IFS= read -r bridge_pid < "$pidfile"
+    [[ "$bridge_pid" =~ ^[0-9]+$ ]] || continue
+    kill -0 "$bridge_pid" 2>/dev/null || continue
+
+    CODEX_BRIDGE_PIDS+=("$bridge_pid")
+    CODEX_BRIDGE_NAMES+=("$bridge_name")
+    CODEX_BRIDGE_LOGS+=("${metafile%.meta}.log")
+  done
 fi
 
-# psは1回だけ走査し、bridge生存とClaude配下のバックグラウンドタスクを導出
-BRIDGE_ALIVE=0
+# psは1回だけ走査し、bridgeの実体確認とClaude配下のバックグラウンドタスクに再利用
 BG_BUSY=0
-PROCESS_STATE=$(ps -ax -o pid=,ppid=,command= 2>/dev/null | awk \
-  -v self_pid="$$" -v team="$AGMSG_TEAM" '
+PROCESS_SNAPSHOT=$(ps -ww -ax -o pid=,ppid=,command= 2>/dev/null) || PROCESS_SNAPSHOT=""
+PROCESS_STATE=$(printf '%s\n' "$PROCESS_SNAPSHOT" | awk \
+  -v self_pid="$$" '
   {
     pid = $1 + 0
     ppid = $2 + 0
@@ -71,20 +86,9 @@ PROCESS_STATE=$(ps -ax -o pid=,ppid=,command= 2>/dev/null | awk \
     pids[pid] = 1
   }
   END {
-    bridge_signature = "codex" "-bridge"
     snapshot_signature = "shell-snapshots/" "snapshot-"
     watch_signature = "agmsg/scripts/" "watch.sh"
-    bridge_alive = 0
     bg_busy = 0
-
-    if (team != "") {
-      for (pid in pids) {
-        if (index(commands[pid], bridge_signature) && index(commands[pid], team)) {
-          bridge_alive = 1
-          break
-        }
-      }
-    }
 
     current = self_pid + 0
     while (current > 0 && !visited[current]) {
@@ -133,12 +137,60 @@ PROCESS_STATE=$(ps -ax -o pid=,ppid=,command= 2>/dev/null | awk \
       }
     }
 
-    print bridge_alive, bg_busy
+    print bg_busy
   }
 ' 2>/dev/null) || PROCESS_STATE=""
-read -r BRIDGE_ALIVE BG_BUSY <<< "$PROCESS_STATE"
-[ "$BRIDGE_ALIVE" = "1" ] || BRIDGE_ALIVE=0
+read -r BG_BUSY <<< "$PROCESS_STATE"
 [ "$BG_BUSY" = "1" ] || BG_BUSY=0
+
+# meta/pidに対応するbridgeの実体をpsスナップショットで確認し、最後のlifecycle行を読む
+for index in "${!CODEX_BRIDGE_PIDS[@]}"; do
+  bridge_pid=${CODEX_BRIDGE_PIDS[$index]}
+  bridge_name=${CODEX_BRIDGE_NAMES[$index]}
+  logfile=${CODEX_BRIDGE_LOGS[$index]}
+  bridge_command=""
+  while read -r process_pid process_ppid process_command; do
+    if [ "$process_pid" = "$bridge_pid" ]; then
+      bridge_command="$process_command"
+      break
+    fi
+  done <<< "$PROCESS_SNAPSHOT"
+
+  padded_command=" $bridge_command "
+  [[ "$bridge_command" == *"codex-bridge.js"* ]] || continue
+  [[ "$padded_command" == *" --team ${AGMSG_TEAM} "* ]] || continue
+  [[ "$padded_command" == *" --name ${bridge_name} "* ]] || continue
+  [ -r "$logfile" ] || continue
+
+  lifecycle_state=$(tail -n 400 "$logfile" 2>/dev/null | awk \
+    -v identity="${AGMSG_TEAM}/${bridge_name}" '
+    BEGIN {
+      wakeup_prefix = "codex-bridge: wakeup "
+      wakeup_suffix = " for " identity
+      armed_line = "codex-bridge: armed " identity
+      state = 0
+    }
+    $0 == armed_line {
+      state = 0
+      next
+    }
+    index($0, wakeup_prefix) == 1 &&
+        substr($0, length($0) - length(wakeup_suffix) + 1) == wakeup_suffix {
+      wakeup_number = substr($0, length(wakeup_prefix) + 1,
+        length($0) - length(wakeup_prefix) - length(wakeup_suffix))
+      if (wakeup_number ~ /^[0-9]+$/) {
+        state = 1
+      }
+    }
+    END {
+      print state
+    }
+  ' 2>/dev/null) || lifecycle_state=0
+  if [ "$lifecycle_state" = "1" ]; then
+    CODEX_BUSY=1
+    break
+  fi
+done
 
 RST='\e[0m'
 
@@ -162,8 +214,6 @@ hex2fg() {
 C_MODEL="\e[38;2;205;233;245m"   # #CDE9F5 foregrounds.main
 C_DIR="\e[38;2;136;203;234m"     # #88CBEA foregrounds.heading
 C_GIT="\e[38;2;88;202;248m"     # #58CAF8 teals.bright
-C_ADD="\e[38;2;46;101;137m"      # #2E6589 teals.deep
-C_DEL="\e[38;2;176;122;224m"     # #b07ae0 purples.bright_purple
 C_BUSY="\e[38;2;176;122;224m"    # #b07ae0 purples.bright_purple
 
 # 使用率の色（閾値で変化）
@@ -222,28 +272,20 @@ build_bar() {
 }
 
 # BEGIN GENERATED COLORS: SEGMENTS
-# --- 1段目: モデル / コンテキスト使用率 / レート制限残量 ---
+# --- 1段目: モデル / コンテキスト使用率 / レート制限残量 / codex・bgマーカー ---
 row1=()
 row1+=("#1F3265|${C_MODEL}${MODEL}")
 row1+=("#252A40|${C_PCT}󰍛 ${pct}%")
 if [ -n "$RATE_USED" ]; then
   row1+=("#30314B|${C_RATE}󰔛 ${rate_remaining}%")
 fi
+[ "$CODEX_BUSY" = "1" ] && row1+=("#191D2B|${C_BUSY}󰚩")
+[ "$BG_BUSY" = "1" ] && row1+=("#191D2B|${C_BUSY}󰜎")
 
-# --- 2段目: ディレクトリ / Gitブランチ / 行変更 ---
+# --- 2段目: ディレクトリ / Gitブランチ ---
 row2=()
 row2+=("#102337|${C_DIR}${DIR_NAME}")
 [ -n "$GIT_BRANCH" ] && row2+=("#191D2B|${C_GIT}${GIT_BRANCH}")
-if [ "$ADDED" -gt 0 ] || [ "$REMOVED" -gt 0 ]; then
-  lines=""
-  [ "$ADDED" -gt 0 ]                               && lines+="${C_ADD}+${ADDED}"
-  [ "$ADDED" -gt 0 ] && [ "$REMOVED" -gt 0 ]       && lines+=" "
-  [ "$REMOVED" -gt 0 ]                             && lines+="${C_DEL}-${REMOVED}"
-  row2+=("#3A2A3E|${lines}")
-fi
-
-[ "$CODEX_PENDING" = "1" ] && [ "$BRIDGE_ALIVE" = "1" ] && row2+=("#191D2B|${C_BUSY}󰚩 codex")
-[ "$BG_BUSY" = "1" ] && row2+=("#191D2B|${C_BUSY}󰜎 bg")
 
 # END GENERATED COLORS: SEGMENTS
 build_bar row1
