@@ -13,6 +13,8 @@ let
   # [theme.custom]のsurface_dim overrideはsidebar選択行のbgにも波及するため不採用。
   # expanded sidebarのspaces一覧にもcollapsed railと同じ表示順番号を常時表示
   # （上流は番号なしを明示テストで固定した意図的設計・configキーなし）。
+  # 同一覧の2行目(branch行)先頭にworkspaceのdirラベルを追加表示
+  # （1行目はherdr-task-label hookがタイトルのみをrenameする前提の分業）。
   herdrPatched = herdr.overrideAttrs (old: {
     patches = (old.patches or [ ]) ++ [
       ./patches/herdr-active-pane-border-white.patch

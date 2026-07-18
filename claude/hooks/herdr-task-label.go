@@ -3,8 +3,9 @@
 //
 //   - workspace名（1行目）: Claude Code 自身が生成する会話タイトル
 //     （transcript の ai-title/custom-title。WezTerm タブタイトルと同じ仕組み）を
-//     "<ディレクトリ名> · <タイトル>" として反映。Stop フックで、ターン完了ごとに
-//     最新のタイトルへ同期する（毎回全体を作り直すので前回分は積み上がらない）。
+//     タイトルのみで反映。Stop フックで、ターン完了ごとに最新のタイトルへ
+//     同期する（毎回作り直すので前回分は積み上がらない）。ディレクトリ名は
+//     herdr パッチ側が spaces 一覧の2行目（branch行）に表示する。
 //   - agentsパネルの状態表示（2行目、display_agent）: 直近のユーザー指示を
 //     短く整形して反映。UserPromptSubmit フックで、プロンプトが送られるたびに
 //     最新の内容へ更新する。
@@ -19,7 +20,6 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"strings"
 )
 
@@ -27,7 +27,6 @@ import (
 type InputData struct {
 	HookEventName  string `json:"hook_event_name"`
 	Prompt         string `json:"prompt"`
-	Cwd            string `json:"cwd"`
 	TranscriptPath string `json:"transcript_path"`
 }
 
@@ -121,16 +120,16 @@ func extractConversationTitle(path string) string {
 	return ""
 }
 
-// maxTitleRunes はworkspace名に載せる会話タイトル部分の最大文字数です。
-// ディレクトリ名 + " · " と同じ行を共有するため、実際に見える幅に合わせて
-// 短めにしています（herdr側に折り返し機能は無く、収まらない分は
+// maxTitleRunes はworkspace名に載せる会話タイトルの最大文字数です。
+// ディレクトリ名が2行目へ移り1行目をタイトルが占有できるようになったため、
+// 旧値18から拡大（herdr側に折り返し機能は無く、収まらない分は
 // herdr側で単純に切り詰められる）。
-const maxTitleRunes = 18
+const maxTitleRunes = 28
 
-// updateSessionTitle は Claude 生成の会話タイトルを
-// "<ディレクトリ名> · <タイトル>" として herdr の workspace 名に反映します。
-// 毎回ディレクトリ名から作り直すため、以前のタイトルが積み上がることはありません。
-func updateSessionTitle(workspaceID, cwd, transcriptPath string) {
+// updateSessionTitle は Claude 生成の会話タイトルを herdr の workspace 名に
+// 反映します。毎回タイトルから作り直すため、以前の内容が積み上がることは
+// ありません。
+func updateSessionTitle(workspaceID, transcriptPath string) {
 	if transcriptPath == "" {
 		return
 	}
@@ -138,11 +137,7 @@ func updateSessionTitle(workspaceID, cwd, transcriptPath string) {
 	if title == "" {
 		return
 	}
-	label := truncate(title, maxTitleRunes)
-	if dirName := filepath.Base(cwd); dirName != "" && dirName != "." && dirName != string(filepath.Separator) {
-		label = dirName + " · " + label
-	}
-	_ = exec.Command("herdr", "workspace", "rename", workspaceID, label).Run()
+	_ = exec.Command("herdr", "workspace", "rename", workspaceID, truncate(title, maxTitleRunes)).Run()
 }
 
 func main() {
@@ -162,7 +157,7 @@ func main() {
 		}
 	case "Stop":
 		if workspaceID := os.Getenv("HERDR_WORKSPACE_ID"); workspaceID != "" {
-			updateSessionTitle(workspaceID, input.Cwd, input.TranscriptPath)
+			updateSessionTitle(workspaceID, input.TranscriptPath)
 		}
 	}
 }
