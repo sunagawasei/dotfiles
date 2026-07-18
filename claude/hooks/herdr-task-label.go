@@ -1,11 +1,14 @@
 // herdr-task-label は Claude Code の hook として動作し、herdr の agents パネルに
-// 2種類の情報を反映します:
+// 3種類の情報を反映します:
 //
 //   - workspace名（1行目）: Claude Code 自身が生成する会話タイトル
 //     （transcript の ai-title/custom-title。WezTerm タブタイトルと同じ仕組み）を
 //     タイトルのみで反映。Stop フックで、ターン完了ごとに最新のタイトルへ
-//     同期する（毎回作り直すので前回分は積み上がらない）。ディレクトリ名は
-//     herdr パッチ側が spaces 一覧の2行目（branch行）に表示する。
+//     同期する（毎回作り直すので前回分は積み上がらない）。
+//   - workspaceのdirメタデータ: 作業ディレクトリのbasenameを workspace へ
+//     反映。SessionStart と Stop フックで報告し、herdr server 再起動後も
+//     自動回復する。表示位置は herdr 側の [ui.sidebar.spaces] rows 設定が
+//     担う。
 //   - agentsパネルの状態表示（2行目、display_agent）: 直近のユーザー指示を
 //     短く整形して反映。UserPromptSubmit フックで、プロンプトが送られるたびに
 //     最新の内容へ更新する。
@@ -20,6 +23,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 )
 
@@ -28,6 +32,7 @@ type InputData struct {
 	HookEventName  string `json:"hook_event_name"`
 	Prompt         string `json:"prompt"`
 	TranscriptPath string `json:"transcript_path"`
+	Cwd            string `json:"cwd"`
 }
 
 // truncate は s の空白類を1つのスペースに畳み込み、max rune を超える場合は
@@ -140,6 +145,26 @@ func updateSessionTitle(workspaceID, transcriptPath string) {
 	_ = exec.Command("herdr", "workspace", "rename", workspaceID, truncate(title, maxTitleRunes)).Run()
 }
 
+// reportWorkspaceDir は作業ディレクトリ名を workspace の dir メタデータに反映します。
+func reportWorkspaceDir(workspaceID, cwd string) {
+	if cwd == "" {
+		var err error
+		cwd, err = os.Getwd()
+		if err != nil {
+			return
+		}
+	}
+	dir := filepath.Base(cwd)
+	if dir == "" || dir == "." || dir == "/" {
+		return
+	}
+	_ = exec.Command(
+		"herdr", "workspace", "report-metadata", workspaceID,
+		"--source", "claude-task-hook",
+		"--token", "dir="+dir,
+	).Run()
+}
+
 func main() {
 	rawBytes, err := io.ReadAll(os.Stdin)
 	if err != nil {
@@ -155,9 +180,14 @@ func main() {
 		if paneID := os.Getenv("HERDR_PANE_ID"); paneID != "" {
 			updateLatestPrompt(paneID, input.Prompt)
 		}
+	case "SessionStart":
+		if workspaceID := os.Getenv("HERDR_WORKSPACE_ID"); workspaceID != "" {
+			reportWorkspaceDir(workspaceID, input.Cwd)
+		}
 	case "Stop":
 		if workspaceID := os.Getenv("HERDR_WORKSPACE_ID"); workspaceID != "" {
 			updateSessionTitle(workspaceID, input.TranscriptPath)
+			reportWorkspaceDir(workspaceID, input.Cwd)
 		}
 	}
 }

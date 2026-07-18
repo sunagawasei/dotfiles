@@ -13,8 +13,9 @@ let
   # [theme.custom]のsurface_dim overrideはsidebar選択行のbgにも波及するため不採用。
   # expanded sidebarのspaces一覧にもcollapsed railと同じ表示順番号を常時表示
   # （上流は番号なしを明示テストで固定した意図的設計・configキーなし）。
-  # 同一覧の2行目(branch行)先頭にworkspaceのdirラベルを追加表示
-  # （1行目はherdr-task-label hookがタイトルのみをrenameする前提の分業）。
+  # 同一覧の2行目のdirラベルは0.7.4のrows設定+$dirメタデータで表示
+  # （herdr/config.tomlのrows設定とherdr-task-label hookの分業。パッチ不使用）。
+  # sidebarトークンの区切りを" · "から" › "へ変更（spaces/agents両パネル共通）。
   herdrPatched = herdr.overrideAttrs (old: {
     patches = (old.patches or [ ]) ++ [
       ./patches/herdr-active-pane-border-white.patch
@@ -22,6 +23,7 @@ let
       ./patches/herdr-confirm-close-running-process.patch
       ./patches/herdr-panel-contrast-fg-bright.patch
       ./patches/herdr-expanded-sidebar-space-numbers.patch
+      ./patches/herdr-sidebar-token-separator.patch
     ];
   });
 

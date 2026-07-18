@@ -1,0 +1,26 @@
+diff --git a/src/ui/sidebar.rs b/src/ui/sidebar.rs
+index ebe7d0a..2d600a5 100644
+--- a/src/ui/sidebar.rs
++++ b/src/ui/sidebar.rs
+@@ -1514,7 +1514,7 @@ mod tests {
+         let first = row_text(buffer, body.y, 17);
+ 
+         assert!(first.contains("logs"), "rendered row: {first:?}");
+-        assert!(first.contains('·'), "rendered row: {first:?}");
++        assert!(first.contains('›'), "rendered row: {first:?}");
+     }
+ 
+     #[test]
+diff --git a/src/ui/sidebar/tokens.rs b/src/ui/sidebar/tokens.rs
+index 5c00361..237f018 100644
+--- a/src/ui/sidebar/tokens.rs
++++ b/src/ui/sidebar/tokens.rs
+@@ -112,7 +112,7 @@ pub(super) fn separator(previous: &ResolvedToken, current: &ResolvedToken) -> &'
+     {
+         " "
+     } else {
+-        " · "
++        " › "
+     }
+ }
+ 
