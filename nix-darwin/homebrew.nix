@@ -58,6 +58,7 @@ in
       "azookey"
       "homerow"
       # アプリケーション
+      "chatgpt"
       "claude-code@latest"
       "codex"
       "copilot-cli"
