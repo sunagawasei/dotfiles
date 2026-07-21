@@ -143,6 +143,27 @@ PROCESS_STATE=$(printf '%s\n' "$PROCESS_SNAPSHOT" | awk \
 read -r BG_BUSY <<< "$PROCESS_STATE"
 [ "$BG_BUSY" = "1" ] || BG_BUSY=0
 
+# 実行中のサブエージェントが残したマーカーを同じbusy表示へ合流
+if [[ -n "$SESSION_ID" && "$SESSION_ID" =~ ^[0-9a-fA-F-]+$ ]]; then
+  SUBAGENT_RUN_DIR=/Users/s23159/.config/claude/run
+  for marker in "$SUBAGENT_RUN_DIR"/subagent."$SESSION_ID".*; do
+    [ -f "$marker" ] || continue
+    marker_pid=""
+    IFS= read -r marker_pid < "$marker"
+    [[ "$marker_pid" =~ ^[0-9]+$ ]] || continue
+
+    while read -r process_pid process_ppid process_command; do
+      [ "$process_pid" = "$marker_pid" ] || continue
+      command_token=${process_command%%[[:space:]]*}
+      if [ "${command_token##*/}" = "claude" ]; then
+        BG_BUSY=1
+        break
+      fi
+    done <<< "$PROCESS_SNAPSHOT"
+    [ "$BG_BUSY" = "1" ] && break
+  done
+fi
+
 # meta/pidに対応するbridgeの実体をpsスナップショットで確認し、最後のlifecycle行を読む
 for index in "${!CODEX_BRIDGE_PIDS[@]}"; do
   bridge_pid=${CODEX_BRIDGE_PIDS[$index]}

@@ -161,6 +161,7 @@ raycast/extensions/
 # Zsh session files
 # Claude Code（デフォルト除外、公開対象のみホワイトリスト）
 claude/*
+claude/run/
 !claude/CLAUDE.md
 !claude/statusline.sh
 !claude/keybindings.json
@@ -175,6 +176,7 @@ claude/hooks/*
 !claude/hooks/add_newline.go
 !claude/hooks/herdr-notify.go
 !claude/hooks/herdr-task-label.go
+!claude/hooks/subagent-busy.go
 !claude/hooks/guard-readonly-agents.go
 !claude/hooks/guard-readonly-agents_test.go
 !claude/skills/
