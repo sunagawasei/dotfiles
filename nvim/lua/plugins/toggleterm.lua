@@ -142,6 +142,8 @@ return {
     local lazygit = Terminal:new({
       cmd = "lazygit",
       direction = "float",
+      hidden = true,
+      count = 99,
       env = {
         NVIM = vim.v.servername, -- $NVIMを明示的に渡してneovim-remoteで開けるようにする
         LG_CONFIG_FILE = table.concat({
@@ -186,6 +188,8 @@ return {
     local hunk = Terminal:new({
       cmd = "hunk diff",
       direction = "float",
+      hidden = true,
+      count = 98,
       env = {
         NVIM = vim.v.servername,
         -- Hunkの`e`キー(open file in $EDITOR)を、lazygitのnvim-remoteプリセット同様
@@ -212,6 +216,12 @@ return {
 
     _G.hunk_toggle = function()
       hunk:toggle()
+    end
+
+    _G.toggle_last_terminal = function()
+      if lazygit:is_open() and lazygit:is_focused() then lazygit:close() end
+      if hunk:is_open() and hunk:is_focused() then hunk:close() end
+      vim.cmd("ToggleTerm")
     end
 
     -- ターミナルウィンドウのサイズを変更
@@ -332,27 +342,27 @@ return {
     -- これにより閉じ時のModeChangedパターンがnt:nとなり、which-keyが正しく再アタッチできる。
     {
       "<C-/>",
-      "<cmd>ToggleTerm<CR>",
+      function() _G.toggle_last_terminal() end,
       mode = "n",
-      desc = "Toggle Terminal (Last)",
+      desc = "Toggle Terminal (Last, shell only)",
     },
     {
       "<C-/>",
-      [[<C-\><C-n><cmd>ToggleTerm<CR>]],
+      [[<C-\><C-n><cmd>lua _G.toggle_last_terminal()<CR>]],
       mode = "t",
-      desc = "Toggle Terminal (Last, exit insert first)",
+      desc = "Toggle Terminal (Last, shell only, exit insert first)",
     },
     {
       "<C-_>",
-      "<cmd>ToggleTerm<CR>",
+      function() _G.toggle_last_terminal() end,
       mode = "n",
-      desc = "Toggle Terminal (Last)",
+      desc = "Toggle Terminal (Last, shell only)",
     },
     {
       "<C-_>",
-      [[<C-\><C-n><cmd>ToggleTerm<CR>]],
+      [[<C-\><C-n><cmd>lua _G.toggle_last_terminal()<CR>]],
       mode = "t",
-      desc = "Toggle Terminal (Last, exit insert first)",
+      desc = "Toggle Terminal (Last, shell only, exit insert first)",
     },
 
     -- LazyGit
