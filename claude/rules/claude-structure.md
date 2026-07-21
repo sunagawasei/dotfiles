@@ -98,6 +98,15 @@ description: Brief one-line description
 - 簡潔に保つ（50行以内推奨）
 - 詳細は`.claude/`に分離
 
+### CLAUDE.local.md（個人ローカル用）
+
+**目的**: プロジェクト固有だが git にコミットしない個人メモ（ローカル環境のプロファイル名・個人パス等）
+
+**ポイント**:
+- リポジトリルートに置く。`CLAUDE.md` と並んで自動読込される（公式サポート、[docs/memory](https://code.claude.com/docs/en/memory)）
+- **`.gitignore` への追加は手動**（自動では ignore されない）
+- `.claude/CLAUDE.md` は root `CLAUDE.md` と同一の「Project instructions」スコープ（チーム共有・コミット前提）であり、ローカル専用の置き場としては使わない
+
 ## 確立されたパターンに従う
 
 ### ✅ 良いパターン

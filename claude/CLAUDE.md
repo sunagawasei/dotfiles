@@ -10,7 +10,7 @@
 - **セキュリティガイドライン**: 詳細は `claude/rules/shell-security.md` を参照
 - **Claude Code構造規約**: 詳細は `claude/rules/claude-structure.md` を参照
 - **Datadogプロジェクト規約**: 詳細は `claude/rules/datadog.md` を参照（社内情報を含むためローカル限定・非公開）
-- **Pull Request運用規約**: 詳細は `claude/rules/pull-request.md` を参照（draft作成・アサイン・body書式）
+- **Pull Request運用規約**: 詳細は `claude/rules/pull-request.md` を参照（draft/ready の事前確認・アサイン・body書式）
 
 これらのルールは、該当するファイルを編集する際に自動的に適用されます。
 
@@ -30,6 +30,7 @@
 - 作業記録では誰が実行したか（ユーザー/Claude）を正確に区別する。不明なら聞く
 - 期間は「M/D〜M/D」形式（「2週間」等の曖昧表現を避ける）。日本語文中の括弧は半角
 - コードコメントは最小限（処理の「なぜ」のみ）
+- **個人ローカル環境情報を成果物に書かない**: コミット対象のドキュメント・コードに個人環境の値（AWS profile 名・個人パス・エイリアス等）を書かず、マシン中立な表現にする。実値はリポジトリルートの `CLAUDE.local.md`（要 .gitignore 登録）へ分離する（2026-07-21指示。実例: hw-inventory/undercloud-datadog の AWS_PROFILE 行分離）
 - 上長向け説明を求められたら要点のみのN行サマリー（技術詳細なし）
 - **日本語の文章規範**: 実質的な日本語の文章（ユーザーへの返信・レポート・ドラフト・ドキュメント）を書く/推敲するときは `claude/skills/japanese-tech-writing/SKILL.md` の規範に従う。ただし「整形」節（一文一行改行・脚注記法等）は書籍原稿・記事向けの規則であり、チャット返信には適用しない。記事・エッセイ・解説文など読み物を書くときは `claude/skills/cognitive-rhythm-writing/SKILL.md` も併用する（日常の返信には併用しない。未回収の緊張を残す読み物向け設計であり、結論先行の返信とは目的が逆のため）
 
