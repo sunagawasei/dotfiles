@@ -58,6 +58,9 @@ in
     grpcurl gitui imagemagick gifski pwgen tmux ansifilter
     ripgrep oxlint unzip
 
+    # GitHub PR/issue TUI
+    gh-dash
+
     # その他
     zoxide
 
