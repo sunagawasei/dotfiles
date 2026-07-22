@@ -17,8 +17,8 @@ return {
 
     -- diff表示設定
     diff_opts = {
-      open_in_new_tab = true,           -- 新規タブでdiffを開く（作業中バッファを汚さない）
-      hide_terminal_in_new_tab = true,  -- 新規タブでターミナル非表示（diffに集中）
+      open_in_new_tab = true, -- 新規タブでdiffを開く（作業中バッファを汚さない）
+      hide_terminal_in_new_tab = true, -- 新規タブでターミナル非表示（diffに集中）
     },
 
     -- 差分表示・タブ管理設定（v0.3.0新機能）
@@ -38,7 +38,7 @@ return {
           Add = "追加",
           Update = "更新",
           Remove = "削除",
-          Diff = "差分"
+          Diff = "差分",
         }
 
         local jp_type = type_map[change_type] or change_type
@@ -47,7 +47,6 @@ return {
         return string.format("[%s] %s", jp_type, base)
       end,
     },
-
   },
   config = function(_, opts)
     -- claudecode.nvim は visual 選択の終端列を byte 単位の inclusive index として扱う。
@@ -93,17 +92,16 @@ return {
 
         -- claudecode.nvimのバッファ変数で確実に検出
         if vim.b[bufnr].claudecode_diff_tab_name then
-          vim.opt_local.wrap = true         -- 行折り返しを有効化
-          vim.opt_local.linebreak = false   -- 画面幅ベースで折り返し（日本語対応）
-          vim.opt_local.breakindent = true  -- 折り返し行のインデント保持
-          vim.opt_local.showbreak = "> "    -- 折り返し行マーカー（日本語対応）
+          vim.opt_local.wrap = true -- 行折り返しを有効化
+          vim.opt_local.linebreak = false -- 画面幅ベースで折り返し（日本語対応）
+          vim.opt_local.breakindent = true -- 折り返し行のインデント保持
+          vim.opt_local.showbreak = "> " -- 折り返し行マーカー（日本語対応）
         end
       end,
     })
   end,
   keys = {
     { "<leader>a", nil, desc = "AI/Claude Code" },
-
 
     -- Claude Code統合の開始・停止
     { "<leader>aI", "<cmd>ClaudeCodeStart<cr>", desc = "Start Claude Code integration" },
@@ -123,6 +121,5 @@ return {
     -- Diff管理（v0.3.0新機能）
     { "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff changes" },
     { "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff changes" },
-
   },
 }
