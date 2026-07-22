@@ -109,13 +109,13 @@ Run `git status` after committing to confirm success.
 
 ### 7. On pre-commit hook failure
 
-Fix the issue → re-stage → create a **new** commit (never `--amend`).
+Fix the issue → re-stage → commit again.
 
 ## Safety Rules
 
 - **Never** commit `.env`, credentials, API keys, or secrets
 - **Never** use `git add -A` or `git add .`
-- **Never** amend — always create a new commit
+- **Amend is allowed** when the user explicitly asks for it (e.g. folding a follow-up fix into the previous commit). Only amend commits that are not yet pushed — check `git log --oneline @{u}..HEAD` (or equivalent) first, and if the target commit is already pushed, stop and ask instead of amending
 - **Never** push (that's the calling agent's job)
 - **Never** use `--no-verify` or `--no-gpg-sign`
 - **Never** run `git push --force`, `git reset --hard`, or `git checkout -- .`
