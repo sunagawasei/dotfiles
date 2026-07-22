@@ -68,6 +68,8 @@ keybinding:
     moveDownCommit: '<c-d>'
     moveUpCommit: '<c-u>'
     openLogMenu: '<c-g>' # Ctrl+Gでログメニューを開く（Karabinerとの競合回避）
+  files:
+    openStatusFilter: '<c-a>' # Ctrl+Bはherdrのprefixキーに吸われるため回避
 customCommands:
   - key: "<c-g>"
     context: "files"
