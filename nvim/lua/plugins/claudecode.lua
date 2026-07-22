@@ -50,6 +50,18 @@ return {
 
   },
   config = function(_, opts)
+    -- claudecode.nvim は visual 選択の終端列を byte 単位の inclusive index として扱う。
+    -- 終端がマルチバイト文字の場合に欠けた UTF-8 を送らないよう、
+    -- setup() 前に抽出と送信を補正する。
+    local utf8_ok, utf8 = pcall(require, "utils.claudecode_utf8")
+    if utf8_ok then
+      utf8.patch_selection_function("get_visual_selection", utf8.wrap_selection_result)
+      utf8.patch_selection_function("get_visual_selection_from_marks", utf8.wrap_selection_result)
+      utf8.patch_selection_function("send_selection_update", utf8.wrap_send_selection_update)
+    else
+      vim.notify("claudecode.nvim UTF-8 patch could not be loaded", vim.log.levels.WARN)
+    end
+
     -- closeAllDiffTabs が Diffview など「自分で開いた diff」まで閉じてしまう問題への対処。
     -- 元ハンドラは diff モードの全ウィンドウを無差別に閉じるため、Diffview の左右ペイン
     -- （vim ネイティブの diff モード）が Claude Code の submit のたびに巻き込まれて閉じる。
