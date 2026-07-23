@@ -221,9 +221,9 @@ agmsg configのper-workerキー（`spawn.codex_model.<name>` / `spawn.codex_effo
 
 | タスク | 宛先ワーカー | モデル/effort |
 |---|---|---|
-| 実質的な機能実装の自走 | codex-impl | gpt-5.6-sol / xhigh（global継承）・turn_timeout 3600s・implementer layout（cwd=対象repo・permission profileでrepo書き込み可） |
-| 実装後レビュー（オンデマンド） | codex | gpt-5.6-sol / xhigh（global継承） |
-| 調査・軽微な確認・大量列挙 | codex-research | gpt-5.6-terra / xhigh（global継承。遅いと感じたら `spawn.codex_effort.codex-research: high` へ下げる） |
+| 実質的な機能実装の自走 | codex-impl | gpt-5.6-sol / xhigh（per-workerキー明示）・turn_timeout 3600s・implementer layout（cwd=対象repo・permission profileでrepo書き込み可） |
+| 実装後レビュー（オンデマンド） | codex | gpt-5.6-sol / xhigh（per-workerキー明示） |
+| 調査・軽微な確認・大量列挙 | codex-research | gpt-5.6-sol / xhigh（per-workerキー明示。遅いと感じたら `spawn.codex_effort.codex-research: high` へ下げる） |
 | 大規模・設計横断の節目レビュー | codex-deep（一時spawn→使い捨て） | gpt-5.6-sol / max（configキー設定済み） |
 
 codex-deepは常駐させず、必要時にspawnし終わったらdespawnする:

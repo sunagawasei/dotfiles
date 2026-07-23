@@ -61,7 +61,7 @@
 |---|---|---|
 | **Claude（本セッション・Fable/Opus）** | 要件壁打ち→プラン化・[implement]パケット設計・実装中の質問に即応（ユーザー判断が要る論点はユーザーに確認）・検収（要件適合＋diff査読＋git log確認）・実行・git・権限/sandbox/auto-mode・最終統合 | write（適用・commitの唯一の主体） |
 | **codex-impl** | コード挙動(logic)を変える編集全般の自走（機能実装・バグ修正・条件/戻り値変更。単一ファイル数行でも挙動が変わればここ。[implement]パケット=プラン契約。ブロック時は起案者へ質問、完了時[done]報告）。モデルはgpt-5.6-sol | 対象repoへwrite（implementer layout=cwd対象repo+workspace-write）。**commit/push禁止** |
-| **codex-research** | コードベース内横断調査・データ収集（プラン前の棚卸し。file:line一覧・構造化データを返す。パッチは作らない）。モデルはgpt-5.6-terra | read-only運用（書けるのはagmsg配下のみ） |
+| **codex-research** | コードベース内横断調査・データ収集（プラン前の棚卸し。file:line一覧・構造化データを返す。パッチは作らない）。モデルはgpt-5.6-sol | read-only運用（書けるのはagmsg配下のみ） |
 | **codex（review役）** | プラン査読（ExitPlanMode前の常時ゲート、2026-07-21〜）＋オンデマンド査読（検収はFable。大規模diffの第二意見等） | read-only |
 
 振り分け基準:
