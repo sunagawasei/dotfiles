@@ -165,6 +165,9 @@ claude/run/
 !claude/CLAUDE.md
 !claude/statusline.sh
 !claude/keybindings.json
+!claude/themes/
+claude/themes/*
+!claude/themes/ghost-visor.json
 !claude/rules/
 claude/rules/*
 # rules配下はデフォルト非公開。公開してよいものだけ ! で明示する

@@ -250,6 +250,7 @@ func generateOutputs(root, sourceName string, palette *colorPalette) ([]outputFi
 		{filepath.Join(root, "nvim/lua/config/palette.lua"), paletteLuaTemplate},
 		{filepath.Join(root, "wezterm/colors.lua"), weztermLuaTemplate},
 		{filepath.Join(root, "home-manager/colors.nix"), nixColorsTemplate},
+		{filepath.Join(root, "claude/themes/ghost-visor.json"), claudeThemeTemplate},
 	}
 
 	files := make([]outputFile, 0, len(templates))
@@ -489,6 +490,63 @@ func xterm256Palette() []rgbColor {
 	}
 	return palette
 }
+
+// claudeThemeTemplate derives the Claude Code theme from existing ghost-visor.toml keys.
+// Changes to shared keys such as ansi.*, nvim.*, and core.* must flow through to this theme.
+// name and base remain literals because they are Claude Code-specific values.
+const claudeThemeTemplate = `{
+  "name": "Ghost Visor",
+  "base": "dark-ansi",
+  "overrides": {
+    "claude": "{{teals.bright}}",
+    "claudeShimmer": "{{foregrounds.bright}}",
+    "claudeBlue_FOR_SYSTEM_SPINNER": "{{teals.bright}}",
+    "claudeBlueShimmer_FOR_SYSTEM_SPINNER": "{{foregrounds.bright}}",
+    "text": "{{foregrounds.main}}",
+    "inverseText": "{{core.darkest_bg}}",
+    "inactive": "{{foregrounds.dim}}",
+    "inactiveShimmer": "{{blues_slates.cloud_slate}}",
+    "subtle": "{{blues_slates.slate_mid}}",
+    "suggestion": "{{teals.mid_bright}}",
+    "permission": "{{teals.border}}",
+    "permissionShimmer": "{{teals.bright}}",
+    "remember": "{{purples.bright_purple}}",
+    "skill": "{{purples.bright_purple}}",
+    "effortUltra": "{{purples.bright_purple}}",
+    "chromeYellow": "{{ansi.bright_yellow}}",
+    "professionalBlue": "{{ansi.blue}}",
+    "success": "{{semantic.success}}",
+    "error": "{{ansi.magenta}}",
+    "warning": "{{ansi.yellow}}",
+    "warningShimmer": "{{ansi.bright_yellow}}",
+    "merged": "{{purples.bright_purple}}",
+    "promptBorder": "{{teals.border}}",
+    "promptBorderShimmer": "{{teals.bright}}",
+    "planMode": "{{teals.bright}}",
+    "autoAccept": "{{semantic.success}}",
+    "autoAcceptShimmer": "{{foregrounds.bright}}",
+    "bashBorder": "{{ansi.magenta}}",
+    "ide": "{{teals.bright}}",
+    "fastMode": "{{ansi.bright_magenta}}",
+    "fastModeShimmer": "{{ansi.bright_white}}",
+    "diffAdded": "{{nvim.diff_add_bg}}",
+    "diffRemoved": "{{nvim.diff_delete_bg}}",
+    "diffAddedDimmed": "{{nvim.gutter_bg}}",
+    "diffRemovedDimmed": "{{core.ui_shadow}}",
+    "diffAddedWord": "{{nvim.diff_add_inline_bg}}",
+    "diffRemovedWord": "{{nvim.diff_delete_inline_bg}}",
+    "userMessageBackground": "{{core.ui_shadow}}",
+    "userMessageBackgroundHover": "{{core.active_line}}",
+    "bashMessageBackgroundColor": "{{purples.dark_rose}}",
+    "memoryBackgroundColor": "{{nvim.diff_change_bg}}",
+    "selectionBg": "{{core.active_line}}",
+    "rate_limit_fill": "{{teals.bright}}",
+    "rate_limit_empty": "{{core.ui_shadow}}",
+    "briefLabelYou": "{{foregrounds.dim}}",
+    "briefLabelClaude": "{{teals.bright}}"
+  }
+}
+`
 
 const paletteLuaTemplate = `-- ` + generatedNotice + `
 -- {{metadata.name}} カラーパレット共有モジュール
