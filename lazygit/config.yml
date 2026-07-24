@@ -28,14 +28,14 @@ gui:
       - '#375F98'
     # Git関連の色
     unstagedChangesColor:
-      - '#B17DCF' # Glitch Purple
+      - '#CEADE1' # Glitch Purple
     cherryPickedCommitFgColor:
       - '#58CAF8'
     cherryPickedCommitBgColor:
-      - '#102337' # Dark Teal Panel
+      - '#324664' # Dark Teal Panel
   # 著者色設定
   authorColors:
-    '*': '#8C97B5' # Git Blame Gray (improved visibility)
+    '*': '#B1B9CD' # Git Blame Gray (improved visibility)
     # END GENERATED COLORS
 os:
   editPreset: "nvim-remote" # editAtLineAndWait/openDirInEditorのフォールバック用に維持

@@ -14,10 +14,10 @@
 
 | 名称 | HEX | 用途 |
 |-----|-----|-----|
-| メイン背景 | `#0A0C1A` | エディタ、ターミナル作業領域 |
-| 最暗背景 | `#0E1127` | タブバー、外枠 |
-| パネル背景 | `#102337` | サイドバー、フロート |
-| UIシャドウ | `#191D2B` | 非アクティブ領域、ポップアップ |
+| メイン背景 | `#202A42` | エディタ、ターミナル作業領域 |
+| 最暗背景 | `#141B2D` | タブバー、外枠 |
+| パネル背景 | `#324664` | サイドバー、フロート |
+| UIシャドウ | `#242F48` | 非アクティブ領域、ポップアップ |
 | 選択強調 | `#5199C2` | 選択範囲、アクティブ状態 |
 
 ### テキスト・強調系
@@ -28,34 +28,34 @@
 | 最高強調 | `#F8FCFD` | カーソルテキスト、重要 |
 | ブライトテキスト | `#9FDBF7` | 数値、定数、アクティブタブ |
 | ヘディング/パス | `#88CBEA` | ディレクトリ名、見出し |
-| ディムテキスト | `#8296AC` | 補助テキスト |
+| ディムテキスト | `#ADBAC9` | 補助テキスト |
 
 ### スペクトラム・アクセント
 
 | グループ | 色 | HEX | 用途 |
 |---------|-----|-----|-----|
-| **Cyan** | Success | `#52C4BC` | 成功インジケーター |
+| **Cyan** | Success | `#62C9C2` | 成功インジケーター |
 | | Visor Glow | `#58CAF8` | 関数、コマンド |
-| | Selection Blue | `#5199C2` | 演算子、ステータス |
-| | String Blue | `#5F98B9` | 文字列、情報 |
+| | Selection Blue | `#92BFD9` | 演算子、ステータス |
+| | String Blue | `#9ABED3` | 文字列、情報 |
 | | UI Border | `#45799D` | 境界線、分割線 |
-| **Slate** | Git Blame Gray | `#8C97B5` | Git blame、補助情報 |
-| | Comment Gray | `#8692AD` | コメント |
-| | Punctuation Gray | `#8892A8` | 句読点 |
+| **Slate** | Git Blame Gray | `#B1B9CD` | Git blame、補助情報 |
+| | Comment Gray | `#B1B9CA` | コメント |
+| | Punctuation Gray | `#B3B9C7` | 句読点 |
 | | Slate Mid | `#4A4953` | 非アクティブ（特定用途のみ） |
-| | Sky Slate | `#A8B2D6` | 型、オプション |
-| **Purple** | Error Purple | `#B17DCF` | エラー、重要警告 |
+| | Sky Slate | `#AFB8D9` | 型、オプション |
+| **Purple** | Error Purple | `#CEADE1` | エラー、重要警告 |
 | | Lavender | `#D0D4F0` | 警告、定数、ラベル |
-| | Muted Purple | `#8E92C8` | キーワード、予約語 |
+| | Muted Purple | `#B4B6DA` | キーワード、予約語 |
 
 ### ANSI 16色（拡張マッピング）
 
 <!-- BEGIN GENERATED COLORS -->
 ```
- 0: #0E1127 (Black)           8: #5E5A63 (Bright Black)
+ 0: #141B2D (Black)           8: #5E5A63 (Bright Black)
  1: #C67F9E (Red)             9: #D38AA6 (Bright Red)
  2: #2FA5A0 (Green)          10: #52C4BC (Bright Green)
- 3: #BBA881 (Yellow)         11: #DFBE90 (Bright Yellow)
+ 3: #C2B08D (Yellow)         11: #DFBE90 (Bright Yellow)
  4: #6393D7 (Blue)           12: #A8B2D6 (Bright Blue)
  5: #D96DC0 (Magenta)        13: #EBC1F8 (Bright Magenta)
  6: #58CAF8 (Cyan)           14: #9FDBF7 (Bright Cyan)
@@ -69,10 +69,10 @@
 
 ### 背景の階層構造
 
-1. **`#0E1127` (Deepest)**: 外枠、タブバー背景
-2. **`#0A0C1A` (Main)**: エディタ、ターミナル作業領域
-3. **`#102337` (Panel)**: サイドバー、フロート
-4. **`#191D2B` (UI Layer)**: ポップアップ、非アクティブ領域
+1. **`#141B2D` (Deepest)**: 外枠、タブバー背景
+2. **`#202A42` (Main)**: エディタ、ターミナル作業領域
+3. **`#324664` (Panel)**: サイドバー、フロート
+4. **`#242F48` (UI Layer)**: ポップアップ、非アクティブ領域
 5. **`#5199C2` (Selection)**: アクティブ選択、ハイライト
 
 ### テキストの優先順位
@@ -80,10 +80,10 @@
 1. **`#F8FCFD` (Critical)**: アクティブな強調
 2. **`#9FDBF7` (High)**: 定数、アクティブ要素
 3. **`#CDE9F5` (Standard)**: メインテキスト
-4. **`#8296AC` (Low)**: 補助情報
-5. **`#8C97B5` (Auxiliary)**: Git blame、補助的な情報
-6. **`#8692AD` (Comment)**: コメント
-7. **`#8892A8` (Punctuation)**: 句読点
+4. **`#ADBAC9` (Low)**: 補助情報
+5. **`#B1B9CD` (Auxiliary)**: Git blame、補助的な情報
+6. **`#B1B9CA` (Comment)**: コメント
+7. **`#B3B9C7` (Punctuation)**: 句読点
 8. **`#4A4953` (Inactive)**: 非アクティブ要素（意図的に暗い）
 
 ---

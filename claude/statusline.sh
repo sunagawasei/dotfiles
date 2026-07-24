@@ -235,13 +235,13 @@ hex2fg() {
 C_MODEL="\e[38;2;205;233;245m"   # #CDE9F5 foregrounds.main
 C_DIR="\e[38;2;136;203;234m"     # #88CBEA foregrounds.heading
 C_GIT="\e[38;2;88;202;248m"     # #58CAF8 teals.bright
-C_BUSY="\e[38;2;176;122;224m"    # #b07ae0 purples.bright_purple
+C_BUSY="\e[38;2;205;172;236m"    # #cdacec purples.bright_purple
 
 # 使用率の色（閾値で変化）
 pct=${USED_PCT%.*}
 pct=${pct:-0}
 if [ "$pct" -gt 75 ]; then
-  C_PCT="\e[38;2;176;122;224m"   # #b07ae0
+  C_PCT="\e[38;2;205;172;236m"   # #cdacec
 elif [ "$pct" -gt 50 ]; then
   C_PCT="\e[38;2;208;212;240m"   # #D0D4F0
 else
@@ -254,7 +254,7 @@ if [ -n "$RATE_USED" ]; then
   rate_used_int=${rate_used_int:-0}
   rate_remaining=$((100 - rate_used_int))
   if [ "$rate_remaining" -lt 25 ]; then
-    C_RATE="\e[38;2;176;122;224m"   # #b07ae0 警告（purple）
+    C_RATE="\e[38;2;205;172;236m"   # #cdacec 警告（purple）
   elif [ "$rate_remaining" -lt 50 ]; then
     C_RATE="\e[38;2;208;212;240m"   # #D0D4F0 注意（グレー）
   else
@@ -296,17 +296,17 @@ build_bar() {
 # --- 1段目: モデル / コンテキスト使用率 / レート制限残量 / codex・bgマーカー ---
 row1=()
 row1+=("#1F3265|${C_MODEL}${MODEL}")
-row1+=("#252A40|${C_PCT}󰍛 ${pct}%")
+row1+=("#314463|${C_PCT}󰍛 ${pct}%")
 if [ -n "$RATE_USED" ]; then
-  row1+=("#30314B|${C_RATE}󰔛 ${rate_remaining}%")
+  row1+=("#42547A|${C_RATE}󰔛 ${rate_remaining}%")
 fi
-[ "$CODEX_BUSY" = "1" ] && row1+=("#191D2B|${C_BUSY}󰚩")
-[ "$BG_BUSY" = "1" ] && row1+=("#191D2B|${C_BUSY}󰜎")
+[ "$CODEX_BUSY" = "1" ] && row1+=("#242F48|${C_BUSY}󰚩")
+[ "$BG_BUSY" = "1" ] && row1+=("#242F48|${C_BUSY}󰜎")
 
 # --- 2段目: ディレクトリ / Gitブランチ ---
 row2=()
-row2+=("#102337|${C_DIR}${DIR_NAME}")
-[ -n "$GIT_BRANCH" ] && row2+=("#191D2B|${C_GIT}${GIT_BRANCH}")
+row2+=("#324664|${C_DIR}${DIR_NAME}")
+[ -n "$GIT_BRANCH" ] && row2+=("#242F48|${C_GIT}${GIT_BRANCH}")
 
 # END GENERATED COLORS: SEGMENTS
 build_bar row1

@@ -7,20 +7,20 @@ local M = {}
 
 M.colors = {
   -- コアカラー
-  bg = "#0A0C1A",           -- Main (Pure Black) [core.background]
-  darkest_bg = "#0E1127",   -- Deepest Shadow [core.darkest_bg]
-  panel_bg = "#102337",     -- Dark Teal Panel [core.panel_bg]
-  dark_shadow = "#191D2B",  -- UI Shadow [core.ui_shadow]
-  gutter_bg = "#0D101F",    -- Gutter background [nvim.gutter_bg]
+  bg = "#202A42",           -- Main (Pure Black) [core.background]
+  darkest_bg = "#141B2D",   -- Deepest Shadow [core.darkest_bg]
+  panel_bg = "#324664",     -- Dark Teal Panel [core.panel_bg]
+  dark_shadow = "#242F48",  -- UI Shadow [core.ui_shadow]
+  gutter_bg = "#1A2235",    -- Gutter background [nvim.gutter_bg]
   border = "#45799D",       -- UI Border [teals.border]
   mid_gray = "#4A4953",     -- Slate Mid [blues_slates.slate_mid]
-  light_gray = "#8296AC",   -- Dim text [foregrounds.dim]
+  light_gray = "#ADBAC9",   -- Dim text [foregrounds.dim]
 
   -- Visibility improvements
-  punctuation_gray = "#8892A8",  -- 句読点 [blues_slates.punctuation_gray]
-  comment_gray = "#8692AD",      -- コメント [blues_slates.comment_gray]
-  git_blame_gray = "#8C97B5",    -- Git blame [blues_slates.git_blame_gray]
-  operator = "#5199C2",     -- Clear Teal [teals.mid_bright]
+  punctuation_gray = "#B3B9C7",  -- 句読点 [blues_slates.punctuation_gray]
+  comment_gray = "#B1B9CA",      -- コメント [blues_slates.comment_gray]
+  git_blame_gray = "#B1B9CD",    -- Git blame [blues_slates.git_blame_gray]
+  operator = "#92BFD9",     -- Clear Teal [teals.mid_bright]
   fg = "#CDE9F5",           -- Main Text [foregrounds.main]
   near_white = "#9FDBF7",   -- Brightest [foregrounds.bright]
   highlight_white = "#F8FCFD", -- Purest [ansi.bright_white]
@@ -28,19 +28,19 @@ M.colors = {
   -- アクセントカラー
   cyan = "#58CAF8",         -- Vibrant Teal [teals.bright]
   bright_cyan = "#88CBEA",  -- Heading Cyan [foregrounds.heading]
-  magenta = "#B17DCF",      -- Glitch Purple (error accent)
+  magenta = "#CEADE1",      -- Glitch Purple (error accent)
   bright_magenta = "#B8BCD8", -- Cloud Slate [blues_slates.cloud_slate]
 
   -- 拡張セマンティック
-  purple_accent = "#8E92C8", -- Muted Purple (Keyword) [purples.muted_purple]
-  success = "#52C4BC",       -- Success indicator [semantic.success]
+  purple_accent = "#B4B6DA", -- Muted Purple (Keyword) [purples.muted_purple]
+  success = "#62C9C2",       -- Success indicator [semantic.success]
   ocean_blue = "#375F98",    -- Ocean Blue [blues_slates.ocean_blue]
   lavender = "#D0D4F0",      -- Lavender (Constant) [purples.lavender]
 
   -- ANSI/Terminal (normal)
   ansi_red = "#C67F9E",
   ansi_green = "#2FA5A0",
-  ansi_yellow = "#BBA881",
+  ansi_yellow = "#C2B08D",
   ansi_blue = "#6393D7",
   ansi_magenta = "#D96DC0",    -- ansi.magenta専用キー（`magenta`はerrorアクセントとしてUIハイライトに共有されているため分離）
 
@@ -51,18 +51,18 @@ M.colors = {
   bright_blue = "#A8B2D6",     -- ansi.bright_blue (Sky Slate)
 
   -- その他
-  white = "#A8B2D6",        -- Sky Slate (Icon) [blues_slates.sky_slate]
+  white = "#AFB8D9",        -- Sky Slate (Icon) [blues_slates.sky_slate]
   selection = "#5199C2",    -- Clear Teal [core.selection_bg]
-  selection_fg = "#0A0C1A", -- Background for contrast
-  string = "#5F98B9",       -- Base Teal [semantic.string]
+  selection_fg = "#141B2D", -- Background for contrast
+  string = "#9ABED3",       -- Base Teal [semantic.string]
 
   -- Diff背景カラー
-  diff_add_bg = "#0D1F2A",      -- Diff Add背景 [nvim.diff_add_bg]
-  diff_change_bg = "#191430",   -- Diff Change背景 [nvim.diff_change_bg]
-  diff_delete_bg = "#1C1218",   -- Diff Delete背景 [nvim.diff_delete_bg]
-  diff_add_inline_bg = "#1E4550",     -- Word-diff add背景 [nvim.diff_add_inline_bg]
-  diff_change_inline_bg = "#3A2C5A",  -- Word-diff change背景 [nvim.diff_change_inline_bg]
-  diff_delete_inline_bg = "#4A2333",  -- Word-diff delete背景 [nvim.diff_delete_inline_bg]
+  diff_add_bg = "#1E3A44",      -- Diff Add背景 [nvim.diff_add_bg]
+  diff_change_bg = "#2B2650",   -- Diff Change背景 [nvim.diff_change_bg]
+  diff_delete_bg = "#302230",   -- Diff Delete背景 [nvim.diff_delete_bg]
+  diff_add_inline_bg = "#2E5D6B",     -- Word-diff add背景 [nvim.diff_add_inline_bg]
+  diff_change_inline_bg = "#4C3C78",  -- Word-diff change背景 [nvim.diff_change_inline_bg]
+  diff_delete_inline_bg = "#5E3245",  -- Word-diff delete背景 [nvim.diff_delete_inline_bg]
 }
 
 return M

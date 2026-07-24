@@ -76,30 +76,30 @@ highlight NonText guibg=NONE guifg=#45799D ctermbg=NONE ctermfg=67
 highlight EndOfBuffer guibg=NONE ctermbg=NONE
 
 " 行番号
-highlight LineNr guifg=#8692AD guibg=NONE ctermfg=103 ctermbg=NONE
+highlight LineNr guifg=#B1B9CA guibg=NONE ctermfg=146 ctermbg=NONE
 highlight CursorLineNr guifg=#F8FCFD guibg=NONE ctermfg=15 ctermbg=NONE gui=bold cterm=bold
 
 " カーソルライン
-highlight CursorLine guibg=#191D2B ctermbg=234 cterm=NONE gui=NONE
-highlight CursorColumn guibg=#191D2B ctermbg=234
-highlight ColorColumn guibg=#191D2B ctermbg=234
+highlight CursorLine guibg=#242F48 ctermbg=236 cterm=NONE gui=NONE
+highlight CursorColumn guibg=#242F48 ctermbg=236
+highlight ColorColumn guibg=#242F48 ctermbg=236
 
 " 構文ハイライト
-highlight Comment guifg=#8692AD ctermfg=103
-highlight Keyword guifg=#8E92C8 ctermfg=104
-highlight Statement guifg=#8E92C8 ctermfg=104
-highlight Conditional guifg=#8E92C8 ctermfg=104
-highlight Repeat guifg=#8E92C8 ctermfg=104
-highlight String guifg=#5F98B9 ctermfg=67
-highlight Character guifg=#5F98B9 ctermfg=67
+highlight Comment guifg=#B1B9CA ctermfg=146
+highlight Keyword guifg=#B4B6DA ctermfg=146
+highlight Statement guifg=#B4B6DA ctermfg=146
+highlight Conditional guifg=#B4B6DA ctermfg=146
+highlight Repeat guifg=#B4B6DA ctermfg=146
+highlight String guifg=#9ABED3 ctermfg=110
+highlight Character guifg=#9ABED3 ctermfg=110
 highlight Function guifg=#58CAF8 ctermfg=81
 highlight Identifier guifg=#CDE9F5 ctermfg=189
 highlight Number guifg=#9FDBF7 ctermfg=153
 highlight Float guifg=#9FDBF7 ctermfg=153
 highlight Boolean guifg=#9FDBF7 ctermfg=153
-highlight Type guifg=#A8B2D6 ctermfg=146
+highlight Type guifg=#AFB8D9 ctermfg=146
 highlight Constant guifg=#D0D4F0 ctermfg=189
-highlight Operator guifg=#5199C2 ctermfg=67
+highlight Operator guifg=#92BFD9 ctermfg=110
 highlight PreProc guifg=#58CAF8 ctermfg=81
 highlight Special guifg=#4A4953 ctermfg=239
 highlight Todo guifg=#58CAF8 guibg=NONE ctermfg=81 ctermbg=NONE gui=bold cterm=bold
@@ -107,9 +107,9 @@ highlight Todo guifg=#58CAF8 guibg=NONE ctermfg=81 ctermbg=NONE gui=bold cterm=b
 " Markdownのバッククォート（インラインコード `code` / コードフェンス ```）
 " 既定では markdownCodeDelimiter→Delimiter→Special(#4A4953) で暗く沈むため、
 " Special自体(Conceal用途)は変えずデリミタだけ視認可能なTeal(Operator色)に上書き
-highlight markdownCodeDelimiter guifg=#5199C2 ctermfg=67
+highlight markdownCodeDelimiter guifg=#92BFD9 ctermfg=110
 " 見出しの # も同根（markdownHeadingDelimiter→Delimiter→Special）で沈むため同様に上書き
-highlight markdownHeadingDelimiter guifg=#5199C2 ctermfg=67
+highlight markdownHeadingDelimiter guifg=#92BFD9 ctermfg=110
 highlight Underlined guifg=#58CAF8 ctermfg=81 gui=underline cterm=underline
 highlight Conceal guifg=#4A4953 ctermfg=239
 
@@ -122,33 +122,33 @@ highlight StatusLineNC guifg=#4A4953 guibg=NONE ctermfg=239 ctermbg=NONE gui=NON
 highlight TabLine guifg=#4A4953 guibg=NONE ctermfg=239 ctermbg=NONE
 highlight TabLineSel guifg=#CDE9F5 guibg=NONE ctermfg=189 ctermbg=NONE gui=bold cterm=bold
 highlight TabLineFill guibg=NONE ctermbg=NONE
-highlight Visual guibg=#5199C2 guifg=#0A0C1A ctermbg=67 ctermfg=233
-highlight Pmenu guibg=#191D2B guifg=#CDE9F5 ctermbg=234 ctermfg=189
-highlight PmenuSel guibg=#191D2B guifg=#F8FCFD ctermbg=234 ctermfg=15
-highlight Search guibg=#191D2B guifg=#58CAF8 ctermbg=234 ctermfg=81
-highlight IncSearch guibg=#58CAF8 guifg=#0A0C1A ctermbg=81 ctermfg=233
+highlight Visual guibg=#5199C2 guifg=#141B2D ctermbg=67 ctermfg=234
+highlight Pmenu guibg=#242F48 guifg=#CDE9F5 ctermbg=236 ctermfg=189
+highlight PmenuSel guibg=#242F48 guifg=#F8FCFD ctermbg=236 ctermfg=15
+highlight Search guibg=#242F48 guifg=#58CAF8 ctermbg=236 ctermfg=81
+highlight IncSearch guibg=#58CAF8 guifg=#141B2D ctermbg=81 ctermfg=234
 highlight MatchParen guibg=#45799D guifg=#F8FCFD ctermbg=67 ctermfg=15 gui=bold cterm=bold
 
 " 追加グループ
 highlight Directory guifg=#58CAF8 ctermfg=81
 highlight Title guifg=#88CBEA ctermfg=116 gui=bold cterm=bold
-highlight Folded guibg=#191D2B guifg=#4A4953 ctermbg=234 ctermfg=239
-highlight WildMenu guibg=#191D2B guifg=#F8FCFD ctermbg=234 ctermfg=15
+highlight Folded guibg=#242F48 guifg=#4A4953 ctermbg=236 ctermfg=239
+highlight WildMenu guibg=#242F48 guifg=#F8FCFD ctermbg=236 ctermfg=15
 highlight Question guifg=#58CAF8 ctermfg=81
 highlight MoreMsg guifg=#58CAF8 ctermfg=81
 highlight ModeMsg guifg=#CDE9F5 ctermfg=189 gui=bold cterm=bold
-highlight QuickFixLine guibg=#191D2B ctermbg=234
-highlight ErrorMsg guifg=#B07AE0 ctermfg=140
+highlight QuickFixLine guibg=#242F48 ctermbg=236
+highlight ErrorMsg guifg=#CDACEC ctermfg=183
 highlight WarningMsg guifg=#B8BCD8 ctermfg=146
 
 " Diff
-highlight DiffAdd guifg=#58CAF8 guibg=#0D1F2A ctermfg=81 ctermbg=234
-highlight DiffChange guifg=#B07AE0 guibg=#191430 ctermfg=140 ctermbg=234
-highlight DiffDelete guifg=#8296AC guibg=#1C1218 ctermfg=103 ctermbg=234
+highlight DiffAdd guifg=#58CAF8 guibg=#1E3A44 ctermfg=81 ctermbg=236
+highlight DiffChange guifg=#CDACEC guibg=#2B2650 ctermfg=183 ctermbg=237
+highlight DiffDelete guifg=#ADBAC9 guibg=#302230 ctermfg=146 ctermbg=236
 highlight DiffText guifg=#88CBEA guibg=NONE ctermfg=116 ctermbg=NONE gui=bold cterm=bold
 
 " スペルチェック
-highlight SpellBad guifg=#B07AE0 ctermfg=140 gui=undercurl cterm=underline
+highlight SpellBad guifg=#CDACEC ctermfg=183 gui=undercurl cterm=underline
 highlight SpellCap guifg=#B8BCD8 ctermfg=146 gui=undercurl cterm=underline
 " END GENERATED COLORS
 " ========================================
