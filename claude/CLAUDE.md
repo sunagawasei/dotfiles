@@ -50,6 +50,7 @@
 - 秘密情報はファイル編集時だけでなく、提案・実行するコマンドの標準出力にも出さない（詳細: `claude/rules/shell-security.md`）
 - PR作成の型は `claude/rules/pull-request.md` を参照
 - **commit直前にdiffレビューを通す**: プラン/アプローチを承認済みでも、それは方針の承認であってdiffの承認ではない。commitする前に必ず実際の差分（`git diff`）を提示し、ユーザーのレビュー・承認を得てからcommitする。既定は変更を**unstagedのまま**提示し、承認後に`git add`＋commitする（無承認でstage/commitしない）。codexレビューを併用する場合もユーザーのレビューを代替しない
+- **sandboxがローカルファイル書込みを弾いたらリトライせずコマンド提示**（2026-07-25 /insights friction）: `.envrc`/`.kubeconfig` 等、sandbox allowWrite外のローカルファイルの生成・編集がブロックされたら、書込みを繰り返さずユーザー実行用コマンドを即提示する（`!` なしのプレーンなコードブロック。[[feedback_command_presentation_no_bang]]）。無駄な失敗試行でセッションをstallさせない
 
 ## エージェント役割分担
 
@@ -91,6 +92,7 @@
 - **メイン（Fable/Opus）の仕事は指示設計・報告の実物検証・統合・安全判断**。sonnetの「編集した」報告は鵜呑みにせず、grep/存在確認で必ずスポットチェックする（「修正したと報告したが未適用」の実例: 2026-07-04）
 - **（2026-07-07〜廃止）** 重要な最終検証・判断だけ `model: opus` をピンポイント投入、という例外運用は上記の環境変数強制により機能しない。opusでの検証が必要な局面はサブエージェントに委譲せず、メインセッション自身（Fable/Opus）が直接判断する（詳細はメモリ feedback_subagent_model_sonnet）
 - 例外: ごく軽微な操作（1行のconfig値変更等）でsonnet往復の方が高くつく場合はメインが直接編集してよいが、既定は委譲
+- **些末な自己完結タスクはsubagentに投げず直接処理**（2026-07-25 /insights friction）: メモリへのノート書き等、diffだけで正しさが自明かつ単発で完結する極小タスクは、sonnetにもcodexにも委譲せずメインが直接やる。「spawnしたsubagentが返らずtrivialタスクがstallする」実害（note-writing task無限待ち）を避けるため。上の軽微例外と同趣旨。複数ファイルに及ぶ/判断を要するなら通常の委譲へ
 
 トークン節約ガード（中〜大タスク時）:
 - codex-research 調査結果返却まで対象領域の Read/Grep/Glob を控え、実装は codex-research が cite したファイル/データを起点に開く（不足・安全確認に必要なら Claude が追加で開いてよい。最終的な正しさ/安全判断は Claude が持つ）
