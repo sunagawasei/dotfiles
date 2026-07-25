@@ -118,11 +118,9 @@ description: Brief one-line description
 - **`.gitignore` への追加は手動**（自動では ignore されない）
 - `.claude/CLAUDE.md` は root `CLAUDE.md` と同一の「Project instructions」スコープ（チーム共有・コミット前提）であり、ローカル専用の置き場としては使わない
 
-## 確立されたパターンに従う
+## 各ファイル種別の骨格
 
-### ✅ 良いパターン
-
-#### Rule作成時
+### Rule
 
 ```yaml
 ---
@@ -131,56 +129,40 @@ paths:
   - "**/go.mod"
 ---
 
-# Go言語規約
+# ルールタイトル
 
-**コード生成時は、明示的に指定がない限りGolangを使用してください**
-
-## プロジェクト構造
-
-- `go.mod`: Goモジュール定義
+[内容]
 ```
 
-#### Skill作成時
+### Skill
 
 ```
-skills/config-change/
-├── SKILL.md
-└── references/          # オプション
-    └── template.md
+skills/[name]/SKILL.md
+skills/[name]/references/   # オプション
 ```
 
 ```yaml
 ---
-name: config-change
-description: dotfiles設定変更のワークフロー
+name: skill-name
+description: 一行説明
 ---
 
-# 設定変更ワークフロー
-
-## ワークフロー
-
-### 1. 変更内容の確認
-### 2. ステージング
-### 3. コミット
+# スキルタイトル
 ```
 
-#### Doc作成時
+### Doc
 
 ```markdown
-# Gitワークフロー
+# ドキュメントタイトル
 
-このドキュメントは、dotfilesリポジトリでのGit運用方法を定義します。
-
-## ブランチ戦略
-## コミットワークフロー
-## プッシュ頻度
+[内容]
 ```
 
 ## ベストプラクティス
 
 1. **単一責任**: 1ファイル = 1つの規約/ワークフロー
 2. **簡潔に**: 読む側が必要な判断をできる最小限に保つ。詳細は`references/`や`docs/`へ切り出す（Docsは長文OK・制限なし）
-3. **実例を含める**: 良い例と悪い例を示す
+3. **例示は最小限**: 骨格が伝わる1例に留める。良い例/悪い例の対比や網羅的なサンプルは探索空間を狭めるので置かない
 4. **テストする**: 作成後、必ず動作確認
 5. **DRY原則**: 重複を避け、参照を使用
 6. **段階的開示**: 基本→詳細の順で情報提供
