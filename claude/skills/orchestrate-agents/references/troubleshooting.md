@@ -1,0 +1,11 @@
+# 返信が来ない時の診断（2026-07-06実例）
+
+1. **bridgeログ確認**: `~/.agents/skills/agmsg/run/<type>-bridge.<team>.<name>.log` を見る。`rc=124`（CLIタイムアウト）+「leaving message unread」なら依頼は未読滞留しており、bridgeプロセス自体も死んでいることが多い
+2. **stale pidfile**: bridgeが死んでいるのに `spawn.sh` が「already running (pid N)」と言う場合は、`despawn.sh <team> <from> <name> --force` で登録を掃除してから再spawnする。再spawnしたbridgeは未読メッセージを自動で再処理する
+3. **Monitor(watch.sh)が常駐していない場合のfallback**: 返信はDB直読みで取得できる — `sqlite3 ~/.agents/skills/agmsg/db/messages.db "SELECT body FROM messages WHERE team='<team>' AND from_agent='<agent>' ORDER BY id DESC LIMIT 1;"`。到着待ちはバックグラウンドのポーリングループ（10秒間隔でCOUNTを見て、>0で即exit・15分でタイムアウト）にすると、到着時に通知で拾える
+4. **CLI更新後は必ずdespawn→再spawn**: bridgeは起動時のCLIバイナリを掴み続けるため、codex CLI等を更新しても既存bridgeには反映されない（実例: 2026-07-10、旧CLIが「gpt-5.6-sol requires a newer version of Codex」の400で全turn失敗し続けた。ログ上はturn completed with errorが並ぶ）。`despawn.sh <team> <from> codex --force` → `ensure-codex.sh` で入れ替える。なお `ensure-codex.sh` は生存確認を兼ねる（生きていれば "already running" のno-op）
+5. **既読消化された依頼は再送**: 壊れたbridgeが依頼を既読処理してしまった場合、再spawn後の自動再処理は未読のみが対象なので、該当依頼は `send.sh` で再送する。既読状態は `sqlite3 ~/.agents/skills/agmsg/db/messages.db "SELECT id, read_at IS NOT NULL FROM messages WHERE team='<team>' AND from_agent='claude' ORDER BY id DESC LIMIT 3;"` で確認できる
+6. **返信が空body(length 0)で届く送信事故**: Monitor通知が空・DBの `length(body)=0` でも、workerのthreadには作業結果が生きている(bridgeログ末尾に要約が残っていることも多い)。「直前の最終報告がbody空で届いた(送信事故)。全文をそのまま再送して。長文は2〜3分割で送ってよい」と依頼すれば新規調査なしで回収できる(2026-07-18実例: codex-researchの調査報告を3分割再送で全量回収)
+7. **turn timeout超過後の沈黙はbridge死亡ではない**: `no turn completion within <N>s; assuming the turn ended and resuming` が出た後にログが静止するのは armed idle（bridge生存・pid健在）。依頼は既読消化済みなので、成果が要るなら再送（項5）か「今すぐ途中経過を送って」での回収、不要なら `despawn --force`（killの成否は必ずpsで検証する）
+8. **`watch-once failed with exit 124` の正体**: watch-once.sh 自体の exit code は 0/1/2 のみで、124はbridgeがwatch-onceを実行する app-server `process/spawn`（timeoutMs=timeout+interval+10秒）がkillした時のコード。間欠発生し、3連続でbridgeが自滅して**spawn登録だけがstale残存**する（以後のsendは黙って滞留。despawn --force → ensure-codex で入れ替える）
+9. **`codex_models_manager` の `missing field` 系ERRORはハング原因ではない**: brew CLIとChatGPT.app同梱codexのバージョン乖離による models cache（`~/.config/codex/models_cache.json` 共有）のschema非互換で、**fail-open（turnは止まらない）**。恒久対処は `brew upgrade --cask codex` で世代を揃える（更新後は項4のとおり既存bridgeの入れ替えが必要）

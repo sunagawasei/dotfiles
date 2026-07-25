@@ -150,16 +150,21 @@ codex系ワーカーへ送るパケットの書式、Claude側の検品・収束
 
 ### codex依頼パケットの鉄則
 
-（2026-07-12〜: 標準フローの検収はFableが担うため、codex査読はオンデマンド。依頼時の書式は従来どおり以下）
+codexへのレビューには3つの独立した位置づけがある。**「いつ・必須かどうか」の判断規約はグローバル`CLAUDE.md`を正本とし、このファイルはパケット書式・収束条件・実務ノウハウの正本**とする:
+
+1. **プラン査読(常時必須)**: 実装・検証計画をユーザーに提示する前に必ずcodex査読を通す(`claude/CLAUDE.md`「対話・確認の規約」の常時ゲート)。指摘の採否は「指摘→対応」対応表で示してから承認を求める
+2. **実装後のdiff査読(オンデマンド)**: 大規模diffの第二意見等、明示的に必要と判断した時だけ使う。対象は**実質的な実装のみ**(1行修正など些細な編集は対象外)。標準フローの検収はFableが単独で担うため、このレビューは必須ではない(`claude/CLAUDE.md`「エージェント役割分担」)
+3. **検収(Fable単独・必須)**: codex-implの[done]報告はFableが`git status`/`git diff`/`git log`を読んで単独で検収する(上記「codex-impl自走実装ワークフロー」5.)。codex査読はこの検収の代替にならない
+
+以下はプラン査読・オンデマンドdiff査読どちらにも使う共通のパケット書式:
 
 - codex は **read-only**。findings を返すだけで、**fix は Claude が適用**する。依頼は review/verify/findings/test-plan のみ。codex に計画を振らない
-- agmsg: 宛先 codex・prefix `[review]`。自己完結パケット = `git diff` か対象 `file:line` ＋ 意図 ＋(ループ時)前回指摘→対応の対応表(codex はメッセージ本文しか見ない)
+- agmsg: 宛先 codex・prefix `[review]`。自己完結パケット = `git diff`か対象`file:line`(プラン査読の場合はプラン本文) ＋ 意図 ＋(ループ時)前回指摘→対応の対応表(codex はメッセージ本文しか見ない)
 - 出力形式: Findings / Required tests / Residual risk / Confidence。severity 順・推測は明記
-- 対象は **実質的な実装のみ**。1行修正など些細な編集はレビュー不要
 
 ### レビュー収束条件
 
-**実質的な**実装(機能・タスク完了の節目。1行修正など些細な編集は除く)をしたら、その diff を codex に非同期`send`してレビューを受ける(codexはask往復が機能しない実績があるため`ask`は使わない)。指摘の反映(再修正)も「実装」なので反映後の差分を再依頼しうるが、**1回で止めるな・延々と回すな**。能動的に妥協点を見出して打ち切る。
+プラン査読・オンデマンドdiff査読のいずれでも、指摘の反映(再修正)は「実装」なので反映後の差分を再依頼しうるが、**1回で止めるな・延々と回すな**。能動的に妥協点を見出して打ち切る(codexはask往復が機能しない実績があるため`ask`は使わない)。
 
 収束条件(いずれか満たせば完了とみなす):
 - 残る findings が **Low / nit / 「見送り(理由明記)」/ 「別タスク(スコープ外)」だけ** で、substantive(Med/High＝正しさ・設計・回帰に関わる)な findings が無い。
@@ -196,17 +201,9 @@ codex-researchの返信到着(Monitor通知)→検品→プラン確定→codex-
 - 非同期化してもcommit・適用の最終主体はClaudeである原則は変わらない。codex-researchの調査もcodex-implの[done]も無検証で受け入れない(検品・検収ゲートを通す)。
 - 大量のタスクを一度に並行させすぎない。依存関係の見落としは収束を遅らせるだけ。
 
-## 返信が来ない時の診断（2026-07-06実例）
+## 返信が来ない時の診断
 
-1. **bridgeログ確認**: `~/.agents/skills/agmsg/run/<type>-bridge.<team>.<name>.log` を見る。`rc=124`（CLIタイムアウト）+「leaving message unread」なら依頼は未読滞留しており、bridgeプロセス自体も死んでいることが多い
-2. **stale pidfile**: bridgeが死んでいるのに `spawn.sh` が「already running (pid N)」と言う場合は、`despawn.sh <team> <from> <name> --force` で登録を掃除してから再spawnする。再spawnしたbridgeは未読メッセージを自動で再処理する
-3. **Monitor(watch.sh)が常駐していない場合のfallback**: 返信はDB直読みで取得できる — `sqlite3 ~/.agents/skills/agmsg/db/messages.db "SELECT body FROM messages WHERE team='<team>' AND from_agent='<agent>' ORDER BY id DESC LIMIT 1;"`。到着待ちはバックグラウンドのポーリングループ（10秒間隔でCOUNTを見て、>0で即exit・15分でタイムアウト）にすると、到着時に通知で拾える
-4. **CLI更新後は必ずdespawn→再spawn**: bridgeは起動時のCLIバイナリを掴み続けるため、codex CLI等を更新しても既存bridgeには反映されない（実例: 2026-07-10、旧CLIが「gpt-5.6-sol requires a newer version of Codex」の400で全turn失敗し続けた。ログ上はturn completed with errorが並ぶ）。`despawn.sh <team> <from> codex --force` → `ensure-codex.sh` で入れ替える。なお `ensure-codex.sh` は生存確認を兼ねる（生きていれば "already running" のno-op）
-5. **既読消化された依頼は再送**: 壊れたbridgeが依頼を既読処理してしまった場合、再spawn後の自動再処理は未読のみが対象なので、該当依頼は `send.sh` で再送する。既読状態は `sqlite3 ~/.agents/skills/agmsg/db/messages.db "SELECT id, read_at IS NOT NULL FROM messages WHERE team='<team>' AND from_agent='claude' ORDER BY id DESC LIMIT 3;"` で確認できる
-6. **返信が空body(length 0)で届く送信事故**: Monitor通知が空・DBの `length(body)=0` でも、workerのthreadには作業結果が生きている(bridgeログ末尾に要約が残っていることも多い)。「直前の最終報告がbody空で届いた(送信事故)。全文をそのまま再送して。長文は2〜3分割で送ってよい」と依頼すれば新規調査なしで回収できる(2026-07-18実例: codex-researchの調査報告を3分割再送で全量回収)
-7. **turn timeout超過後の沈黙はbridge死亡ではない**: `no turn completion within <N>s; assuming the turn ended and resuming` が出た後にログが静止するのは armed idle（bridge生存・pid健在）。依頼は既読消化済みなので、成果が要るなら再送（項5）か「今すぐ途中経過を送って」での回収、不要なら `despawn --force`（killの成否は必ずpsで検証する）
-8. **`watch-once failed with exit 124` の正体**: watch-once.sh 自体の exit code は 0/1/2 のみで、124はbridgeがwatch-onceを実行する app-server `process/spawn`（timeoutMs=timeout+interval+10秒）がkillした時のコード。間欠発生し、3連続でbridgeが自滅して**spawn登録だけがstale残存**する（以後のsendは黙って滞留。despawn --force → ensure-codex で入れ替える）
-9. **`codex_models_manager` の `missing field` 系ERRORはハング原因ではない**: brew CLIとChatGPT.app同梱codexのバージョン乖離による models cache（`~/.config/codex/models_cache.json` 共有）のschema非互換で、**fail-open（turnは止まらない）**。恒久対処は `brew upgrade --cask codex` で世代を揃える（更新後は項4のとおり既存bridgeの入れ替えが必要）
+bridgeログ確認・stale pidfile・CLI更新後のdespawn→再spawn等、9項目の診断手順は `references/troubleshooting.md` を参照。
 
 ## codex-research（調査用codexワーカー）
 
@@ -218,29 +215,9 @@ codexの既定role（`spawn-roles/codex.codex.md`）はreview専任で、どう�
 
 role file は `db/spawn-roles/codex-research.codex.md`（規約名でensure-codex.shから自動解決）。依頼書式は上記「[research]パケットの鉄則」を使う。
 
-## codexワーカーのモデル/effort振り分け（2026-07-08〜）
+## codexワーカーのモデル/effort振り分け
 
-agmsg configのper-workerキー（`spawn.codex_model.<name>` / `spawn.codex_effort.<name>`、codex headless限定）により、ワーカー名がモデル+effortのプリセットになっている。タスク難易度の判定はコードで自動化せず、依頼側（Claude）が適切な名前のワーカーへ送ることで実現する。
-
-| タスク | 宛先ワーカー | モデル/effort |
-|---|---|---|
-| 実質的な機能実装の自走 | codex-impl | gpt-5.6-sol / xhigh（per-workerキー明示）・turn_timeout 3600s・implementer layout（cwd=対象repo・permission profileでrepo書き込み可） |
-| 実装後レビュー（オンデマンド） | codex | gpt-5.6-sol / xhigh（per-workerキー明示） |
-| 調査・軽微な確認・大量列挙 | codex-research | gpt-5.6-sol / xhigh（per-workerキー明示。遅いと感じたら `spawn.codex_effort.codex-research: high` へ下げる） |
-| 大規模・設計横断の節目レビュー | codex-deep（一時spawn→使い捨て） | gpt-5.6-sol / max（configキー設定済み） |
-
-codex-deepは常駐させず、必要時にspawnし終わったらdespawnする:
-
-```bash
-~/.agents/skills/agmsg/scripts/spawn.sh codex codex-deep --team <team> --project <project> \
-  --role-file ~/.agents/skills/agmsg/db/spawn-roles/codex.codex.md   # review役を流用
-# 使用後: ~/.agents/skills/agmsg/scripts/despawn.sh <team> claude codex-deep
-```
-
-注意:
-- 重いモード（max/ultra）への自動エスカレーションはしない。gpt-5.6系のクレジット消費倍率が未公開のため、明示的に選んだ時だけ使う
-- gpt-5.6系はプレビュー段階。モデルIDが無効化・改名されたら該当configキー（実効config: `~/.agents/skills/agmsg/db/config.yaml`）を更新して戻す（振り分けの仕組み自体はモデル非依存）
-- **gpt-5.6-sol が bridge 経由で `400 "requires a newer version of Codex"` になる場合**: 原因はCLI版ではなく、app-server `initialize` の `clientInfo.name` に対する server-side gate（bridgeの既定名 `agmsg-codex-bridge` が sol の first-party allowlist に弾かれる）。per-worker キー `spawn.codex_client_name.<name>: codex_cli` を設定して first-party 名を名乗らせると解消する（既定は従来名のまま。sol を使う worker にのみ設定）。CLI を最新stableに上げても・再認証しても直らない（2026-07-10確認）。純正 `codex exec` は別API面のため通るので、exec成功をbridge成功の証拠にしないこと。
+agmsg configのper-workerキー（`spawn.codex_model.<name>` / `spawn.codex_effort.<name>`）によるワーカー名別モデル+effortプリセット、codex-deepの使い捨て運用、既知のgpt-5.6-sol 400エラー対処は `references/model-routing.md` を参照。
 
 ## 関連スキル
 
