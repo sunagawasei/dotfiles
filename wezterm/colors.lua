@@ -57,7 +57,7 @@ return {
     comment = "#B1B9CA",
     git_blame = "#B1B9CD",
     string = "#9ABED3",
-    keyword = "#B4B6DA",
+    keyword = "#BFADFF",
     punctuation = "#B3B9C7",
     function_color = "#58CAF8",
     type_color = "#AFB8D9",

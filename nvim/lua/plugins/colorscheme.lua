@@ -31,7 +31,7 @@ return {
         Title = { fg = colors.bright_cyan, bold = true },
         Special = { fg = colors.punctuation_gray },
         Identifier = { fg = colors.fg },
-        Statement = { fg = colors.purple_accent },
+        Statement = { fg = colors.syntax_violet },
         PreProc = { fg = colors.cyan },
         Type = { fg = colors.white },
         Constant = { fg = colors.lavender },
@@ -39,7 +39,7 @@ return {
         Number = { fg = colors.near_white },
         Boolean = { fg = colors.near_white },
         Function = { fg = colors.cyan },
-        Keyword = { fg = colors.purple_accent },
+        Keyword = { fg = colors.syntax_violet },
         Operator = { fg = colors.operator },
         Comment = { fg = colors.comment_gray },  -- より明るく読みやすく
 
@@ -114,10 +114,10 @@ return {
         GitSignsDeleteInline = { fg = colors.highlight_white, bg = colors.diff_delete_inline_bg },
 
         -- 構文ハイライト（Cyber Glitch Teal - ネオン系配色）
-        ["@keyword"] = { fg = colors.purple_accent },
-        ["@keyword.function"] = { fg = colors.purple_accent },
-        ["@keyword.operator"] = { fg = colors.purple_accent },
-        ["@keyword.return"] = { fg = colors.purple_accent },
+        ["@keyword"] = { fg = colors.syntax_violet },
+        ["@keyword.function"] = { fg = colors.syntax_violet },
+        ["@keyword.operator"] = { fg = colors.syntax_violet },
+        ["@keyword.return"] = { fg = colors.syntax_violet },
         ["@keyword.import"] = { fg = colors.cyan },
         ["@string"] = { fg = colors.string },
         ["@number"] = { fg = colors.fg },
@@ -141,11 +141,11 @@ return {
         ["@punctuation.bracket"] = { fg = colors.punctuation_gray },
         ["@punctuation.delimiter"] = { fg = colors.punctuation_gray },
         ["@punctuation.delimiter.yaml"] = { fg = colors.light_gray }, -- YAML list marker visibility
-        -- YAML: 値の型で色分け（キー=cyan / 数値=lavender / 真偽・null=purple。文字列は@string既定を維持）
+        -- YAML: 値の型で色分け（キー=cyan / 数値=lavender / 真偽・null=syntax violet。文字列は@string既定を維持）
         ["@property.yaml"] = { fg = colors.cyan },
-        ["@boolean.yaml"] = { fg = colors.purple_accent },
+        ["@boolean.yaml"] = { fg = colors.syntax_violet },
         ["@number.yaml"] = { fg = colors.lavender },
-        ["@constant.builtin.yaml"] = { fg = colors.purple_accent },
+        ["@constant.builtin.yaml"] = { fg = colors.syntax_violet },
         ["@namespace"] = { fg = colors.fg },
         ["@module"] = { fg = colors.fg },
         ["@tag"] = { fg = colors.cyan },

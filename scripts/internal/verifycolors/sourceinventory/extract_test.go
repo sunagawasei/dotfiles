@@ -1,6 +1,9 @@
 package sourceinventory
 
 import (
+	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/sunagawasei/dotfiles/scripts/internal/palette"
@@ -64,6 +67,83 @@ func TestRepresentativeBackgroundResolution(t *testing.T) {
 		if !pair.Background.Ambient {
 			t.Errorf("%s background = %q, want ambient after transparency reapplication", consumerID, pair.Background.Token)
 		}
+	}
+}
+
+func TestSyntaxAndUIRoleSeparation(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := Extract(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pairs := pairMap(result.Pairs)
+
+	for _, consumerID := range []string{
+		"nvim.highlight.Statement",
+		"nvim.highlight.Keyword",
+		"nvim.highlight.@keyword",
+		"nvim.highlight.@keyword.function",
+		"nvim.highlight.@keyword.operator",
+		"nvim.highlight.@keyword.return",
+		"nvim.highlight.@boolean.yaml",
+		"nvim.highlight.@constant.builtin.yaml",
+		"hunk.theme.syntax.keyword",
+		"vim.highlight.Keyword",
+		"vim.highlight.Statement",
+		"vim.highlight.Conditional",
+		"vim.highlight.Repeat",
+	} {
+		assertPair(
+			t,
+			pairs,
+			consumerID,
+			"semantic.keyword",
+			"",
+			true,
+			verifycolors.ClassReportOnly,
+		)
+	}
+
+	assertPair(
+		t,
+		pairs,
+		"nvim.lualine.command.a",
+		"core.darkest_bg",
+		"purples.muted_purple",
+		false,
+		verifycolors.ClassEnforced,
+	)
+	assertPair(
+		t,
+		pairs,
+		"hunk.theme.fileRenamed",
+		"purples.muted_purple",
+		"",
+		true,
+		verifycolors.ClassReportOnly,
+	)
+}
+
+func TestKeybindsModeIndicatorUsesMutedPurple(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(filepath.Join(root, "wezterm", "keybinds.lua"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	contents := string(data)
+
+	// wezterm/keybinds.lua は sourceinventory の抽出対象外のため、参照文字列を直接固定する。
+	if !strings.Contains(contents, "colors.purples.muted_purple") {
+		t.Error("key-table mode indicator does not reference colors.purples.muted_purple")
+	}
+	if strings.Contains(contents, "colors.semantic.keyword") {
+		t.Error("key-table mode indicator still references colors.semantic.keyword")
 	}
 }
 

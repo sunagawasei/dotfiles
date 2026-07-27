@@ -28,6 +28,7 @@ var nvimAliases = map[string]verifycolors.TokenRef{
 	"magenta":               "zsh.error",
 	"bright_magenta":        "blues_slates.cloud_slate",
 	"purple_accent":         "purples.muted_purple",
+	"syntax_violet":         "semantic.keyword",
 	"success":               "semantic.success",
 	"ocean_blue":            "blues_slates.ocean_blue",
 	"lavender":              "purples.lavender",

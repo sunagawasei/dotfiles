@@ -57,7 +57,7 @@
     comment = "#B1B9CA";
     git_blame = "#B1B9CD";
     string = "#9ABED3";
-    keyword = "#B4B6DA";
+    keyword = "#BFADFF";
     punctuation = "#B3B9C7";
     function = "#58CAF8";
     type = "#AFB8D9";
@@ -94,7 +94,7 @@
     git_blame = "#B1B9CD";
     punctuation = "#B3B9C7";
     string = "#9ABED3";
-    keyword = "#B4B6DA";
+    keyword = "#BFADFF";
     function = "#58CAF8";
     variable = "#CDE9F5";
     number = "#9FDBF7";

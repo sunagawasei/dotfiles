@@ -1163,7 +1163,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.@boolean.yaml",
-		Foreground: "purples.muted_purple",
+		Foreground: "semantic.keyword",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -1199,7 +1199,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.@constant.builtin.yaml",
-		Foreground: "purples.muted_purple",
+		Foreground: "semantic.keyword",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -1253,7 +1253,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.@keyword",
-		Foreground: "purples.muted_purple",
+		Foreground: "semantic.keyword",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -1262,7 +1262,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.@keyword.function",
-		Foreground: "purples.muted_purple",
+		Foreground: "semantic.keyword",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -1280,7 +1280,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.@keyword.operator",
-		Foreground: "purples.muted_purple",
+		Foreground: "semantic.keyword",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -1289,7 +1289,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.@keyword.return",
-		Foreground: "purples.muted_purple",
+		Foreground: "semantic.keyword",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -2634,7 +2634,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.Keyword",
-		Foreground: "purples.muted_purple",
+		Foreground: "semantic.keyword",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -4074,7 +4074,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.Statement",
-		Foreground: "purples.muted_purple",
+		Foreground: "semantic.keyword",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -4845,7 +4845,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:913",
+		Source:     "scripts/cmd/generate-colors/main.go:914",
 	},
 	{
 		ConsumerID: "statusline.busy.background.surface",
@@ -4854,7 +4854,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:913",
+		Source:     "scripts/cmd/generate-colors/main.go:914",
 	},
 	{
 		ConsumerID: "statusline.busy.codex",
@@ -4863,7 +4863,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:912",
+		Source:     "scripts/cmd/generate-colors/main.go:913",
 	},
 	{
 		ConsumerID: "statusline.busy.codex.surface",
@@ -4872,7 +4872,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:912",
+		Source:     "scripts/cmd/generate-colors/main.go:913",
 	},
 	{
 		ConsumerID: "statusline.context.critical",
@@ -4881,7 +4881,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:908",
+		Source:     "scripts/cmd/generate-colors/main.go:909",
 	},
 	{
 		ConsumerID: "statusline.context.safe",
@@ -4890,7 +4890,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:908",
+		Source:     "scripts/cmd/generate-colors/main.go:909",
 	},
 	{
 		ConsumerID: "statusline.context.surface",
@@ -4899,7 +4899,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:908",
+		Source:     "scripts/cmd/generate-colors/main.go:909",
 	},
 	{
 		ConsumerID: "statusline.context.warning",
@@ -4908,7 +4908,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:908",
+		Source:     "scripts/cmd/generate-colors/main.go:909",
 	},
 	{
 		ConsumerID: "statusline.directory",
@@ -4917,7 +4917,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:917",
+		Source:     "scripts/cmd/generate-colors/main.go:918",
 	},
 	{
 		ConsumerID: "statusline.directory.surface",
@@ -4926,7 +4926,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:917",
+		Source:     "scripts/cmd/generate-colors/main.go:918",
 	},
 	{
 		ConsumerID: "statusline.git",
@@ -4935,7 +4935,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:918",
+		Source:     "scripts/cmd/generate-colors/main.go:919",
 	},
 	{
 		ConsumerID: "statusline.git.surface",
@@ -4944,7 +4944,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:918",
+		Source:     "scripts/cmd/generate-colors/main.go:919",
 	},
 	{
 		ConsumerID: "statusline.model",
@@ -4953,7 +4953,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:907",
+		Source:     "scripts/cmd/generate-colors/main.go:908",
 	},
 	{
 		ConsumerID: "statusline.model.surface",
@@ -4962,7 +4962,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:907",
+		Source:     "scripts/cmd/generate-colors/main.go:908",
 	},
 	{
 		ConsumerID: "statusline.rate.critical",
@@ -4971,7 +4971,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:910",
+		Source:     "scripts/cmd/generate-colors/main.go:911",
 	},
 	{
 		ConsumerID: "statusline.rate.safe",
@@ -4980,7 +4980,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:910",
+		Source:     "scripts/cmd/generate-colors/main.go:911",
 	},
 	{
 		ConsumerID: "statusline.rate.surface",
@@ -4989,7 +4989,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:910",
+		Source:     "scripts/cmd/generate-colors/main.go:911",
 	},
 	{
 		ConsumerID: "statusline.rate.warning",
@@ -4998,7 +4998,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:910",
+		Source:     "scripts/cmd/generate-colors/main.go:911",
 	},
 	{
 		ConsumerID: "vim.highlight.Boolean",
@@ -5007,7 +5007,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:812",
+		Source:     "scripts/cmd/generate-colors/main.go:813",
 	},
 	{
 		ConsumerID: "vim.highlight.Character",
@@ -5016,7 +5016,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:807",
+		Source:     "scripts/cmd/generate-colors/main.go:808",
 	},
 	{
 		ConsumerID: "vim.highlight.ColorColumn.surface",
@@ -5025,7 +5025,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:798",
+		Source:     "scripts/cmd/generate-colors/main.go:799",
 	},
 	{
 		ConsumerID: "vim.highlight.Comment",
@@ -5034,7 +5034,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:801",
+		Source:     "scripts/cmd/generate-colors/main.go:802",
 	},
 	{
 		ConsumerID: "vim.highlight.Conceal",
@@ -5043,7 +5043,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:827",
+		Source:     "scripts/cmd/generate-colors/main.go:828",
 	},
 	{
 		ConsumerID: "vim.highlight.Conditional",
@@ -5052,7 +5052,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:804",
+		Source:     "scripts/cmd/generate-colors/main.go:805",
 	},
 	{
 		ConsumerID: "vim.highlight.Constant",
@@ -5061,7 +5061,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:814",
+		Source:     "scripts/cmd/generate-colors/main.go:815",
 	},
 	{
 		ConsumerID: "vim.highlight.CursorColumn.surface",
@@ -5070,7 +5070,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:797",
+		Source:     "scripts/cmd/generate-colors/main.go:798",
 	},
 	{
 		ConsumerID: "vim.highlight.CursorLine.surface",
@@ -5079,7 +5079,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:796",
+		Source:     "scripts/cmd/generate-colors/main.go:797",
 	},
 	{
 		ConsumerID: "vim.highlight.CursorLineNr",
@@ -5088,7 +5088,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:793",
+		Source:     "scripts/cmd/generate-colors/main.go:794",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffAdd",
@@ -5097,7 +5097,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:858",
+		Source:     "scripts/cmd/generate-colors/main.go:859",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffAdd.surface",
@@ -5106,7 +5106,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:858",
+		Source:     "scripts/cmd/generate-colors/main.go:859",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffChange",
@@ -5115,7 +5115,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:859",
+		Source:     "scripts/cmd/generate-colors/main.go:860",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffChange.surface",
@@ -5124,7 +5124,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:859",
+		Source:     "scripts/cmd/generate-colors/main.go:860",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffDelete",
@@ -5133,7 +5133,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:860",
+		Source:     "scripts/cmd/generate-colors/main.go:861",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffDelete.surface",
@@ -5142,7 +5142,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:860",
+		Source:     "scripts/cmd/generate-colors/main.go:861",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffText",
@@ -5151,7 +5151,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:861",
+		Source:     "scripts/cmd/generate-colors/main.go:862",
 	},
 	{
 		ConsumerID: "vim.highlight.Directory",
@@ -5160,7 +5160,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:846",
+		Source:     "scripts/cmd/generate-colors/main.go:847",
 	},
 	{
 		ConsumerID: "vim.highlight.ErrorMsg",
@@ -5169,7 +5169,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:854",
+		Source:     "scripts/cmd/generate-colors/main.go:855",
 	},
 	{
 		ConsumerID: "vim.highlight.Float",
@@ -5178,7 +5178,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:811",
+		Source:     "scripts/cmd/generate-colors/main.go:812",
 	},
 	{
 		ConsumerID: "vim.highlight.FoldColumn",
@@ -5187,7 +5187,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:831",
+		Source:     "scripts/cmd/generate-colors/main.go:832",
 	},
 	{
 		ConsumerID: "vim.highlight.Folded",
@@ -5196,7 +5196,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:848",
+		Source:     "scripts/cmd/generate-colors/main.go:849",
 	},
 	{
 		ConsumerID: "vim.highlight.Folded.surface",
@@ -5205,7 +5205,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:848",
+		Source:     "scripts/cmd/generate-colors/main.go:849",
 	},
 	{
 		ConsumerID: "vim.highlight.Function",
@@ -5214,7 +5214,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:808",
+		Source:     "scripts/cmd/generate-colors/main.go:809",
 	},
 	{
 		ConsumerID: "vim.highlight.Identifier",
@@ -5223,7 +5223,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:809",
+		Source:     "scripts/cmd/generate-colors/main.go:810",
 	},
 	{
 		ConsumerID: "vim.highlight.IncSearch",
@@ -5232,7 +5232,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:842",
+		Source:     "scripts/cmd/generate-colors/main.go:843",
 	},
 	{
 		ConsumerID: "vim.highlight.IncSearch.surface",
@@ -5241,7 +5241,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:842",
+		Source:     "scripts/cmd/generate-colors/main.go:843",
 	},
 	{
 		ConsumerID: "vim.highlight.Keyword",
@@ -5250,7 +5250,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:802",
+		Source:     "scripts/cmd/generate-colors/main.go:803",
 	},
 	{
 		ConsumerID: "vim.highlight.LineNr",
@@ -5259,7 +5259,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:792",
+		Source:     "scripts/cmd/generate-colors/main.go:793",
 	},
 	{
 		ConsumerID: "vim.highlight.MatchParen",
@@ -5268,7 +5268,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:843",
+		Source:     "scripts/cmd/generate-colors/main.go:844",
 	},
 	{
 		ConsumerID: "vim.highlight.MatchParen.surface",
@@ -5277,7 +5277,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:843",
+		Source:     "scripts/cmd/generate-colors/main.go:844",
 	},
 	{
 		ConsumerID: "vim.highlight.ModeMsg",
@@ -5286,7 +5286,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:852",
+		Source:     "scripts/cmd/generate-colors/main.go:853",
 	},
 	{
 		ConsumerID: "vim.highlight.MoreMsg",
@@ -5295,7 +5295,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:851",
+		Source:     "scripts/cmd/generate-colors/main.go:852",
 	},
 	{
 		ConsumerID: "vim.highlight.NonText",
@@ -5304,7 +5304,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:788",
+		Source:     "scripts/cmd/generate-colors/main.go:789",
 	},
 	{
 		ConsumerID: "vim.highlight.Normal",
@@ -5313,7 +5313,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:786",
+		Source:     "scripts/cmd/generate-colors/main.go:787",
 	},
 	{
 		ConsumerID: "vim.highlight.NormalNC",
@@ -5322,7 +5322,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:787",
+		Source:     "scripts/cmd/generate-colors/main.go:788",
 	},
 	{
 		ConsumerID: "vim.highlight.Number",
@@ -5331,7 +5331,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:810",
+		Source:     "scripts/cmd/generate-colors/main.go:811",
 	},
 	{
 		ConsumerID: "vim.highlight.Operator",
@@ -5340,7 +5340,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:815",
+		Source:     "scripts/cmd/generate-colors/main.go:816",
 	},
 	{
 		ConsumerID: "vim.highlight.Pmenu",
@@ -5349,7 +5349,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:839",
+		Source:     "scripts/cmd/generate-colors/main.go:840",
 	},
 	{
 		ConsumerID: "vim.highlight.Pmenu.surface",
@@ -5358,7 +5358,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:839",
+		Source:     "scripts/cmd/generate-colors/main.go:840",
 	},
 	{
 		ConsumerID: "vim.highlight.PmenuSel",
@@ -5367,7 +5367,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:840",
+		Source:     "scripts/cmd/generate-colors/main.go:841",
 	},
 	{
 		ConsumerID: "vim.highlight.PmenuSel.surface",
@@ -5376,7 +5376,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:840",
+		Source:     "scripts/cmd/generate-colors/main.go:841",
 	},
 	{
 		ConsumerID: "vim.highlight.PreProc",
@@ -5385,7 +5385,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:816",
+		Source:     "scripts/cmd/generate-colors/main.go:817",
 	},
 	{
 		ConsumerID: "vim.highlight.Question",
@@ -5394,7 +5394,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:850",
+		Source:     "scripts/cmd/generate-colors/main.go:851",
 	},
 	{
 		ConsumerID: "vim.highlight.QuickFixLine.surface",
@@ -5403,7 +5403,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:853",
+		Source:     "scripts/cmd/generate-colors/main.go:854",
 	},
 	{
 		ConsumerID: "vim.highlight.Repeat",
@@ -5412,7 +5412,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:805",
+		Source:     "scripts/cmd/generate-colors/main.go:806",
 	},
 	{
 		ConsumerID: "vim.highlight.Search",
@@ -5421,7 +5421,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:841",
+		Source:     "scripts/cmd/generate-colors/main.go:842",
 	},
 	{
 		ConsumerID: "vim.highlight.Search.surface",
@@ -5430,7 +5430,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:841",
+		Source:     "scripts/cmd/generate-colors/main.go:842",
 	},
 	{
 		ConsumerID: "vim.highlight.Special",
@@ -5439,7 +5439,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:817",
+		Source:     "scripts/cmd/generate-colors/main.go:818",
 	},
 	{
 		ConsumerID: "vim.highlight.SpellBad",
@@ -5448,7 +5448,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:864",
+		Source:     "scripts/cmd/generate-colors/main.go:865",
 	},
 	{
 		ConsumerID: "vim.highlight.SpellCap",
@@ -5457,7 +5457,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:865",
+		Source:     "scripts/cmd/generate-colors/main.go:866",
 	},
 	{
 		ConsumerID: "vim.highlight.Statement",
@@ -5466,7 +5466,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:803",
+		Source:     "scripts/cmd/generate-colors/main.go:804",
 	},
 	{
 		ConsumerID: "vim.highlight.StatusLine",
@@ -5475,7 +5475,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:833",
+		Source:     "scripts/cmd/generate-colors/main.go:834",
 	},
 	{
 		ConsumerID: "vim.highlight.StatusLineNC",
@@ -5484,7 +5484,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:834",
+		Source:     "scripts/cmd/generate-colors/main.go:835",
 	},
 	{
 		ConsumerID: "vim.highlight.String",
@@ -5493,7 +5493,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:806",
+		Source:     "scripts/cmd/generate-colors/main.go:807",
 	},
 	{
 		ConsumerID: "vim.highlight.TabLine",
@@ -5502,7 +5502,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:835",
+		Source:     "scripts/cmd/generate-colors/main.go:836",
 	},
 	{
 		ConsumerID: "vim.highlight.TabLineSel",
@@ -5511,7 +5511,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:836",
+		Source:     "scripts/cmd/generate-colors/main.go:837",
 	},
 	{
 		ConsumerID: "vim.highlight.Title",
@@ -5520,7 +5520,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:847",
+		Source:     "scripts/cmd/generate-colors/main.go:848",
 	},
 	{
 		ConsumerID: "vim.highlight.Todo",
@@ -5529,7 +5529,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:818",
+		Source:     "scripts/cmd/generate-colors/main.go:819",
 	},
 	{
 		ConsumerID: "vim.highlight.Type",
@@ -5538,7 +5538,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:813",
+		Source:     "scripts/cmd/generate-colors/main.go:814",
 	},
 	{
 		ConsumerID: "vim.highlight.Underlined",
@@ -5547,7 +5547,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:826",
+		Source:     "scripts/cmd/generate-colors/main.go:827",
 	},
 	{
 		ConsumerID: "vim.highlight.VertSplit",
@@ -5556,7 +5556,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:832",
+		Source:     "scripts/cmd/generate-colors/main.go:833",
 	},
 	{
 		ConsumerID: "vim.highlight.Visual",
@@ -5565,7 +5565,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:838",
+		Source:     "scripts/cmd/generate-colors/main.go:839",
 	},
 	{
 		ConsumerID: "vim.highlight.Visual.surface",
@@ -5574,7 +5574,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:838",
+		Source:     "scripts/cmd/generate-colors/main.go:839",
 	},
 	{
 		ConsumerID: "vim.highlight.WarningMsg",
@@ -5583,7 +5583,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:855",
+		Source:     "scripts/cmd/generate-colors/main.go:856",
 	},
 	{
 		ConsumerID: "vim.highlight.WildMenu",
@@ -5592,7 +5592,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:849",
+		Source:     "scripts/cmd/generate-colors/main.go:850",
 	},
 	{
 		ConsumerID: "vim.highlight.WildMenu.surface",
@@ -5601,7 +5601,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:849",
+		Source:     "scripts/cmd/generate-colors/main.go:850",
 	},
 	{
 		ConsumerID: "vim.highlight.markdownCodeDelimiter",
@@ -5610,7 +5610,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:823",
+		Source:     "scripts/cmd/generate-colors/main.go:824",
 	},
 	{
 		ConsumerID: "vim.highlight.markdownHeadingDelimiter",
@@ -5619,7 +5619,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:825",
+		Source:     "scripts/cmd/generate-colors/main.go:826",
 	},
 	{
 		ConsumerID: "wezterm.ansi.black",

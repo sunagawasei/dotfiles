@@ -86,10 +86,10 @@ highlight ColorColumn guibg=#242F48 ctermbg=236
 
 " 構文ハイライト
 highlight Comment guifg=#B1B9CA ctermfg=146
-highlight Keyword guifg=#B4B6DA ctermfg=146
-highlight Statement guifg=#B4B6DA ctermfg=146
-highlight Conditional guifg=#B4B6DA ctermfg=146
-highlight Repeat guifg=#B4B6DA ctermfg=146
+highlight Keyword guifg=#BFADFF ctermfg=147
+highlight Statement guifg=#BFADFF ctermfg=147
+highlight Conditional guifg=#BFADFF ctermfg=147
+highlight Repeat guifg=#BFADFF ctermfg=147
 highlight String guifg=#9ABED3 ctermfg=110
 highlight Character guifg=#9ABED3 ctermfg=110
 highlight Function guifg=#58CAF8 ctermfg=81

@@ -492,6 +492,7 @@ M.colors = {
 
   -- 拡張セマンティック
   purple_accent = "{{purples.muted_purple}}", -- Muted Purple (Keyword) [purples.muted_purple]
+  syntax_violet = "{{semantic.keyword}}", -- Syntax Violet [semantic.keyword]
   success = "{{semantic.success}}",       -- Success indicator [semantic.success]
   ocean_blue = "{{blues_slates.ocean_blue}}",    -- Ocean Blue [blues_slates.ocean_blue]
   lavender = "{{purples.lavender}}",      -- Lavender (Constant) [purples.lavender]

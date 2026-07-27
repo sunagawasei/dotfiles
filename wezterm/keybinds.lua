@@ -71,8 +71,8 @@ wezterm.on("update-right-status", function(window, pane)
 			table.insert(elements, { Foreground = { Color = colors.core.darkest_bg } })
 			table.insert(elements, { Text = "  SEARCH " }) -- NerdFont search icon
 		else
-			-- その他のモード: semantic.keyword
-			table.insert(elements, { Background = { Color = colors.semantic.keyword } })
+			-- その他のモード: purples.muted_purple
+			table.insert(elements, { Background = { Color = colors.purples.muted_purple } })
 			table.insert(elements, { Foreground = { Color = colors.core.darkest_bg } })
 			table.insert(elements, { Text = " TABLE: " .. name .. " " })
 		end
