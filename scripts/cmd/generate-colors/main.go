@@ -245,6 +245,10 @@ func generateOutputs(root, sourceName string, palette *colorPalette) ([]outputFi
 			template: ghDashTemplate,
 		},
 		{
+			path: filepath.Join(root, "herdr/config.toml"), begin: "# BEGIN GENERATED COLORS", end: "# END GENERATED COLORS",
+			template: herdrTemplate,
+		},
+		{
 			path: filepath.Join(root, "vim/vimrc"), begin: `" BEGIN GENERATED COLORS`, end: `" END GENERATED COLORS`,
 			template: vimTemplate,
 		},
@@ -811,6 +815,26 @@ const ghDashTemplate = `        # BEGIN GENERATED COLORS
             member: "{{semantic.warning}}"
             owner: "{{semantic.warning}}"
         # END GENERATED COLORS
+`
+
+const herdrTemplate = `# BEGIN GENERATED COLORS
+accent = "{{ansi.blue}}"
+panel_bg = "reset"
+surface0 = "reset"
+surface1 = "{{core.active_line}}"
+surface_dim = "{{ansi.bright_black}}"
+overlay0 = "{{foregrounds.dim}}"
+overlay1 = "{{ansi.bright_white}}"
+text = "{{foregrounds.main}}"
+subtext0 = "{{foregrounds.dim}}"
+mauve = "{{foregrounds.heading}}"
+green = "{{ansi.green}}"
+yellow = "{{ansi.yellow}}"
+red = "{{ansi.bright_red}}"
+blue = "{{ansi.blue}}"
+teal = "{{ansi.cyan}}"
+peach = "{{semantic.warning}}" # herdr 0.7.4では未使用
+# END GENERATED COLORS
 `
 
 const vimTemplate = `" BEGIN GENERATED COLORS

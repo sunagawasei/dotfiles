@@ -290,6 +290,96 @@ func TestDeltaStylesUseExpectedTokens(t *testing.T) {
 	}
 }
 
+func TestHerdrThemeUsesExpectedTokensAndFixedValues(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := Extract(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pairs := pairMap(result.Pairs)
+
+	expected := map[string]verifycolors.TokenRef{
+		"accent":      "ansi.blue",
+		"surface1":    "core.active_line",
+		"surface_dim": "ansi.bright_black",
+		"overlay0":    "foregrounds.dim",
+		"overlay1":    "ansi.bright_white",
+		"text":        "foregrounds.main",
+		"subtext0":    "foregrounds.dim",
+		"mauve":       "foregrounds.heading",
+		"green":       "ansi.green",
+		"yellow":      "ansi.yellow",
+		"red":         "ansi.bright_red",
+		"blue":        "ansi.blue",
+		"teal":        "ansi.cyan",
+	}
+	if len(herdrThemeSpecs) != 16 {
+		t.Fatalf("herdr theme key count = %d, want 16", len(herdrThemeSpecs))
+	}
+	count := 0
+	for _, pair := range result.Pairs {
+		if strings.HasPrefix(pair.ConsumerID, "herdr.theme.") {
+			count++
+		}
+	}
+	if count != len(expected) {
+		t.Fatalf("herdr theme pair count = %d, want %d", count, len(expected))
+	}
+	for key, token := range expected {
+		assertPair(
+			t,
+			pairs,
+			"herdr.theme."+key,
+			token,
+			"",
+			true,
+			verifycolors.ClassReportOnly,
+		)
+	}
+	for _, key := range []string{"panel_bg", "surface0", "peach"} {
+		if _, ok := pairs["herdr.theme."+key]; ok {
+			t.Errorf("herdr.theme.%s must not be represented as a visible pair", key)
+		}
+	}
+
+	data, err := os.ReadFile(filepath.Join(root, "scripts", "cmd", "generate-colors", "main.go"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	contents := string(data)
+	for _, assignment := range []string{
+		`panel_bg = "reset"`,
+		`surface0 = "reset"`,
+		`peach = "{{semantic.warning}}" # herdr 0.7.4では未使用`,
+	} {
+		if !strings.Contains(contents, assignment) {
+			t.Errorf("herdrTemplate does not contain %q", assignment)
+		}
+	}
+
+	notes := make(map[string]verifycolors.CoverageNote, len(result.CoverageNotes))
+	for _, note := range result.CoverageNotes {
+		notes[note.ID] = note
+	}
+	for _, noteID := range []string{
+		"herdr.theme.panel_bg.reset",
+		"herdr.theme.surface0.reset",
+		"herdr.theme.peach.unused",
+	} {
+		note, ok := notes[noteID]
+		if !ok {
+			t.Errorf("coverage note %s not found", noteID)
+			continue
+		}
+		if note.Reason == "" {
+			t.Errorf("coverage note %s has no reason", noteID)
+		}
+	}
+}
+
 func TestKeybindsModeIndicatorUsesMutedPurple(t *testing.T) {
 	root, err := palette.FindRepositoryRoot()
 	if err != nil {

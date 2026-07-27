@@ -141,6 +141,7 @@ opencode/
 herdr/*
 !herdr/agent-detection/
 !herdr/open-in-nvim.sh
+!herdr/config.toml
 
 # Cursor CLI (local configuration)
 cursor/

@@ -1,0 +1,88 @@
+onboarding = false
+[theme]
+name = "terminal"
+auto_switch = false
+
+[theme.custom]
+# 以下のブロックは scripts/cmd/generate-colors が生成するため、手で編集しない。
+# herdr の settings UI から設定を変更すると失われる可能性があるため、配色は colors/ghost-visor.toml 側で変更する。
+# BEGIN GENERATED COLORS
+accent = "#6393D7"
+panel_bg = "reset"
+surface0 = "reset"
+surface1 = "#314463"
+surface_dim = "#5E5A63"
+overlay0 = "#ADBAC9"
+overlay1 = "#F8FCFD"
+text = "#CDE9F5"
+subtext0 = "#ADBAC9"
+mauve = "#88CBEA"
+green = "#2FA5A0"
+yellow = "#C2B08D"
+red = "#D38AA6"
+blue = "#6393D7"
+teal = "#58CAF8"
+peach = "#D0D4F0" # herdr 0.7.4では未使用
+# END GENERATED COLORS
+[ui.toast]
+delivery = "terminal"
+# 一瞬のIdle誤判定(画面再描画時の検出揺れ)によるfinished誤発火を吸収する。
+# 配送前に同一state/agentの再検証が走るため、5秒以内に復帰すれば通知されない
+delay_seconds = 5
+
+[ui]
+agent_panel_sort = "spaces"
+
+# spaces一覧: 1行目=状態dot+workspace名(hookがセッションタイトルをrename)、
+# 2行目=$dir(hookがreport-metadataで報告)+branch+ahead/behind
+[ui.sidebar.spaces]
+rows = [
+  ["state_icon", "workspace"],
+  ["$dir", "branch", "git_status"],
+]
+
+[keys]
+previous_agent = "prefix+alt+p"
+next_agent = "prefix+alt+n"
+switch_workspace = "prefix+1..9"
+# weztermのタブ切り替え(macOSデフォルト踏襲)に合わせる
+previous_tab = ["prefix+p", "cmd+shift+[", "ctrl+shift+tab"]
+next_tab = ["prefix+n", "cmd+shift+]", "ctrl+tab"]
+switch_tab = "cmd+1..9"
+
+[[keys.command]]
+key = "prefix+alt+r"
+type = "shell"
+command = "herdr pane swap --direction right --current | jq -e '.result.swap.changed' >/dev/null || herdr pane swap --direction left --current"
+
+[[keys.command]]
+key = "prefix+i"
+type = "shell"
+description = "現在のシェルペインの右にnvimを開く（左ペインのcwdを継承・フォーカスは元のシェルに戻す）"
+command = '''
+CWD=$(herdr pane get "$HERDR_ACTIVE_PANE_ID" | jq -r '.result.pane.cwd // .result.pane.foreground_cwd // empty')
+if [ -n "$CWD" ]; then
+  RIGHT=$(herdr pane split "$HERDR_ACTIVE_PANE_ID" --direction right --cwd "$CWD" --focus | jq -r '.result.pane.pane_id')
+else
+  RIGHT=$(herdr pane split "$HERDR_ACTIVE_PANE_ID" --direction right --focus | jq -r '.result.pane.pane_id')
+fi
+sleep 0.5
+herdr pane run "$RIGHT" "nvim"
+herdr pane focus --direction left
+'''
+
+[[keys.command]]
+key = "prefix+g"
+type = "popup"
+command = "lazygit"
+description = "lazygitをpopupで開く（oで同spaceのnvimに開く）"
+width = "90%"
+height = "90%"
+
+[[keys.command]]
+key = "prefix+d"
+type = "popup"
+command = "gh-dash"
+description = "gh-dashをpopupで開く（PR/issueダッシュボード）"
+width = "90%"
+height = "90%"
