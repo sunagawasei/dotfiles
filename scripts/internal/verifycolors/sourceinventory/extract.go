@@ -24,6 +24,7 @@ func Extract(root string) (Result, error) {
 		{"herdr theme", extractHerdrTheme},
 		{"bat theme", extractBatTheme},
 		{"eza and zsh completion themes", extractEzaTheme},
+		{"Markdown Preview theme", extractMarkdownPreviewTheme},
 		{"WezTerm UI", extractWezTerm},
 		{"statusline", extractStatusline},
 	}

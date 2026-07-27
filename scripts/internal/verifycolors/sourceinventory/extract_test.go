@@ -688,6 +688,88 @@ func TestEzaStyleSpecRejectsUnknownDuplicateAndMissingPaths(t *testing.T) {
 	}
 }
 
+func TestMarkdownPreviewUsesExpectedTokensAndBackgrounds(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := Extract(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pairs := pairMap(result.Pairs)
+
+	type expectedPair struct {
+		foreground verifycolors.TokenRef
+		background verifycolors.TokenRef
+	}
+	expected := map[string]expectedPair{
+		"markdown.text-primary":             {foreground: "foregrounds.main", background: "core.background"},
+		"markdown.blockquote":               {foreground: "foregrounds.dim", background: "core.background"},
+		"markdown.link":                     {foreground: "teals.bright", background: "core.background"},
+		"markdown.h1":                       {foreground: "foregrounds.heading", background: "core.background"},
+		"markdown.h2":                       {foreground: "teals.bright", background: "core.background"},
+		"markdown.h3":                       {foreground: "teals.mid_bright", background: "core.background"},
+		"markdown.h4":                       {foreground: "foregrounds.main", background: "core.background"},
+		"markdown.h5":                       {foreground: "blues_slates.cloud_slate", background: "core.background"},
+		"markdown.h6":                       {foreground: "foregrounds.subdued", background: "core.background"},
+		"markdown.table":                    {foreground: "foregrounds.main", background: "core.panel_bg"},
+		"markdown.kbd":                      {foreground: "foregrounds.dim", background: "core.ui_shadow"},
+		"markdown.page-header":              {foreground: "foregrounds.main", background: "core.background"},
+		"highlight.hljs":                    {foreground: "foregrounds.main", background: "core.panel_bg"},
+		"highlight.hljs-comment":            {foreground: "semantic.comment", background: "core.panel_bg"},
+		"highlight.hljs-quote":              {foreground: "semantic.comment", background: "core.panel_bg"},
+		"highlight.hljs-keyword":            {foreground: "semantic.keyword", background: "core.panel_bg"},
+		"highlight.hljs-selector-tag":       {foreground: "semantic.keyword", background: "core.panel_bg"},
+		"highlight.hljs-subst":              {foreground: "semantic.keyword", background: "core.panel_bg"},
+		"highlight.hljs-number":             {foreground: "semantic.number", background: "core.panel_bg"},
+		"highlight.hljs-literal":            {foreground: "semantic.number", background: "core.panel_bg"},
+		"highlight.hljs-variable":           {foreground: "semantic.variable", background: "core.panel_bg"},
+		"highlight.hljs-template-variable":  {foreground: "semantic.variable", background: "core.panel_bg"},
+		"highlight.hljs-tag_hljs-attr":      {foreground: "semantic.variable", background: "core.panel_bg"},
+		"highlight.hljs-string":             {foreground: "semantic.string", background: "core.panel_bg"},
+		"highlight.hljs-doctag":             {foreground: "semantic.string", background: "core.panel_bg"},
+		"highlight.hljs-title":              {foreground: "semantic.function", background: "core.panel_bg"},
+		"highlight.hljs-section":            {foreground: "semantic.function", background: "core.panel_bg"},
+		"highlight.hljs-selector-id":        {foreground: "semantic.function", background: "core.panel_bg"},
+		"highlight.hljs-type":               {foreground: "semantic.type", background: "core.panel_bg"},
+		"highlight.hljs-class_hljs-title":   {foreground: "semantic.type", background: "core.panel_bg"},
+		"highlight.hljs-tag":                {foreground: "foregrounds.heading", background: "core.panel_bg"},
+		"highlight.hljs-name":               {foreground: "foregrounds.heading", background: "core.panel_bg"},
+		"highlight.hljs-attribute":          {foreground: "foregrounds.heading", background: "core.panel_bg"},
+		"highlight.hljs-regexp":             {foreground: "teals.bright", background: "core.panel_bg"},
+		"highlight.hljs-link":               {foreground: "teals.bright", background: "core.panel_bg"},
+		"highlight.hljs-symbol":             {foreground: "semantic.punctuation", background: "core.panel_bg"},
+		"highlight.hljs-bullet":             {foreground: "semantic.punctuation", background: "core.panel_bg"},
+		"highlight.hljs-built_in":           {foreground: "teals.mid_bright", background: "core.panel_bg"},
+		"highlight.hljs-builtin-name":       {foreground: "teals.mid_bright", background: "core.panel_bg"},
+		"highlight.hljs-meta":               {foreground: "foregrounds.dim", background: "core.panel_bg"},
+		"highlight.hljs-deletion.inherited": {foreground: "foregrounds.main", background: "nvim.diff_delete_bg"},
+		"highlight.hljs-addition.inherited": {foreground: "foregrounds.main", background: "nvim.diff_add_bg"},
+	}
+
+	count := 0
+	for _, pair := range result.Pairs {
+		if strings.HasPrefix(pair.ConsumerID, "nvim.markdown-preview.") {
+			count++
+		}
+	}
+	if count != len(expected) {
+		t.Fatalf("Markdown Preview pair count = %d, want %d", count, len(expected))
+	}
+	for suffix, pair := range expected {
+		assertPair(
+			t,
+			pairs,
+			"nvim.markdown-preview."+suffix,
+			pair.foreground,
+			pair.background,
+			false,
+			verifycolors.ClassEnforced,
+		)
+	}
+}
+
 func TestHerdrThemeUsesExpectedTokensAndFixedValues(t *testing.T) {
 	root, err := palette.FindRepositoryRoot()
 	if err != nil {
