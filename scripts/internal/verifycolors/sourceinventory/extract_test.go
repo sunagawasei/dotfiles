@@ -427,6 +427,267 @@ func TestBatThemeUsesExpectedTokensAndExplicitBackgrounds(t *testing.T) {
 	}
 }
 
+func TestEzaAndZshCompletionUseSharedExpectedTokens(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := Extract(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pairs := pairMap(result.Pairs)
+
+	expectedByToken := map[verifycolors.TokenRef][]string{
+		"foregrounds.main": {
+			"filekinds.normal",
+			"size.number_byte", "size.number_kilo", "size.number_mega", "size.number_giga", "size.number_huge",
+		},
+		"foregrounds.heading": {
+			"filekinds.directory", "git_repo.branch_main", "header",
+		},
+		"semantic.keyword": {
+			"filekinds.symlink", "git.renamed", "git.typechange", "git_repo.branch_other",
+		},
+		"semantic.operator": {
+			"filekinds.pipe", "filekinds.socket",
+		},
+		"foregrounds.dim": {
+			"filekinds.block_device", "filekinds.char_device",
+			"perms.user_read", "perms.group_read", "perms.other_read",
+			"size.major", "size.minor",
+			"users.user_other", "users.group_other",
+			"links.normal", "file_type.compiled", "date", "symlink_path",
+		},
+		"teals.mid_bright": {
+			"filekinds.special", "filekinds.mount_point", "file_type.build",
+		},
+		"semantic.success": {
+			"filekinds.executable",
+			"perms.user_execute_file", "perms.user_execute_other", "perms.group_execute", "perms.other_execute",
+			"users.user_you", "users.group_yours",
+			"git.new", "git_repo.git_clean",
+		},
+		"semantic.warning": {
+			"perms.user_write", "perms.group_write", "perms.other_write",
+			"links.multi_link_file", "git.modified", "git_repo.git_dirty",
+		},
+		"purples.bright_purple": {
+			"perms.special_user_file", "perms.special_other", "file_type.music", "file_type.lossless",
+		},
+		"foregrounds.subdued": {
+			"perms.attribute",
+			"size.unit_byte", "size.unit_kilo", "size.unit_mega", "size.unit_giga", "size.unit_huge",
+			"git.ignored",
+			"security_context.none",
+			"security_context.selinux.colon", "security_context.selinux.user", "security_context.selinux.role",
+			"security_context.selinux.typ", "security_context.selinux.range",
+			"file_type.temp",
+			"inode", "blocks", "octal", "flags",
+		},
+		"semantic.error": {
+			"users.user_root", "users.group_root",
+			"git.deleted", "git.conflicted",
+			"control_char", "broken_symlink", "broken_path_overlay",
+		},
+		"purples.lavender":         {"file_type.image"},
+		"purples.muted_purple":     {"file_type.video"},
+		"ansi.bright_yellow":       {"file_type.crypto"},
+		"blues_slates.cloud_slate": {"file_type.document"},
+		"ansi.bright_red":          {"file_type.compressed"},
+		"semantic.punctuation":     {"punctuation"},
+		"semantic.type":            {"file_type.source"},
+	}
+
+	ezaCount := 0
+	expectedEzaCount := 0
+	for _, pair := range result.Pairs {
+		if strings.HasPrefix(pair.ConsumerID, "eza.theme.") {
+			ezaCount++
+		}
+	}
+	for token, paths := range expectedByToken {
+		expectedEzaCount += len(paths)
+		for _, path := range paths {
+			assertPair(
+				t,
+				pairs,
+				"eza.theme."+path,
+				token,
+				"",
+				true,
+				verifycolors.ClassReportOnly,
+			)
+		}
+	}
+	if expectedEzaCount != 82 {
+		t.Fatalf("test eza schema key count = %d, want 82", expectedEzaCount)
+	}
+	if ezaCount != expectedEzaCount {
+		t.Fatalf("eza theme pair count = %d, want %d", ezaCount, expectedEzaCount)
+	}
+	if ezaThemeSchema["header"].modifier != "bold" {
+		t.Errorf("eza header modifier = %q, want bold", ezaThemeSchema["header"].modifier)
+	}
+
+	expectedClasses := map[string]verifycolors.TokenRef{
+		"fi": "foregrounds.main",
+		"di": "foregrounds.heading",
+		"ln": "semantic.keyword",
+		"ex": "semantic.success",
+		"or": "semantic.error",
+		"pi": "semantic.operator",
+		"so": "semantic.operator",
+		"bd": "foregrounds.dim",
+		"cd": "foregrounds.dim",
+	}
+	expectedExtensions := map[verifycolors.TokenRef][]string{
+		"purples.lavender":         {"png", "jpg", "svg"},
+		"purples.muted_purple":     {"mp4", "mkv"},
+		"purples.bright_purple":    {"mp3", "ogg", "flac", "wav"},
+		"ansi.bright_yellow":       {"age", "pem"},
+		"blues_slates.cloud_slate": {"pdf", "key"},
+		"foregrounds.subdued":      {"tmp", "bak"},
+		"ansi.bright_red":          {"zip", "gz", "tar", "tar.gz"},
+		"foregrounds.dim":          {"so", "o"},
+		"teals.mid_bright":         {"ninja"},
+		"semantic.type":            {"go", "rs", "py", "ts", "lua", "js"},
+	}
+	zshCount := 0
+	for _, pair := range result.Pairs {
+		if strings.HasPrefix(pair.ConsumerID, "zsh.completion.") {
+			zshCount++
+		}
+	}
+	for code, token := range expectedClasses {
+		assertPair(t, pairs, "zsh.completion.class."+code, token, "", true, verifycolors.ClassReportOnly)
+	}
+	expectedExtensionCount := 0
+	for token, extensions := range expectedExtensions {
+		expectedExtensionCount += len(extensions)
+		for _, extension := range extensions {
+			assertPair(
+				t,
+				pairs,
+				"zsh.completion.extension."+strings.ReplaceAll(extension, ".", "_"),
+				token,
+				"",
+				true,
+				verifycolors.ClassReportOnly,
+			)
+		}
+	}
+	assertPair(
+		t,
+		pairs,
+		"zsh.completion.menu-select",
+		"core.selection_fg",
+		"core.selection_bg",
+		false,
+		verifycolors.ClassEnforced,
+	)
+	if want := len(expectedClasses) + expectedExtensionCount + 1; zshCount != want {
+		t.Fatalf("zsh completion pair count = %d, want %d", zshCount, want)
+	}
+
+	for _, note := range result.CoverageNotes {
+		if note.ID == "zsh.completion.file-type-subset" && strings.Contains(note.Reason, "README") {
+			return
+		}
+	}
+	t.Fatal("zsh completion file-type subset coverage note not found")
+}
+
+func TestEzaFileTypeSemanticGroupsUseDistinctColors(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	data, err := os.ReadFile(filepath.Join(root, "eza", "theme.yml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	colors := make(map[string]string)
+	inFileType := false
+	currentClass := ""
+	for _, line := range strings.Split(string(data), "\n") {
+		switch {
+		case line == "file_type:":
+			inFileType = true
+		case inFileType && line != "" && line[0] != ' ':
+			inFileType = false
+		case inFileType && strings.HasPrefix(line, "  ") && !strings.HasPrefix(line, "    "):
+			currentClass = strings.TrimSuffix(strings.TrimSpace(line), ":")
+		case inFileType && strings.HasPrefix(line, "    foreground: "):
+			colors[currentClass] = strings.Trim(strings.TrimSpace(strings.TrimPrefix(line, "    foreground: ")), `"`)
+		}
+	}
+	if len(colors) != 11 {
+		t.Fatalf("eza file_type color count = %d, want 11", len(colors))
+	}
+
+	semanticGroups := map[string][]string{
+		"image": {"image"},
+		"video": {"video"},
+		// Audio files intentionally share one color regardless of lossy/lossless encoding.
+		"audio":      {"music", "lossless"},
+		"crypto":     {"crypto"},
+		"document":   {"document"},
+		"compressed": {"compressed"},
+		"temp":       {"temp"},
+		"compiled":   {"compiled"},
+		"build":      {"build"},
+		"source":     {"source"},
+	}
+	if len(semanticGroups) != 10 {
+		t.Fatalf("eza file_type semantic group count = %d, want 10", len(semanticGroups))
+	}
+
+	seenColors := make(map[string]string)
+	for group, classes := range semanticGroups {
+		groupColor := colors[classes[0]]
+		if groupColor == "" {
+			t.Fatalf("eza file_type class %q has no generated color", classes[0])
+		}
+		for _, class := range classes[1:] {
+			if colors[class] != groupColor {
+				t.Fatalf("eza file_type semantic group %q: %s = %q, want %q", group, class, colors[class], groupColor)
+			}
+		}
+		if previousGroup, ok := seenColors[groupColor]; ok {
+			t.Fatalf("eza file_type semantic groups %q and %q both use %s", previousGroup, group, groupColor)
+		}
+		seenColors[groupColor] = group
+	}
+}
+
+func TestEzaStyleSpecRejectsUnknownDuplicateAndMissingPaths(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	template, startLine, err := readRawStringConstant(
+		filepath.Join(root, "scripts", "cmd", "generate-colors", "main.go"),
+		"ezaStyleSpecTemplate",
+	)
+	if err != nil {
+		t.Fatal(err)
+	}
+	tests := map[string]string{
+		"unknown":   strings.Replace(template, "filekinds.normal|", "filekinds.typo|", 1),
+		"duplicate": template + "\nfilekinds.normal|foregrounds.main||fi2|\n",
+		"missing":   strings.Replace(template, "filekinds.normal|foregrounds.main||fi|\n", "", 1),
+	}
+	for name, input := range tests {
+		t.Run(name, func(t *testing.T) {
+			if _, err := parseEzaSourceSpecs(input, "test", startLine); err == nil {
+				t.Fatal("parseEzaSourceSpecs succeeded, want error")
+			}
+		})
+	}
+}
+
 func TestHerdrThemeUsesExpectedTokensAndFixedValues(t *testing.T) {
 	root, err := palette.FindRepositoryRoot()
 	if err != nil {

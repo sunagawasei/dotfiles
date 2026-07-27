@@ -46,7 +46,19 @@ type markerOutput struct {
 	block string
 }
 
+type ezaStyleSpec struct {
+	path           string
+	token          string
+	modifier       string
+	completionCode string
+	extensions     []string
+}
+
 var placeholderPattern = regexp.MustCompile(`\{\{(?:(lower|xterm|rgb):)?([a-z_]+)\.([a-z_]+)\}\}`)
+var tokenRefPattern = regexp.MustCompile(`^[a-z_]+\.[a-z_]+$`)
+var ezaPathPattern = regexp.MustCompile(`^[a-z_]+(?:\.[a-z_]+){0,2}$`)
+var completionCodePattern = regexp.MustCompile(`^[A-Za-z]{2}$`)
+var extensionPattern = regexp.MustCompile(`^[a-z0-9+_-]+(?:\.[a-z0-9+_-]+)*$`)
 
 func main() {
 	check := flag.Bool("check", false, "check whether generated files are up to date")
@@ -209,7 +221,140 @@ func renderTemplate(template string, palette *colorPalette) (string, error) {
 	return rendered, nil
 }
 
+func parseEzaStyleSpecs(template string) ([]ezaStyleSpec, error) {
+	var specs []ezaStyleSpec
+	seenPaths := make(map[string]bool)
+	seenCodes := make(map[string]bool)
+	seenExtensions := make(map[string]bool)
+	for lineNumber, rawLine := range strings.Split(template, "\n") {
+		line := strings.TrimSpace(rawLine)
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+		fields := strings.Split(line, "|")
+		if len(fields) != 5 {
+			return nil, fmt.Errorf("eza style spec line %d has %d fields, want 5", lineNumber+1, len(fields))
+		}
+		for index := range fields {
+			fields[index] = strings.TrimSpace(fields[index])
+		}
+		spec := ezaStyleSpec{
+			path:           fields[0],
+			token:          fields[1],
+			modifier:       fields[2],
+			completionCode: fields[3],
+		}
+		if !ezaPathPattern.MatchString(spec.path) {
+			return nil, fmt.Errorf("eza style spec line %d has invalid path %q", lineNumber+1, spec.path)
+		}
+		if seenPaths[spec.path] {
+			return nil, fmt.Errorf("eza style spec line %d duplicates path %q", lineNumber+1, spec.path)
+		}
+		seenPaths[spec.path] = true
+		if !tokenRefPattern.MatchString(spec.token) {
+			return nil, fmt.Errorf("eza style spec line %d has invalid token %q", lineNumber+1, spec.token)
+		}
+		if spec.modifier != "" && spec.modifier != "bold" {
+			return nil, fmt.Errorf("eza style spec line %d has unknown modifier %q", lineNumber+1, spec.modifier)
+		}
+		if spec.completionCode != "" {
+			if !completionCodePattern.MatchString(spec.completionCode) {
+				return nil, fmt.Errorf("eza style spec line %d has invalid completion code %q", lineNumber+1, spec.completionCode)
+			}
+			if seenCodes[spec.completionCode] {
+				return nil, fmt.Errorf("eza style spec line %d duplicates completion code %q", lineNumber+1, spec.completionCode)
+			}
+			seenCodes[spec.completionCode] = true
+		}
+		if fields[4] != "" {
+			for _, extension := range strings.Split(fields[4], ",") {
+				extension = strings.TrimSpace(extension)
+				if !extensionPattern.MatchString(extension) {
+					return nil, fmt.Errorf("eza style spec line %d has invalid extension %q", lineNumber+1, extension)
+				}
+				if seenExtensions[extension] {
+					return nil, fmt.Errorf("eza style spec line %d duplicates extension %q", lineNumber+1, extension)
+				}
+				seenExtensions[extension] = true
+				spec.extensions = append(spec.extensions, extension)
+			}
+		}
+		if len(spec.extensions) > 0 && !strings.HasPrefix(spec.path, "file_type.") {
+			return nil, fmt.Errorf("eza style spec line %d assigns extensions to non-file_type path %q", lineNumber+1, spec.path)
+		}
+		specs = append(specs, spec)
+	}
+	if len(specs) == 0 {
+		return nil, errors.New("eza style spec template is empty")
+	}
+	return specs, nil
+}
+
+func buildEzaThemeTemplate(specs []ezaStyleSpec) string {
+	var builder strings.Builder
+	builder.WriteString("# " + generatedNotice + "\n")
+	builder.WriteString("# eza 0.23.4 UiStyles schema; all visible Style keys are explicit.\n")
+	builder.WriteString("colourful: true\n")
+
+	var previousParents []string
+	for _, spec := range specs {
+		parts := strings.Split(spec.path, ".")
+		parents := parts[:len(parts)-1]
+		common := 0
+		for common < len(parents) && common < len(previousParents) && parents[common] == previousParents[common] {
+			common++
+		}
+		for index := common; index < len(parents); index++ {
+			fmt.Fprintf(&builder, "%s%s:\n", strings.Repeat("  ", index), parents[index])
+		}
+		indent := strings.Repeat("  ", len(parents))
+		fmt.Fprintf(&builder, "%s%s:\n", indent, parts[len(parts)-1])
+		fmt.Fprintf(&builder, "%s  foreground: \"{{%s}}\"\n", indent, spec.token)
+		if spec.modifier == "bold" {
+			fmt.Fprintf(&builder, "%s  is_bold: true\n", indent)
+		}
+		previousParents = parents
+	}
+	builder.WriteString("filenames: {}\n")
+	builder.WriteString("extensions: {}\n")
+	return builder.String()
+}
+
+func buildZshCompletionTemplate(specs []ezaStyleSpec) string {
+	entries := []string{
+		"ma=48;2;{{rgb:core.selection_bg}};38;2;{{rgb:core.selection_fg}}",
+	}
+	for _, spec := range specs {
+		if spec.completionCode != "" {
+			entries = append(entries, spec.completionCode+"=38;2;{{rgb:"+spec.token+"}}")
+		}
+		for _, extension := range spec.extensions {
+			entries = append(entries, "*."+extension+"=38;2;{{rgb:"+spec.token+"}}")
+		}
+	}
+
+	var builder strings.Builder
+	builder.WriteString("        # BEGIN GENERATED COLORS: ZSH COMPLETION\n")
+	builder.WriteString("        # LS_COLORS overrides eza/theme.yml, so discard inherited values in interactive shells.\n")
+	builder.WriteString("        # Non-interactive shells do not read this block; scripts invoking eza must unset LS_COLORS themselves.\n")
+	builder.WriteString("        unset LS_COLORS\n")
+	builder.WriteString("        typeset -ga ZSH_COMPLETION_COLORS=(\n")
+	for _, entry := range entries {
+		fmt.Fprintf(&builder, "          '%s'\n", entry)
+	}
+	builder.WriteString("        )\n")
+	builder.WriteString("        # END GENERATED COLORS: ZSH COMPLETION\n")
+	return builder.String()
+}
+
 func generateOutputs(root, sourceName string, palette *colorPalette) ([]outputFile, []markerOutput, error) {
+	ezaSpecs, err := parseEzaStyleSpecs(ezaStyleSpecTemplate)
+	if err != nil {
+		return nil, nil, err
+	}
+	ezaThemeTemplate := buildEzaThemeTemplate(ezaSpecs)
+	zshCompletionTemplate := buildZshCompletionTemplate(ezaSpecs)
+
 	templates := []struct {
 		path     string
 		template string
@@ -219,6 +364,7 @@ func generateOutputs(root, sourceName string, palette *colorPalette) ([]outputFi
 		{filepath.Join(root, "home-manager/colors.nix"), nixColorsTemplate},
 		{filepath.Join(root, "claude/themes/ghost-visor.json"), claudeThemeTemplate},
 		{filepath.Join(root, "bat/themes/ghost-visor.tmTheme"), batThemeTemplate},
+		{filepath.Join(root, "eza/theme.yml"), ezaThemeTemplate},
 	}
 
 	files := make([]outputFile, 0, len(templates))
@@ -248,6 +394,10 @@ func generateOutputs(root, sourceName string, palette *colorPalette) ([]outputFi
 		{
 			path: filepath.Join(root, "herdr/config.toml"), begin: "# BEGIN GENERATED COLORS", end: "# END GENERATED COLORS",
 			template: herdrTemplate,
+		},
+		{
+			path: filepath.Join(root, "home-manager/zsh.nix"), begin: "        # BEGIN GENERATED COLORS: ZSH COMPLETION", end: "        # END GENERATED COLORS: ZSH COMPLETION",
+			template: zshCompletionTemplate,
 		},
 		{
 			path: filepath.Join(root, "vim/vimrc"), begin: `" BEGIN GENERATED COLORS`, end: `" END GENERATED COLORS`,
@@ -764,6 +914,93 @@ const nixColorsTemplate = `# ` + generatedNotice + `
     error = "{{zsh.error}}";
   };
 }
+`
+
+// ezaStyleSpecTemplate is the shared source for eza's UiStyles and the subset
+// representable by zsh list-colors. Format: path|token|modifier|code|extensions.
+const ezaStyleSpecTemplate = `
+filekinds.normal|foregrounds.main||fi|
+filekinds.directory|foregrounds.heading||di|
+filekinds.symlink|semantic.keyword||ln|
+filekinds.pipe|semantic.operator||pi|
+filekinds.block_device|foregrounds.dim||bd|
+filekinds.char_device|foregrounds.dim||cd|
+filekinds.socket|semantic.operator||so|
+filekinds.special|teals.mid_bright|||
+filekinds.executable|semantic.success||ex|
+filekinds.mount_point|teals.mid_bright|||
+perms.user_read|foregrounds.dim|||
+perms.user_write|semantic.warning|||
+perms.user_execute_file|semantic.success|||
+perms.user_execute_other|semantic.success|||
+perms.group_read|foregrounds.dim|||
+perms.group_write|semantic.warning|||
+perms.group_execute|semantic.success|||
+perms.other_read|foregrounds.dim|||
+perms.other_write|semantic.warning|||
+perms.other_execute|semantic.success|||
+perms.special_user_file|purples.bright_purple|||
+perms.special_other|purples.bright_purple|||
+perms.attribute|foregrounds.subdued|||
+size.major|foregrounds.dim|||
+size.minor|foregrounds.dim|||
+size.number_byte|foregrounds.main|||
+size.number_kilo|foregrounds.main|||
+size.number_mega|foregrounds.main|||
+size.number_giga|foregrounds.main|||
+size.number_huge|foregrounds.main|||
+size.unit_byte|foregrounds.subdued|||
+size.unit_kilo|foregrounds.subdued|||
+size.unit_mega|foregrounds.subdued|||
+size.unit_giga|foregrounds.subdued|||
+size.unit_huge|foregrounds.subdued|||
+users.user_you|semantic.success|||
+users.user_root|semantic.error|||
+users.user_other|foregrounds.dim|||
+users.group_yours|semantic.success|||
+users.group_other|foregrounds.dim|||
+users.group_root|semantic.error|||
+links.normal|foregrounds.dim|||
+links.multi_link_file|semantic.warning|||
+git.new|semantic.success|||
+git.modified|semantic.warning|||
+git.deleted|semantic.error|||
+git.renamed|semantic.keyword|||
+git.typechange|semantic.keyword|||
+git.ignored|foregrounds.subdued|||
+git.conflicted|semantic.error|||
+git_repo.branch_main|foregrounds.heading|||
+git_repo.branch_other|semantic.keyword|||
+git_repo.git_clean|semantic.success|||
+git_repo.git_dirty|semantic.warning|||
+security_context.none|foregrounds.subdued|||
+security_context.selinux.colon|foregrounds.subdued|||
+security_context.selinux.user|foregrounds.subdued|||
+security_context.selinux.role|foregrounds.subdued|||
+security_context.selinux.typ|foregrounds.subdued|||
+security_context.selinux.range|foregrounds.subdued|||
+file_type.image|purples.lavender|||png,jpg,svg
+file_type.video|purples.muted_purple|||mp4,mkv
+file_type.music|purples.bright_purple|||mp3,ogg
+file_type.lossless|purples.bright_purple|||flac,wav
+file_type.crypto|ansi.bright_yellow|||age,pem
+file_type.document|blues_slates.cloud_slate|||pdf,key
+file_type.compressed|ansi.bright_red|||zip,gz,tar,tar.gz
+file_type.temp|foregrounds.subdued|||tmp,bak
+file_type.compiled|foregrounds.dim|||so,o
+file_type.build|teals.mid_bright|||ninja
+file_type.source|semantic.type|||go,rs,py,ts,lua,js
+punctuation|semantic.punctuation|||
+date|foregrounds.dim|||
+inode|foregrounds.subdued|||
+blocks|foregrounds.subdued|||
+header|foregrounds.heading|bold||
+octal|foregrounds.subdued|||
+flags|foregrounds.subdued|||
+symlink_path|foregrounds.dim|||
+control_char|semantic.error|||
+broken_symlink|semantic.error||or|
+broken_path_overlay|semantic.error|||
 `
 
 const lazygitTemplate = `    # BEGIN GENERATED COLORS

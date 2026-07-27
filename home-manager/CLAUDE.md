@@ -45,4 +45,4 @@ sudo darwin-rebuild switch --flake ~/.config#CA-20021145
 - **fzf の ZSH 統合**: `fzf.nix` で `enableZshIntegration = false` を設定し、`zsh.nix` の Zinit (`fzf-tab`) で管理
 - **Zsh 初期化順序**: `zsh.nix` では `lib.mkMerge` / `lib.mkOrder` で複数の `initContent` ブロックの実行順を制御
 - **CLAUDECODE ガード**: `zsh.nix` に `[[ -n "$CLAUDECODE" ]]` チェックがあり、Claude Code 内では zoxide を無効化
-- **カラーテーマ**: `zsh.nix` の Pure プロンプト・LS_COLORS・FZF_DEFAULT_OPTS・ZSH_HIGHLIGHT_STYLES は Ghost Visor テーマで統一 (`colors/ghost-visor.toml` が single source of truth)
+- **カラーテーマ**: `colors/ghost-visor.toml` を single source of truth とし、`ls` は eza の `theme.yml`、zsh 補完リストは export しないシェルローカル変数で配色する。`LS_COLORS` は eza で `theme.yml` より優先されるため、zsh 初期化時に明示的に unset する

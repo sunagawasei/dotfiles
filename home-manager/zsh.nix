@@ -285,9 +285,51 @@ in
         bindkey '^]' accept-and-hold
 
         # ---- 補完機能 ----
-        # LS_COLORS（補完候補の色設定）
-        export LS_COLORS='ma=48;2;100;187;190;38;2;19;32;24:di=38;2;157;220;217:ln=38;2;147;105;151:ex=38;2;108;216;211;1:*.md=38;2;82;91;101:*.txt=38;2;82;91;101:*.go=38;2;164;171;203:*.ts=38;2;164;171;203:*.js=38;2;164;171;203'
-
+        # BEGIN GENERATED COLORS: ZSH COMPLETION
+        # LS_COLORS overrides eza/theme.yml, so discard inherited values in interactive shells.
+        # Non-interactive shells do not read this block; scripts invoking eza must unset LS_COLORS themselves.
+        unset LS_COLORS
+        typeset -ga ZSH_COMPLETION_COLORS=(
+          'ma=48;2;81;153;194;38;2;20;27;45'
+          'fi=38;2;205;233;245'
+          'di=38;2;136;203;234'
+          'ln=38;2;191;173;255'
+          'pi=38;2;146;191;217'
+          'bd=38;2;173;186;201'
+          'cd=38;2;173;186;201'
+          'so=38;2;146;191;217'
+          'ex=38;2;98;201;194'
+          '*.png=38;2;208;212;240'
+          '*.jpg=38;2;208;212;240'
+          '*.svg=38;2;208;212;240'
+          '*.mp4=38;2;180;182;218'
+          '*.mkv=38;2;180;182;218'
+          '*.mp3=38;2;205;172;236'
+          '*.ogg=38;2;205;172;236'
+          '*.flac=38;2;205;172;236'
+          '*.wav=38;2;205;172;236'
+          '*.age=38;2;223;190;144'
+          '*.pem=38;2;223;190;144'
+          '*.pdf=38;2;184;188;216'
+          '*.key=38;2;184;188;216'
+          '*.zip=38;2;211;138;166'
+          '*.gz=38;2;211;138;166'
+          '*.tar=38;2;211;138;166'
+          '*.tar.gz=38;2;211;138;166'
+          '*.tmp=38;2;148;157;176'
+          '*.bak=38;2;148;157;176'
+          '*.so=38;2;173;186;201'
+          '*.o=38;2;173;186;201'
+          '*.ninja=38;2;146;191;217'
+          '*.go=38;2;175;184;217'
+          '*.rs=38;2;175;184;217'
+          '*.py=38;2;175;184;217'
+          '*.ts=38;2;175;184;217'
+          '*.lua=38;2;175;184;217'
+          '*.js=38;2;175;184;217'
+          'or=38;2;205;172;236'
+        )
+        # END GENERATED COLORS: ZSH COMPLETION
         # FZF カラー設定
         export FZF_DEFAULT_OPTS='
           --color=bg+:${colors.core.selection_bg},bg:-1,fg:${colors.foregrounds.main},fg+:${colors.core.selection_fg}
@@ -307,7 +349,7 @@ in
         zstyle ':completion:*' menu no
         zstyle ':fzf-tab:complete:cd:*' disabled-on any  # zoxideとの競合を回避
         zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-        zstyle ':completion:*' list-colors "''${(s.:.)LS_COLORS}"
+        zstyle ':completion:*' list-colors "''${ZSH_COMPLETION_COLORS[@]}"
         zstyle ':completion:*' completer _complete _match
 
         # ---- Google Cloud SDK (PATH設定のみ同期) ----

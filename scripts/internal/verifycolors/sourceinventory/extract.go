@@ -23,6 +23,7 @@ func Extract(root string) (Result, error) {
 		{"delta styles", extractDeltaStyles},
 		{"herdr theme", extractHerdrTheme},
 		{"bat theme", extractBatTheme},
+		{"eza and zsh completion themes", extractEzaTheme},
 		{"WezTerm UI", extractWezTerm},
 		{"statusline", extractStatusline},
 	}
