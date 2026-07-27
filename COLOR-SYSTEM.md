@@ -108,8 +108,8 @@
 
 ```bash
 cd scripts
-go run generate-colors.go
-go run generate-colors.go --check
+go run ./cmd/generate-colors
+go run ./cmd/generate-colors --check
 ```
 
 ---

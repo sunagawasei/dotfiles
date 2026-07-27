@@ -22,7 +22,7 @@ macOS上の開発ツール設定を管理する個人用dotfilesリポジトリ�
 
 ```bash
 # カラーバリデーション（カラー関連ファイル変更後は必須）
-cd scripts && go run validate-colors.go
+cd scripts && go run ./cmd/validate-colors
 
 # Raycast拡張機能
 cd raycast/extensions/<name> && npm run lint && npm run build

@@ -3,66 +3,18 @@ package main
 import (
 	"fmt"
 	"math"
-	"strconv"
-)
 
-// hexToRGB converts hex color to RGB
-func hexToRGB(hex string) (float64, float64, float64) {
-	r, _ := strconv.ParseInt(hex[0:2], 16, 0)
-	g, _ := strconv.ParseInt(hex[2:4], 16, 0)
-	b, _ := strconv.ParseInt(hex[4:6], 16, 0)
-	return float64(r), float64(g), float64(b)
-}
+	"github.com/sunagawasei/dotfiles/scripts/internal/colorutil"
+)
 
 // rgbToHex converts RGB to hex
 func rgbToHex(r, g, b float64) string {
 	return fmt.Sprintf("%02X%02X%02X", int(r), int(g), int(b))
 }
 
-// getLuminance calculates relative luminance
-func getLuminance(r, g, b float64) float64 {
-	rs := r / 255.0
-	gs := g / 255.0
-	bs := b / 255.0
-
-	if rs <= 0.03928 {
-		rs = rs / 12.92
-	} else {
-		rs = math.Pow((rs+0.055)/1.055, 2.4)
-	}
-
-	if gs <= 0.03928 {
-		gs = gs / 12.92
-	} else {
-		gs = math.Pow((gs+0.055)/1.055, 2.4)
-	}
-
-	if bs <= 0.03928 {
-		bs = bs / 12.92
-	} else {
-		bs = math.Pow((bs+0.055)/1.055, 2.4)
-	}
-
-	return 0.2126*rs + 0.7152*gs + 0.0722*bs
-}
-
-// getContrastRatio calculates contrast ratio between two colors
-func getContrastRatio(hex1, hex2 string) float64 {
-	r1, g1, b1 := hexToRGB(hex1)
-	r2, g2, b2 := hexToRGB(hex2)
-
-	l1 := getLuminance(r1, g1, b1)
-	l2 := getLuminance(r2, g2, b2)
-
-	lighter := math.Max(l1, l2)
-	darker := math.Min(l1, l2)
-
-	return (lighter + 0.05) / (darker + 0.05)
-}
-
 // brightenColor increases brightness while maintaining hue
 func brightenColor(hex string, factor float64) string {
-	r, g, b := hexToRGB(hex)
+	r, g, b := colorutil.LegacyNoHash(hex)
 
 	// Increase RGB values proportionally
 	r = math.Min(255, r*factor)
@@ -75,12 +27,12 @@ func brightenColor(hex string, factor float64) string {
 // findOptimalBrightness finds the brightness factor to achieve target contrast
 func findOptimalBrightness(hexColor, bgColor string, targetRatio float64) (string, float64) {
 	bestHex := hexColor
-	bestRatio := getContrastRatio(hexColor, bgColor)
+	bestRatio := colorutil.LegacyContrastNoHash(hexColor, bgColor)
 
 	// Try increasing brightness factors
 	for factor := 1.1; factor <= 2.0; factor += 0.05 {
 		newHex := brightenColor(hexColor, factor)
-		ratio := getContrastRatio(newHex, bgColor)
+		ratio := colorutil.LegacyContrastNoHash(newHex, bgColor)
 
 		if ratio >= targetRatio && ratio < bestRatio+1.0 {
 			bestHex = newHex
@@ -119,7 +71,7 @@ func main() {
 	fmt.Println("|------|------|------|------|--------|------|---------|------|")
 
 	for _, color := range colors {
-		currentRatio := getContrastRatio(color.hexOld, bgColor)
+		currentRatio := colorutil.LegacyContrastNoHash(color.hexOld, bgColor)
 		aaOptimal, aaRatio := findOptimalBrightness(color.hexOld, bgColor, targetAA)
 		aaaOptimal, aaaRatio := findOptimalBrightness(color.hexOld, bgColor, targetAAA)
 

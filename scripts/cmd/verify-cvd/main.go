@@ -1,8 +1,5 @@
 // Command verify-cvd is a standalone, single-file numeric verification tool for
-// colors/ghost-visor.toml. It is run individually (`go run verify-cvd.go`), not
-// built together with the other scripts/*.go files (this directory intentionally
-// hosts multiple independent `package main` files run one at a time — see
-// scripts/generate-colors.go and scripts/validate-colors.go for the sibling tools).
+// colors/ghost-visor.toml.
 //
 // Methodology:
 //   - Contrast: WCAG 2.x relative luminance (sRGB -> linear, Rec. 709 coefficients)
@@ -19,23 +16,22 @@
 //
 // Usage:
 //
-//	go run verify-cvd.go [path/to/palette.toml]
+//	go run ./cmd/verify-cvd [path/to/palette.toml]
 //
 // With no argument, resolves colors/ghost-visor.toml relative to the git
 // repository root.
 package main
 
 import (
+	"errors"
 	"fmt"
-	"math"
 	"os"
-	"os/exec"
-	"path/filepath"
 	"sort"
-	"strconv"
 	"strings"
 
-	"github.com/pelletier/go-toml/v2"
+	"github.com/sunagawasei/dotfiles/scripts/internal/colorutil"
+	"github.com/sunagawasei/dotfiles/scripts/internal/cvd"
+	"github.com/sunagawasei/dotfiles/scripts/internal/palette"
 )
 
 // ---------- palette loading ----------
@@ -46,159 +42,24 @@ import (
 type rawPalette map[string]map[string]string
 
 func loadPalette(path string) (rawPalette, error) {
-	data, err := os.ReadFile(path)
+	loaded, err := palette.Load[rawPalette](path)
 	if err != nil {
-		return nil, fmt.Errorf("read %s: %w", path, err)
+		var loadErr *palette.LoadError
+		if errors.As(err, &loadErr) {
+			switch loadErr.Stage {
+			case palette.LoadStageRead:
+				return nil, fmt.Errorf("read %s: %w", path, loadErr.Err)
+			case palette.LoadStageParse:
+				return nil, fmt.Errorf("parse %s: %w", path, loadErr.Err)
+			}
+		}
+		return nil, err
 	}
-	var p rawPalette
-	if err := toml.Unmarshal(data, &p); err != nil {
-		return nil, fmt.Errorf("parse %s: %w", path, err)
-	}
-	return p, nil
+	return *loaded, nil
 }
 
 func resolvePalettePath() (string, error) {
-	if len(os.Args) > 1 {
-		return os.Args[1], nil
-	}
-	cmd := exec.Command("git", "rev-parse", "--show-toplevel")
-	out, err := cmd.Output()
-	if err != nil {
-		return "", fmt.Errorf("find repository root: %w", err)
-	}
-	root := strings.TrimSpace(string(out))
-	return filepath.Join(root, "colors", "ghost-visor.toml"), nil
-}
-
-// ---------- color space plumbing ----------
-
-func hexToRGB01(hex string) (r, g, b float64, err error) {
-	hex = strings.TrimPrefix(strings.TrimSpace(hex), "#")
-	if len(hex) < 6 {
-		return 0, 0, 0, fmt.Errorf("not a 6-digit hex color: %q", hex)
-	}
-	ri, err1 := strconv.ParseInt(hex[0:2], 16, 64)
-	gi, err2 := strconv.ParseInt(hex[2:4], 16, 64)
-	bi, err3 := strconv.ParseInt(hex[4:6], 16, 64)
-	if err1 != nil || err2 != nil || err3 != nil {
-		return 0, 0, 0, fmt.Errorf("invalid hex color: %q", hex)
-	}
-	return float64(ri) / 255, float64(gi) / 255, float64(bi) / 255, nil
-}
-
-func clamp01(x float64) float64 {
-	if x < 0 {
-		return 0
-	}
-	if x > 1 {
-		return 1
-	}
-	return x
-}
-
-func srgbToLinear(c float64) float64 {
-	if c <= 0.04045 {
-		return c / 12.92
-	}
-	return math.Pow((c+0.055)/1.055, 2.4)
-}
-
-// relLuminance computes WCAG relative luminance for a hex color.
-func relLuminance(hex string) (float64, error) {
-	r, g, b, err := hexToRGB01(hex)
-	if err != nil {
-		return 0, err
-	}
-	rl, gl, bl := srgbToLinear(r), srgbToLinear(g), srgbToLinear(b)
-	return 0.2126*rl + 0.7152*gl + 0.0722*bl, nil
-}
-
-// contrastRatio computes the WCAG contrast ratio between two hex colors.
-func contrastRatio(hexA, hexB string) (float64, error) {
-	l1, err := relLuminance(hexA)
-	if err != nil {
-		return 0, err
-	}
-	l2, err := relLuminance(hexB)
-	if err != nil {
-		return 0, err
-	}
-	if l1 < l2 {
-		l1, l2 = l2, l1
-	}
-	return (l1 + 0.05) / (l2 + 0.05), nil
-}
-
-// ---------- CVD simulation (Machado 2009, severity=1.0, linear sRGB) ----------
-
-var protanopiaM = [3][3]float64{
-	{0.152286, 1.052583, -0.204868},
-	{0.114503, 0.786281, 0.099216},
-	{-0.003882, -0.048116, 1.051998},
-}
-var deuteranopiaM = [3][3]float64{
-	{0.367322, 0.860646, -0.227968},
-	{0.280085, 0.672501, 0.047413},
-	{-0.011820, 0.042940, 0.968881},
-}
-var tritanopiaM = [3][3]float64{
-	{1.255528, -0.076749, -0.178779},
-	{-0.078411, 0.930809, 0.147602},
-	{0.004733, 0.691367, 0.303900},
-}
-
-type cvdType struct {
-	Name string
-	M    [3][3]float64
-}
-
-var cvdTypes = []cvdType{
-	{"protanopia", protanopiaM},
-	{"deuteranopia", deuteranopiaM},
-	{"tritanopia", tritanopiaM},
-}
-
-// applyCVD simulates the given CVD type on a hex color and returns the
-// resulting color's CIELAB coordinates.
-func applyCVD(hex string, M [3][3]float64) ([3]float64, error) {
-	r, g, b, err := hexToRGB01(hex)
-	if err != nil {
-		return [3]float64{}, err
-	}
-	rl, gl, bl := srgbToLinear(r), srgbToLinear(g), srgbToLinear(b)
-	rl2 := M[0][0]*rl + M[0][1]*gl + M[0][2]*bl
-	gl2 := M[1][0]*rl + M[1][1]*gl + M[1][2]*bl
-	bl2 := M[2][0]*rl + M[2][1]*gl + M[2][2]*bl
-	rl2, gl2, bl2 = clamp01(rl2), clamp01(gl2), clamp01(bl2)
-	return linearRGBToLab(rl2, gl2, bl2), nil
-}
-
-// linearRGBToLab converts linear sRGB (D65 white point) to CIELAB.
-func linearRGBToLab(r, g, b float64) [3]float64 {
-	X := 0.4124564*r + 0.3575761*g + 0.1804375*b
-	Y := 0.2126729*r + 0.7151522*g + 0.0721750*b
-	Z := 0.0193339*r + 0.1191920*g + 0.9503041*b
-	Xn, Yn, Zn := 0.95047, 1.0, 1.08883
-	f := func(t float64) float64 {
-		d := 6.0 / 29.0
-		if t > d*d*d {
-			return math.Cbrt(t)
-		}
-		return t/(3*d*d) + 4.0/29.0
-	}
-	fx, fy, fz := f(X/Xn), f(Y/Yn), f(Z/Zn)
-	L := 116*fy - 16
-	a := 500 * (fx - fy)
-	bb := 200 * (fy - fz)
-	return [3]float64{L, a, bb}
-}
-
-// deltaE76 computes the CIE76 Euclidean Delta E between two CIELAB colors.
-func deltaE76(l1, l2 [3]float64) float64 {
-	dl := l1[0] - l2[0]
-	da := l1[1] - l2[1]
-	db := l1[2] - l2[2]
-	return math.Sqrt(dl*dl + da*da + db*db)
+	return palette.ResolveDefaultPath(os.Args[1:])
 }
 
 // ---------- main ----------
@@ -264,7 +125,7 @@ func main() {
 	var ngRows []string
 	for _, e := range entries {
 		for _, bg := range bgs {
-			ratio, err := contrastRatio(e.Hex, bg.Hex)
+			ratio, err := colorutil.StrictContrastRatio(e.Hex, bg.Hex)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "verify-cvd: %s.%s: %v\n", e.Section, e.Key, err)
 				os.Exit(1)
@@ -310,13 +171,13 @@ func main() {
 	fmt.Println("\n=== CVD DELTA E (ANSI 16-color pairs, Machado 2009 severity=1.0, CIE76) ===")
 	cvdTotal, cvdNG := 0, 0
 	var cvdNGRows []string
-	for _, ct := range cvdTypes {
+	for _, ct := range cvd.Types {
 		labCache := map[string][3]float64{}
 		getLab := func(name string) [3]float64 {
 			if v, ok := labCache[name]; ok {
 				return v
 			}
-			lab, err := applyCVD(ansi[name], ct.M)
+			lab, err := cvd.Apply(ansi[name], ct.Matrix)
 			if err != nil {
 				fmt.Fprintf(os.Stderr, "verify-cvd: ansi.%s: %v\n", name, err)
 				os.Exit(1)
@@ -327,7 +188,7 @@ func main() {
 		for i := 0; i < len(ansiNames); i++ {
 			for j := i + 1; j < len(ansiNames); j++ {
 				a, b := ansiNames[i], ansiNames[j]
-				de := deltaE76(getLab(a), getLab(b))
+				de := cvd.DeltaE76(getLab(a), getLab(b))
 				cvdTotal++
 				status := "PASS"
 				if de < cvdDeltaEThreshold {

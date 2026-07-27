@@ -3,12 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"path/filepath"
 	"regexp"
 	"strings"
 
-	"github.com/pelletier/go-toml/v2"
+	"github.com/sunagawasei/dotfiles/scripts/internal/palette"
 )
 
 // ColorPalette represents the TOML color definition file
@@ -33,18 +32,9 @@ var allowedColors = map[string]bool{
 	"#F8FCFD": true, // Bright white
 }
 
-func findGitRoot() (string, error) {
-	cmd := exec.Command("git", "rev-parse", "--show-toplevel")
-	output, err := cmd.Output()
-	if err != nil {
-		return "", fmt.Errorf("not in a git repository: %w", err)
-	}
-	return strings.TrimSpace(string(output)), nil
-}
-
 func getConfigDir() (string, error) {
 	// Try 1: Git root
-	if gitRoot, err := findGitRoot(); err == nil {
+	if gitRoot, err := palette.FindRepositoryRoot(); err == nil {
 		return gitRoot, nil
 	}
 
@@ -74,14 +64,14 @@ func main() {
 	tomlPath := filepath.Join(configDir, "colors", "ghost-visor.toml")
 
 	// Load color palette
-	palette, err := loadPalette(tomlPath)
+	colorPalette, err := palette.Load[ColorPalette](tomlPath)
 	if err != nil {
 		fmt.Printf("❌ Failed to load palette: %v\n", err)
 		os.Exit(1)
 	}
 
 	// Extract all valid colors
-	validColors := extractValidColors(palette)
+	validColors := extractValidColors(colorPalette)
 	fmt.Printf("✓ Loaded %d unique colors from colors/ghost-visor.toml\n", len(validColors))
 
 	// Files to check
@@ -124,20 +114,6 @@ func main() {
 		fmt.Println("\n⚠ Some files contain undefined colors. Please review.")
 		os.Exit(1)
 	}
-}
-
-func loadPalette(path string) (*ColorPalette, error) {
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-
-	var palette ColorPalette
-	if err := toml.Unmarshal(data, &palette); err != nil {
-		return nil, err
-	}
-
-	return &palette, nil
 }
 
 func extractValidColors(palette *ColorPalette) map[string]bool {

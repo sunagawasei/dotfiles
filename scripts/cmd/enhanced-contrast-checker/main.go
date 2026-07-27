@@ -2,12 +2,11 @@ package main
 
 import (
 	"fmt"
-	"math"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/BurntSushi/toml"
+	"github.com/sunagawasei/dotfiles/scripts/internal/colorutil"
 )
 
 // TOML構造体
@@ -31,57 +30,6 @@ type ColorCheck struct {
 	Priority string
 	Usage    string
 	Category string
-}
-
-// hexToRGB converts hex color to RGB (既存のコードから再利用)
-func hexToRGB(hex string) (float64, float64, float64) {
-	// #を除去
-	hex = strings.TrimPrefix(hex, "#")
-	r, _ := strconv.ParseInt(hex[0:2], 16, 0)
-	g, _ := strconv.ParseInt(hex[2:4], 16, 0)
-	b, _ := strconv.ParseInt(hex[4:6], 16, 0)
-	return float64(r), float64(g), float64(b)
-}
-
-// getLuminance calculates relative luminance (既存のコードから再利用)
-func getLuminance(r, g, b float64) float64 {
-	rs := r / 255.0
-	gs := g / 255.0
-	bs := b / 255.0
-
-	if rs <= 0.03928 {
-		rs = rs / 12.92
-	} else {
-		rs = math.Pow((rs+0.055)/1.055, 2.4)
-	}
-
-	if gs <= 0.03928 {
-		gs = gs / 12.92
-	} else {
-		gs = math.Pow((gs+0.055)/1.055, 2.4)
-	}
-
-	if bs <= 0.03928 {
-		bs = bs / 12.92
-	} else {
-		bs = math.Pow((bs+0.055)/1.055, 2.4)
-	}
-
-	return 0.2126*rs + 0.7152*gs + 0.0722*bs
-}
-
-// getContrastRatio calculates contrast ratio between two colors (既存のコードから再利用)
-func getContrastRatio(hex1, hex2 string) float64 {
-	r1, g1, b1 := hexToRGB(hex1)
-	r2, g2, b2 := hexToRGB(hex2)
-
-	l1 := getLuminance(r1, g1, b1)
-	l2 := getLuminance(r2, g2, b2)
-
-	lighter := math.Max(l1, l2)
-	darker := math.Min(l1, l2)
-
-	return (lighter + 0.05) / (darker + 0.05)
 }
 
 // evaluateWCAG evaluates WCAG compliance (既存のコードから再利用)
@@ -205,7 +153,7 @@ func printResults(checks []ColorCheck, bgColor string, whitelist map[string]bool
 				continue
 			}
 
-			ratio := getContrastRatio(check.Hex, bgColor)
+			ratio := colorutil.LegacyContrastWithHash(check.Hex, bgColor)
 			aa, aaa := evaluateWCAG(ratio)
 
 			// 不合格の記録
@@ -249,7 +197,7 @@ func printResults(checks []ColorCheck, bgColor string, whitelist map[string]bool
 	}
 
 	for _, elem := range markdownElements {
-		ratio := getContrastRatio(elem.hex, bgColor)
+		ratio := colorutil.LegacyContrastWithHash(elem.hex, bgColor)
 		fmt.Printf("│ %-33s │ %-7s │ %6.2f:1 │ %-10s │\n",
 			elem.name,
 			elem.hex,

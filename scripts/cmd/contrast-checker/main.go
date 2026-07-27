@@ -2,58 +2,9 @@ package main
 
 import (
 	"fmt"
-	"math"
-	"strconv"
+
+	"github.com/sunagawasei/dotfiles/scripts/internal/colorutil"
 )
-
-// hexToRGB converts hex color to RGB
-func hexToRGB(hex string) (float64, float64, float64) {
-	r, _ := strconv.ParseInt(hex[0:2], 16, 0)
-	g, _ := strconv.ParseInt(hex[2:4], 16, 0)
-	b, _ := strconv.ParseInt(hex[4:6], 16, 0)
-	return float64(r), float64(g), float64(b)
-}
-
-// getLuminance calculates relative luminance
-func getLuminance(r, g, b float64) float64 {
-	rs := r / 255.0
-	gs := g / 255.0
-	bs := b / 255.0
-
-	if rs <= 0.03928 {
-		rs = rs / 12.92
-	} else {
-		rs = math.Pow((rs+0.055)/1.055, 2.4)
-	}
-
-	if gs <= 0.03928 {
-		gs = gs / 12.92
-	} else {
-		gs = math.Pow((gs+0.055)/1.055, 2.4)
-	}
-
-	if bs <= 0.03928 {
-		bs = bs / 12.92
-	} else {
-		bs = math.Pow((bs+0.055)/1.055, 2.4)
-	}
-
-	return 0.2126*rs + 0.7152*gs + 0.0722*bs
-}
-
-// getContrastRatio calculates contrast ratio between two colors
-func getContrastRatio(hex1, hex2 string) float64 {
-	r1, g1, b1 := hexToRGB(hex1)
-	r2, g2, b2 := hexToRGB(hex2)
-
-	l1 := getLuminance(r1, g1, b1)
-	l2 := getLuminance(r2, g2, b2)
-
-	lighter := math.Max(l1, l2)
-	darker := math.Min(l1, l2)
-
-	return (lighter + 0.05) / (darker + 0.05)
-}
 
 // evaluateWCAG evaluates WCAG compliance
 func evaluateWCAG(ratio float64) (string, string) {
@@ -96,10 +47,10 @@ func main() {
 	fmt.Println("|------|------|-----------|------|----|----|-----------|------|----|----|")
 
 	for _, color := range colors {
-		ratioOld := getContrastRatio(color.hexOld, bgColor)
+		ratioOld := colorutil.LegacyContrastNoHash(color.hexOld, bgColor)
 		aaOld, aaaOld := evaluateWCAG(ratioOld)
 
-		ratioNew := getContrastRatio(color.hexNew, bgColor)
+		ratioNew := colorutil.LegacyContrastNoHash(color.hexNew, bgColor)
 		aaNew, aaaNew := evaluateWCAG(ratioNew)
 
 		fmt.Printf("| %s | %s | #%s | %.2f:1 | %s | %s | #%s | %.2f:1 | %s | %s |\n",
@@ -135,7 +86,7 @@ func main() {
 	fmt.Println("| 色名 | HEX | 用途 | 比率 | AA | AAA |")
 	fmt.Println("|------|-----|------|------|----|-----|")
 	for _, color := range dimColors {
-		ratio := getContrastRatio(color.hex, bgColor)
+		ratio := colorutil.LegacyContrastNoHash(color.hex, bgColor)
 		aa, aaa := evaluateWCAG(ratio)
 		fmt.Printf("| %s | #%s | %s | %.2f:1 | %s | %s |\n",
 			color.name,

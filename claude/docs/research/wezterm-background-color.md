@@ -164,7 +164,7 @@ config.colors = {
 
 3. **バリデーション**:
    ```bash
-   cd scripts && go run validate-colors.go
+   cd scripts && go run ./cmd/validate-colors
    ```
 
 ---
