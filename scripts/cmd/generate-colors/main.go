@@ -881,7 +881,7 @@ if [ "$pct" -gt 75 ]; then
 elif [ "$pct" -gt 50 ]; then
   C_PCT="\e[38;2;{{rgb:purples.lavender}}m"   # {{purples.lavender}}
 else
-  C_PCT="\e[38;2;{{rgb:teals.deep}}m"    # {{teals.deep}}
+  C_PCT="\e[38;2;{{rgb:teals.mid_bright}}m"    # {{teals.mid_bright}} 安全（暗いtealは帯背景に沈む）
 fi
 
 # リミット残量の色
@@ -894,7 +894,7 @@ if [ -n "$RATE_USED" ]; then
   elif [ "$rate_remaining" -lt 50 ]; then
     C_RATE="\e[38;2;{{rgb:purples.lavender}}m"   # {{purples.lavender}} 注意（グレー）
   else
-    C_RATE="\e[38;2;{{rgb:teals.deep}}m"    # {{teals.deep}} 安全（teal）
+    C_RATE="\e[38;2;{{rgb:teals.mid_bright}}m"    # {{teals.mid_bright}} 安全（teal）
   fi
 fi
 
@@ -904,18 +904,18 @@ fi
 const statuslineSegmentsTemplate = `# BEGIN GENERATED COLORS: SEGMENTS
 # --- 1段目: モデル / コンテキスト使用率 / レート制限残量 / codex・bgマーカー ---
 row1=()
-row1+=("{{blues_slates.slate_dark}}|${C_MODEL}${MODEL}")
-row1+=("{{core.active_line}}|${C_PCT}󰍛 ${pct}%")
+row1+=("{{core.darkest_bg}}|${C_MODEL}${MODEL}")
+row1+=("{{nvim.gutter_bg}}|${C_PCT}󰍛 ${pct}%")
 if [ -n "$RATE_USED" ]; then
-  row1+=("{{blues_slates.deep_ocean}}|${C_RATE}󰔛 ${rate_remaining}%")
+  row1+=("{{core.background}}|${C_RATE}󰔛 ${rate_remaining}%")
 fi
-[ "$CODEX_BUSY" = "1" ] && row1+=("{{core.ui_shadow}}|${C_BUSY}󰚩")
-[ "$BG_BUSY" = "1" ] && row1+=("{{core.ui_shadow}}|${C_BUSY}󰜎")
+[ "$CODEX_BUSY" = "1" ] && row1+=("{{core.darkest_bg}}|${C_BUSY}󰚩")
+[ "$BG_BUSY" = "1" ] && row1+=("{{core.darkest_bg}}|${C_BUSY}󰜎")
 
 # --- 2段目: ディレクトリ / Gitブランチ ---
 row2=()
-row2+=("{{core.panel_bg}}|${C_DIR}${DIR_NAME}")
-[ -n "$GIT_BRANCH" ] && row2+=("{{core.ui_shadow}}|${C_GIT}${GIT_BRANCH}")
+row2+=("{{nvim.gutter_bg}}|${C_DIR}${DIR_NAME}")
+[ -n "$GIT_BRANCH" ] && row2+=("{{core.background}}|${C_GIT}${GIT_BRANCH}")
 
 # END GENERATED COLORS: SEGMENTS
 `

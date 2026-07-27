@@ -245,7 +245,7 @@ if [ "$pct" -gt 75 ]; then
 elif [ "$pct" -gt 50 ]; then
   C_PCT="\e[38;2;208;212;240m"   # #D0D4F0
 else
-  C_PCT="\e[38;2;46;101;137m"    # #2E6589
+  C_PCT="\e[38;2;146;191;217m"    # #92BFD9 安全（暗いtealは帯背景に沈む）
 fi
 
 # リミット残量の色
@@ -258,7 +258,7 @@ if [ -n "$RATE_USED" ]; then
   elif [ "$rate_remaining" -lt 50 ]; then
     C_RATE="\e[38;2;208;212;240m"   # #D0D4F0 注意（グレー）
   else
-    C_RATE="\e[38;2;46;101;137m"    # #2E6589 安全（teal）
+    C_RATE="\e[38;2;146;191;217m"    # #92BFD9 安全（teal）
   fi
 fi
 
@@ -295,18 +295,18 @@ build_bar() {
 # BEGIN GENERATED COLORS: SEGMENTS
 # --- 1段目: モデル / コンテキスト使用率 / レート制限残量 / codex・bgマーカー ---
 row1=()
-row1+=("#1F3265|${C_MODEL}${MODEL}")
-row1+=("#314463|${C_PCT}󰍛 ${pct}%")
+row1+=("#141B2D|${C_MODEL}${MODEL}")
+row1+=("#1A2235|${C_PCT}󰍛 ${pct}%")
 if [ -n "$RATE_USED" ]; then
-  row1+=("#42547A|${C_RATE}󰔛 ${rate_remaining}%")
+  row1+=("#202A42|${C_RATE}󰔛 ${rate_remaining}%")
 fi
-[ "$CODEX_BUSY" = "1" ] && row1+=("#242F48|${C_BUSY}󰚩")
-[ "$BG_BUSY" = "1" ] && row1+=("#242F48|${C_BUSY}󰜎")
+[ "$CODEX_BUSY" = "1" ] && row1+=("#141B2D|${C_BUSY}󰚩")
+[ "$BG_BUSY" = "1" ] && row1+=("#141B2D|${C_BUSY}󰜎")
 
 # --- 2段目: ディレクトリ / Gitブランチ ---
 row2=()
-row2+=("#324664|${C_DIR}${DIR_NAME}")
-[ -n "$GIT_BRANCH" ] && row2+=("#242F48|${C_GIT}${GIT_BRANCH}")
+row2+=("#1A2235|${C_DIR}${DIR_NAME}")
+[ -n "$GIT_BRANCH" ] && row2+=("#202A42|${C_GIT}${GIT_BRANCH}")
 
 # END GENERATED COLORS: SEGMENTS
 build_bar row1
