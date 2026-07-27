@@ -241,6 +241,10 @@ func generateOutputs(root, sourceName string, palette *colorPalette) ([]outputFi
 			template: lazygitTemplate,
 		},
 		{
+			path: filepath.Join(root, "gh-dash/config.yml"), begin: "        # BEGIN GENERATED COLORS", end: "        # END GENERATED COLORS",
+			template: ghDashTemplate,
+		},
+		{
 			path: filepath.Join(root, "vim/vimrc"), begin: `" BEGIN GENERATED COLORS`, end: `" END GENERATED COLORS`,
 			template: vimTemplate,
 		},
@@ -782,6 +786,31 @@ const lazygitTemplate = `    # BEGIN GENERATED COLORS
   authorColors:
     '*': '{{blues_slates.git_blame_gray}}' # Git Blame Gray (improved visibility)
     # END GENERATED COLORS
+`
+
+const ghDashTemplate = `        # BEGIN GENERATED COLORS
+        text:
+            primary: "{{foregrounds.main}}"
+            secondary: "{{foregrounds.dim}}"
+            inverted: "{{core.darkest_bg}}"
+            faint: "{{foregrounds.subdued}}"
+            warning: "{{semantic.warning}}"
+            success: "{{semantic.success}}"
+            error: "{{semantic.error}}"
+            actor: "{{foregrounds.heading}}"
+        background:
+            selected: "{{core.active_line}}"
+        border:
+            primary: "{{teals.border}}"
+            secondary: "{{teals.border}}"
+            faint: "{{core.ui_shadow}}"
+        icon:
+            newcontributor: "{{semantic.success}}"
+            contributor: "{{foregrounds.heading}}"
+            collaborator: "{{semantic.warning}}"
+            member: "{{semantic.warning}}"
+            owner: "{{semantic.warning}}"
+        # END GENERATED COLORS
 `
 
 const vimTemplate = `" BEGIN GENERATED COLORS

@@ -179,6 +179,117 @@ func TestNvimTerminalColorsUseANSIOnly(t *testing.T) {
 	}
 }
 
+func TestGhDashThemeColorsUseExpectedTokens(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := Extract(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pairs := pairMap(result.Pairs)
+
+	expected := map[string]verifycolors.TokenRef{
+		"text.primary":        "foregrounds.main",
+		"text.secondary":      "foregrounds.dim",
+		"text.inverted":       "core.darkest_bg",
+		"text.faint":          "foregrounds.subdued",
+		"text.warning":        "semantic.warning",
+		"text.success":        "semantic.success",
+		"text.error":          "semantic.error",
+		"text.actor":          "foregrounds.heading",
+		"background.selected": "core.active_line",
+		"border.primary":      "teals.border",
+		"border.secondary":    "teals.border",
+		"border.faint":        "core.ui_shadow",
+		"icon.newcontributor": "semantic.success",
+		"icon.contributor":    "foregrounds.heading",
+		"icon.collaborator":   "semantic.warning",
+		"icon.member":         "semantic.warning",
+		"icon.owner":          "semantic.warning",
+	}
+	count := 0
+	for _, pair := range result.Pairs {
+		if strings.HasPrefix(pair.ConsumerID, "gh-dash.theme.") {
+			count++
+		}
+	}
+	if count != len(expected) {
+		t.Fatalf("gh-dash theme pair count = %d, want %d", count, len(expected))
+	}
+	for fieldPath, token := range expected {
+		assertPair(
+			t,
+			pairs,
+			"gh-dash.theme."+fieldPath,
+			token,
+			"",
+			true,
+			verifycolors.ClassReportOnly,
+		)
+	}
+}
+
+func TestDeltaStylesUseExpectedTokens(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := Extract(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pairs := pairMap(result.Pairs)
+
+	expected := map[string]verifycolors.TokenRef{
+		"plus-style":                    "nvim.diff_add_bg",
+		"minus-style":                   "nvim.diff_delete_bg",
+		"plus-emph-style":               "nvim.diff_add_inline_bg",
+		"minus-emph-style":              "nvim.diff_delete_inline_bg",
+		"line-numbers-plus-style":       "semantic.success",
+		"line-numbers-minus-style":      "semantic.error",
+		"line-numbers-zero-style":       "foregrounds.subdued",
+		"line-numbers-left-style":       "foregrounds.subdued",
+		"line-numbers-right-style":      "foregrounds.subdued",
+		"hunk-header-line-number-style": "foregrounds.subdued",
+		"hunk-header-decoration-style":  "teals.border",
+		"file-style":                    "foregrounds.heading",
+		"whitespace-error-style":        "semantic.error",
+	}
+	count := 0
+	for _, pair := range result.Pairs {
+		if strings.HasPrefix(pair.ConsumerID, "delta.style.") {
+			count++
+		}
+	}
+	if count != len(expected) {
+		t.Fatalf("delta style pair count = %d, want %d", count, len(expected))
+	}
+	for option, token := range expected {
+		assertPair(
+			t,
+			pairs,
+			"delta.style."+option,
+			token,
+			"",
+			true,
+			verifycolors.ClassReportOnly,
+		)
+	}
+	if _, ok := pairs["delta.style.hunk-header-file-style"]; ok {
+		t.Error("delta.style.hunk-header-file-style must remain unset")
+	}
+
+	data, err := os.ReadFile(filepath.Join(root, "home-manager", "git.nix"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(data), "hunk-header-file-style =") {
+		t.Error("programs.delta.options must not define hunk-header-file-style")
+	}
+}
+
 func TestKeybindsModeIndicatorUsesMutedPurple(t *testing.T) {
 	root, err := palette.FindRepositoryRoot()
 	if err != nil {

@@ -79,6 +79,30 @@ defaults:
 keybindings: {}
 repoPaths: {}
 theme:
+    colors:
+        # BEGIN GENERATED COLORS
+        text:
+            primary: "#CDE9F5"
+            secondary: "#ADBAC9"
+            inverted: "#141B2D"
+            faint: "#949DB0"
+            warning: "#D0D4F0"
+            success: "#62C9C2"
+            error: "#CDACEC"
+            actor: "#88CBEA"
+        background:
+            selected: "#314463"
+        border:
+            primary: "#45799D"
+            secondary: "#45799D"
+            faint: "#242F48"
+        icon:
+            newcontributor: "#62C9C2"
+            contributor: "#88CBEA"
+            collaborator: "#D0D4F0"
+            member: "#D0D4F0"
+            owner: "#D0D4F0"
+        # END GENERATED COLORS
     ui:
         sectionsShowCount: true
         table:

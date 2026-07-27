@@ -19,6 +19,8 @@ func Extract(root string) (Result, error) {
 		{"Vim highlights", extractVimTemplate},
 		{"Claude theme", extractClaudeTheme},
 		{"Hunk theme", extractHunk},
+		{"gh-dash theme", extractGhDashTheme},
+		{"delta styles", extractDeltaStyles},
 		{"WezTerm UI", extractWezTerm},
 		{"statusline", extractStatusline},
 	}
