@@ -36,7 +36,7 @@ in
 
     # ---- エイリアス ----
     shellAliases = {
-      ls = "ls --color=auto";
+      ls = "eza --color=auto";
       vtmp = ''nvim "''${TMPDIR%/}/$(date "+%Y%m%d_%H%M%S").md"'';
       ssh = ''TERM=xterm-256color \ssh'';
       nswitch = "sudo darwin-rebuild switch --flake ~/.config#CA-20021145";

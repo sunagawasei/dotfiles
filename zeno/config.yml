@@ -21,7 +21,7 @@ snippets:
   - keyword: la
     snippet: ls -la
   - keyword: l
-    snippet: ls -CF
+    snippet: ls -F
 
   # Git shortcuts
   - keyword: gs

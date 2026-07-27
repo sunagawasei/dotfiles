@@ -17,6 +17,7 @@
     LISTMAX = "50";
     ZENO_HOME = "$HOME/.config/zeno";
     ZENO_HISTORY_LIMIT = "5000";
+    EZA_CONFIG_DIR = "$HOME/.config/eza";
     CLAUDE_CONFIG_DIR = "$HOME/.config/claude";
     CODEX_HOME = "$HOME/.config/codex";
     BASH_SILENCE_DEPRECATION_WARNING = "1";

@@ -1,4 +1,4 @@
-{ pkgs, gws, herdr, ... }:
+{ config, lib, pkgs, gws, herdr, ... }:
 let
   # アクティブpane枠=白 / 非アクティブ=青（デフォルトは逆）にするための上流パッチ。
   # レガシー制御バイト31(US)の逆デコードがCtrl+-になっておりCtrl+_/Ctrl+/が
@@ -45,10 +45,10 @@ in
     nil # Nix LSP
 
     # ファイル操作
-    fd tree unar
+    fd tree unar eza
 
     # テキスト処理
-    jq wget pv gron nkf
+    bat jq wget pv gron nkf
 
     # セキュリティ
     gnupg pinentry_mac git-crypt bitwarden-cli
@@ -73,6 +73,17 @@ in
     # AIエージェント用ターミナルマルチプレクサ
     herdrPatched
   ];
+
+  # eza/bat のテーマ配置先を用意し、bat のテーマキャッシュを毎回再構築する
+  home.activation.buildBatCache = lib.hm.dag.entryAfter [ "linkGeneration" ] ''
+    $DRY_RUN_CMD mkdir -p \
+      "${config.xdg.configHome}/eza" \
+      "${config.xdg.configHome}/bat/themes"
+    $DRY_RUN_CMD env \
+      XDG_CONFIG_HOME="${config.xdg.configHome}" \
+      XDG_CACHE_HOME="${config.xdg.cacheHome}" \
+      ${pkgs.bat}/bin/bat cache --build
+  '';
 
   # direnv: シェル統合を HM に任せる
   programs.direnv = {
