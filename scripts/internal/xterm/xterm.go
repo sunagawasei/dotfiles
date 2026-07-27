@@ -1,6 +1,8 @@
 package xterm
 
 import (
+	"fmt"
+
 	"github.com/sunagawasei/dotfiles/scripts/internal/colorutil"
 )
 
@@ -10,6 +12,10 @@ type RGB struct {
 	B int
 }
 
+func (rgb RGB) Hex() string {
+	return fmt.Sprintf("#%02X%02X%02X", rgb.R, rgb.G, rgb.B)
+}
+
 // Nearest256 returns both the xterm-256 index and the RGB value represented by
 // that index.
 func Nearest256(value string) (int, RGB, error) {
@@ -17,7 +23,10 @@ func Nearest256(value string) (int, RGB, error) {
 	if err != nil {
 		return 0, RGB{}, err
 	}
-	palette := Palette256()
+	return nearest(r, g, b, Palette256())
+}
+
+func nearest(r, g, b int, palette []RGB) (int, RGB, error) {
 	bestIndex := 0
 	bestDistance := int(^uint(0) >> 1)
 	for index, candidate := range palette {
@@ -52,4 +61,17 @@ func Palette256() []RGB {
 		palette = append(palette, RGB{gray, gray, gray})
 	}
 	return palette
+}
+
+// Resolve256 resolves an xterm index as rendered by WezTerm. Indices 0-15 use
+// the configured ANSI palette; indices 16-255 use the standard cube/grayscale
+// values.
+func Resolve256(index int, ansi [16]RGB) (RGB, error) {
+	if index < 0 || index > 255 {
+		return RGB{}, fmt.Errorf("xterm index out of range: %d", index)
+	}
+	if index < len(ansi) {
+		return ansi[index], nil
+	}
+	return Palette256()[index], nil
 }

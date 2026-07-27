@@ -110,6 +110,9 @@
 cd scripts
 go run ./cmd/generate-colors
 go run ./cmd/generate-colors --check
+go run ./cmd/generate-color-inventory
+go run ./cmd/generate-color-inventory --check
+go run ./cmd/verify-colors
 ```
 
 ---

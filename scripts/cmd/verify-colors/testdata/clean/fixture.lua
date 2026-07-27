@@ -1,0 +1,1 @@
+-- No literal colors are needed for this fixture.

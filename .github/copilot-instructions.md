@@ -38,7 +38,11 @@
 2. 各設定ファイル (WezTerm, Neovim等) に反映
 3. バリデーションを実行:
    ```bash
-   cd scripts && go run ./cmd/validate-colors
+   cd scripts
+   go run ./cmd/validate-colors
+   go run ./cmd/generate-color-inventory
+   go run ./cmd/generate-color-inventory --check
+   go run ./cmd/verify-colors
    ```
 
 詳細は `COLOR-SYSTEM.md` を参照してください。
@@ -148,7 +152,8 @@ AIアシスタント向けの重要な変更があれば、該当ファイルを
 
 ### カラーシステム
 - **定義ファイル**: `colors/ghost-visor.toml` (32色拡張パレット)
-- **バリデーター**: `scripts/cmd/validate-colors/main.go`
+- **統合バリデーター**: `scripts/cmd/verify-colors/main.go`
+- **旧HEXバリデーター（B3まで併存）**: `scripts/cmd/validate-colors/main.go`
 
 ### ドキュメント
 - **AI指示**: `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `nvim/CLAUDE.md`
@@ -172,6 +177,9 @@ AIアシスタント向けの重要な変更があれば、該当ファイルを
 ```bash
 cd scripts
 go run ./cmd/validate-colors
+go run ./cmd/generate-color-inventory
+go run ./cmd/generate-color-inventory --check
+go run ./cmd/verify-colors
 ```
 
 **チェック内容:**
