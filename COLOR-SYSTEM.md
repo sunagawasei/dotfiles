@@ -29,6 +29,7 @@
 | ブライトテキスト | `#9FDBF7` | 数値、定数、アクティブタブ |
 | ヘディング/パス | `#88CBEA` | ディレクトリ名、見出し |
 | ディムテキスト | `#ADBAC9` | 補助テキスト |
+| Subdued | `#949DB0` | 非アクティブ前景、低強調テキスト |
 
 ### スペクトラム・アクセント
 
@@ -42,7 +43,7 @@
 | **Slate** | Git Blame Gray | `#B1B9CD` | Git blame、補助情報 |
 | | Comment Gray | `#B1B9CA` | コメント |
 | | Punctuation Gray | `#B3B9C7` | 句読点 |
-| | Slate Mid | `#4A4953` | 非アクティブ（特定用途のみ） |
+| | Slate Mid | `#4A4953` | 意図的減光専用（Conceal、Flash backdrop、打ち消し線、背景塗り） |
 | | Sky Slate | `#AFB8D9` | 型、オプション |
 | **Purple** | Error Purple | `#CEADE1` | エラー、重要警告 |
 | | Lavender | `#D0D4F0` | 警告、定数、ラベル |
@@ -84,7 +85,8 @@
 5. **`#B1B9CD` (Auxiliary)**: Git blame、補助的な情報
 6. **`#B1B9CA` (Comment)**: コメント
 7. **`#B3B9C7` (Punctuation)**: 句読点
-8. **`#4A4953` (Inactive)**: 非アクティブ要素（意図的に暗い）
+8. **`#949DB0` (Subdued)**: 非アクティブ前景、低強調テキスト
+9. **`#4A4953` (Intentional Dim)**: Conceal、Flash backdrop、打ち消し線、背景塗り
 
 ---
 

@@ -37,7 +37,7 @@ in
         removedSignColor = colors.semantic.error;
 
         lineNumberBg = colors.core.background;
-        lineNumberFg = colors.blues_slates.slate_mid;
+        lineNumberFg = colors.foregrounds.subdued;
         selectedHunk = colors.core.selection_bg;
 
         badgeAdded = colors.semantic.success;

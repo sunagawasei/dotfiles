@@ -23,6 +23,7 @@ selection_fg = "#141B2D"
 main = "#CDE9F5"
 bright = "#9FDBF7"
 dim = "#ADBAC9"
+subdued = "#949DB0"
 heading = "#88CBEA"
 
 [teals]
@@ -36,7 +37,7 @@ dark_accent = "#1C3A5E"
 sea_green = "#2F7D72"
 
 [blues_slates]
-slate_mid = "#4A4953"
+slate_mid = "#4A4953" # Background fills and intentional dimming only
 punctuation_gray = "#B3B9C7"
 comment_gray = "#B1B9CA"
 git_blame_gray = "#B1B9CD"

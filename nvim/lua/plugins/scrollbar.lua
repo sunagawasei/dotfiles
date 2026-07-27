@@ -7,7 +7,7 @@ return {
   config = function()
     local p = require("config.palette").colors
     local colors = {
-      handle = p.mid_gray,      -- foregrounds.muted (視認性改善)
+      handle = p.mid_gray,      -- blues_slates.slate_mid (handle fill)
       search = p.operator,      -- semantic.operator
       error = p.magenta,        -- semantic.error
       warn = p.lavender,        -- semantic.warning

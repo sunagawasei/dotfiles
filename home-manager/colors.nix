@@ -16,6 +16,7 @@
     main = "#CDE9F5";
     bright = "#9FDBF7";
     dim = "#ADBAC9";
+    subdued = "#949DB0";
     heading = "#88CBEA";
   };
   teals = {

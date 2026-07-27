@@ -506,7 +506,7 @@ const claudeThemeTemplate = `{
     "inverseText": "{{core.darkest_bg}}",
     "inactive": "{{foregrounds.dim}}",
     "inactiveShimmer": "{{blues_slates.cloud_slate}}",
-    "subtle": "{{blues_slates.slate_mid}}",
+    "subtle": "{{foregrounds.subdued}}",
     "suggestion": "{{teals.mid_bright}}",
     "permission": "{{teals.border}}",
     "permissionShimmer": "{{teals.bright}}",
@@ -563,7 +563,8 @@ M.colors = {
   dark_shadow = "{{core.ui_shadow}}",  -- UI Shadow [core.ui_shadow]
   gutter_bg = "{{nvim.gutter_bg}}",    -- Gutter background [nvim.gutter_bg]
   border = "{{teals.border}}",       -- UI Border [teals.border]
-  mid_gray = "{{blues_slates.slate_mid}}",     -- Slate Mid [blues_slates.slate_mid]
+  mid_gray = "{{blues_slates.slate_mid}}",     -- Background fill / intentional dim only [blues_slates.slate_mid]
+  subdued_fg = "{{foregrounds.subdued}}",   -- Subdued foreground [foregrounds.subdued]
   light_gray = "{{foregrounds.dim}}",   -- Dim text [foregrounds.dim]
 
   -- Visibility improvements
@@ -636,6 +637,7 @@ return {
     main = "{{foregrounds.main}}",
     bright = "{{foregrounds.bright}}",
     dim = "{{foregrounds.dim}}",
+    subdued = "{{foregrounds.subdued}}",
     heading = "{{foregrounds.heading}}",
   },
   teals = {
@@ -734,6 +736,7 @@ const nixColorsTemplate = `# ` + generatedNotice + `
     main = "{{foregrounds.main}}";
     bright = "{{foregrounds.bright}}";
     dim = "{{foregrounds.dim}}";
+    subdued = "{{foregrounds.subdued}}";
     heading = "{{foregrounds.heading}}";
   };
   teals = {
@@ -920,8 +923,8 @@ highlight SignColumn guibg=NONE ctermbg=NONE
 highlight FoldColumn guibg=NONE guifg={{teals.border}} ctermbg=NONE ctermfg={{xterm:teals.border}}
 highlight VertSplit guifg={{teals.border}} guibg=NONE ctermfg={{xterm:teals.border}} ctermbg=NONE
 highlight StatusLine guifg={{foregrounds.main}} guibg=NONE ctermfg={{xterm:foregrounds.main}} ctermbg=NONE gui=bold cterm=bold
-highlight StatusLineNC guifg={{blues_slates.slate_mid}} guibg=NONE ctermfg={{xterm:blues_slates.slate_mid}} ctermbg=NONE gui=NONE cterm=NONE
-highlight TabLine guifg={{blues_slates.slate_mid}} guibg=NONE ctermfg={{xterm:blues_slates.slate_mid}} ctermbg=NONE
+highlight StatusLineNC guifg={{foregrounds.subdued}} guibg=NONE ctermfg={{xterm:foregrounds.subdued}} ctermbg=NONE gui=NONE cterm=NONE
+highlight TabLine guifg={{foregrounds.subdued}} guibg=NONE ctermfg={{xterm:foregrounds.subdued}} ctermbg=NONE
 highlight TabLineSel guifg={{foregrounds.main}} guibg=NONE ctermfg={{xterm:foregrounds.main}} ctermbg=NONE gui=bold cterm=bold
 highlight TabLineFill guibg=NONE ctermbg=NONE
 highlight Visual guibg={{core.selection_bg}} guifg={{core.selection_fg}} ctermbg={{xterm:core.selection_bg}} ctermfg={{xterm:core.selection_fg}}
@@ -934,7 +937,7 @@ highlight MatchParen guibg={{teals.border}} guifg={{ansi.bright_white}} ctermbg=
 " 追加グループ
 highlight Directory guifg={{semantic.function}} ctermfg={{xterm:semantic.function}}
 highlight Title guifg={{foregrounds.heading}} ctermfg={{xterm:foregrounds.heading}} gui=bold cterm=bold
-highlight Folded guibg={{core.ui_shadow}} guifg={{blues_slates.slate_mid}} ctermbg={{xterm:core.ui_shadow}} ctermfg={{xterm:blues_slates.slate_mid}}
+highlight Folded guibg={{core.ui_shadow}} guifg={{foregrounds.subdued}} ctermbg={{xterm:core.ui_shadow}} ctermfg={{xterm:foregrounds.subdued}}
 highlight WildMenu guibg={{core.ui_shadow}} guifg={{ansi.bright_white}} ctermbg={{xterm:core.ui_shadow}} ctermfg={{xterm:ansi.bright_white}}
 highlight Question guifg={{semantic.function}} ctermfg={{xterm:semantic.function}}
 highlight MoreMsg guifg={{semantic.function}} ctermfg={{xterm:semantic.function}}

@@ -118,8 +118,8 @@ highlight SignColumn guibg=NONE ctermbg=NONE
 highlight FoldColumn guibg=NONE guifg=#45799D ctermbg=NONE ctermfg=67
 highlight VertSplit guifg=#45799D guibg=NONE ctermfg=67 ctermbg=NONE
 highlight StatusLine guifg=#CDE9F5 guibg=NONE ctermfg=189 ctermbg=NONE gui=bold cterm=bold
-highlight StatusLineNC guifg=#4A4953 guibg=NONE ctermfg=239 ctermbg=NONE gui=NONE cterm=NONE
-highlight TabLine guifg=#4A4953 guibg=NONE ctermfg=239 ctermbg=NONE
+highlight StatusLineNC guifg=#949DB0 guibg=NONE ctermfg=247 ctermbg=NONE gui=NONE cterm=NONE
+highlight TabLine guifg=#949DB0 guibg=NONE ctermfg=247 ctermbg=NONE
 highlight TabLineSel guifg=#CDE9F5 guibg=NONE ctermfg=189 ctermbg=NONE gui=bold cterm=bold
 highlight TabLineFill guibg=NONE ctermbg=NONE
 highlight Visual guibg=#5199C2 guifg=#141B2D ctermbg=67 ctermfg=234
@@ -132,7 +132,7 @@ highlight MatchParen guibg=#45799D guifg=#F8FCFD ctermbg=67 ctermfg=15 gui=bold 
 " 追加グループ
 highlight Directory guifg=#58CAF8 ctermfg=81
 highlight Title guifg=#88CBEA ctermfg=116 gui=bold cterm=bold
-highlight Folded guibg=#242F48 guifg=#4A4953 ctermbg=236 ctermfg=239
+highlight Folded guibg=#242F48 guifg=#949DB0 ctermbg=236 ctermfg=247
 highlight WildMenu guibg=#242F48 guifg=#F8FCFD ctermbg=236 ctermfg=15
 highlight Question guifg=#58CAF8 ctermfg=81
 highlight MoreMsg guifg=#58CAF8 ctermfg=81

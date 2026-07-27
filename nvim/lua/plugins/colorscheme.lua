@@ -59,8 +59,8 @@ return {
         BlinkCmpDocBorder = { bg = colors.dark_shadow, fg = colors.cyan },
         BlinkCmpLabel = { bg = colors.dark_shadow, fg = colors.fg },
         BlinkCmpLabelMatch = { bg = colors.dark_shadow, fg = colors.cyan },
-        BlinkCmpKind = { bg = colors.dark_shadow, fg = colors.mid_gray },
-        BlinkCmpSource = { bg = colors.dark_shadow, fg = colors.mid_gray },
+        BlinkCmpKind = { bg = colors.dark_shadow, fg = colors.subdued_fg },
+        BlinkCmpSource = { bg = colors.dark_shadow, fg = colors.subdued_fg },
 
         -- Snacks.nvim Picker/Explorer の透明化
         SnacksPickerNormal = { bg = "none" },
@@ -150,7 +150,7 @@ return {
         ["@module"] = { fg = colors.fg },
         ["@tag"] = { fg = colors.cyan },
         ["@tag.attribute"] = { fg = colors.bright_cyan },
-        ["@tag.delimiter"] = { fg = colors.mid_gray },
+        ["@tag.delimiter"] = { fg = colors.subdued_fg },
 
         -- Treesitter Markup（Markdown用）
         ["@markup.heading"] = { fg = colors.highlight_white, bold = true },
@@ -159,7 +159,7 @@ return {
         ["@markup.heading.3"] = { fg = colors.fg, bold = true },
         ["@markup.heading.4"] = { fg = colors.operator, bold = true },
         ["@markup.heading.5"] = { fg = colors.light_gray, bold = true },
-        ["@markup.heading.6"] = { fg = colors.mid_gray, bold = true },
+        ["@markup.heading.6"] = { fg = colors.subdued_fg, bold = true },
         -- Markdown 見出し背景: teal グラデーション（treesitter + render-markdown.nvim 共有）
         ["@markup.heading.1.markdown"] = { bg = colors.bright_cyan,    fg = colors.bg, bold = true },
         ["@markup.heading.2.markdown"] = { bg = colors.cyan,           fg = colors.bg, bold = true },
@@ -208,7 +208,7 @@ return {
         ["@markup.list.unchecked"] = { fg = colors.light_gray },
         ["@markup.link"] = { fg = colors.cyan, underline = true },
         ["@markup.link.label"] = { fg = colors.cyan },
-        ["@markup.link.url"] = { fg = colors.mid_gray, underline = true },
+        ["@markup.link.url"] = { fg = colors.subdued_fg, underline = true },
         ["@markup.raw"] = { fg = colors.fg },
         ["@markup.raw.markdown_inline"] = { bg = colors.dark_shadow, fg = colors.fg },
         ["@markup.raw.block"] = { fg = colors.fg },
@@ -227,7 +227,7 @@ return {
         -- TreesitterContext (スティッキースクロール) ハイライトグループ
         TreesitterContext = { bg = colors.dark_shadow, fg = colors.fg },
         TreesitterContextBottom = { underline = true, sp = colors.dark_shadow },
-        TreesitterContextLineNumber = { bg = colors.dark_shadow, fg = colors.mid_gray },
+        TreesitterContextLineNumber = { bg = colors.dark_shadow, fg = colors.subdued_fg },
 
         -- 診断関連（bufferline、LSP診断などが参照）
         DiagnosticError = { fg = colors.magenta },
@@ -280,11 +280,11 @@ return {
         LspReferenceRead = { bg = colors.dark_shadow },
         LspReferenceWrite = { bg = colors.dark_shadow, bold = true },
         LspSignatureActiveParameter = { fg = colors.cyan, bold = true },
-        LspCodeLens = { fg = colors.mid_gray },
-        LspInlayHint = { fg = colors.mid_gray, italic = true },
+        LspCodeLens = { fg = colors.subdued_fg },
+        LspInlayHint = { fg = colors.subdued_fg, italic = true },
 
         -- Folding関連
-        Folded = { bg = colors.dark_shadow, fg = colors.mid_gray },
+        Folded = { bg = colors.dark_shadow, fg = colors.subdued_fg },
         FoldColumn = { bg = "none", fg = colors.border },
 
         -- Flash.nvim
@@ -302,7 +302,7 @@ return {
         WhichKeySeparator = { fg = colors.border },
         WhichKeyFloat = { bg = "none" },
         WhichKeyBorder = { fg = colors.border },
-        WhichKeyValue = { fg = colors.mid_gray },
+        WhichKeyValue = { fg = colors.subdued_fg },
 
         -- Noice.nvim
         NoiceCmdline = { fg = colors.fg },
@@ -320,23 +320,23 @@ return {
         NoicePopupmenuBorder = { fg = colors.cyan },
         NoicePopupmenuMatch = { fg = colors.cyan, bold = true },
         NoicePopupmenuSelected = { bg = colors.dark_shadow },
-        NoiceVirtualText = { fg = colors.mid_gray },
+        NoiceVirtualText = { fg = colors.subdued_fg },
 
         -- Notify（noice.nvimが使用）
         NotifyERRORBorder = { fg = colors.magenta },
         NotifyWARNBorder = { fg = colors.bright_magenta },
         NotifyINFOBorder = { fg = colors.bright_cyan },
-        NotifyDEBUGBorder = { fg = colors.mid_gray },
+        NotifyDEBUGBorder = { fg = colors.subdued_fg },
         NotifyTRACEBorder = { fg = colors.border },
         NotifyERRORIcon = { fg = colors.magenta },
         NotifyWARNIcon = { fg = colors.bright_magenta },
         NotifyINFOIcon = { fg = colors.bright_cyan },
-        NotifyDEBUGIcon = { fg = colors.mid_gray },
+        NotifyDEBUGIcon = { fg = colors.subdued_fg },
         NotifyTRACEIcon = { fg = colors.border },
         NotifyERRORTitle = { fg = colors.magenta },
         NotifyWARNTitle = { fg = colors.bright_magenta },
         NotifyINFOTitle = { fg = colors.bright_cyan },
-        NotifyDEBUGTitle = { fg = colors.mid_gray },
+        NotifyDEBUGTitle = { fg = colors.subdued_fg },
         NotifyTRACETitle = { fg = colors.border },
         NotifyERRORBody = { fg = colors.fg },
         NotifyWARNBody = { fg = colors.fg },
@@ -347,9 +347,9 @@ return {
         -- Trouble.nvim
         TroubleNormal = { bg = "none" },
         TroubleText = { fg = colors.fg },
-        TroubleSource = { fg = colors.mid_gray },
-        TroubleCode = { fg = colors.mid_gray },
-        TroubleLocation = { fg = colors.mid_gray },
+        TroubleSource = { fg = colors.subdued_fg },
+        TroubleCode = { fg = colors.subdued_fg },
+        TroubleLocation = { fg = colors.subdued_fg },
         TroubleFile = { fg = colors.cyan },
         TroubleFoldIcon = { fg = colors.border },
         TroubleCount = { fg = colors.magenta, bold = true },
@@ -369,15 +369,15 @@ return {
         WildMenu = { bg = colors.dark_shadow, fg = colors.highlight_white },
         QuickFixLine = { bg = colors.dark_shadow },
         WinBar = { bg = "none", fg = colors.fg },
-        WinBarNC = { bg = "none", fg = colors.mid_gray },
+        WinBarNC = { bg = "none", fg = colors.subdued_fg },
 
         -- Lazy.nvim
-        LazyButton = { bg = "none", fg = colors.mid_gray },
+        LazyButton = { bg = "none", fg = colors.subdued_fg },
         LazyButtonActive = { bg = colors.selection, fg = colors.highlight_white, bold = true },
         LazyH1 = { fg = colors.highlight_white, bold = true },
         LazyH2 = { fg = colors.cyan, bold = true },
         LazySpecial = { fg = colors.cyan },
-        LazyCommit = { fg = colors.mid_gray },
+        LazyCommit = { fg = colors.subdued_fg },
         LazyCommitType = { fg = colors.cyan },
         LazyDimmed = { fg = colors.mid_gray },
         LazyProp = { fg = colors.light_gray },
@@ -429,7 +429,7 @@ return {
         -- ステータスライン・タブライン
         vim.api.nvim_set_hl(0, "StatusLine", { bg = "none" })
         vim.api.nvim_set_hl(0, "StatusLineNC", { bg = "none" })
-        vim.api.nvim_set_hl(0, "TabLine", { fg = colors.mid_gray, bg = "none" })
+        vim.api.nvim_set_hl(0, "TabLine", { fg = colors.subdued_fg, bg = "none" })
         vim.api.nvim_set_hl(0, "TabLineSel", { fg = colors.fg, bg = "none", bold = true })
         vim.api.nvim_set_hl(0, "TabLineFill", { bg = "none" })
 
@@ -474,15 +474,15 @@ return {
         vim.api.nvim_set_hl(0, "NeotestSkipped", { fg = colors.fg })
         vim.api.nvim_set_hl(0, "NeotestMarked", { fg = colors.cyan })
         vim.api.nvim_set_hl(0, "NeotestWinSelect", { fg = colors.cyan })
-        vim.api.nvim_set_hl(0, "NeotestAdapterName", { fg = colors.mid_gray })
+        vim.api.nvim_set_hl(0, "NeotestAdapterName", { fg = colors.subdued_fg })
         vim.api.nvim_set_hl(0, "NeotestBorder", { fg = colors.dark_shadow })
-        vim.api.nvim_set_hl(0, "NeotestDir", { fg = colors.mid_gray })
+        vim.api.nvim_set_hl(0, "NeotestDir", { fg = colors.subdued_fg })
         vim.api.nvim_set_hl(0, "NeotestFile", { fg = colors.fg })
         vim.api.nvim_set_hl(0, "NeotestNamespace", { fg = colors.cyan })
         vim.api.nvim_set_hl(0, "NeotestIndent", { fg = colors.dark_shadow })
-        vim.api.nvim_set_hl(0, "NeotestExpandMarker", { fg = colors.mid_gray })
+        vim.api.nvim_set_hl(0, "NeotestExpandMarker", { fg = colors.subdued_fg })
         vim.api.nvim_set_hl(0, "NeotestFocused", { fg = colors.cyan, bold = true })
-        vim.api.nvim_set_hl(0, "NeotestUnknown", { fg = colors.mid_gray })
+        vim.api.nvim_set_hl(0, "NeotestUnknown", { fg = colors.subdued_fg })
         vim.api.nvim_set_hl(0, "NeotestTarget", { fg = colors.cyan })
 
         -- Scrollbar関連のハイライトグループ

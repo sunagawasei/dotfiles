@@ -2,13 +2,13 @@
 local p = require("config.palette").colors
 
 local mode_colors = {
-  normal = p.mid_gray,        -- semantic.comment (subdued for idle state)
+  normal = p.subdued_fg,      -- foregrounds.subdued (mode badge background)
   insert = p.success,         -- semantic.success (green for creative action)
   visual = p.operator,        -- semantic.operator (teal bright for selection)
   replace = p.lavender,       -- semantic.warning (lavender for caution)
   command = p.purple_accent,  -- semantic.keyword (blue for commands)
   terminal = p.string,        -- semantic.string (teal mid for shell)
-  inactive = p.mid_gray,      -- semantic.comment (dim for background)
+  inactive = p.subdued_fg,    -- foregrounds.subdued (inactive foreground)
 }
 
 return {
@@ -20,32 +20,32 @@ return {
           normal = {
             a = { fg = p.darkest_bg, bg = mode_colors.normal, gui = "bold" },
             b = { fg = p.fg, bg = "NONE" },
-            c = { fg = p.mid_gray, bg = "NONE" },
+            c = { fg = p.subdued_fg, bg = "NONE" },
           },
           insert = {
             a = { fg = p.darkest_bg, bg = mode_colors.insert, gui = "bold" },
             b = { fg = p.fg, bg = "NONE" },
-            c = { fg = p.mid_gray, bg = "NONE" },
+            c = { fg = p.subdued_fg, bg = "NONE" },
           },
           visual = {
             a = { fg = p.darkest_bg, bg = mode_colors.visual, gui = "bold" },
             b = { fg = p.fg, bg = "NONE" },
-            c = { fg = p.mid_gray, bg = "NONE" },
+            c = { fg = p.subdued_fg, bg = "NONE" },
           },
           replace = {
             a = { fg = p.darkest_bg, bg = mode_colors.replace, gui = "bold" },
             b = { fg = p.fg, bg = "NONE" },
-            c = { fg = p.mid_gray, bg = "NONE" },
+            c = { fg = p.subdued_fg, bg = "NONE" },
           },
           command = {
             a = { fg = p.darkest_bg, bg = mode_colors.command, gui = "bold" },
             b = { fg = p.fg, bg = "NONE" },
-            c = { fg = p.mid_gray, bg = "NONE" },
+            c = { fg = p.subdued_fg, bg = "NONE" },
           },
           terminal = {
             a = { fg = p.darkest_bg, bg = mode_colors.terminal, gui = "bold" },
             b = { fg = p.fg, bg = "NONE" },
-            c = { fg = p.mid_gray, bg = "NONE" },
+            c = { fg = p.subdued_fg, bg = "NONE" },
           },
           inactive = {
             a = { fg = mode_colors.inactive, bg = "NONE" },
