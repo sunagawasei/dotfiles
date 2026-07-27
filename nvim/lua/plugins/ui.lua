@@ -12,28 +12,28 @@ return {
         end,
       })
 
-      -- 透明背景テーマ向けの bufferline ハイライト
+      -- bufferline の前景設定
       opts.highlights = {
         fill = { bg = "none" },
-        background = { bg = "none", fg = p.subdued_fg },
-        tab = { bg = "none", fg = p.subdued_fg },
+        background = { bg = "none", fg = p.light_gray },
+        tab = { bg = "none", fg = p.light_gray },
         tab_selected = { bg = "none", fg = p.highlight_white, bold = true },
         tab_separator = { bg = "none", fg = p.border },
         tab_separator_selected = { bg = "none", fg = p.cyan },
-        buffer_visible = { bg = "none", fg = p.light_gray },
+        buffer_visible = { bg = "none", fg = p.fg },
         buffer_selected = { bg = "none", fg = p.highlight_white, bold = true, italic = false },
         separator = { bg = "none", fg = p.border },
         separator_visible = { bg = "none", fg = p.border },
         separator_selected = { bg = "none", fg = p.border },
         indicator_selected = { bg = "none", fg = p.cyan },
-        modified = { bg = "none", fg = p.subdued_fg },
+        modified = { bg = "none", fg = p.light_gray },
         modified_visible = { bg = "none", fg = p.lavender },
         modified_selected = { bg = "none", fg = p.cyan },
-        close_button = { bg = "none", fg = p.subdued_fg },
-        close_button_visible = { bg = "none", fg = p.light_gray },
+        close_button = { bg = "none", fg = p.light_gray },
+        close_button_visible = { bg = "none", fg = p.fg },
         close_button_selected = { bg = "none", fg = p.magenta },
-        numbers = { bg = "none", fg = p.subdued_fg },
-        numbers_visible = { bg = "none", fg = p.subdued_fg },
+        numbers = { bg = "none", fg = p.light_gray },
+        numbers_visible = { bg = "none", fg = p.light_gray },
         numbers_selected = { bg = "none", fg = p.highlight_white, bold = true },
         error = { bg = "none", fg = p.magenta },
         error_visible = { bg = "none", fg = p.magenta },
@@ -51,8 +51,24 @@ return {
         pick_visible = { bg = "none", fg = p.magenta, bold = true },
         pick_selected = { bg = "none", fg = p.magenta, bold = true },
         offset_separator = { bg = "none", fg = p.border },
-        trunc_marker = { bg = "none", fg = p.subdued_fg },
+        trunc_marker = { bg = "none", fg = p.light_gray },
       }
+
+      -- 全グループを透過に揃える。デフォルトキーは実行時取得なので、
+      -- プラグイン更新でグループが増えても不透明な帯が混ざらない
+      local cfgmod = require("bufferline.config")
+      cfgmod.setup({})
+      cfgmod.apply(true)
+      local highlight_names = vim.tbl_keys(cfgmod.highlights)
+      if #highlight_names == 0 then
+        error("bufferline default highlight discovery returned no groups")
+      end
+
+      for _, name in ipairs(highlight_names) do
+        local highlight = opts.highlights[name] or {}
+        highlight.bg = "none"
+        opts.highlights[name] = highlight
+      end
     end,
   },
   {

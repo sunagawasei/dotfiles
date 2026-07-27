@@ -8,7 +8,7 @@ local mode_colors = {
   replace = p.lavender,       -- semantic.warning (lavender for caution)
   command = p.purple_accent,  -- semantic.keyword (blue for commands)
   terminal = p.string,        -- semantic.string (teal mid for shell)
-  inactive = p.subdued_fg,    -- foregrounds.subdued (inactive foreground)
+  inactive = p.light_gray,    -- foregrounds.dim (透過バー上で AA を満たす最も控えめな色)
 }
 
 return {
@@ -19,38 +19,38 @@ return {
         theme = {
           normal = {
             a = { fg = p.darkest_bg, bg = mode_colors.normal, gui = "bold" },
-            b = { fg = p.fg, bg = "NONE" },
-            c = { fg = p.subdued_fg, bg = "NONE" },
+            b = { fg = p.fg, bg = "none" },
+            c = { fg = p.light_gray, bg = "none" },
           },
           insert = {
             a = { fg = p.darkest_bg, bg = mode_colors.insert, gui = "bold" },
-            b = { fg = p.fg, bg = "NONE" },
-            c = { fg = p.subdued_fg, bg = "NONE" },
+            b = { fg = p.fg, bg = "none" },
+            c = { fg = p.light_gray, bg = "none" },
           },
           visual = {
             a = { fg = p.darkest_bg, bg = mode_colors.visual, gui = "bold" },
-            b = { fg = p.fg, bg = "NONE" },
-            c = { fg = p.subdued_fg, bg = "NONE" },
+            b = { fg = p.fg, bg = "none" },
+            c = { fg = p.light_gray, bg = "none" },
           },
           replace = {
             a = { fg = p.darkest_bg, bg = mode_colors.replace, gui = "bold" },
-            b = { fg = p.fg, bg = "NONE" },
-            c = { fg = p.subdued_fg, bg = "NONE" },
+            b = { fg = p.fg, bg = "none" },
+            c = { fg = p.light_gray, bg = "none" },
           },
           command = {
             a = { fg = p.darkest_bg, bg = mode_colors.command, gui = "bold" },
-            b = { fg = p.fg, bg = "NONE" },
-            c = { fg = p.subdued_fg, bg = "NONE" },
+            b = { fg = p.fg, bg = "none" },
+            c = { fg = p.light_gray, bg = "none" },
           },
           terminal = {
             a = { fg = p.darkest_bg, bg = mode_colors.terminal, gui = "bold" },
-            b = { fg = p.fg, bg = "NONE" },
-            c = { fg = p.subdued_fg, bg = "NONE" },
+            b = { fg = p.fg, bg = "none" },
+            c = { fg = p.light_gray, bg = "none" },
           },
           inactive = {
-            a = { fg = mode_colors.inactive, bg = "NONE" },
-            b = { fg = mode_colors.inactive, bg = "NONE" },
-            c = { fg = mode_colors.inactive, bg = "NONE" },
+            a = { fg = mode_colors.inactive, bg = "none" },
+            b = { fg = mode_colors.inactive, bg = "none" },
+            c = { fg = mode_colors.inactive, bg = "none" },
           },
         },
         component_separators = { left = "", right = "" },

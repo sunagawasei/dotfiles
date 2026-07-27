@@ -539,7 +539,7 @@ const claudeThemeTemplate = `{
     "userMessageBackgroundHover": "{{core.active_line}}",
     "bashMessageBackgroundColor": "{{purples.dark_rose}}",
     "memoryBackgroundColor": "{{nvim.diff_change_bg}}",
-    "selectionBg": "{{core.active_line}}",
+    "selectionBg": "{{blues_slates.slate_dark}}",
     "rate_limit_fill": "{{teals.bright}}",
     "rate_limit_empty": "{{core.ui_shadow}}",
     "briefLabelYou": "{{foregrounds.dim}}",
