@@ -166,7 +166,7 @@ func evaluateProfile(
 	if profile != ProfileTruecolor && result.Class == ClassEnforced {
 		result.Class = ClassReportOnly
 	}
-	ratio, err := colorutil.StrictContrastRatio(result.ForegroundColor, result.BackgroundColor)
+	ratio, err := colorutil.ContrastRatio(result.ForegroundColor, result.BackgroundColor)
 	if err != nil {
 		return result, fmt.Errorf("%s contrast: %w", pair.ConsumerID, err)
 	}

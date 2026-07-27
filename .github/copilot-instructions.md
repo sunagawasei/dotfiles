@@ -39,7 +39,6 @@
 3. バリデーションを実行:
    ```bash
    cd scripts
-   go run ./cmd/validate-colors
    go run ./cmd/generate-color-inventory
    go run ./cmd/generate-color-inventory --check
    go run ./cmd/verify-colors
@@ -153,7 +152,6 @@ AIアシスタント向けの重要な変更があれば、該当ファイルを
 ### カラーシステム
 - **定義ファイル**: `colors/ghost-visor.toml` (32色拡張パレット)
 - **統合バリデーター**: `scripts/cmd/verify-colors/main.go`
-- **旧HEXバリデーター（B3まで併存）**: `scripts/cmd/validate-colors/main.go`
 
 ### ドキュメント
 - **AI指示**: `AGENTS.md`, `CLAUDE.md`, `GEMINI.md`, `nvim/CLAUDE.md`
@@ -176,7 +174,6 @@ AIアシスタント向けの重要な変更があれば、該当ファイルを
 
 ```bash
 cd scripts
-go run ./cmd/validate-colors
 go run ./cmd/generate-color-inventory
 go run ./cmd/generate-color-inventory --check
 go run ./cmd/verify-colors

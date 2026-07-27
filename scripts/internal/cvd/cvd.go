@@ -40,7 +40,7 @@ var Types = []Type{
 
 // Apply simulates one Machado CVD matrix and returns CIELAB coordinates.
 func Apply(hex string, matrix [3][3]float64) ([3]float64, error) {
-	r, g, b, err := colorutil.StrictRGB01(hex)
+	r, g, b, err := colorutil.ParseHexRGB01(hex)
 	if err != nil {
 		return [3]float64{}, err
 	}

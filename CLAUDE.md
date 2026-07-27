@@ -22,7 +22,6 @@ macOS上の開発ツール設定を管理する個人用dotfilesリポジトリ�
 
 ```bash
 # カラーバリデーション（カラー関連ファイル変更後は必須）
-cd scripts && go run ./cmd/validate-colors
 cd scripts && go run ./cmd/generate-color-inventory
 cd scripts && go run ./cmd/generate-color-inventory --check
 cd scripts && go run ./cmd/verify-colors
