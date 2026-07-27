@@ -373,7 +373,7 @@ return {
 
         -- Lazy.nvim
         LazyButton = { bg = "none", fg = colors.subdued_fg },
-        LazyButtonActive = { bg = colors.selection, fg = colors.highlight_white, bold = true },
+        LazyButtonActive = { bg = colors.selection, fg = colors.darkest_bg, bold = true },
         LazyH1 = { fg = colors.highlight_white, bold = true },
         LazyH2 = { fg = colors.cyan, bold = true },
         LazySpecial = { fg = colors.cyan },

@@ -252,7 +252,7 @@ config.colors = {
 
 	-- クイックセレクト色設定
 	quick_select_label_bg = { Color = colors.ansi.red },
-	quick_select_label_fg = { Color = colors.ansi.bright_white },
+	quick_select_label_fg = { Color = colors.core.darkest_bg },
 	quick_select_match_bg = { Color = colors.teals.bright },
 	quick_select_match_fg = { Color = colors.core.background },
 
