@@ -497,18 +497,23 @@ M.colors = {
   ocean_blue = "{{blues_slates.ocean_blue}}",    -- Ocean Blue [blues_slates.ocean_blue]
   lavender = "{{purples.lavender}}",      -- Lavender (Constant) [purples.lavender]
 
-  -- ANSI/Terminal (normal)
-  ansi_red = "{{ansi.red}}",
-  ansi_green = "{{ansi.green}}",
-  ansi_yellow = "{{ansi.yellow}}",
-  ansi_blue = "{{ansi.blue}}",
-  ansi_magenta = "{{ansi.magenta}}",    -- ansi.magenta専用キー（` + "`magenta`" + `はerrorアクセントとしてUIハイライトに共有されているため分離）
-
-  -- ANSI Bright [ansi section] — Step 1: 未定義 terminal_color の修正
-  bright_red = "{{ansi.bright_red}}",      -- ansi.bright_red (Dusty Rose)
-  bright_green = "{{ansi.bright_green}}",    -- ansi.bright_green (Clear Teal)
-  bright_yellow = "{{ansi.bright_yellow}}",   -- ansi.bright_yellow (Bright Text)
-  bright_blue = "{{ansi.bright_blue}}",     -- ansi.bright_blue (Sky Slate)
+  -- ANSI/Terminal
+  ansi_black = "{{ansi.black}}", -- ANSI Black [ansi.black]
+  ansi_red = "{{ansi.red}}", -- ANSI Red [ansi.red]
+  ansi_green = "{{ansi.green}}", -- ANSI Green [ansi.green]
+  ansi_yellow = "{{ansi.yellow}}", -- ANSI Yellow [ansi.yellow]
+  ansi_blue = "{{ansi.blue}}", -- ANSI Blue [ansi.blue]
+  ansi_magenta = "{{ansi.magenta}}", -- ANSI Magenta [ansi.magenta]
+  ansi_cyan = "{{ansi.cyan}}", -- ANSI Cyan [ansi.cyan]
+  ansi_white = "{{ansi.white}}", -- ANSI White [ansi.white]
+  ansi_bright_black = "{{ansi.bright_black}}", -- ANSI Bright Black [ansi.bright_black]
+  ansi_bright_red = "{{ansi.bright_red}}", -- ANSI Bright Red [ansi.bright_red]
+  ansi_bright_green = "{{ansi.bright_green}}", -- ANSI Bright Green [ansi.bright_green]
+  ansi_bright_yellow = "{{ansi.bright_yellow}}", -- ANSI Bright Yellow [ansi.bright_yellow]
+  ansi_bright_blue = "{{ansi.bright_blue}}", -- ANSI Bright Blue [ansi.bright_blue]
+  ansi_bright_magenta = "{{ansi.bright_magenta}}", -- ANSI Bright Magenta [ansi.bright_magenta]
+  ansi_bright_cyan = "{{ansi.bright_cyan}}", -- ANSI Bright Cyan [ansi.bright_cyan]
+  ansi_bright_white = "{{ansi.bright_white}}", -- ANSI Bright White [ansi.bright_white]
 
   -- その他
   white = "{{blues_slates.sky_slate}}",        -- Sky Slate (Icon) [blues_slates.sky_slate]

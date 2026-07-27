@@ -399,22 +399,22 @@ return {
       end
 
       -- ターミナルカラー設定（統一ANSI 16色）
-      vim.g.terminal_color_0 = colors.bg              -- Black: 背景
-      vim.g.terminal_color_1 = colors.ansi_red        -- Red → gray
-      vim.g.terminal_color_2 = colors.ansi_green      -- Green → gray
-      vim.g.terminal_color_3 = colors.ansi_yellow     -- Yellow → gray
-      vim.g.terminal_color_4 = colors.ansi_blue       -- Blue → gray
-      vim.g.terminal_color_5 = colors.ansi_magenta    -- Magenta: ANSI専用色（colors.magentaはerrorアクセント共有のため分離）
-      vim.g.terminal_color_6 = colors.cyan            -- Cyan: ネオン青緑（アクセント）
-      vim.g.terminal_color_7 = colors.fg              -- White: 前景
-      vim.g.terminal_color_8 = colors.dark_shadow     -- Bright Black: 濃い影
-      vim.g.terminal_color_9 = colors.bright_red      -- Bright Red → near white
-      vim.g.terminal_color_10 = colors.bright_green   -- Bright Green → light gray
-      vim.g.terminal_color_11 = colors.bright_yellow  -- Bright Yellow → white
-      vim.g.terminal_color_12 = colors.bright_blue    -- Bright Blue → light gray
-      vim.g.terminal_color_13 = colors.bright_magenta -- Bright Magenta
-      vim.g.terminal_color_14 = colors.bright_cyan    -- Bright Cyan
-      vim.g.terminal_color_15 = colors.highlight_white -- Bright White: ハイライト白
+      vim.g.terminal_color_0 = colors.ansi_black             -- ANSI Black (ansi.black)
+      vim.g.terminal_color_1 = colors.ansi_red               -- ANSI Red (ansi.red)
+      vim.g.terminal_color_2 = colors.ansi_green             -- ANSI Green (ansi.green)
+      vim.g.terminal_color_3 = colors.ansi_yellow            -- ANSI Yellow (ansi.yellow)
+      vim.g.terminal_color_4 = colors.ansi_blue              -- ANSI Blue (ansi.blue)
+      vim.g.terminal_color_5 = colors.ansi_magenta           -- ANSI Magenta (ansi.magenta)
+      vim.g.terminal_color_6 = colors.ansi_cyan              -- ANSI Cyan (ansi.cyan)
+      vim.g.terminal_color_7 = colors.ansi_white             -- ANSI White (ansi.white)
+      vim.g.terminal_color_8 = colors.ansi_bright_black      -- ANSI Bright Black (ansi.bright_black)
+      vim.g.terminal_color_9 = colors.ansi_bright_red        -- ANSI Bright Red (ansi.bright_red)
+      vim.g.terminal_color_10 = colors.ansi_bright_green     -- ANSI Bright Green (ansi.bright_green)
+      vim.g.terminal_color_11 = colors.ansi_bright_yellow    -- ANSI Bright Yellow (ansi.bright_yellow)
+      vim.g.terminal_color_12 = colors.ansi_bright_blue      -- ANSI Bright Blue (ansi.bright_blue)
+      vim.g.terminal_color_13 = colors.ansi_bright_magenta   -- ANSI Bright Magenta (ansi.bright_magenta)
+      vim.g.terminal_color_14 = colors.ansi_bright_cyan      -- ANSI Bright Cyan (ansi.bright_cyan)
+      vim.g.terminal_color_15 = colors.ansi_bright_white     -- ANSI Bright White (ansi.bright_white)
 
       -- 包括的な透明化設定
       local function set_transparent_bg()

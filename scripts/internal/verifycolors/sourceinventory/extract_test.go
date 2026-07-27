@@ -1,6 +1,7 @@
 package sourceinventory
 
 import (
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -125,6 +126,57 @@ func TestSyntaxAndUIRoleSeparation(t *testing.T) {
 		true,
 		verifycolors.ClassReportOnly,
 	)
+}
+
+func TestNvimTerminalColorsUseANSIOnly(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := Extract(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pairs := pairMap(result.Pairs)
+
+	expected := []verifycolors.TokenRef{
+		"ansi.black",
+		"ansi.red",
+		"ansi.green",
+		"ansi.yellow",
+		"ansi.blue",
+		"ansi.magenta",
+		"ansi.cyan",
+		"ansi.white",
+		"ansi.bright_black",
+		"ansi.bright_red",
+		"ansi.bright_green",
+		"ansi.bright_yellow",
+		"ansi.bright_blue",
+		"ansi.bright_magenta",
+		"ansi.bright_cyan",
+		"ansi.bright_white",
+	}
+	count := 0
+	for _, pair := range result.Pairs {
+		if strings.HasPrefix(pair.ConsumerID, "nvim.terminal.color") {
+			count++
+		}
+	}
+	if count != len(expected) {
+		t.Fatalf("Neovim terminal color pair count = %d, want %d", count, len(expected))
+	}
+	for index, token := range expected {
+		assertPair(
+			t,
+			pairs,
+			fmt.Sprintf("nvim.terminal.color%d", index),
+			token,
+			"",
+			true,
+			verifycolors.ClassReportOnly,
+		)
+	}
 }
 
 func TestKeybindsModeIndicatorUsesMutedPurple(t *testing.T) {

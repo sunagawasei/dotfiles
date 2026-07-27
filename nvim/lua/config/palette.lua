@@ -39,18 +39,23 @@ M.colors = {
   ocean_blue = "#375F98",    -- Ocean Blue [blues_slates.ocean_blue]
   lavender = "#D0D4F0",      -- Lavender (Constant) [purples.lavender]
 
-  -- ANSI/Terminal (normal)
-  ansi_red = "#C67F9E",
-  ansi_green = "#2FA5A0",
-  ansi_yellow = "#C2B08D",
-  ansi_blue = "#6393D7",
-  ansi_magenta = "#D96DC0",    -- ansi.magenta専用キー（`magenta`はerrorアクセントとしてUIハイライトに共有されているため分離）
-
-  -- ANSI Bright [ansi section] — Step 1: 未定義 terminal_color の修正
-  bright_red = "#D38AA6",      -- ansi.bright_red (Dusty Rose)
-  bright_green = "#52C4BC",    -- ansi.bright_green (Clear Teal)
-  bright_yellow = "#DFBE90",   -- ansi.bright_yellow (Bright Text)
-  bright_blue = "#A8B2D6",     -- ansi.bright_blue (Sky Slate)
+  -- ANSI/Terminal
+  ansi_black = "#141B2D", -- ANSI Black [ansi.black]
+  ansi_red = "#C67F9E", -- ANSI Red [ansi.red]
+  ansi_green = "#2FA5A0", -- ANSI Green [ansi.green]
+  ansi_yellow = "#C2B08D", -- ANSI Yellow [ansi.yellow]
+  ansi_blue = "#6393D7", -- ANSI Blue [ansi.blue]
+  ansi_magenta = "#D96DC0", -- ANSI Magenta [ansi.magenta]
+  ansi_cyan = "#58CAF8", -- ANSI Cyan [ansi.cyan]
+  ansi_white = "#CDE9F5", -- ANSI White [ansi.white]
+  ansi_bright_black = "#5E5A63", -- ANSI Bright Black [ansi.bright_black]
+  ansi_bright_red = "#D38AA6", -- ANSI Bright Red [ansi.bright_red]
+  ansi_bright_green = "#52C4BC", -- ANSI Bright Green [ansi.bright_green]
+  ansi_bright_yellow = "#DFBE90", -- ANSI Bright Yellow [ansi.bright_yellow]
+  ansi_bright_blue = "#A8B2D6", -- ANSI Bright Blue [ansi.bright_blue]
+  ansi_bright_magenta = "#EBC1F8", -- ANSI Bright Magenta [ansi.bright_magenta]
+  ansi_bright_cyan = "#9FDBF7", -- ANSI Bright Cyan [ansi.bright_cyan]
+  ansi_bright_white = "#F8FCFD", -- ANSI Bright White [ansi.bright_white]
 
   -- その他
   white = "#AFB8D9",        -- Sky Slate (Icon) [blues_slates.sky_slate]

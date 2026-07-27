@@ -12,6 +12,7 @@ func Extract(root string) (Result, error) {
 		run  func(string, *Result) error
 	}{
 		{"Neovim colorscheme", extractNvimColorscheme},
+		{"Neovim terminal colors", extractNvimTerminalColors},
 		{"Neovim bufferline", extractBufferline},
 		{"Neovim lualine", extractLualine},
 		{"Neovim scrollbar", extractScrollbar},
