@@ -56,7 +56,7 @@ git:
   branchLogCmd: "git log --graph --color=always --abbrev-commit --decorate --date=relative --pretty=medium -n 200 {{branchName}} --"
   pagers:
     - colorArg: always
-      pager: delta --dark --paging=never --side-by-side --commit-decoration-style=none --commit-style=raw --file-decoration-style=none --syntax-theme=Nord
+      pager: delta --dark --paging=never --side-by-side --commit-decoration-style=none --commit-style=raw --file-decoration-style=none
   mainBranches:
     - main
     - master

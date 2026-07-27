@@ -45,8 +45,9 @@ in
     options = {
       plus-style = "syntax ${colors.nvim.diff_add_bg}";
       minus-style = "syntax ${colors.nvim.diff_delete_bg}";
-      plus-emph-style = "syntax ${colors.nvim.diff_add_inline_bg}";
-      minus-emph-style = "syntax ${colors.nvim.diff_delete_inline_bg}";
+      plus-emph-style = "${colors.ansi.bright_white} ${colors.nvim.diff_add_inline_bg}";
+      minus-emph-style = "${colors.ansi.bright_white} ${colors.nvim.diff_delete_inline_bg}";
+      syntax-theme = "ghost-visor";
       line-numbers-plus-style = "${colors.semantic.success}";
       line-numbers-minus-style = "${colors.semantic.error}";
       line-numbers-zero-style = "${colors.foregrounds.subdued}";

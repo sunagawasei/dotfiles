@@ -22,6 +22,7 @@ func Extract(root string) (Result, error) {
 		{"gh-dash theme", extractGhDashTheme},
 		{"delta styles", extractDeltaStyles},
 		{"herdr theme", extractHerdrTheme},
+		{"bat theme", extractBatTheme},
 		{"WezTerm UI", extractWezTerm},
 		{"statusline", extractStatusline},
 	}

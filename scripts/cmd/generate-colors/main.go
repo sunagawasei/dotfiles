@@ -218,6 +218,7 @@ func generateOutputs(root, sourceName string, palette *colorPalette) ([]outputFi
 		{filepath.Join(root, "wezterm/colors.lua"), weztermLuaTemplate},
 		{filepath.Join(root, "home-manager/colors.nix"), nixColorsTemplate},
 		{filepath.Join(root, "claude/themes/ghost-visor.json"), claudeThemeTemplate},
+		{filepath.Join(root, "bat/themes/ghost-visor.tmTheme"), batThemeTemplate},
 	}
 
 	files := make([]outputFile, 0, len(templates))
@@ -353,6 +354,9 @@ func writePreservingMode(path string, content []byte) error {
 		mode = info.Mode().Perm()
 	} else if !os.IsNotExist(err) {
 		return fmt.Errorf("stat %s: %w", path, err)
+	}
+	if err := os.MkdirAll(filepath.Dir(path), 0o755); err != nil {
+		return fmt.Errorf("create parent directory for %s: %w", path, err)
 	}
 	if err := os.WriteFile(path, content, mode); err != nil {
 		return fmt.Errorf("write %s: %w", path, err)
@@ -835,6 +839,450 @@ blue = "{{ansi.blue}}"
 teal = "{{ansi.cyan}}"
 peach = "{{semantic.warning}}" # herdr 0.7.4では未使用
 # END GENERATED COLORS
+`
+
+const batThemeTemplate = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>name</key>
+  <string>ghost-visor</string>
+  <key>settings</key>
+  <array>
+    <dict>
+      <key>settings</key>
+      <dict>
+        <key>background</key>
+        <string>{{core.background}}</string>
+        <key>foreground</key>
+        <string>{{foregrounds.main}}</string>
+        <key>lineHighlight</key>
+        <string>{{core.active_line}}</string>
+        <key>gutterForeground</key>
+        <string>{{foregrounds.dim}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Comment</string>
+      <key>scope</key>
+      <string>comment</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.comment}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>String</string>
+      <key>scope</key>
+      <string>string</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.string}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Numeric Constant</string>
+      <key>scope</key>
+      <string>constant.numeric</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.number}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Language Constant</string>
+      <key>scope</key>
+      <string>constant.language</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.constant}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Character Escape</string>
+      <key>scope</key>
+      <string>constant.character.escape</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{foregrounds.bright}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Keyword</string>
+      <key>scope</key>
+      <string>keyword</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.keyword}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Operator</string>
+      <key>scope</key>
+      <string>keyword.operator</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.operator}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Import Keyword</string>
+      <key>scope</key>
+      <string>keyword.control.import</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{teals.bright}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Storage Type</string>
+      <key>scope</key>
+      <string>storage.type</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.type}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Storage Modifier</string>
+      <key>scope</key>
+      <string>storage.modifier</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.keyword}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Function Declaration</string>
+      <key>scope</key>
+      <string>entity.name.function</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.function}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Function Call</string>
+      <key>scope</key>
+      <string>variable.function</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.function}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Support Function</string>
+      <key>scope</key>
+      <string>support.function</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.function}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Class Name</string>
+      <key>scope</key>
+      <string>entity.name.class</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.type}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Type Name</string>
+      <key>scope</key>
+      <string>entity.name.type</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.type}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Support Type</string>
+      <key>scope</key>
+      <string>support.type</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.type}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Tag Name</string>
+      <key>scope</key>
+      <string>entity.name.tag</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{teals.bright}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Attribute Name</string>
+      <key>scope</key>
+      <string>entity.other.attribute-name</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{foregrounds.heading}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Parameter</string>
+      <key>scope</key>
+      <string>variable.parameter</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.variable}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Language Variable</string>
+      <key>scope</key>
+      <string>variable.language</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{foregrounds.heading}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Separator Punctuation</string>
+      <key>scope</key>
+      <string>punctuation.separator</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.punctuation}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Terminator Punctuation</string>
+      <key>scope</key>
+      <string>punctuation.terminator</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.punctuation}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Section Punctuation</string>
+      <key>scope</key>
+      <string>punctuation.section</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.punctuation}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Definition Punctuation</string>
+      <key>scope</key>
+      <string>punctuation.definition</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.punctuation}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Accessor Punctuation</string>
+      <key>scope</key>
+      <string>punctuation.accessor</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.punctuation}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Invalid</string>
+      <key>scope</key>
+      <string>invalid.illegal</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.error}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>YAML Key</string>
+      <key>scope</key>
+      <string>entity.name.tag.yaml</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{teals.bright}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>YAML Boolean</string>
+      <key>scope</key>
+      <string>constant.language.boolean.yaml</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.keyword}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>YAML Null</string>
+      <key>scope</key>
+      <string>constant.language.null.yaml</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.keyword}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>YAML Number</string>
+      <key>scope</key>
+      <string>source.yaml constant.numeric</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{purples.lavender}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>YAML List Marker</string>
+      <key>scope</key>
+      <string>punctuation.definition.block.sequence.item.yaml</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.punctuation}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Markdown Heading</string>
+      <key>scope</key>
+      <string>markup.heading</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{foregrounds.heading}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Markdown Bold</string>
+      <key>scope</key>
+      <string>markup.bold</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{ansi.bright_white}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Markdown Italic</string>
+      <key>scope</key>
+      <string>markup.italic</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{foregrounds.bright}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Markdown Raw</string>
+      <key>scope</key>
+      <string>markup.raw</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.string}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Markdown Quote</string>
+      <key>scope</key>
+      <string>markup.quote</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{foregrounds.dim}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Markdown List</string>
+      <key>scope</key>
+      <string>markup.list</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{semantic.punctuation}}</string>
+      </dict>
+    </dict>
+    <dict>
+      <key>name</key>
+      <string>Markdown Link</string>
+      <key>scope</key>
+      <string>markup.underline.link</string>
+      <key>settings</key>
+      <dict>
+        <key>foreground</key>
+        <string>{{teals.bright}}</string>
+      </dict>
+    </dict>
+  </array>
+</dict>
+</plist>
 `
 
 const vimTemplate = `" BEGIN GENERATED COLORS

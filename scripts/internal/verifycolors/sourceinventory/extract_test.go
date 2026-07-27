@@ -242,11 +242,9 @@ func TestDeltaStylesUseExpectedTokens(t *testing.T) {
 	}
 	pairs := pairMap(result.Pairs)
 
-	expected := map[string]verifycolors.TokenRef{
+	expectedAmbient := map[string]verifycolors.TokenRef{
 		"plus-style":                    "nvim.diff_add_bg",
 		"minus-style":                   "nvim.diff_delete_bg",
-		"plus-emph-style":               "nvim.diff_add_inline_bg",
-		"minus-emph-style":              "nvim.diff_delete_inline_bg",
 		"line-numbers-plus-style":       "semantic.success",
 		"line-numbers-minus-style":      "semantic.error",
 		"line-numbers-zero-style":       "foregrounds.subdued",
@@ -263,10 +261,10 @@ func TestDeltaStylesUseExpectedTokens(t *testing.T) {
 			count++
 		}
 	}
-	if count != len(expected) {
-		t.Fatalf("delta style pair count = %d, want %d", count, len(expected))
+	if count != len(expectedAmbient)+2 {
+		t.Fatalf("delta style pair count = %d, want %d", count, len(expectedAmbient)+2)
 	}
-	for option, token := range expected {
+	for option, token := range expectedAmbient {
 		assertPair(
 			t,
 			pairs,
@@ -276,6 +274,27 @@ func TestDeltaStylesUseExpectedTokens(t *testing.T) {
 			true,
 			verifycolors.ClassReportOnly,
 		)
+	}
+	assertPair(
+		t,
+		pairs,
+		"delta.style.plus-emph-style",
+		"ansi.bright_white",
+		"nvim.diff_add_inline_bg",
+		false,
+		verifycolors.ClassEnforced,
+	)
+	assertPair(
+		t,
+		pairs,
+		"delta.style.minus-emph-style",
+		"ansi.bright_white",
+		"nvim.diff_delete_inline_bg",
+		false,
+		verifycolors.ClassEnforced,
+	)
+	if _, ok := pairs["delta.style.syntax-theme"]; ok {
+		t.Error("delta.style.syntax-theme must not be represented as a color pair")
 	}
 	if _, ok := pairs["delta.style.hunk-header-file-style"]; ok {
 		t.Error("delta.style.hunk-header-file-style must remain unset")
@@ -287,6 +306,124 @@ func TestDeltaStylesUseExpectedTokens(t *testing.T) {
 	}
 	if strings.Contains(string(data), "hunk-header-file-style =") {
 		t.Error("programs.delta.options must not define hunk-header-file-style")
+	}
+	if !strings.Contains(string(data), `syntax-theme = "ghost-visor";`) {
+		t.Error(`programs.delta.options must define syntax-theme = "ghost-visor"`)
+	}
+	data, err = os.ReadFile(filepath.Join(root, "lazygit", "config.yml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if strings.Contains(string(data), "--syntax-theme") {
+		t.Error("lazygit delta pager must not override syntax-theme")
+	}
+}
+
+func TestBatThemeUsesExpectedTokensAndExplicitBackgrounds(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := Extract(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pairs := pairMap(result.Pairs)
+
+	expectedScopes := map[string]verifycolors.TokenRef{
+		"comment":                        "semantic.comment",
+		"string":                         "semantic.string",
+		"constant.numeric":               "semantic.number",
+		"constant.language":              "semantic.constant",
+		"constant.character.escape":      "foregrounds.bright",
+		"keyword":                        "semantic.keyword",
+		"keyword.operator":               "semantic.operator",
+		"keyword.control.import":         "teals.bright",
+		"storage.type":                   "semantic.type",
+		"storage.modifier":               "semantic.keyword",
+		"entity.name.function":           "semantic.function",
+		"variable.function":              "semantic.function",
+		"support.function":               "semantic.function",
+		"entity.name.class":              "semantic.type",
+		"entity.name.type":               "semantic.type",
+		"support.type":                   "semantic.type",
+		"entity.name.tag":                "teals.bright",
+		"entity.other.attribute-name":    "foregrounds.heading",
+		"variable.parameter":             "semantic.variable",
+		"variable.language":              "foregrounds.heading",
+		"punctuation.separator":          "semantic.punctuation",
+		"punctuation.terminator":         "semantic.punctuation",
+		"punctuation.section":            "semantic.punctuation",
+		"punctuation.definition":         "semantic.punctuation",
+		"punctuation.accessor":           "semantic.punctuation",
+		"invalid.illegal":                "semantic.error",
+		"entity.name.tag.yaml":           "teals.bright",
+		"constant.language.boolean.yaml": "semantic.keyword",
+		"constant.language.null.yaml":    "semantic.keyword",
+		"source.yaml constant.numeric":   "purples.lavender",
+		"punctuation.definition.block.sequence.item.yaml": "semantic.punctuation",
+		"markup.heading":        "foregrounds.heading",
+		"markup.bold":           "ansi.bright_white",
+		"markup.italic":         "foregrounds.bright",
+		"markup.raw":            "semantic.string",
+		"markup.quote":          "foregrounds.dim",
+		"markup.list":           "semantic.punctuation",
+		"markup.underline.link": "teals.bright",
+	}
+	if len(batGlobalTokens) != 4 {
+		t.Fatalf("bat global setting count = %d, want 4", len(batGlobalTokens))
+	}
+	if len(batScopeTokens) != len(expectedScopes) {
+		t.Fatalf("bat scope count = %d, want %d", len(batScopeTokens), len(expectedScopes))
+	}
+
+	count := 0
+	for _, pair := range result.Pairs {
+		if strings.HasPrefix(pair.ConsumerID, "bat.theme.") {
+			count++
+		}
+	}
+	if count != len(expectedScopes)+3 {
+		t.Fatalf("bat theme pair count = %d, want %d", count, len(expectedScopes)+3)
+	}
+
+	assertPair(
+		t,
+		pairs,
+		"bat.theme.foreground",
+		"foregrounds.main",
+		"core.background",
+		false,
+		verifycolors.ClassEnforced,
+	)
+	assertPair(
+		t,
+		pairs,
+		"bat.theme.gutterForeground",
+		"foregrounds.dim",
+		"core.background",
+		false,
+		verifycolors.ClassEnforced,
+	)
+	assertPair(
+		t,
+		pairs,
+		"bat.theme.gutterForeground.lineHighlight",
+		"foregrounds.dim",
+		"core.active_line",
+		false,
+		verifycolors.ClassEnforced,
+	)
+	for scope, token := range expectedScopes {
+		assertPair(
+			t,
+			pairs,
+			"bat.theme.scope."+strings.ReplaceAll(scope, " ", "_"),
+			token,
+			"core.background",
+			false,
+			verifycolors.ClassEnforced,
+		)
 	}
 }
 
