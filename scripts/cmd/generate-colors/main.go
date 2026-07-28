@@ -2129,17 +2129,73 @@ else
   C_PCT="\e[38;2;{{rgb:teals.mid_bright}}m"    # {{teals.mid_bright}} 安全（暗いtealは帯背景に沈む）
 fi
 
-# リミット残量の色
-if [ -n "$RATE_USED" ]; then
-  rate_used_int=${RATE_USED%.*}
-  rate_used_int=${rate_used_int:-0}
-  rate_remaining=$((100 - rate_used_int))
-  if [ "$rate_remaining" -lt 25 ]; then
-    C_RATE="\e[38;2;{{rgb:purples.bright_purple}}m"   # {{lower:purples.bright_purple}} 警告（purple）
-  elif [ "$rate_remaining" -lt 50 ]; then
-    C_RATE="\e[38;2;{{rgb:purples.lavender}}m"   # {{purples.lavender}} 注意（グレー）
+# 5時間リミット使用率とバー
+rate_used_int=""
+if [[ "$RATE_USED" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+  rate_used_int=$((10#${RATE_USED%%.*}))
+  [ "$rate_used_int" -gt 100 ] && rate_used_int=100
+
+  if [ "$rate_used_int" -gt 75 ]; then
+    C_RATE="\e[38;2;{{rgb:purples.bright_purple}}m"   # {{lower:purples.bright_purple}} critical
+  elif [ "$rate_used_int" -gt 50 ]; then
+    C_RATE="\e[38;2;{{rgb:purples.lavender}}m"   # {{purples.lavender}} warning
   else
-    C_RATE="\e[38;2;{{rgb:teals.mid_bright}}m"    # {{teals.mid_bright}} 安全（teal）
+    C_RATE="\e[38;2;{{rgb:teals.mid_bright}}m"    # {{teals.mid_bright}} safe
+  fi
+  C_RATETRACK="\e[38;2;{{rgb:core.panel_bg}}m"   # {{core.panel_bg}} track
+
+  build_meter "$rate_used_int" 8
+  rate_bar_filled=$METER_FILLED
+  rate_bar_track=$METER_TRACK
+
+  rate_remaining=""
+  rate_now=$(date +%s)
+  if [[ "$RATE_RESET" =~ ^[0-9]+$ ]] && [ "$RATE_RESET" -gt "$rate_now" ]; then
+    rate_remaining_seconds=$((RATE_RESET - rate_now))
+    if [ "$rate_remaining_seconds" -ge 86400 ]; then
+      rate_days=$((rate_remaining_seconds / 86400))
+      rate_hours=$(((rate_remaining_seconds % 86400) / 3600))
+      rate_remaining="${rate_days}d${rate_hours}h"
+    else
+      rate_hours=$((rate_remaining_seconds / 3600))
+      rate_minutes=$(((rate_remaining_seconds % 3600) / 60))
+      printf -v rate_remaining '%dh%02dm' "$rate_hours" "$rate_minutes"
+    fi
+  fi
+fi
+
+# 週次リミット使用率とバー
+week_used_int=""
+if [[ "$WEEK_USED" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+  week_used_int=$((10#${WEEK_USED%%.*}))
+  [ "$week_used_int" -gt 100 ] && week_used_int=100
+
+  if [ "$week_used_int" -gt 75 ]; then
+    C_WEEK="\e[38;2;{{rgb:purples.bright_purple}}m"   # {{lower:purples.bright_purple}} critical
+  elif [ "$week_used_int" -gt 50 ]; then
+    C_WEEK="\e[38;2;{{rgb:purples.lavender}}m"   # {{purples.lavender}} warning
+  else
+    C_WEEK="\e[38;2;{{rgb:teals.mid_bright}}m"    # {{teals.mid_bright}} safe
+  fi
+  C_WEEKTRACK="\e[38;2;{{rgb:core.panel_bg}}m"   # {{core.panel_bg}} track
+
+  build_meter "$week_used_int" 8
+  week_bar_filled=$METER_FILLED
+  week_bar_track=$METER_TRACK
+
+  week_remaining=""
+  week_now=$(date +%s)
+  if [[ "$WEEK_RESET" =~ ^[0-9]+$ ]] && [ "$WEEK_RESET" -gt "$week_now" ]; then
+    week_remaining_seconds=$((WEEK_RESET - week_now))
+    if [ "$week_remaining_seconds" -ge 86400 ]; then
+      week_days=$((week_remaining_seconds / 86400))
+      week_hours=$(((week_remaining_seconds % 86400) / 3600))
+      week_remaining="${week_days}d${week_hours}h"
+    else
+      week_hours=$((week_remaining_seconds / 3600))
+      week_minutes=$(((week_remaining_seconds % 3600) / 60))
+      printf -v week_remaining '%dh%02dm' "$week_hours" "$week_minutes"
+    fi
   fi
 fi
 
@@ -2147,20 +2203,24 @@ fi
 `
 
 const statuslineSegmentsTemplate = `# BEGIN GENERATED COLORS: SEGMENTS
-# --- 1段目: モデル / コンテキスト使用率 / レート制限残量 / codex・bgマーカー ---
+# --- 1段目: モデル / コンテキスト使用率 / ディレクトリ / Gitブランチ ---
 row1=()
 row1+=("{{core.darkest_bg}}|${C_MODEL}${MODEL}")
 row1+=("{{nvim.gutter_bg}}|${C_PCT}󰍛 ${pct}%")
-if [ -n "$RATE_USED" ]; then
-  row1+=("{{core.background}}|${C_RATE}󰔛 ${rate_remaining}%")
-fi
-[ "$CODEX_BUSY" = "1" ] && row1+=("{{core.darkest_bg}}|${C_BUSY}󰚩")
-[ "$BG_BUSY" = "1" ] && row1+=("{{core.darkest_bg}}|${C_BUSY}󰜎")
+row1+=("{{core.background}}|${C_DIR}${DIR_NAME}")
+[ -n "$GIT_BRANCH" ] && row1+=("{{core.darkest_bg}}|${C_GIT}${GIT_BRANCH}")
 
-# --- 2段目: ディレクトリ / Gitブランチ ---
+# --- 2段目: busyマーカー / 5時間リミット / 週次リミット ---
 row2=()
-row2+=("{{nvim.gutter_bg}}|${C_DIR}${DIR_NAME}")
-[ -n "$GIT_BRANCH" ] && row2+=("{{core.background}}|${C_GIT}${GIT_BRANCH}")
+# herdrが画面下の非空3行だけを走査するため、busyマーカーを下段先頭に置く
+[ "$CODEX_BUSY" = "1" ] && row2+=("{{core.darkest_bg}}|${C_BUSY}󰚩")
+[ "$BG_BUSY" = "1" ] && row2+=("{{nvim.gutter_bg}}|${C_BUSY}󰜎")
+if [ -n "$rate_used_int" ]; then
+  row2+=("{{core.background}}|${C_RATE}5h ${rate_bar_filled}${C_RATETRACK}${rate_bar_track}${C_RATE} ${rate_used_int}%${rate_remaining:+ ${rate_remaining}}")
+fi
+if [ -n "$week_used_int" ]; then
+  row2+=("{{core.darkest_bg}}|${C_WEEK}Week ${week_bar_filled}${C_WEEKTRACK}${week_bar_track}${C_WEEK} ${week_used_int}%${week_remaining:+ ${week_remaining}}")
+fi
 
 # END GENERATED COLORS: SEGMENTS
 `

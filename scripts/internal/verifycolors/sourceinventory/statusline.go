@@ -13,6 +13,7 @@ import (
 var (
 	statuslineColorPattern   = regexp.MustCompile(`^\s*(C_[A-Z]+)=.*\{\{rgb:([a-z_]+\.[a-z_]+)\}\}`)
 	statuslineSegmentPattern = regexp.MustCompile(`row[12]\+=\("\{\{([a-z_]+\.[a-z_]+)\}\}\|\$\{(C_[A-Z]+)\}`)
+	statuslineTrackPattern   = regexp.MustCompile(`row[12]\+=\("\{\{([a-z_]+\.[a-z_]+)\}\}\|.*\$\{(C_[A-Z]+TRACK)\}`)
 )
 
 type statuslineColor struct {
@@ -38,6 +39,7 @@ func extractStatusline(root string, result *Result) error {
 
 	colors := make(map[string][]statuslineColor)
 	var segments []statuslineSegment
+	var tracks []statuslineSegment
 	scanner := bufio.NewScanner(file)
 	lineNumber := 0
 	for scanner.Scan() {
@@ -54,6 +56,15 @@ func extractStatusline(root string, result *Result) error {
 			id := statuslineSegmentID(match[2], line)
 			segments = append(segments, statuslineSegment{
 				id:         id,
+				colorVar:   match[2],
+				background: verifycolors.TokenRef(match[1]),
+				source:     source,
+			})
+		}
+		if match := statuslineTrackPattern.FindStringSubmatch(line); match != nil {
+			baseColorVar := strings.TrimSuffix(match[2], "TRACK")
+			tracks = append(tracks, statuslineSegment{
+				id:         statuslineSegmentID(baseColorVar, line),
 				colorVar:   match[2],
 				background: verifycolors.TokenRef(match[1]),
 				source:     source,
@@ -89,6 +100,23 @@ func extractStatusline(root string, result *Result) error {
 			segment.source,
 		))
 	}
+	for _, track := range tracks {
+		trackColors := colors[track.colorVar]
+		if len(trackColors) == 0 {
+			return fmt.Errorf("%s: no foreground token found for %s", track.source, track.colorVar)
+		}
+		for _, color := range trackColors {
+			result.addPair(verifycolors.PairSpec{
+				ConsumerID: "statusline." + track.id + ".track",
+				Foreground: color.token,
+				Background: verifycolors.TokenBackground(track.background),
+				Class:      verifycolors.ClassReportOnly,
+				Profiles:   []verifycolors.RenderProfile{verifycolors.ProfileTruecolor},
+				Role:       verifycolors.RoleSurface,
+				Source:     track.source,
+			})
+		}
+	}
 	return nil
 }
 
@@ -100,6 +128,8 @@ func statuslineSegmentID(colorVar, line string) string {
 		return "context"
 	case "C_RATE":
 		return "rate"
+	case "C_WEEK":
+		return "week"
 	case "C_DIR":
 		return "directory"
 	case "C_GIT":

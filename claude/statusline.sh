@@ -7,6 +7,9 @@ MODEL="?"
 DIR=""
 USED_PCT=0
 RATE_USED=""
+RATE_RESET=""
+WEEK_USED=""
+WEEK_RESET=""
 SESSION_ID=""
 
 # jqで一括抽出
@@ -15,12 +18,11 @@ eval "$(printf '%s' "$input" | jq -r '
   @sh "DIR=\(.workspace.current_dir // "")",
   @sh "USED_PCT=\(.context_window.used_percentage // 0)",
   @sh "RATE_USED=\(.rate_limits.five_hour.used_percentage // "")",
+  @sh "RATE_RESET=\(.rate_limits.five_hour.resets_at // "")",
+  @sh "WEEK_USED=\(.rate_limits.seven_day.used_percentage // "")",
+  @sh "WEEK_RESET=\(.rate_limits.seven_day.resets_at // "")",
   @sh "SESSION_ID=\(.session_id // "")"
 ' 2>/dev/null)" 2>/dev/null
-
-# モデル名を短縮（例: "claude-sonnet-4-6" → "sonnet", "Claude Sonnet 4.6" → "sonnet"）
-MODEL_SHORT=$(echo "$MODEL" | sed -E 's/[Cc]laude[- ]+//g; s/[- ]*[0-9]+(\.[0-9]+)*//g; s/[- ]+$//; s/^ +//; s/ +$//' | tr '[:upper:]' '[:lower:]')
-[ -n "$MODEL_SHORT" ] && MODEL="$MODEL_SHORT"
 
 # ディレクトリ名
 DIR_NAME="${DIR##*/}"
@@ -236,6 +238,24 @@ hex2fg() {
   printf '\\e[38;2;%d;%d;%dm' $((16#${h:0:2})) $((16#${h:2:2})) $((16#${h:4:2}))
 }
 
+# 使用率を固定幅の塗り部分とtrack部分に量子化
+build_meter() {
+  local meter_pct=$1
+  local meter_width=$2
+  local meter_filled=$(((meter_pct * meter_width + 50) / 100))
+  local i
+
+  METER_FILLED=""
+  METER_TRACK=""
+  for ((i = 0; i < meter_width; i++)); do
+    if [ "$i" -lt "$meter_filled" ]; then
+      METER_FILLED+="━"
+    else
+      METER_TRACK+="━"
+    fi
+  done
+}
+
 # BEGIN GENERATED COLORS: ANSI
 # セクション本体テキスト用前景色
 C_MODEL="\e[38;2;205;233;245m"   # #CDE9F5 foregrounds.main
@@ -254,17 +274,73 @@ else
   C_PCT="\e[38;2;146;191;217m"    # #92BFD9 安全（暗いtealは帯背景に沈む）
 fi
 
-# リミット残量の色
-if [ -n "$RATE_USED" ]; then
-  rate_used_int=${RATE_USED%.*}
-  rate_used_int=${rate_used_int:-0}
-  rate_remaining=$((100 - rate_used_int))
-  if [ "$rate_remaining" -lt 25 ]; then
-    C_RATE="\e[38;2;205;172;236m"   # #cdacec 警告（purple）
-  elif [ "$rate_remaining" -lt 50 ]; then
-    C_RATE="\e[38;2;208;212;240m"   # #D0D4F0 注意（グレー）
+# 5時間リミット使用率とバー
+rate_used_int=""
+if [[ "$RATE_USED" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+  rate_used_int=$((10#${RATE_USED%%.*}))
+  [ "$rate_used_int" -gt 100 ] && rate_used_int=100
+
+  if [ "$rate_used_int" -gt 75 ]; then
+    C_RATE="\e[38;2;205;172;236m"   # #cdacec critical
+  elif [ "$rate_used_int" -gt 50 ]; then
+    C_RATE="\e[38;2;208;212;240m"   # #D0D4F0 warning
   else
-    C_RATE="\e[38;2;146;191;217m"    # #92BFD9 安全（teal）
+    C_RATE="\e[38;2;146;191;217m"    # #92BFD9 safe
+  fi
+  C_RATETRACK="\e[38;2;50;70;100m"   # #324664 track
+
+  build_meter "$rate_used_int" 8
+  rate_bar_filled=$METER_FILLED
+  rate_bar_track=$METER_TRACK
+
+  rate_remaining=""
+  rate_now=$(date +%s)
+  if [[ "$RATE_RESET" =~ ^[0-9]+$ ]] && [ "$RATE_RESET" -gt "$rate_now" ]; then
+    rate_remaining_seconds=$((RATE_RESET - rate_now))
+    if [ "$rate_remaining_seconds" -ge 86400 ]; then
+      rate_days=$((rate_remaining_seconds / 86400))
+      rate_hours=$(((rate_remaining_seconds % 86400) / 3600))
+      rate_remaining="${rate_days}d${rate_hours}h"
+    else
+      rate_hours=$((rate_remaining_seconds / 3600))
+      rate_minutes=$(((rate_remaining_seconds % 3600) / 60))
+      printf -v rate_remaining '%dh%02dm' "$rate_hours" "$rate_minutes"
+    fi
+  fi
+fi
+
+# 週次リミット使用率とバー
+week_used_int=""
+if [[ "$WEEK_USED" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
+  week_used_int=$((10#${WEEK_USED%%.*}))
+  [ "$week_used_int" -gt 100 ] && week_used_int=100
+
+  if [ "$week_used_int" -gt 75 ]; then
+    C_WEEK="\e[38;2;205;172;236m"   # #cdacec critical
+  elif [ "$week_used_int" -gt 50 ]; then
+    C_WEEK="\e[38;2;208;212;240m"   # #D0D4F0 warning
+  else
+    C_WEEK="\e[38;2;146;191;217m"    # #92BFD9 safe
+  fi
+  C_WEEKTRACK="\e[38;2;50;70;100m"   # #324664 track
+
+  build_meter "$week_used_int" 8
+  week_bar_filled=$METER_FILLED
+  week_bar_track=$METER_TRACK
+
+  week_remaining=""
+  week_now=$(date +%s)
+  if [[ "$WEEK_RESET" =~ ^[0-9]+$ ]] && [ "$WEEK_RESET" -gt "$week_now" ]; then
+    week_remaining_seconds=$((WEEK_RESET - week_now))
+    if [ "$week_remaining_seconds" -ge 86400 ]; then
+      week_days=$((week_remaining_seconds / 86400))
+      week_hours=$(((week_remaining_seconds % 86400) / 3600))
+      week_remaining="${week_days}d${week_hours}h"
+    else
+      week_hours=$((week_remaining_seconds / 3600))
+      week_minutes=$(((week_remaining_seconds % 3600) / 60))
+      printf -v week_remaining '%dh%02dm' "$week_hours" "$week_minutes"
+    fi
   fi
 fi
 
@@ -299,22 +375,28 @@ build_bar() {
 }
 
 # BEGIN GENERATED COLORS: SEGMENTS
-# --- 1段目: モデル / コンテキスト使用率 / レート制限残量 / codex・bgマーカー ---
+# --- 1段目: モデル / コンテキスト使用率 / ディレクトリ / Gitブランチ ---
 row1=()
 row1+=("#141B2D|${C_MODEL}${MODEL}")
 row1+=("#1A2235|${C_PCT}󰍛 ${pct}%")
-if [ -n "$RATE_USED" ]; then
-  row1+=("#202A42|${C_RATE}󰔛 ${rate_remaining}%")
-fi
-[ "$CODEX_BUSY" = "1" ] && row1+=("#141B2D|${C_BUSY}󰚩")
-[ "$BG_BUSY" = "1" ] && row1+=("#141B2D|${C_BUSY}󰜎")
+row1+=("#202A42|${C_DIR}${DIR_NAME}")
+[ -n "$GIT_BRANCH" ] && row1+=("#141B2D|${C_GIT}${GIT_BRANCH}")
 
-# --- 2段目: ディレクトリ / Gitブランチ ---
+# --- 2段目: busyマーカー / 5時間リミット / 週次リミット ---
 row2=()
-row2+=("#1A2235|${C_DIR}${DIR_NAME}")
-[ -n "$GIT_BRANCH" ] && row2+=("#202A42|${C_GIT}${GIT_BRANCH}")
+# herdrが画面下の非空3行だけを走査するため、busyマーカーを下段先頭に置く
+[ "$CODEX_BUSY" = "1" ] && row2+=("#141B2D|${C_BUSY}󰚩")
+[ "$BG_BUSY" = "1" ] && row2+=("#1A2235|${C_BUSY}󰜎")
+if [ -n "$rate_used_int" ]; then
+  row2+=("#202A42|${C_RATE}5h ${rate_bar_filled}${C_RATETRACK}${rate_bar_track}${C_RATE} ${rate_used_int}%${rate_remaining:+ ${rate_remaining}}")
+fi
+if [ -n "$week_used_int" ]; then
+  row2+=("#141B2D|${C_WEEK}Week ${week_bar_filled}${C_WEEKTRACK}${week_bar_track}${C_WEEK} ${week_used_int}%${week_remaining:+ ${week_remaining}}")
+fi
 
 # END GENERATED COLORS: SEGMENTS
 build_bar row1
-printf '\n'
-build_bar row2
+if ((${#row2[@]} > 0)); then
+  printf '\n'
+  build_bar row2
+fi
