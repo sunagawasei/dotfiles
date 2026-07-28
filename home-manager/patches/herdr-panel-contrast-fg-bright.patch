@@ -1,3 +1,16 @@
+diff --git a/src/ui.rs b/src/ui.rs
+index 6d5c02f..af72335 100644
+--- a/src/ui.rs
++++ b/src/ui.rs
+@@ -1092,7 +1092,7 @@ mod tests {
+         let custom_style = buffer[(custom_rect.x + 1, custom_rect.y)].style();
+ 
+         assert_eq!(custom_style.bg, Some(app.palette.accent));
+-        assert_eq!(custom_style.fg, Some(app.palette.surface_dim));
++        assert_eq!(custom_style.fg, Some(app.palette.overlay1));
+         assert!(custom_style.add_modifier.contains(Modifier::BOLD));
+     }
+ 
 diff --git a/src/ui/menus.rs b/src/ui/menus.rs
 index 763c0ea..c60bdfc 100644
 --- a/src/ui/menus.rs

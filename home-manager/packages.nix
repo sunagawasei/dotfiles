@@ -16,6 +16,8 @@ let
   # 同一覧の2行目のdirラベルは0.7.4のrows設定+$dirメタデータで表示
   # （herdr/config.tomlのrows設定とherdr-task-label hookの分業。パッチ不使用）。
   # sidebarトークンの区切りを" · "から" › "へ変更（spaces/agents両パネル共通）。
+  # combined-frame-digestは個別機能ではなく、上記UIパッチ全部の合成描画を固定する
+  # integration fixture。必ず最後に適用し、UIパッチを変えたらdigestを再生成する。
   herdrPatched = herdr.overrideAttrs (old: {
     patches = (old.patches or [ ]) ++ [
       ./patches/herdr-active-pane-border-white.patch
@@ -24,6 +26,7 @@ let
       ./patches/herdr-panel-contrast-fg-bright.patch
       ./patches/herdr-expanded-sidebar-space-numbers.patch
       ./patches/herdr-sidebar-token-separator.patch
+      ./patches/herdr-combined-frame-digest.patch
     ];
   });
 

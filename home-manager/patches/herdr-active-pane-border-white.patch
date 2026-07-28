@@ -1,8 +1,8 @@
 diff --git a/src/ui/panes.rs b/src/ui/panes.rs
-index e62936c..d1a48ce 100644
+index 981f324..bb25548 100644
 --- a/src/ui/panes.rs
 +++ b/src/ui/panes.rs
-@@ -394,9 +394,9 @@ fn render_pane_borders(app: &AppState, ws: &crate::workspace::Workspace, frame:
+@@ -473,9 +473,9 @@ fn render_pane_borders(
          let cell = &mut buf[(x, y)];
          cell.set_symbol(symbol);
          let color = if focused {
@@ -14,7 +14,7 @@ index e62936c..d1a48ce 100644
          };
          cell.set_style(Style::default().fg(color));
      }
-@@ -555,9 +555,9 @@ fn render_pane_border_titles(app: &AppState, ws: &crate::workspace::Workspace, f
+@@ -640,9 +640,9 @@ fn render_pane_border_titles(
              continue;
          }
          let color = if info.is_focused {
@@ -26,3 +26,26 @@ index e62936c..d1a48ce 100644
          };
          let mut style = Style::default().fg(color);
          if info.is_focused {
+@@ -1200,9 +1200,9 @@ mod tests {
+ 
+         let buffer = terminal.backend().buffer();
+         assert_eq!(buffer[(2, 2)].symbol(), "┼");
+-        assert_eq!(buffer[(2, 2)].style().fg, Some(app.palette.accent));
++        assert_eq!(buffer[(2, 2)].style().fg, Some(app.palette.overlay0));
+         assert_eq!(buffer[(2, 1)].symbol(), "│");
+-        assert_eq!(buffer[(2, 1)].style().fg, Some(app.palette.accent));
++        assert_eq!(buffer[(2, 1)].style().fg, Some(app.palette.overlay0));
+     }
+ 
+     #[test]
+@@ -1238,8 +1238,8 @@ mod tests {
+             .unwrap();
+ 
+         let buffer = terminal.backend().buffer();
+-        assert_eq!(buffer[(1, 1)].style().fg, Some(app.palette.accent));
+-        assert_eq!(buffer[(2, 1)].style().fg, Some(app.palette.overlay0));
++        assert_eq!(buffer[(1, 1)].style().fg, Some(app.palette.overlay0));
++        assert_eq!(buffer[(2, 1)].style().fg, Some(app.palette.accent));
+     }
+ 
+     #[tokio::test]

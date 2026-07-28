@@ -1,8 +1,8 @@
 diff --git a/src/app/input/mod.rs b/src/app/input/mod.rs
-index 421b373..901592a 100644
+index c17f64cd98972998a9682ad0c35983b9117af188..c782991278345d27a22e37d236448269552490be 100644
 --- a/src/app/input/mod.rs
 +++ b/src/app/input/mod.rs
-@@ -96,6 +96,7 @@ impl App {
+@@ -102,6 +102,7 @@ impl App {
                  Mode::ConfirmRemoveWorktree => self.handle_worktree_remove_key(key_event),
                  Mode::Resize => self.handle_resize_key_via_api(key),
                  Mode::ConfirmClose => self.handle_confirm_close_key_via_api(key_event),
@@ -10,7 +10,7 @@ index 421b373..901592a 100644
                  Mode::ContextMenu => {
                      self.handle_context_menu_key_via_api(key_event);
                  }
-@@ -338,6 +339,7 @@ impl App {
+@@ -359,6 +360,7 @@ impl App {
                          self.apply_rename_mouse_action_via_api(action)
                      }
                      MouseAction::ConfirmCloseAccept => self.confirm_close_accept_via_api(),
@@ -18,8 +18,16 @@ index 421b373..901592a 100644
                      MouseAction::ContextMenu { menu, idx } => {
                          self.apply_context_menu_action_via_api(menu, idx)
                      }
+@@ -880,5 +882,7 @@ mod tests {
+ 
+         state.mode = Mode::ConfirmClose;
+         assert!(!modal_paste_target_active(&state));
++        state.mode = Mode::ConfirmClosePane;
++        assert!(!modal_paste_target_active(&state));
+     }
+ }
 diff --git a/src/app/input/modal.rs b/src/app/input/modal.rs
-index 84aed8d..ebe9a7e 100644
+index dc126b40e5cfde1c22a93e988abd4fe92a2d8457..bf159faa04b6818808350dcddc90411ba52e1e41 100644
 --- a/src/app/input/modal.rs
 +++ b/src/app/input/modal.rs
 @@ -11,7 +11,7 @@ use crate::{
@@ -31,7 +39,7 @@ index 84aed8d..ebe9a7e 100644
  };
  
  #[derive(Debug, Clone, Copy, PartialEq, Eq)]
-@@ -654,6 +654,23 @@ pub(super) fn confirm_close_cancel(state: &mut AppState) {
+@@ -680,6 +680,23 @@ pub(super) fn confirm_close_cancel(state: &mut AppState) {
      state.mode = Mode::Navigate;
  }
  
@@ -55,7 +63,7 @@ index 84aed8d..ebe9a7e 100644
  #[cfg(test)]
  pub(crate) fn handle_confirm_close_key(state: &mut AppState, key: KeyEvent) {
      match modal_action_from_key(&key, CONFIRM_CLOSE_ACTIONS) {
-@@ -1014,6 +1031,26 @@ impl App {
+@@ -1054,6 +1071,26 @@ impl App {
          };
      }
  
@@ -82,7 +90,7 @@ index 84aed8d..ebe9a7e 100644
      pub(crate) fn handle_resize_key_via_api(&mut self, raw_key: TerminalKey) {
          let key = raw_key.as_key_event();
          if key.code == KeyCode::Esc
-@@ -1058,6 +1095,16 @@ impl App {
+@@ -1098,6 +1135,16 @@ impl App {
          }
      }
  
@@ -99,7 +107,7 @@ index 84aed8d..ebe9a7e 100644
      pub(crate) fn handle_context_menu_key_via_api(&mut self, key: KeyEvent) {
          match key.code {
              KeyCode::Esc => {
-@@ -1884,6 +1931,128 @@ mod tests {
+@@ -1936,6 +1983,128 @@ mod tests {
          assert_eq!(state.mode, Mode::Terminal);
      }
  
@@ -229,7 +237,7 @@ index 84aed8d..ebe9a7e 100644
      fn context_menu_close_group_opens_group_close_confirmation() {
          let mut state = state_with_workspaces(&["main", "issue"]);
 diff --git a/src/app/input/mouse.rs b/src/app/input/mouse.rs
-index 911e27c..0187c03 100644
+index 59dcf5026e7dd84602fde153c9cb41e8edaecc29..8e2ca3940a818060c7064aa3c1dc81a3e37e0cb8 100644
 --- a/src/app/input/mouse.rs
 +++ b/src/app/input/mouse.rs
 @@ -18,8 +18,9 @@ use crate::{
@@ -244,7 +252,7 @@ index 911e27c..0187c03 100644
      },
      settings::SettingsAction,
      ScrollbarClickTarget, TAB_DRAG_THRESHOLD, WORKSPACE_DRAG_THRESHOLD,
-@@ -53,6 +54,7 @@ pub(super) enum MouseAction {
+@@ -54,6 +55,7 @@ pub(super) enum MouseAction {
      },
      RenameModal(ModalAction),
      ConfirmCloseAccept,
@@ -252,7 +260,7 @@ index 911e27c..0187c03 100644
      ContextMenu {
          menu: ContextMenuState,
          idx: usize,
-@@ -248,6 +250,32 @@ impl AppState {
+@@ -249,6 +251,32 @@ impl AppState {
                      return None;
                  }
  
@@ -286,10 +294,10 @@ index 911e27c..0187c03 100644
                      if let Some(inner) =
                          crate::ui::new_linked_worktree_inner_rect(self.screen_rect())
 diff --git a/src/app/input/navigate.rs b/src/app/input/navigate.rs
-index a159766..877e1f7 100644
+index d151b94d4f530155a8c72ccb6b755e9ee10fd8c5..8447946a2ad82db1b7627dd0b92f6811f37b1efd 100644
 --- a/src/app/input/navigate.rs
 +++ b/src/app/input/navigate.rs
-@@ -570,13 +570,51 @@ impl App {
+@@ -561,13 +561,51 @@ impl App {
          let Some((ws_idx, pane_id)) = self.focused_pane_target() else {
              return false;
          };
@@ -343,7 +351,7 @@ index a159766..877e1f7 100644
      pub(crate) fn zoom_focused_pane_via_api(&mut self) {
          self.runtime_pane_zoom(
              "tui.pane.zoom",
-@@ -2926,6 +2964,45 @@ navigate_pane_down = "ctrl+j"
+@@ -3034,6 +3072,45 @@ navigate_pane_down = "ctrl+j"
          assert_eq!(app.state.workspaces.len(), 2);
      }
  
@@ -390,35 +398,35 @@ index a159766..877e1f7 100644
      #[tokio::test]
      async fn custom_command_runs_from_prefix_key_in_navigate_mode() {
 diff --git a/src/app/mod.rs b/src/app/mod.rs
-index 99fc12a..68647d6 100644
+index 8a9e7389038a64e62c012827f4c85abf71ef0809..f78af6f60fdf63d68d4c62dbead9098614ace188 100644
 --- a/src/app/mod.rs
 +++ b/src/app/mod.rs
-@@ -527,6 +527,8 @@ impl App {
-             creating_new_tab: false,
+@@ -537,6 +537,8 @@ impl App {
              requested_new_tab_name: None,
+             pending_workspace_create_cwd: None,
              rename_pane_target: None,
 +            pending_close_pane: None,
 +            pending_close_pane_process: None,
              worktree_create: None,
              worktree_open: None,
              worktree_remove: None,
-@@ -606,6 +608,7 @@ impl App {
+@@ -619,6 +621,7 @@ impl App {
              redraw_on_focus_gained: config.ui.redraw_on_focus_gained,
              mouse_scroll_lines: config.ui.mouse_scroll_lines(),
              confirm_close: config.ui.confirm_close,
 +            confirm_close_running_process: config.ui.confirm_close_running_process,
              prompt_new_tab_name: config.ui.prompt_new_tab_name,
+             prompt_new_workspace_name: config.ui.prompt_new_workspace_name,
              pane_borders: config.ui.pane_borders,
-             pane_gaps: config.ui.pane_gaps,
-@@ -1382,6 +1385,7 @@ impl App {
+@@ -1411,6 +1414,7 @@ impl App {
                  self.state.right_click_passthrough_modifiers =
                      config.ui.right_click_passthrough_modifiers();
                  self.state.confirm_close = config.ui.confirm_close;
 +                self.state.confirm_close_running_process = config.ui.confirm_close_running_process;
                  self.state.prompt_new_tab_name = config.ui.prompt_new_tab_name;
+                 self.state.prompt_new_workspace_name = config.ui.prompt_new_workspace_name;
                  self.state.pane_borders = config.ui.pane_borders;
-                 self.state.pane_gaps = config.ui.pane_gaps;
-@@ -1663,6 +1667,9 @@ impl App {
+@@ -1695,6 +1699,9 @@ impl App {
              Mode::ConfirmClose => {
                  self.handle_confirm_close_key_via_api(key_event);
              }
@@ -428,11 +436,19 @@ index 99fc12a..68647d6 100644
              Mode::ContextMenu => {
                  self.handle_context_menu_key_via_api(key_event);
              }
+@@ -1889,6 +1896,7 @@ mod tests {
+             Mode::Copy,
+             Mode::Resize,
+             Mode::ConfirmClose,
++            Mode::ConfirmClosePane,
+             Mode::ConfirmRemoveWorktree,
+             Mode::ContextMenu,
+             Mode::GlobalMenu,
 diff --git a/src/app/state.rs b/src/app/state.rs
-index be85867..4563a8b 100644
+index f8395cbdc69def7ba6e7578db83dec08aa97f09f..8308949b54b0fae3007bb9770698609abf1d9148 100644
 --- a/src/app/state.rs
 +++ b/src/app/state.rs
-@@ -761,6 +761,7 @@ pub enum Mode {
+@@ -806,6 +806,7 @@ pub enum Mode {
      ConfirmRemoveWorktree,
      Resize,
      ConfirmClose,
@@ -440,45 +456,53 @@ index be85867..4563a8b 100644
      ContextMenu,
      Settings,
      GlobalMenu,
-@@ -1350,6 +1351,8 @@ pub struct AppState {
-     pub creating_new_tab: bool,
+@@ -832,6 +833,7 @@ impl Mode {
+                 | Mode::Copy
+                 | Mode::Resize
+                 | Mode::ConfirmClose
++                | Mode::ConfirmClosePane
+                 | Mode::ConfirmRemoveWorktree
+                 | Mode::ContextMenu
+                 | Mode::GlobalMenu
+@@ -1438,6 +1440,8 @@ pub struct AppState {
      pub requested_new_tab_name: Option<String>,
+     pub pending_workspace_create_cwd: Option<std::path::PathBuf>,
      pub rename_pane_target: Option<PaneId>,
 +    pub pending_close_pane: Option<(usize, PaneId)>,
 +    pub pending_close_pane_process: Option<String>,
      pub worktree_create: Option<WorktreeCreateState>,
      pub worktree_open: Option<WorktreeOpenState>,
      pub worktree_remove: Option<WorktreeRemoveState>,
-@@ -1413,6 +1416,7 @@ pub struct AppState {
+@@ -1505,6 +1509,7 @@ pub struct AppState {
      pub redraw_on_focus_gained: bool,
      pub mouse_scroll_lines: usize,
      pub confirm_close: bool,
 +    pub confirm_close_running_process: bool,
      pub prompt_new_tab_name: bool,
+     pub prompt_new_workspace_name: bool,
      pub pane_borders: bool,
-     pub pane_gaps: bool,
-@@ -1702,6 +1706,8 @@ impl AppState {
-             creating_new_tab: false,
+@@ -1808,6 +1813,8 @@ impl AppState {
              requested_new_tab_name: None,
+             pending_workspace_create_cwd: None,
              rename_pane_target: None,
 +            pending_close_pane: None,
 +            pending_close_pane_process: None,
              worktree_create: None,
              worktree_open: None,
              worktree_remove: None,
-@@ -1772,6 +1778,7 @@ impl AppState {
+@@ -1881,6 +1888,7 @@ impl AppState {
              redraw_on_focus_gained: true,
              mouse_scroll_lines: crate::config::DEFAULT_MOUSE_SCROLL_LINES,
              confirm_close: true,
 +            confirm_close_running_process: true,
              prompt_new_tab_name: true,
+             prompt_new_workspace_name: false,
              pane_borders: true,
-             pane_gaps: false,
 diff --git a/src/config/model.rs b/src/config/model.rs
-index 16bc595..2fc5ea9 100644
+index 9fbca3a601c7c0c29c53ceb94d112d97f5b5c5bc..84546b677a391b7ba5880b6127fbbb34805d66be 100644
 --- a/src/config/model.rs
 +++ b/src/config/model.rs
-@@ -798,6 +798,8 @@ pub struct UiConfig {
+@@ -800,6 +800,8 @@ pub struct UiConfig {
      pub mouse_scroll_lines: Option<NonZeroUsize>,
      /// Ask for confirmation before closing a workspace. Default: true.
      pub confirm_close: bool,
@@ -486,20 +510,20 @@ index 16bc595..2fc5ea9 100644
 +    pub confirm_close_running_process: bool,
      /// Ask for a tab name before creating a new tab. Default: true.
      pub prompt_new_tab_name: bool,
-     /// Draw borders around split panes. Default: true.
-@@ -997,6 +999,7 @@ impl Default for UiConfig {
+     /// Ask for a workspace name before interactive creation. Default: false.
+@@ -1004,6 +1006,7 @@ impl Default for UiConfig {
              redraw_on_focus_gained: true,
              mouse_scroll_lines: None,
              confirm_close: true,
 +            confirm_close_running_process: true,
              prompt_new_tab_name: true,
+             prompt_new_workspace_name: false,
              pane_borders: true,
-             pane_gaps: true,
 diff --git a/src/detect/mod.rs b/src/detect/mod.rs
-index 7657ae3..5daa321 100644
+index b8eb8f60255f1af5f1756ce7985d78068d58343b..bb7c1c03add7290fc357eeed091c2a26a823ddb5 100644
 --- a/src/detect/mod.rs
 +++ b/src/detect/mod.rs
-@@ -269,6 +269,64 @@ pub fn foreground_job(child_pid: u32) -> Option<crate::platform::ForegroundJob>
+@@ -303,6 +303,64 @@ pub fn foreground_job(child_pid: u32) -> Option<crate::platform::ForegroundJob>
      crate::platform::foreground_job(child_pid)
  }
  
@@ -564,7 +588,7 @@ index 7657ae3..5daa321 100644
  /// Get the foreground process group leader as a one-process job.
  /// This is cheaper than collecting every process in the foreground job.
  pub fn foreground_group_leader_job(
-@@ -614,6 +672,83 @@ mod tests {
+@@ -648,6 +706,83 @@ mod tests {
          assert!(detection.visible_working);
      }
  
@@ -649,10 +673,10 @@ index 7657ae3..5daa321 100644
  
      #[test]
 diff --git a/src/main.rs b/src/main.rs
-index 57ca4dc..4e09903 100644
+index a73423bf5f683503eecf2136be8667e326b6f421..9c18797575e7183a27457c2b22b63bbc102bc73b 100644
 --- a/src/main.rs
 +++ b/src/main.rs
-@@ -283,6 +283,9 @@ const DEFAULT_CONFIG: &str = r##"# herdr configuration
+@@ -293,6 +293,9 @@ const DEFAULT_CONFIG: &str = r##"# herdr configuration
  # Ask for confirmation before closing a workspace
  # confirm_close = true
  
@@ -663,10 +687,10 @@ index 57ca4dc..4e09903 100644
  # Set false to create tabs immediately with generated names.
  # prompt_new_tab_name = true
 diff --git a/src/ui.rs b/src/ui.rs
-index dec8d7a..f9e88b0 100644
+index 6d5c02f1714745cf6817481d0d68bd1738e3e83b..869b7634a40371b8b32ca57825e4ea36001f2f86 100644
 --- a/src/ui.rs
 +++ b/src/ui.rs
-@@ -22,8 +22,9 @@ mod text;
+@@ -23,8 +23,9 @@ mod text;
  mod widgets;
  
  use self::dialogs::{
@@ -678,19 +702,19 @@ index dec8d7a..f9e88b0 100644
  };
  use self::keybind_help::render_keybind_help_overlay;
  use self::menus::{
-@@ -436,6 +437,7 @@ pub fn render_with_runtime_registry(
-         Mode::Copy => render_copy_mode_overlay(app, frame, terminal_area),
-         Mode::Resize => render_resize_overlay(app, frame, terminal_area),
-         Mode::ConfirmClose => render_confirm_close_overlay(app, frame, terminal_area),
+@@ -438,6 +439,7 @@ pub fn render_with_runtime_registry(
+         Mode::ConfirmClose => {
+             render_confirm_close_overlay(app, terminal_runtimes, frame, terminal_area)
+         }
 +        Mode::ConfirmClosePane => render_confirm_close_pane_overlay(app, frame, terminal_area),
          Mode::ContextMenu => {
              render_context_menu(app, frame);
          }
 diff --git a/src/ui/dialogs.rs b/src/ui/dialogs.rs
-index e86edd8..79ab0ed 100644
+index 9575cfe9fe4e2a071c4bc11706e263601b0fd3b3..ee53778cf2ed2e74af1cdc03d539494abb035ffc 100644
 --- a/src/ui/dialogs.rs
 +++ b/src/ui/dialogs.rs
-@@ -731,6 +731,73 @@ pub(super) fn render_confirm_close_overlay(app: &AppState, frame: &mut Frame, ar
+@@ -741,6 +741,73 @@ pub(super) fn render_confirm_close_overlay(
      }
  }
  
