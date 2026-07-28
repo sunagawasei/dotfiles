@@ -35,6 +35,12 @@ M.colors = {
   -- 拡張セマンティック
   purple_accent = "#B4B6DA", -- Muted Purple (Keyword) [purples.muted_purple]
   syntax_violet = "#BFADFF", -- Syntax Violet [semantic.keyword]
+  syntax_function = "#58CAF8", -- Syntax function [semantic.function]
+  syntax_type = "#AFB8D9", -- Syntax type [semantic.type]
+  syntax_number = "#9FDBF7", -- Syntax number [semantic.number]
+  syntax_constant = "#D0D4F0", -- Syntax constant [semantic.constant]
+  syntax_variable = "#CDE9F5", -- Syntax variable [semantic.variable]
+  syntax_builtin_variable = "#88CBEA", -- Syntax builtin variable [semantic.builtin_variable]
   success = "#62C9C2",       -- Success indicator [semantic.success]
   diagnostic_error = "#CEADE1", -- Diagnostic error [semantic.error]
   diagnostic_warn = "#B8BCD8", -- Diagnostic warning [semantic.warning]

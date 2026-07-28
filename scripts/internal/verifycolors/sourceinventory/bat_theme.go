@@ -38,7 +38,7 @@ var batScopeTokens = map[string]verifycolors.TokenRef{
 	"entity.name.tag":                "teals.bright",
 	"entity.other.attribute-name":    "foregrounds.heading",
 	"variable.parameter":             "semantic.variable",
-	"variable.language":              "foregrounds.heading",
+	"variable.language":              "semantic.builtin_variable",
 	"punctuation.separator":          "semantic.punctuation",
 	"punctuation.terminator":         "semantic.punctuation",
 	"punctuation.section":            "semantic.punctuation",

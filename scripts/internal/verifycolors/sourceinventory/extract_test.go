@@ -131,6 +131,81 @@ func TestSyntaxAndUIRoleSeparation(t *testing.T) {
 	)
 }
 
+func TestNvimSyntaxRolesUseCanonicalSemanticTokens(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := Extract(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pairs := pairMap(result.Pairs)
+
+	expected := map[verifycolors.TokenRef][]string{
+		"semantic.function": {
+			"nvim.highlight.Function",
+			"nvim.highlight.@function",
+			"nvim.highlight.@function.call",
+			"nvim.highlight.@function.method",
+			"nvim.highlight.@function.method.call",
+			"nvim.highlight.@function.builtin",
+			"nvim.highlight.@function.macro",
+		},
+		"semantic.type": {
+			"nvim.highlight.Type",
+			"nvim.highlight.@type",
+			"nvim.highlight.@type.builtin",
+		},
+		"semantic.number": {
+			"nvim.highlight.Number",
+			"nvim.highlight.@number",
+		},
+		"semantic.constant": {
+			"nvim.highlight.Constant",
+			"nvim.highlight.Boolean",
+			"nvim.highlight.@boolean",
+			"nvim.highlight.@constant",
+			"nvim.highlight.@constant.builtin",
+		},
+		"semantic.variable": {
+			"nvim.highlight.Identifier",
+			"nvim.highlight.@variable",
+			"nvim.highlight.@variable.member",
+			"nvim.highlight.@variable.parameter",
+			"nvim.highlight.@parameter",
+			"nvim.highlight.@property",
+			"nvim.highlight.@field",
+		},
+		"semantic.builtin_variable": {
+			"nvim.highlight.@variable.builtin",
+			"nvim.highlight.@variable.parameter.builtin",
+		},
+	}
+	for token, consumerIDs := range expected {
+		for _, consumerID := range consumerIDs {
+			assertPair(
+				t,
+				pairs,
+				consumerID,
+				token,
+				"",
+				true,
+				verifycolors.ClassReportOnly,
+			)
+		}
+	}
+	assertPair(
+		t,
+		pairs,
+		"bat.theme.scope.variable.language",
+		"semantic.builtin_variable",
+		"core.background",
+		false,
+		verifycolors.ClassEnforced,
+	)
+}
+
 func TestGitRolesUseCanonicalTokensAcrossConsumers(t *testing.T) {
 	root, err := palette.FindRepositoryRoot()
 	if err != nil {
@@ -385,6 +460,61 @@ func TestSemanticHintIsExported(t *testing.T) {
 		if !strings.Contains(string(data), `hint = "#58CAF8"`) {
 			t.Errorf("%s does not export semantic.hint", relative)
 		}
+	}
+}
+
+func TestSemanticBuiltinVariableIsExported(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, relative := range []string{"home-manager/colors.nix", "wezterm/colors.lua"} {
+		data, err := os.ReadFile(filepath.Join(root, filepath.FromSlash(relative)))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !strings.Contains(string(data), `builtin_variable = "#88CBEA"`) {
+			t.Errorf("%s does not export semantic.builtin_variable", relative)
+		}
+	}
+}
+
+func TestNvimSyntaxSemanticContrastOnBrightAmbient(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	colorPalette, err := verifycolors.LoadPalette(filepath.Join(root, "colors", "ghost-visor.toml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	values := colorPalette.TokenValues()
+	background := values["core.panel_bg"]
+	minimumToken := verifycolors.TokenRef("")
+	minimumRatio := math.Inf(1)
+	for _, token := range []verifycolors.TokenRef{
+		"semantic.function",
+		"semantic.type",
+		"semantic.number",
+		"semantic.constant",
+		"semantic.variable",
+		"semantic.builtin_variable",
+	} {
+		ratio, err := colorutil.ContrastRatio(values[token], background)
+		if err != nil {
+			t.Fatal(err)
+		}
+		t.Logf("%s on core.panel_bg = %.4f", token, ratio)
+		if ratio < 4.5 {
+			t.Errorf("%s on core.panel_bg contrast = %.4f, want >= 4.5", token, ratio)
+		}
+		if ratio < minimumRatio {
+			minimumToken = token
+			minimumRatio = ratio
+		}
+	}
+	if minimumToken != "semantic.type" || math.Abs(minimumRatio-4.864) > 0.001 {
+		t.Errorf("minimum contrast = %s %.4f, want semantic.type 4.864", minimumToken, minimumRatio)
 	}
 }
 
@@ -753,7 +883,7 @@ func TestBatThemeUsesExpectedTokensAndExplicitBackgrounds(t *testing.T) {
 		"entity.name.tag":                "teals.bright",
 		"entity.other.attribute-name":    "foregrounds.heading",
 		"variable.parameter":             "semantic.variable",
-		"variable.language":              "foregrounds.heading",
+		"variable.language":              "semantic.builtin_variable",
 		"punctuation.separator":          "semantic.punctuation",
 		"punctuation.terminator":         "semantic.punctuation",
 		"punctuation.section":            "semantic.punctuation",

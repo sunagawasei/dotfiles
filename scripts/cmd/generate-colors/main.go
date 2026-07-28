@@ -698,6 +698,12 @@ M.colors = {
   -- 拡張セマンティック
   purple_accent = "{{purples.muted_purple}}", -- Muted Purple (Keyword) [purples.muted_purple]
   syntax_violet = "{{semantic.keyword}}", -- Syntax Violet [semantic.keyword]
+  syntax_function = "{{semantic.function}}", -- Syntax function [semantic.function]
+  syntax_type = "{{semantic.type}}", -- Syntax type [semantic.type]
+  syntax_number = "{{semantic.number}}", -- Syntax number [semantic.number]
+  syntax_constant = "{{semantic.constant}}", -- Syntax constant [semantic.constant]
+  syntax_variable = "{{semantic.variable}}", -- Syntax variable [semantic.variable]
+  syntax_builtin_variable = "{{semantic.builtin_variable}}", -- Syntax builtin variable [semantic.builtin_variable]
   success = "{{semantic.success}}",       -- Success indicator [semantic.success]
   diagnostic_error = "{{semantic.error}}", -- Diagnostic error [semantic.error]
   diagnostic_warn = "{{semantic.warning}}", -- Diagnostic warning [semantic.warning]
@@ -812,6 +818,7 @@ return {
     function_color = "{{semantic.function}}",
     type_color = "{{semantic.type}}",
     variable = "{{semantic.variable}}",
+    builtin_variable = "{{semantic.builtin_variable}}",
     number = "{{semantic.number}}",
     operator = "{{semantic.operator}}",
     constant = "{{semantic.constant}}",
@@ -912,6 +919,7 @@ const nixColorsTemplate = `# ` + generatedNotice + `
     function = "{{semantic.function}}";
     type = "{{semantic.type}}";
     variable = "{{semantic.variable}}";
+    builtin_variable = "{{semantic.builtin_variable}}";
     number = "{{semantic.number}}";
     operator = "{{semantic.operator}}";
     constant = "{{semantic.constant}}";
@@ -1810,7 +1818,7 @@ const batThemeTemplate = `<?xml version="1.0" encoding="UTF-8"?>
       <key>settings</key>
       <dict>
         <key>foreground</key>
-        <string>{{foregrounds.heading}}</string>
+        <string>{{semantic.builtin_variable}}</string>
       </dict>
     </dict>
     <dict>

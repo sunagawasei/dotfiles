@@ -67,6 +67,13 @@ var nvimAliases = map[string]verifycolors.TokenRef{
 	"diff_add_inline_bg":    "nvim.diff_add_inline_bg",
 	"diff_change_inline_bg": "nvim.diff_change_inline_bg",
 	"diff_delete_inline_bg": "nvim.diff_delete_inline_bg",
+
+	"syntax_function":         "semantic.function",
+	"syntax_type":             "semantic.type",
+	"syntax_number":           "semantic.number",
+	"syntax_constant":         "semantic.constant",
+	"syntax_variable":         "semantic.variable",
+	"syntax_builtin_variable": "semantic.builtin_variable",
 }
 
 func resolveNvimAlias(alias string) (verifycolors.TokenRef, error) {

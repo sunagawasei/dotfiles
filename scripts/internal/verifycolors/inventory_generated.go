@@ -11,7 +11,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.gutterForeground",
@@ -20,7 +20,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.gutterForeground.lineHighlight",
@@ -29,7 +29,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.comment",
@@ -38,7 +38,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.constant.character.escape",
@@ -47,7 +47,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.constant.language",
@@ -56,7 +56,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.constant.language.boolean.yaml",
@@ -65,7 +65,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.constant.language.null.yaml",
@@ -74,7 +74,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.constant.numeric",
@@ -83,7 +83,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.entity.name.class",
@@ -92,7 +92,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.entity.name.function",
@@ -101,7 +101,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.entity.name.tag",
@@ -110,7 +110,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.entity.name.tag.yaml",
@@ -119,7 +119,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.entity.name.type",
@@ -128,7 +128,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.entity.other.attribute-name",
@@ -137,7 +137,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.invalid.illegal",
@@ -146,7 +146,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.keyword",
@@ -155,7 +155,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.keyword.control.import",
@@ -164,7 +164,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.keyword.operator",
@@ -173,7 +173,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.markup.bold",
@@ -182,7 +182,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.markup.heading",
@@ -191,7 +191,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.markup.italic",
@@ -200,7 +200,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.markup.list",
@@ -209,7 +209,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.markup.quote",
@@ -218,7 +218,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.markup.raw",
@@ -227,7 +227,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.markup.underline.link",
@@ -236,7 +236,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.punctuation.accessor",
@@ -245,7 +245,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.punctuation.definition",
@@ -254,7 +254,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.punctuation.definition.block.sequence.item.yaml",
@@ -263,7 +263,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.punctuation.section",
@@ -272,7 +272,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.punctuation.separator",
@@ -281,7 +281,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.punctuation.terminator",
@@ -290,7 +290,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.source.yaml_constant.numeric",
@@ -299,7 +299,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.storage.modifier",
@@ -308,7 +308,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.storage.type",
@@ -317,7 +317,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.string",
@@ -326,7 +326,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.support.function",
@@ -335,7 +335,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.support.type",
@@ -344,7 +344,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.variable.function",
@@ -353,16 +353,16 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.variable.language",
-		Foreground: "foregrounds.heading",
+		Foreground: "semantic.builtin_variable",
 		Background: TokenBackground("core.background"),
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "bat.theme.scope.variable.parameter",
@@ -371,7 +371,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1583",
 	},
 	{
 		ConsumerID: "claude.theme.autoAccept",
@@ -914,7 +914,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1058",
+		Source:     "scripts/cmd/generate-colors/main.go:1066",
 	},
 	{
 		ConsumerID: "eza.theme.broken_path_overlay",
@@ -923,7 +923,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1065",
+		Source:     "scripts/cmd/generate-colors/main.go:1073",
 	},
 	{
 		ConsumerID: "eza.theme.broken_symlink",
@@ -932,7 +932,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1064",
+		Source:     "scripts/cmd/generate-colors/main.go:1072",
 	},
 	{
 		ConsumerID: "eza.theme.control_char",
@@ -941,7 +941,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1063",
+		Source:     "scripts/cmd/generate-colors/main.go:1071",
 	},
 	{
 		ConsumerID: "eza.theme.date",
@@ -950,7 +950,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1056",
+		Source:     "scripts/cmd/generate-colors/main.go:1064",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.build",
@@ -959,7 +959,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1053",
+		Source:     "scripts/cmd/generate-colors/main.go:1061",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.compiled",
@@ -968,7 +968,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1052",
+		Source:     "scripts/cmd/generate-colors/main.go:1060",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.compressed",
@@ -977,7 +977,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1050",
+		Source:     "scripts/cmd/generate-colors/main.go:1058",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.crypto",
@@ -986,7 +986,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1048",
+		Source:     "scripts/cmd/generate-colors/main.go:1056",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.document",
@@ -995,7 +995,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1049",
+		Source:     "scripts/cmd/generate-colors/main.go:1057",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.image",
@@ -1004,7 +1004,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1044",
+		Source:     "scripts/cmd/generate-colors/main.go:1052",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.lossless",
@@ -1013,7 +1013,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1047",
+		Source:     "scripts/cmd/generate-colors/main.go:1055",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.music",
@@ -1022,7 +1022,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1046",
+		Source:     "scripts/cmd/generate-colors/main.go:1054",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.source",
@@ -1031,7 +1031,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1054",
+		Source:     "scripts/cmd/generate-colors/main.go:1062",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.temp",
@@ -1040,7 +1040,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1051",
+		Source:     "scripts/cmd/generate-colors/main.go:1059",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.video",
@@ -1049,7 +1049,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1045",
+		Source:     "scripts/cmd/generate-colors/main.go:1053",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.block_device",
@@ -1058,7 +1058,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:988",
+		Source:     "scripts/cmd/generate-colors/main.go:996",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.char_device",
@@ -1067,7 +1067,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:989",
+		Source:     "scripts/cmd/generate-colors/main.go:997",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.directory",
@@ -1076,7 +1076,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:985",
+		Source:     "scripts/cmd/generate-colors/main.go:993",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.executable",
@@ -1085,7 +1085,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:992",
+		Source:     "scripts/cmd/generate-colors/main.go:1000",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.mount_point",
@@ -1094,7 +1094,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:993",
+		Source:     "scripts/cmd/generate-colors/main.go:1001",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.normal",
@@ -1103,7 +1103,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:984",
+		Source:     "scripts/cmd/generate-colors/main.go:992",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.pipe",
@@ -1112,7 +1112,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:987",
+		Source:     "scripts/cmd/generate-colors/main.go:995",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.socket",
@@ -1121,7 +1121,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:990",
+		Source:     "scripts/cmd/generate-colors/main.go:998",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.special",
@@ -1130,7 +1130,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:991",
+		Source:     "scripts/cmd/generate-colors/main.go:999",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.symlink",
@@ -1139,7 +1139,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:986",
+		Source:     "scripts/cmd/generate-colors/main.go:994",
 	},
 	{
 		ConsumerID: "eza.theme.flags",
@@ -1148,7 +1148,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1061",
+		Source:     "scripts/cmd/generate-colors/main.go:1069",
 	},
 	{
 		ConsumerID: "eza.theme.git.conflicted",
@@ -1157,7 +1157,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1033",
+		Source:     "scripts/cmd/generate-colors/main.go:1041",
 	},
 	{
 		ConsumerID: "eza.theme.git.deleted",
@@ -1166,7 +1166,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1029",
+		Source:     "scripts/cmd/generate-colors/main.go:1037",
 	},
 	{
 		ConsumerID: "eza.theme.git.ignored",
@@ -1175,7 +1175,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1032",
+		Source:     "scripts/cmd/generate-colors/main.go:1040",
 	},
 	{
 		ConsumerID: "eza.theme.git.modified",
@@ -1184,7 +1184,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1028",
+		Source:     "scripts/cmd/generate-colors/main.go:1036",
 	},
 	{
 		ConsumerID: "eza.theme.git.new",
@@ -1193,7 +1193,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1027",
+		Source:     "scripts/cmd/generate-colors/main.go:1035",
 	},
 	{
 		ConsumerID: "eza.theme.git.renamed",
@@ -1202,7 +1202,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1030",
+		Source:     "scripts/cmd/generate-colors/main.go:1038",
 	},
 	{
 		ConsumerID: "eza.theme.git.typechange",
@@ -1211,7 +1211,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1031",
+		Source:     "scripts/cmd/generate-colors/main.go:1039",
 	},
 	{
 		ConsumerID: "eza.theme.git_repo.branch_main",
@@ -1220,7 +1220,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1034",
+		Source:     "scripts/cmd/generate-colors/main.go:1042",
 	},
 	{
 		ConsumerID: "eza.theme.git_repo.branch_other",
@@ -1229,7 +1229,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1035",
+		Source:     "scripts/cmd/generate-colors/main.go:1043",
 	},
 	{
 		ConsumerID: "eza.theme.git_repo.git_clean",
@@ -1238,7 +1238,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1036",
+		Source:     "scripts/cmd/generate-colors/main.go:1044",
 	},
 	{
 		ConsumerID: "eza.theme.git_repo.git_dirty",
@@ -1247,7 +1247,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1037",
+		Source:     "scripts/cmd/generate-colors/main.go:1045",
 	},
 	{
 		ConsumerID: "eza.theme.header",
@@ -1256,7 +1256,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1059",
+		Source:     "scripts/cmd/generate-colors/main.go:1067",
 	},
 	{
 		ConsumerID: "eza.theme.inode",
@@ -1265,7 +1265,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1057",
+		Source:     "scripts/cmd/generate-colors/main.go:1065",
 	},
 	{
 		ConsumerID: "eza.theme.links.multi_link_file",
@@ -1274,7 +1274,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1026",
+		Source:     "scripts/cmd/generate-colors/main.go:1034",
 	},
 	{
 		ConsumerID: "eza.theme.links.normal",
@@ -1283,7 +1283,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1025",
+		Source:     "scripts/cmd/generate-colors/main.go:1033",
 	},
 	{
 		ConsumerID: "eza.theme.octal",
@@ -1292,7 +1292,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1060",
+		Source:     "scripts/cmd/generate-colors/main.go:1068",
 	},
 	{
 		ConsumerID: "eza.theme.perms.attribute",
@@ -1301,7 +1301,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1006",
+		Source:     "scripts/cmd/generate-colors/main.go:1014",
 	},
 	{
 		ConsumerID: "eza.theme.perms.group_execute",
@@ -1310,7 +1310,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1000",
+		Source:     "scripts/cmd/generate-colors/main.go:1008",
 	},
 	{
 		ConsumerID: "eza.theme.perms.group_read",
@@ -1319,7 +1319,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:998",
+		Source:     "scripts/cmd/generate-colors/main.go:1006",
 	},
 	{
 		ConsumerID: "eza.theme.perms.group_write",
@@ -1328,7 +1328,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:999",
+		Source:     "scripts/cmd/generate-colors/main.go:1007",
 	},
 	{
 		ConsumerID: "eza.theme.perms.other_execute",
@@ -1337,7 +1337,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1003",
+		Source:     "scripts/cmd/generate-colors/main.go:1011",
 	},
 	{
 		ConsumerID: "eza.theme.perms.other_read",
@@ -1346,7 +1346,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1001",
+		Source:     "scripts/cmd/generate-colors/main.go:1009",
 	},
 	{
 		ConsumerID: "eza.theme.perms.other_write",
@@ -1355,7 +1355,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1002",
+		Source:     "scripts/cmd/generate-colors/main.go:1010",
 	},
 	{
 		ConsumerID: "eza.theme.perms.special_other",
@@ -1364,7 +1364,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1005",
+		Source:     "scripts/cmd/generate-colors/main.go:1013",
 	},
 	{
 		ConsumerID: "eza.theme.perms.special_user_file",
@@ -1373,7 +1373,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1004",
+		Source:     "scripts/cmd/generate-colors/main.go:1012",
 	},
 	{
 		ConsumerID: "eza.theme.perms.user_execute_file",
@@ -1382,7 +1382,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:996",
+		Source:     "scripts/cmd/generate-colors/main.go:1004",
 	},
 	{
 		ConsumerID: "eza.theme.perms.user_execute_other",
@@ -1391,7 +1391,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:997",
+		Source:     "scripts/cmd/generate-colors/main.go:1005",
 	},
 	{
 		ConsumerID: "eza.theme.perms.user_read",
@@ -1400,7 +1400,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:994",
+		Source:     "scripts/cmd/generate-colors/main.go:1002",
 	},
 	{
 		ConsumerID: "eza.theme.perms.user_write",
@@ -1409,7 +1409,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:995",
+		Source:     "scripts/cmd/generate-colors/main.go:1003",
 	},
 	{
 		ConsumerID: "eza.theme.punctuation",
@@ -1418,7 +1418,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1055",
+		Source:     "scripts/cmd/generate-colors/main.go:1063",
 	},
 	{
 		ConsumerID: "eza.theme.security_context.none",
@@ -1427,7 +1427,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1038",
+		Source:     "scripts/cmd/generate-colors/main.go:1046",
 	},
 	{
 		ConsumerID: "eza.theme.security_context.selinux.colon",
@@ -1436,7 +1436,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1039",
+		Source:     "scripts/cmd/generate-colors/main.go:1047",
 	},
 	{
 		ConsumerID: "eza.theme.security_context.selinux.range",
@@ -1445,7 +1445,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1043",
+		Source:     "scripts/cmd/generate-colors/main.go:1051",
 	},
 	{
 		ConsumerID: "eza.theme.security_context.selinux.role",
@@ -1454,7 +1454,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1041",
+		Source:     "scripts/cmd/generate-colors/main.go:1049",
 	},
 	{
 		ConsumerID: "eza.theme.security_context.selinux.typ",
@@ -1463,7 +1463,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1042",
+		Source:     "scripts/cmd/generate-colors/main.go:1050",
 	},
 	{
 		ConsumerID: "eza.theme.security_context.selinux.user",
@@ -1472,7 +1472,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1040",
+		Source:     "scripts/cmd/generate-colors/main.go:1048",
 	},
 	{
 		ConsumerID: "eza.theme.size.major",
@@ -1481,7 +1481,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1007",
+		Source:     "scripts/cmd/generate-colors/main.go:1015",
 	},
 	{
 		ConsumerID: "eza.theme.size.minor",
@@ -1490,7 +1490,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1008",
+		Source:     "scripts/cmd/generate-colors/main.go:1016",
 	},
 	{
 		ConsumerID: "eza.theme.size.number_byte",
@@ -1499,7 +1499,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1009",
+		Source:     "scripts/cmd/generate-colors/main.go:1017",
 	},
 	{
 		ConsumerID: "eza.theme.size.number_giga",
@@ -1508,7 +1508,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1012",
+		Source:     "scripts/cmd/generate-colors/main.go:1020",
 	},
 	{
 		ConsumerID: "eza.theme.size.number_huge",
@@ -1517,7 +1517,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1013",
+		Source:     "scripts/cmd/generate-colors/main.go:1021",
 	},
 	{
 		ConsumerID: "eza.theme.size.number_kilo",
@@ -1526,7 +1526,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1010",
+		Source:     "scripts/cmd/generate-colors/main.go:1018",
 	},
 	{
 		ConsumerID: "eza.theme.size.number_mega",
@@ -1535,7 +1535,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1011",
+		Source:     "scripts/cmd/generate-colors/main.go:1019",
 	},
 	{
 		ConsumerID: "eza.theme.size.unit_byte",
@@ -1544,7 +1544,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1014",
+		Source:     "scripts/cmd/generate-colors/main.go:1022",
 	},
 	{
 		ConsumerID: "eza.theme.size.unit_giga",
@@ -1553,7 +1553,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1017",
+		Source:     "scripts/cmd/generate-colors/main.go:1025",
 	},
 	{
 		ConsumerID: "eza.theme.size.unit_huge",
@@ -1562,7 +1562,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1018",
+		Source:     "scripts/cmd/generate-colors/main.go:1026",
 	},
 	{
 		ConsumerID: "eza.theme.size.unit_kilo",
@@ -1571,7 +1571,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1015",
+		Source:     "scripts/cmd/generate-colors/main.go:1023",
 	},
 	{
 		ConsumerID: "eza.theme.size.unit_mega",
@@ -1580,7 +1580,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1016",
+		Source:     "scripts/cmd/generate-colors/main.go:1024",
 	},
 	{
 		ConsumerID: "eza.theme.symlink_path",
@@ -1589,7 +1589,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1062",
+		Source:     "scripts/cmd/generate-colors/main.go:1070",
 	},
 	{
 		ConsumerID: "eza.theme.users.group_other",
@@ -1598,7 +1598,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1023",
+		Source:     "scripts/cmd/generate-colors/main.go:1031",
 	},
 	{
 		ConsumerID: "eza.theme.users.group_root",
@@ -1607,7 +1607,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1024",
+		Source:     "scripts/cmd/generate-colors/main.go:1032",
 	},
 	{
 		ConsumerID: "eza.theme.users.group_yours",
@@ -1616,7 +1616,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1022",
+		Source:     "scripts/cmd/generate-colors/main.go:1030",
 	},
 	{
 		ConsumerID: "eza.theme.users.user_other",
@@ -1625,7 +1625,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1021",
+		Source:     "scripts/cmd/generate-colors/main.go:1029",
 	},
 	{
 		ConsumerID: "eza.theme.users.user_root",
@@ -1634,7 +1634,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1020",
+		Source:     "scripts/cmd/generate-colors/main.go:1028",
 	},
 	{
 		ConsumerID: "eza.theme.users.user_you",
@@ -1643,7 +1643,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1019",
+		Source:     "scripts/cmd/generate-colors/main.go:1027",
 	},
 	{
 		ConsumerID: "gh-dash.theme.background.selected",
@@ -1652,7 +1652,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:1541",
+		Source:     "scripts/cmd/generate-colors/main.go:1549",
 	},
 	{
 		ConsumerID: "gh-dash.theme.border.faint",
@@ -1661,7 +1661,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "border",
-		Source:     "scripts/cmd/generate-colors/main.go:1545",
+		Source:     "scripts/cmd/generate-colors/main.go:1553",
 	},
 	{
 		ConsumerID: "gh-dash.theme.border.primary",
@@ -1670,7 +1670,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "border",
-		Source:     "scripts/cmd/generate-colors/main.go:1543",
+		Source:     "scripts/cmd/generate-colors/main.go:1551",
 	},
 	{
 		ConsumerID: "gh-dash.theme.border.secondary",
@@ -1679,7 +1679,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "border",
-		Source:     "scripts/cmd/generate-colors/main.go:1544",
+		Source:     "scripts/cmd/generate-colors/main.go:1552",
 	},
 	{
 		ConsumerID: "gh-dash.theme.icon.collaborator",
@@ -1688,7 +1688,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1549",
+		Source:     "scripts/cmd/generate-colors/main.go:1557",
 	},
 	{
 		ConsumerID: "gh-dash.theme.icon.contributor",
@@ -1697,7 +1697,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1548",
+		Source:     "scripts/cmd/generate-colors/main.go:1556",
 	},
 	{
 		ConsumerID: "gh-dash.theme.icon.member",
@@ -1706,7 +1706,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1550",
+		Source:     "scripts/cmd/generate-colors/main.go:1558",
 	},
 	{
 		ConsumerID: "gh-dash.theme.icon.newcontributor",
@@ -1715,7 +1715,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1547",
+		Source:     "scripts/cmd/generate-colors/main.go:1555",
 	},
 	{
 		ConsumerID: "gh-dash.theme.icon.owner",
@@ -1724,7 +1724,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1551",
+		Source:     "scripts/cmd/generate-colors/main.go:1559",
 	},
 	{
 		ConsumerID: "gh-dash.theme.text.actor",
@@ -1733,7 +1733,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1539",
+		Source:     "scripts/cmd/generate-colors/main.go:1547",
 	},
 	{
 		ConsumerID: "gh-dash.theme.text.error",
@@ -1742,7 +1742,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1538",
+		Source:     "scripts/cmd/generate-colors/main.go:1546",
 	},
 	{
 		ConsumerID: "gh-dash.theme.text.faint",
@@ -1751,7 +1751,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1535",
+		Source:     "scripts/cmd/generate-colors/main.go:1543",
 	},
 	{
 		ConsumerID: "gh-dash.theme.text.inverted",
@@ -1760,7 +1760,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1534",
+		Source:     "scripts/cmd/generate-colors/main.go:1542",
 	},
 	{
 		ConsumerID: "gh-dash.theme.text.primary",
@@ -1769,7 +1769,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1532",
+		Source:     "scripts/cmd/generate-colors/main.go:1540",
 	},
 	{
 		ConsumerID: "gh-dash.theme.text.secondary",
@@ -1778,7 +1778,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1533",
+		Source:     "scripts/cmd/generate-colors/main.go:1541",
 	},
 	{
 		ConsumerID: "gh-dash.theme.text.success",
@@ -1787,7 +1787,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1537",
+		Source:     "scripts/cmd/generate-colors/main.go:1545",
 	},
 	{
 		ConsumerID: "gh-dash.theme.text.warning",
@@ -1796,7 +1796,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1536",
+		Source:     "scripts/cmd/generate-colors/main.go:1544",
 	},
 	{
 		ConsumerID: "herdr.theme.accent",
@@ -1805,7 +1805,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "border",
-		Source:     "scripts/cmd/generate-colors/main.go:1556",
+		Source:     "scripts/cmd/generate-colors/main.go:1564",
 	},
 	{
 		ConsumerID: "herdr.theme.blue",
@@ -1814,7 +1814,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "indicator",
-		Source:     "scripts/cmd/generate-colors/main.go:1569",
+		Source:     "scripts/cmd/generate-colors/main.go:1577",
 	},
 	{
 		ConsumerID: "herdr.theme.green",
@@ -1823,7 +1823,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "indicator",
-		Source:     "scripts/cmd/generate-colors/main.go:1566",
+		Source:     "scripts/cmd/generate-colors/main.go:1574",
 	},
 	{
 		ConsumerID: "herdr.theme.mauve",
@@ -1832,7 +1832,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1565",
+		Source:     "scripts/cmd/generate-colors/main.go:1573",
 	},
 	{
 		ConsumerID: "herdr.theme.overlay0",
@@ -1841,7 +1841,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1561",
+		Source:     "scripts/cmd/generate-colors/main.go:1569",
 	},
 	{
 		ConsumerID: "herdr.theme.overlay1",
@@ -1850,7 +1850,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1562",
+		Source:     "scripts/cmd/generate-colors/main.go:1570",
 	},
 	{
 		ConsumerID: "herdr.theme.red",
@@ -1859,7 +1859,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "indicator",
-		Source:     "scripts/cmd/generate-colors/main.go:1568",
+		Source:     "scripts/cmd/generate-colors/main.go:1576",
 	},
 	{
 		ConsumerID: "herdr.theme.subtext0",
@@ -1868,7 +1868,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1564",
+		Source:     "scripts/cmd/generate-colors/main.go:1572",
 	},
 	{
 		ConsumerID: "herdr.theme.surface1",
@@ -1877,7 +1877,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:1559",
+		Source:     "scripts/cmd/generate-colors/main.go:1567",
 	},
 	{
 		ConsumerID: "herdr.theme.surface_dim",
@@ -1886,7 +1886,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:1560",
+		Source:     "scripts/cmd/generate-colors/main.go:1568",
 	},
 	{
 		ConsumerID: "herdr.theme.teal",
@@ -1895,7 +1895,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "indicator",
-		Source:     "scripts/cmd/generate-colors/main.go:1570",
+		Source:     "scripts/cmd/generate-colors/main.go:1578",
 	},
 	{
 		ConsumerID: "herdr.theme.text",
@@ -1904,7 +1904,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1563",
+		Source:     "scripts/cmd/generate-colors/main.go:1571",
 	},
 	{
 		ConsumerID: "herdr.theme.yellow",
@@ -1913,7 +1913,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "indicator",
-		Source:     "scripts/cmd/generate-colors/main.go:1567",
+		Source:     "scripts/cmd/generate-colors/main.go:1575",
 	},
 	{
 		ConsumerID: "hunk.theme.accent",
@@ -2320,7 +2320,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1500",
+		Source:     "scripts/cmd/generate-colors/main.go:1508",
 	},
 	{
 		ConsumerID: "nvim.bufferline.background",
@@ -2657,7 +2657,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.@boolean",
-		Foreground: "foregrounds.main",
+		Foreground: "semantic.constant",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -2671,7 +2671,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:146",
+		Source:     "nvim/lua/plugins/colorscheme.lua:151",
 	},
 	{
 		ConsumerID: "nvim.highlight.@comment",
@@ -2684,21 +2684,21 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.@constant",
-		Foreground: "foregrounds.main",
+		Foreground: "semantic.constant",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:137",
+		Source:     "nvim/lua/plugins/colorscheme.lua:142",
 	},
 	{
 		ConsumerID: "nvim.highlight.@constant.builtin",
-		Foreground: "foregrounds.main",
+		Foreground: "semantic.constant",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:138",
+		Source:     "nvim/lua/plugins/colorscheme.lua:143",
 	},
 	{
 		ConsumerID: "nvim.highlight.@constant.builtin.yaml",
@@ -2707,20 +2707,20 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:148",
+		Source:     "nvim/lua/plugins/colorscheme.lua:153",
 	},
 	{
 		ConsumerID: "nvim.highlight.@field",
-		Foreground: "foregrounds.main",
+		Foreground: "semantic.variable",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:136",
+		Source:     "nvim/lua/plugins/colorscheme.lua:141",
 	},
 	{
 		ConsumerID: "nvim.highlight.@function",
-		Foreground: "foregrounds.heading",
+		Foreground: "semantic.function",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -2728,8 +2728,17 @@ var generatedPairs = []PairSpec{
 		Source:     "nvim/lua/plugins/colorscheme.lua:126",
 	},
 	{
+		ConsumerID: "nvim.highlight.@function.builtin",
+		Foreground: "semantic.function",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "nvim/lua/plugins/colorscheme.lua:130",
+	},
+	{
 		ConsumerID: "nvim.highlight.@function.call",
-		Foreground: "foregrounds.heading",
+		Foreground: "semantic.function",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -2737,8 +2746,17 @@ var generatedPairs = []PairSpec{
 		Source:     "nvim/lua/plugins/colorscheme.lua:127",
 	},
 	{
+		ConsumerID: "nvim.highlight.@function.macro",
+		Foreground: "semantic.function",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "nvim/lua/plugins/colorscheme.lua:131",
+	},
+	{
 		ConsumerID: "nvim.highlight.@function.method",
-		Foreground: "foregrounds.heading",
+		Foreground: "semantic.function",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -2747,7 +2765,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.@function.method.call",
-		Foreground: "foregrounds.heading",
+		Foreground: "semantic.function",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -2806,7 +2824,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:156",
+		Source:     "nvim/lua/plugins/colorscheme.lua:161",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.heading.1",
@@ -2815,7 +2833,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:157",
+		Source:     "nvim/lua/plugins/colorscheme.lua:162",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.heading.1.markdown",
@@ -2824,7 +2842,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:164",
+		Source:     "nvim/lua/plugins/colorscheme.lua:169",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.heading.1.markdown.surface",
@@ -2833,7 +2851,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:164",
+		Source:     "nvim/lua/plugins/colorscheme.lua:169",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.heading.2",
@@ -2842,7 +2860,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:158",
+		Source:     "nvim/lua/plugins/colorscheme.lua:163",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.heading.2.markdown",
@@ -2851,7 +2869,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:165",
+		Source:     "nvim/lua/plugins/colorscheme.lua:170",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.heading.2.markdown.surface",
@@ -2860,7 +2878,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:165",
+		Source:     "nvim/lua/plugins/colorscheme.lua:170",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.heading.3",
@@ -2869,7 +2887,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:159",
+		Source:     "nvim/lua/plugins/colorscheme.lua:164",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.heading.3.markdown",
@@ -2878,7 +2896,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:166",
+		Source:     "nvim/lua/plugins/colorscheme.lua:171",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.heading.3.markdown.surface",
@@ -2887,7 +2905,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:166",
+		Source:     "nvim/lua/plugins/colorscheme.lua:171",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.heading.4",
@@ -2896,7 +2914,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:160",
+		Source:     "nvim/lua/plugins/colorscheme.lua:165",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.heading.4.markdown",
@@ -2905,7 +2923,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:167",
+		Source:     "nvim/lua/plugins/colorscheme.lua:172",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.heading.4.markdown.surface",
@@ -2914,7 +2932,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:167",
+		Source:     "nvim/lua/plugins/colorscheme.lua:172",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.heading.5",
@@ -2923,7 +2941,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:161",
+		Source:     "nvim/lua/plugins/colorscheme.lua:166",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.heading.5.markdown",
@@ -2932,7 +2950,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:168",
+		Source:     "nvim/lua/plugins/colorscheme.lua:173",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.heading.5.markdown.surface",
@@ -2941,7 +2959,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:168",
+		Source:     "nvim/lua/plugins/colorscheme.lua:173",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.heading.6",
@@ -2950,7 +2968,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:162",
+		Source:     "nvim/lua/plugins/colorscheme.lua:167",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.heading.6.markdown",
@@ -2959,7 +2977,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:169",
+		Source:     "nvim/lua/plugins/colorscheme.lua:174",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.heading.6.markdown.surface",
@@ -2968,7 +2986,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:169",
+		Source:     "nvim/lua/plugins/colorscheme.lua:174",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.italic",
@@ -2977,7 +2995,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:216",
+		Source:     "nvim/lua/plugins/colorscheme.lua:221",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.link",
@@ -2986,7 +3004,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:209",
+		Source:     "nvim/lua/plugins/colorscheme.lua:214",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.link.label",
@@ -2995,7 +3013,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:210",
+		Source:     "nvim/lua/plugins/colorscheme.lua:215",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.link.url",
@@ -3004,7 +3022,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:211",
+		Source:     "nvim/lua/plugins/colorscheme.lua:216",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.list",
@@ -3013,7 +3031,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:205",
+		Source:     "nvim/lua/plugins/colorscheme.lua:210",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.list.checked",
@@ -3022,7 +3040,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:207",
+		Source:     "nvim/lua/plugins/colorscheme.lua:212",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.list.markdown",
@@ -3031,7 +3049,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:206",
+		Source:     "nvim/lua/plugins/colorscheme.lua:211",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.list.unchecked",
@@ -3040,7 +3058,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:208",
+		Source:     "nvim/lua/plugins/colorscheme.lua:213",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.quote",
@@ -3049,7 +3067,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:218",
+		Source:     "nvim/lua/plugins/colorscheme.lua:223",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.raw",
@@ -3058,7 +3076,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:212",
+		Source:     "nvim/lua/plugins/colorscheme.lua:217",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.raw.block",
@@ -3067,7 +3085,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:214",
+		Source:     "nvim/lua/plugins/colorscheme.lua:219",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.raw.markdown_inline",
@@ -3076,7 +3094,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:213",
+		Source:     "nvim/lua/plugins/colorscheme.lua:218",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.raw.markdown_inline.surface",
@@ -3085,7 +3103,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:213",
+		Source:     "nvim/lua/plugins/colorscheme.lua:218",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.strikethrough",
@@ -3094,7 +3112,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:217",
+		Source:     "nvim/lua/plugins/colorscheme.lua:222",
 	},
 	{
 		ConsumerID: "nvim.highlight.@markup.strong",
@@ -3103,7 +3121,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:215",
+		Source:     "nvim/lua/plugins/colorscheme.lua:220",
 	},
 	{
 		ConsumerID: "nvim.highlight.@module",
@@ -3112,7 +3130,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:150",
+		Source:     "nvim/lua/plugins/colorscheme.lua:155",
 	},
 	{
 		ConsumerID: "nvim.highlight.@namespace",
@@ -3121,11 +3139,11 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:149",
+		Source:     "nvim/lua/plugins/colorscheme.lua:154",
 	},
 	{
 		ConsumerID: "nvim.highlight.@number",
-		Foreground: "foregrounds.main",
+		Foreground: "semantic.number",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -3139,7 +3157,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:147",
+		Source:     "nvim/lua/plugins/colorscheme.lua:152",
 	},
 	{
 		ConsumerID: "nvim.highlight.@operator",
@@ -3148,25 +3166,25 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:139",
+		Source:     "nvim/lua/plugins/colorscheme.lua:144",
 	},
 	{
 		ConsumerID: "nvim.highlight.@parameter",
-		Foreground: "foregrounds.main",
+		Foreground: "semantic.variable",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:132",
+		Source:     "nvim/lua/plugins/colorscheme.lua:137",
 	},
 	{
 		ConsumerID: "nvim.highlight.@property",
-		Foreground: "foregrounds.main",
+		Foreground: "semantic.variable",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:135",
+		Source:     "nvim/lua/plugins/colorscheme.lua:140",
 	},
 	{
 		ConsumerID: "nvim.highlight.@property.yaml",
@@ -3175,7 +3193,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:145",
+		Source:     "nvim/lua/plugins/colorscheme.lua:150",
 	},
 	{
 		ConsumerID: "nvim.highlight.@punctuation",
@@ -3184,7 +3202,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:140",
+		Source:     "nvim/lua/plugins/colorscheme.lua:145",
 	},
 	{
 		ConsumerID: "nvim.highlight.@punctuation.bracket",
@@ -3193,7 +3211,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:141",
+		Source:     "nvim/lua/plugins/colorscheme.lua:146",
 	},
 	{
 		ConsumerID: "nvim.highlight.@punctuation.delimiter",
@@ -3202,7 +3220,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:142",
+		Source:     "nvim/lua/plugins/colorscheme.lua:147",
 	},
 	{
 		ConsumerID: "nvim.highlight.@punctuation.delimiter.yaml",
@@ -3211,7 +3229,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:143",
+		Source:     "nvim/lua/plugins/colorscheme.lua:148",
 	},
 	{
 		ConsumerID: "nvim.highlight.@punctuation.special.markdown",
@@ -3220,7 +3238,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:219",
+		Source:     "nvim/lua/plugins/colorscheme.lua:224",
 	},
 	{
 		ConsumerID: "nvim.highlight.@string",
@@ -3238,7 +3256,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:151",
+		Source:     "nvim/lua/plugins/colorscheme.lua:156",
 	},
 	{
 		ConsumerID: "nvim.highlight.@tag.attribute",
@@ -3247,7 +3265,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:152",
+		Source:     "nvim/lua/plugins/colorscheme.lua:157",
 	},
 	{
 		ConsumerID: "nvim.highlight.@tag.delimiter",
@@ -3256,11 +3274,38 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:153",
+		Source:     "nvim/lua/plugins/colorscheme.lua:158",
 	},
 	{
 		ConsumerID: "nvim.highlight.@type",
-		Foreground: "foregrounds.heading",
+		Foreground: "semantic.type",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "nvim/lua/plugins/colorscheme.lua:138",
+	},
+	{
+		ConsumerID: "nvim.highlight.@type.builtin",
+		Foreground: "semantic.type",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "nvim/lua/plugins/colorscheme.lua:139",
+	},
+	{
+		ConsumerID: "nvim.highlight.@variable",
+		Foreground: "semantic.variable",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "nvim/lua/plugins/colorscheme.lua:132",
+	},
+	{
+		ConsumerID: "nvim.highlight.@variable.builtin",
+		Foreground: "semantic.builtin_variable",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -3268,8 +3313,8 @@ var generatedPairs = []PairSpec{
 		Source:     "nvim/lua/plugins/colorscheme.lua:133",
 	},
 	{
-		ConsumerID: "nvim.highlight.@type.builtin",
-		Foreground: "foregrounds.heading",
+		ConsumerID: "nvim.highlight.@variable.member",
+		Foreground: "semantic.variable",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -3277,22 +3322,22 @@ var generatedPairs = []PairSpec{
 		Source:     "nvim/lua/plugins/colorscheme.lua:134",
 	},
 	{
-		ConsumerID: "nvim.highlight.@variable",
-		Foreground: "foregrounds.main",
+		ConsumerID: "nvim.highlight.@variable.parameter",
+		Foreground: "semantic.variable",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:130",
+		Source:     "nvim/lua/plugins/colorscheme.lua:135",
 	},
 	{
-		ConsumerID: "nvim.highlight.@variable.builtin",
-		Foreground: "foregrounds.heading",
+		ConsumerID: "nvim.highlight.@variable.parameter.builtin",
+		Foreground: "semantic.builtin_variable",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:131",
+		Source:     "nvim/lua/plugins/colorscheme.lua:136",
 	},
 	{
 		ConsumerID: "nvim.highlight.BlinkCmpDoc",
@@ -3458,7 +3503,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.Boolean",
-		Foreground: "foregrounds.bright",
+		Foreground: "semantic.constant",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -3472,7 +3517,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:258",
+		Source:     "nvim/lua/plugins/colorscheme.lua:263",
 	},
 	{
 		ConsumerID: "nvim.highlight.Comment",
@@ -3490,11 +3535,11 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:365",
+		Source:     "nvim/lua/plugins/colorscheme.lua:370",
 	},
 	{
 		ConsumerID: "nvim.highlight.Constant",
-		Foreground: "purples.lavender",
+		Foreground: "semantic.constant",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -3508,7 +3553,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:243",
+		Source:     "nvim/lua/plugins/colorscheme.lua:248",
 	},
 	{
 		ConsumerID: "nvim.highlight.CurSearch.surface",
@@ -3517,7 +3562,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:243",
+		Source:     "nvim/lua/plugins/colorscheme.lua:248",
 	},
 	{
 		ConsumerID: "nvim.highlight.Cursor",
@@ -3526,7 +3571,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:253",
+		Source:     "nvim/lua/plugins/colorscheme.lua:258",
 	},
 	{
 		ConsumerID: "nvim.highlight.Cursor.surface",
@@ -3535,7 +3580,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:253",
+		Source:     "nvim/lua/plugins/colorscheme.lua:258",
 	},
 	{
 		ConsumerID: "nvim.highlight.CursorColumn.surface",
@@ -3544,7 +3589,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:252",
+		Source:     "nvim/lua/plugins/colorscheme.lua:257",
 	},
 	{
 		ConsumerID: "nvim.highlight.CursorIM",
@@ -3553,7 +3598,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:255",
+		Source:     "nvim/lua/plugins/colorscheme.lua:260",
 	},
 	{
 		ConsumerID: "nvim.highlight.CursorIM.surface",
@@ -3562,7 +3607,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:255",
+		Source:     "nvim/lua/plugins/colorscheme.lua:260",
 	},
 	{
 		ConsumerID: "nvim.highlight.CursorLine.surface",
@@ -3571,7 +3616,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:251",
+		Source:     "nvim/lua/plugins/colorscheme.lua:256",
 	},
 	{
 		ConsumerID: "nvim.highlight.CursorLineNr",
@@ -3580,7 +3625,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:438",
+		Source:     "nvim/lua/plugins/colorscheme.lua:443",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticError",
@@ -3589,7 +3634,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:233",
+		Source:     "nvim/lua/plugins/colorscheme.lua:238",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticFloatingError",
@@ -3598,7 +3643,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:273",
+		Source:     "nvim/lua/plugins/colorscheme.lua:278",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticFloatingHint",
@@ -3607,7 +3652,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:276",
+		Source:     "nvim/lua/plugins/colorscheme.lua:281",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticFloatingInfo",
@@ -3616,7 +3661,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:275",
+		Source:     "nvim/lua/plugins/colorscheme.lua:280",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticFloatingWarn",
@@ -3625,7 +3670,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:274",
+		Source:     "nvim/lua/plugins/colorscheme.lua:279",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticHint",
@@ -3634,7 +3679,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:236",
+		Source:     "nvim/lua/plugins/colorscheme.lua:241",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticInfo",
@@ -3643,7 +3688,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:235",
+		Source:     "nvim/lua/plugins/colorscheme.lua:240",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticSignError",
@@ -3652,7 +3697,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:269",
+		Source:     "nvim/lua/plugins/colorscheme.lua:274",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticSignHint",
@@ -3661,7 +3706,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:272",
+		Source:     "nvim/lua/plugins/colorscheme.lua:277",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticSignInfo",
@@ -3670,7 +3715,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:271",
+		Source:     "nvim/lua/plugins/colorscheme.lua:276",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticSignWarn",
@@ -3679,7 +3724,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:270",
+		Source:     "nvim/lua/plugins/colorscheme.lua:275",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticUnderlineError.indicator",
@@ -3689,7 +3734,7 @@ var generatedPairs = []PairSpec{
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "indicator",
 		Reason:     "undercurl or underline shape provides a non-color cue",
-		Source:     "nvim/lua/plugins/colorscheme.lua:265",
+		Source:     "nvim/lua/plugins/colorscheme.lua:270",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticUnderlineHint.indicator",
@@ -3699,7 +3744,7 @@ var generatedPairs = []PairSpec{
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "indicator",
 		Reason:     "undercurl or underline shape provides a non-color cue",
-		Source:     "nvim/lua/plugins/colorscheme.lua:268",
+		Source:     "nvim/lua/plugins/colorscheme.lua:273",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticUnderlineInfo.indicator",
@@ -3709,7 +3754,7 @@ var generatedPairs = []PairSpec{
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "indicator",
 		Reason:     "undercurl or underline shape provides a non-color cue",
-		Source:     "nvim/lua/plugins/colorscheme.lua:267",
+		Source:     "nvim/lua/plugins/colorscheme.lua:272",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticUnderlineWarn.indicator",
@@ -3719,7 +3764,7 @@ var generatedPairs = []PairSpec{
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "indicator",
 		Reason:     "undercurl or underline shape provides a non-color cue",
-		Source:     "nvim/lua/plugins/colorscheme.lua:266",
+		Source:     "nvim/lua/plugins/colorscheme.lua:271",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticVirtualTextError",
@@ -3728,7 +3773,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:261",
+		Source:     "nvim/lua/plugins/colorscheme.lua:266",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticVirtualTextHint",
@@ -3737,7 +3782,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:264",
+		Source:     "nvim/lua/plugins/colorscheme.lua:269",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticVirtualTextInfo",
@@ -3746,7 +3791,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:263",
+		Source:     "nvim/lua/plugins/colorscheme.lua:268",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticVirtualTextWarn",
@@ -3755,7 +3800,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:262",
+		Source:     "nvim/lua/plugins/colorscheme.lua:267",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticWarn",
@@ -3764,7 +3809,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:234",
+		Source:     "nvim/lua/plugins/colorscheme.lua:239",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiffAdd",
@@ -3854,7 +3899,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:238",
+		Source:     "nvim/lua/plugins/colorscheme.lua:243",
 	},
 	{
 		ConsumerID: "nvim.highlight.FlashBackdrop",
@@ -3863,7 +3908,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:291",
+		Source:     "nvim/lua/plugins/colorscheme.lua:296",
 	},
 	{
 		ConsumerID: "nvim.highlight.FlashCurrent",
@@ -3872,7 +3917,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:293",
+		Source:     "nvim/lua/plugins/colorscheme.lua:298",
 	},
 	{
 		ConsumerID: "nvim.highlight.FlashCurrent.surface",
@@ -3881,7 +3926,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:293",
+		Source:     "nvim/lua/plugins/colorscheme.lua:298",
 	},
 	{
 		ConsumerID: "nvim.highlight.FlashLabel",
@@ -3890,7 +3935,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:294",
+		Source:     "nvim/lua/plugins/colorscheme.lua:299",
 	},
 	{
 		ConsumerID: "nvim.highlight.FlashLabel.surface",
@@ -3899,7 +3944,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:294",
+		Source:     "nvim/lua/plugins/colorscheme.lua:299",
 	},
 	{
 		ConsumerID: "nvim.highlight.FlashMatch",
@@ -3908,7 +3953,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:292",
+		Source:     "nvim/lua/plugins/colorscheme.lua:297",
 	},
 	{
 		ConsumerID: "nvim.highlight.FlashMatch.surface",
@@ -3917,7 +3962,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:292",
+		Source:     "nvim/lua/plugins/colorscheme.lua:297",
 	},
 	{
 		ConsumerID: "nvim.highlight.FlashPrompt",
@@ -3926,7 +3971,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:295",
+		Source:     "nvim/lua/plugins/colorscheme.lua:300",
 	},
 	{
 		ConsumerID: "nvim.highlight.FlashPromptIcon",
@@ -3935,7 +3980,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:296",
+		Source:     "nvim/lua/plugins/colorscheme.lua:301",
 	},
 	{
 		ConsumerID: "nvim.highlight.FloatBorder",
@@ -3962,7 +4007,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:439",
+		Source:     "nvim/lua/plugins/colorscheme.lua:444",
 	},
 	{
 		ConsumerID: "nvim.highlight.Folded",
@@ -3971,7 +4016,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:287",
+		Source:     "nvim/lua/plugins/colorscheme.lua:292",
 	},
 	{
 		ConsumerID: "nvim.highlight.Folded.surface",
@@ -3980,11 +4025,11 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:287",
+		Source:     "nvim/lua/plugins/colorscheme.lua:292",
 	},
 	{
 		ConsumerID: "nvim.highlight.Function",
-		Foreground: "teals.bright",
+		Foreground: "semantic.function",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -4110,7 +4155,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.Identifier",
-		Foreground: "foregrounds.main",
+		Foreground: "semantic.variable",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -4124,7 +4169,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:242",
+		Source:     "nvim/lua/plugins/colorscheme.lua:247",
 	},
 	{
 		ConsumerID: "nvim.highlight.IncSearch.surface",
@@ -4133,7 +4178,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:242",
+		Source:     "nvim/lua/plugins/colorscheme.lua:247",
 	},
 	{
 		ConsumerID: "nvim.highlight.Keyword",
@@ -4151,7 +4196,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:375",
+		Source:     "nvim/lua/plugins/colorscheme.lua:380",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyButtonActive",
@@ -4160,7 +4205,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:376",
+		Source:     "nvim/lua/plugins/colorscheme.lua:381",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyButtonActive.surface",
@@ -4169,7 +4214,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:376",
+		Source:     "nvim/lua/plugins/colorscheme.lua:381",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyCommit",
@@ -4178,7 +4223,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:380",
+		Source:     "nvim/lua/plugins/colorscheme.lua:385",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyCommitType",
@@ -4187,7 +4232,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:381",
+		Source:     "nvim/lua/plugins/colorscheme.lua:386",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyDimmed",
@@ -4196,7 +4241,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:382",
+		Source:     "nvim/lua/plugins/colorscheme.lua:387",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyH1",
@@ -4205,7 +4250,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:377",
+		Source:     "nvim/lua/plugins/colorscheme.lua:382",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyH2",
@@ -4214,7 +4259,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:378",
+		Source:     "nvim/lua/plugins/colorscheme.lua:383",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyLocal",
@@ -4223,7 +4268,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:385",
+		Source:     "nvim/lua/plugins/colorscheme.lua:390",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyProgressDone",
@@ -4232,7 +4277,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:386",
+		Source:     "nvim/lua/plugins/colorscheme.lua:391",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyProgressTodo",
@@ -4241,7 +4286,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:387",
+		Source:     "nvim/lua/plugins/colorscheme.lua:392",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyProp",
@@ -4250,7 +4295,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:383",
+		Source:     "nvim/lua/plugins/colorscheme.lua:388",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyReasonCmd",
@@ -4259,7 +4304,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:388",
+		Source:     "nvim/lua/plugins/colorscheme.lua:393",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyReasonEvent",
@@ -4268,7 +4313,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:389",
+		Source:     "nvim/lua/plugins/colorscheme.lua:394",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyReasonFt",
@@ -4277,7 +4322,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:390",
+		Source:     "nvim/lua/plugins/colorscheme.lua:395",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyReasonKeys",
@@ -4286,7 +4331,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:391",
+		Source:     "nvim/lua/plugins/colorscheme.lua:396",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyReasonPlugin",
@@ -4295,7 +4340,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:392",
+		Source:     "nvim/lua/plugins/colorscheme.lua:397",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyReasonStart",
@@ -4304,7 +4349,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:393",
+		Source:     "nvim/lua/plugins/colorscheme.lua:398",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazySpecial",
@@ -4313,7 +4358,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:379",
+		Source:     "nvim/lua/plugins/colorscheme.lua:384",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyValue",
@@ -4322,7 +4367,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:384",
+		Source:     "nvim/lua/plugins/colorscheme.lua:389",
 	},
 	{
 		ConsumerID: "nvim.highlight.LspCodeLens",
@@ -4331,7 +4376,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:283",
+		Source:     "nvim/lua/plugins/colorscheme.lua:288",
 	},
 	{
 		ConsumerID: "nvim.highlight.LspInlayHint",
@@ -4340,7 +4385,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:284",
+		Source:     "nvim/lua/plugins/colorscheme.lua:289",
 	},
 	{
 		ConsumerID: "nvim.highlight.LspReferenceRead.surface",
@@ -4349,7 +4394,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:280",
+		Source:     "nvim/lua/plugins/colorscheme.lua:285",
 	},
 	{
 		ConsumerID: "nvim.highlight.LspReferenceText.surface",
@@ -4358,7 +4403,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:279",
+		Source:     "nvim/lua/plugins/colorscheme.lua:284",
 	},
 	{
 		ConsumerID: "nvim.highlight.LspReferenceWrite.surface",
@@ -4367,7 +4412,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:281",
+		Source:     "nvim/lua/plugins/colorscheme.lua:286",
 	},
 	{
 		ConsumerID: "nvim.highlight.LspSignatureActiveParameter",
@@ -4376,7 +4421,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:282",
+		Source:     "nvim/lua/plugins/colorscheme.lua:287",
 	},
 	{
 		ConsumerID: "nvim.highlight.MatchParen",
@@ -4385,7 +4430,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:245",
+		Source:     "nvim/lua/plugins/colorscheme.lua:250",
 	},
 	{
 		ConsumerID: "nvim.highlight.MatchParen.surface",
@@ -4394,7 +4439,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:245",
+		Source:     "nvim/lua/plugins/colorscheme.lua:250",
 	},
 	{
 		ConsumerID: "nvim.highlight.MiniIconsAzure",
@@ -4484,7 +4529,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:368",
+		Source:     "nvim/lua/plugins/colorscheme.lua:373",
 	},
 	{
 		ConsumerID: "nvim.highlight.MoreMsg",
@@ -4493,7 +4538,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:367",
+		Source:     "nvim/lua/plugins/colorscheme.lua:372",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestAdapterName",
@@ -4502,7 +4547,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:477",
+		Source:     "nvim/lua/plugins/colorscheme.lua:482",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestBorder",
@@ -4511,7 +4556,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:478",
+		Source:     "nvim/lua/plugins/colorscheme.lua:483",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestDir",
@@ -4520,7 +4565,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:479",
+		Source:     "nvim/lua/plugins/colorscheme.lua:484",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestExpandMarker",
@@ -4529,7 +4574,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:483",
+		Source:     "nvim/lua/plugins/colorscheme.lua:488",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestFailed",
@@ -4538,7 +4583,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:472",
+		Source:     "nvim/lua/plugins/colorscheme.lua:477",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestFile",
@@ -4547,7 +4592,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:480",
+		Source:     "nvim/lua/plugins/colorscheme.lua:485",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestFocused",
@@ -4556,7 +4601,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:484",
+		Source:     "nvim/lua/plugins/colorscheme.lua:489",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestIndent",
@@ -4565,7 +4610,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:482",
+		Source:     "nvim/lua/plugins/colorscheme.lua:487",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestMarked",
@@ -4574,7 +4619,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:475",
+		Source:     "nvim/lua/plugins/colorscheme.lua:480",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestNamespace",
@@ -4583,7 +4628,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:481",
+		Source:     "nvim/lua/plugins/colorscheme.lua:486",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestPassed",
@@ -4592,7 +4637,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:471",
+		Source:     "nvim/lua/plugins/colorscheme.lua:476",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestRunning",
@@ -4601,7 +4646,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:473",
+		Source:     "nvim/lua/plugins/colorscheme.lua:478",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestSkipped",
@@ -4610,7 +4655,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:474",
+		Source:     "nvim/lua/plugins/colorscheme.lua:479",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestTarget",
@@ -4619,7 +4664,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:486",
+		Source:     "nvim/lua/plugins/colorscheme.lua:491",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestUnknown",
@@ -4628,7 +4673,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:485",
+		Source:     "nvim/lua/plugins/colorscheme.lua:490",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestWinSelect",
@@ -4637,7 +4682,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:476",
+		Source:     "nvim/lua/plugins/colorscheme.lua:481",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoiceCmdline",
@@ -4646,7 +4691,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:308",
+		Source:     "nvim/lua/plugins/colorscheme.lua:313",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoiceCmdlineIcon",
@@ -4655,7 +4700,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:309",
+		Source:     "nvim/lua/plugins/colorscheme.lua:314",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoiceCmdlineIconSearch",
@@ -4664,7 +4709,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:310",
+		Source:     "nvim/lua/plugins/colorscheme.lua:315",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoiceCmdlinePopupBorder",
@@ -4673,7 +4718,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:312",
+		Source:     "nvim/lua/plugins/colorscheme.lua:317",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoiceCmdlinePopupTitle",
@@ -4682,7 +4727,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:313",
+		Source:     "nvim/lua/plugins/colorscheme.lua:318",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoiceConfirmBorder",
@@ -4691,7 +4736,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:315",
+		Source:     "nvim/lua/plugins/colorscheme.lua:320",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoicePopupBorder",
@@ -4700,7 +4745,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:318",
+		Source:     "nvim/lua/plugins/colorscheme.lua:323",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoicePopupmenuBorder",
@@ -4709,7 +4754,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:320",
+		Source:     "nvim/lua/plugins/colorscheme.lua:325",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoicePopupmenuMatch",
@@ -4718,7 +4763,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:321",
+		Source:     "nvim/lua/plugins/colorscheme.lua:326",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoicePopupmenuSelected.surface",
@@ -4727,7 +4772,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:322",
+		Source:     "nvim/lua/plugins/colorscheme.lua:327",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoiceVirtualText",
@@ -4736,7 +4781,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:323",
+		Source:     "nvim/lua/plugins/colorscheme.lua:328",
 	},
 	{
 		ConsumerID: "nvim.highlight.NonText",
@@ -4745,7 +4790,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:362",
+		Source:     "nvim/lua/plugins/colorscheme.lua:367",
 	},
 	{
 		ConsumerID: "nvim.highlight.Normal",
@@ -4754,7 +4799,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:422",
+		Source:     "nvim/lua/plugins/colorscheme.lua:427",
 	},
 	{
 		ConsumerID: "nvim.highlight.NormalFloat",
@@ -4781,7 +4826,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:423",
+		Source:     "nvim/lua/plugins/colorscheme.lua:428",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyDEBUGBody",
@@ -4790,7 +4835,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:344",
+		Source:     "nvim/lua/plugins/colorscheme.lua:349",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyDEBUGBorder",
@@ -4799,7 +4844,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:329",
+		Source:     "nvim/lua/plugins/colorscheme.lua:334",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyDEBUGIcon",
@@ -4808,7 +4853,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:334",
+		Source:     "nvim/lua/plugins/colorscheme.lua:339",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyDEBUGTitle",
@@ -4817,7 +4862,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:339",
+		Source:     "nvim/lua/plugins/colorscheme.lua:344",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyERRORBody",
@@ -4826,7 +4871,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:341",
+		Source:     "nvim/lua/plugins/colorscheme.lua:346",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyERRORBorder",
@@ -4835,7 +4880,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:326",
+		Source:     "nvim/lua/plugins/colorscheme.lua:331",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyERRORIcon",
@@ -4844,7 +4889,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:331",
+		Source:     "nvim/lua/plugins/colorscheme.lua:336",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyERRORTitle",
@@ -4853,7 +4898,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:336",
+		Source:     "nvim/lua/plugins/colorscheme.lua:341",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyINFOBody",
@@ -4862,7 +4907,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:343",
+		Source:     "nvim/lua/plugins/colorscheme.lua:348",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyINFOBorder",
@@ -4871,7 +4916,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:328",
+		Source:     "nvim/lua/plugins/colorscheme.lua:333",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyINFOIcon",
@@ -4880,7 +4925,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:333",
+		Source:     "nvim/lua/plugins/colorscheme.lua:338",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyINFOTitle",
@@ -4889,7 +4934,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:338",
+		Source:     "nvim/lua/plugins/colorscheme.lua:343",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyTRACEBody",
@@ -4898,7 +4943,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:345",
+		Source:     "nvim/lua/plugins/colorscheme.lua:350",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyTRACEBorder",
@@ -4907,7 +4952,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:330",
+		Source:     "nvim/lua/plugins/colorscheme.lua:335",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyTRACEIcon",
@@ -4916,7 +4961,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:335",
+		Source:     "nvim/lua/plugins/colorscheme.lua:340",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyTRACETitle",
@@ -4925,7 +4970,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:340",
+		Source:     "nvim/lua/plugins/colorscheme.lua:345",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyWARNBody",
@@ -4934,7 +4979,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:342",
+		Source:     "nvim/lua/plugins/colorscheme.lua:347",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyWARNBorder",
@@ -4943,7 +4988,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:327",
+		Source:     "nvim/lua/plugins/colorscheme.lua:332",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyWARNIcon",
@@ -4952,7 +4997,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:332",
+		Source:     "nvim/lua/plugins/colorscheme.lua:337",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyWARNTitle",
@@ -4961,11 +5006,11 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:337",
+		Source:     "nvim/lua/plugins/colorscheme.lua:342",
 	},
 	{
 		ConsumerID: "nvim.highlight.Number",
-		Foreground: "foregrounds.bright",
+		Foreground: "semantic.number",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -4979,7 +5024,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:222",
+		Source:     "nvim/lua/plugins/colorscheme.lua:227",
 	},
 	{
 		ConsumerID: "nvim.highlight.OilDirIcon",
@@ -4988,7 +5033,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:223",
+		Source:     "nvim/lua/plugins/colorscheme.lua:228",
 	},
 	{
 		ConsumerID: "nvim.highlight.OilFile",
@@ -4997,7 +5042,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:225",
+		Source:     "nvim/lua/plugins/colorscheme.lua:230",
 	},
 	{
 		ConsumerID: "nvim.highlight.OilLink",
@@ -5006,7 +5051,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:224",
+		Source:     "nvim/lua/plugins/colorscheme.lua:229",
 	},
 	{
 		ConsumerID: "nvim.highlight.Operator",
@@ -5087,7 +5132,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:366",
+		Source:     "nvim/lua/plugins/colorscheme.lua:371",
 	},
 	{
 		ConsumerID: "nvim.highlight.QuickFixLine.surface",
@@ -5096,7 +5141,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:370",
+		Source:     "nvim/lua/plugins/colorscheme.lua:375",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownBullet",
@@ -5105,7 +5150,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:192",
+		Source:     "nvim/lua/plugins/colorscheme.lua:197",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownChecked",
@@ -5114,7 +5159,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:193",
+		Source:     "nvim/lua/plugins/colorscheme.lua:198",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownCode.surface",
@@ -5123,7 +5168,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:186",
+		Source:     "nvim/lua/plugins/colorscheme.lua:191",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownCodeInline",
@@ -5132,7 +5177,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:187",
+		Source:     "nvim/lua/plugins/colorscheme.lua:192",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownCodeInline.surface",
@@ -5141,7 +5186,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:187",
+		Source:     "nvim/lua/plugins/colorscheme.lua:192",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownError",
@@ -5150,7 +5195,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:204",
+		Source:     "nvim/lua/plugins/colorscheme.lua:209",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownH1",
@@ -5159,7 +5204,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:179",
+		Source:     "nvim/lua/plugins/colorscheme.lua:184",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownH1Bg.surface",
@@ -5168,7 +5213,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:172",
+		Source:     "nvim/lua/plugins/colorscheme.lua:177",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownH2",
@@ -5177,7 +5222,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:180",
+		Source:     "nvim/lua/plugins/colorscheme.lua:185",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownH2Bg.surface",
@@ -5186,7 +5231,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:173",
+		Source:     "nvim/lua/plugins/colorscheme.lua:178",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownH3",
@@ -5195,7 +5240,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:181",
+		Source:     "nvim/lua/plugins/colorscheme.lua:186",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownH3Bg.surface",
@@ -5204,7 +5249,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:174",
+		Source:     "nvim/lua/plugins/colorscheme.lua:179",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownH4",
@@ -5213,7 +5258,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:182",
+		Source:     "nvim/lua/plugins/colorscheme.lua:187",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownH4Bg.surface",
@@ -5222,7 +5267,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:175",
+		Source:     "nvim/lua/plugins/colorscheme.lua:180",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownH5",
@@ -5231,7 +5276,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:183",
+		Source:     "nvim/lua/plugins/colorscheme.lua:188",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownH5Bg.surface",
@@ -5240,7 +5285,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:176",
+		Source:     "nvim/lua/plugins/colorscheme.lua:181",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownH6",
@@ -5249,7 +5294,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:184",
+		Source:     "nvim/lua/plugins/colorscheme.lua:189",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownH6Bg.surface",
@@ -5258,7 +5303,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:177",
+		Source:     "nvim/lua/plugins/colorscheme.lua:182",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownHint",
@@ -5267,7 +5312,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:201",
+		Source:     "nvim/lua/plugins/colorscheme.lua:206",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownInfo",
@@ -5276,7 +5321,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:200",
+		Source:     "nvim/lua/plugins/colorscheme.lua:205",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownLink",
@@ -5285,7 +5330,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:197",
+		Source:     "nvim/lua/plugins/colorscheme.lua:202",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownQuote",
@@ -5294,7 +5339,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:198",
+		Source:     "nvim/lua/plugins/colorscheme.lua:203",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownSuccess",
@@ -5303,7 +5348,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:202",
+		Source:     "nvim/lua/plugins/colorscheme.lua:207",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownTableHead",
@@ -5312,7 +5357,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:189",
+		Source:     "nvim/lua/plugins/colorscheme.lua:194",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownTableRow",
@@ -5321,7 +5366,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:190",
+		Source:     "nvim/lua/plugins/colorscheme.lua:195",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownTodo",
@@ -5330,7 +5375,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:195",
+		Source:     "nvim/lua/plugins/colorscheme.lua:200",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownUnchecked",
@@ -5339,7 +5384,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:194",
+		Source:     "nvim/lua/plugins/colorscheme.lua:199",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownWarn",
@@ -5348,7 +5393,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:203",
+		Source:     "nvim/lua/plugins/colorscheme.lua:208",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarError",
@@ -5357,7 +5402,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:491",
+		Source:     "nvim/lua/plugins/colorscheme.lua:496",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarGitAdd",
@@ -5366,7 +5411,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:496",
+		Source:     "nvim/lua/plugins/colorscheme.lua:501",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarGitChange",
@@ -5375,7 +5420,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:497",
+		Source:     "nvim/lua/plugins/colorscheme.lua:502",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarGitDelete",
@@ -5384,7 +5429,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:498",
+		Source:     "nvim/lua/plugins/colorscheme.lua:503",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarHandle.surface",
@@ -5393,7 +5438,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:489",
+		Source:     "nvim/lua/plugins/colorscheme.lua:494",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarHint",
@@ -5402,7 +5447,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:494",
+		Source:     "nvim/lua/plugins/colorscheme.lua:499",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarInfo",
@@ -5411,7 +5456,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:493",
+		Source:     "nvim/lua/plugins/colorscheme.lua:498",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarMisc",
@@ -5420,7 +5465,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:495",
+		Source:     "nvim/lua/plugins/colorscheme.lua:500",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarSearch",
@@ -5429,7 +5474,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:490",
+		Source:     "nvim/lua/plugins/colorscheme.lua:495",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarWarn",
@@ -5438,7 +5483,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:492",
+		Source:     "nvim/lua/plugins/colorscheme.lua:497",
 	},
 	{
 		ConsumerID: "nvim.highlight.Search",
@@ -5447,7 +5492,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:241",
+		Source:     "nvim/lua/plugins/colorscheme.lua:246",
 	},
 	{
 		ConsumerID: "nvim.highlight.Search.surface",
@@ -5456,7 +5501,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:241",
+		Source:     "nvim/lua/plugins/colorscheme.lua:246",
 	},
 	{
 		ConsumerID: "nvim.highlight.Select",
@@ -5465,7 +5510,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:250",
+		Source:     "nvim/lua/plugins/colorscheme.lua:255",
 	},
 	{
 		ConsumerID: "nvim.highlight.Select.surface",
@@ -5474,7 +5519,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:250",
+		Source:     "nvim/lua/plugins/colorscheme.lua:255",
 	},
 	{
 		ConsumerID: "nvim.highlight.SnacksPickerCursor",
@@ -5483,7 +5528,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:454",
+		Source:     "nvim/lua/plugins/colorscheme.lua:459",
 	},
 	{
 		ConsumerID: "nvim.highlight.SnacksPickerCursor.surface",
@@ -5492,7 +5537,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:454",
+		Source:     "nvim/lua/plugins/colorscheme.lua:459",
 	},
 	{
 		ConsumerID: "nvim.highlight.SnacksPickerCursorLine",
@@ -5501,7 +5546,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:455",
+		Source:     "nvim/lua/plugins/colorscheme.lua:460",
 	},
 	{
 		ConsumerID: "nvim.highlight.SnacksPickerCursorLine.surface",
@@ -5510,7 +5555,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:455",
+		Source:     "nvim/lua/plugins/colorscheme.lua:460",
 	},
 	{
 		ConsumerID: "nvim.highlight.SnacksPickerListCursorLine",
@@ -5519,7 +5564,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:452",
+		Source:     "nvim/lua/plugins/colorscheme.lua:457",
 	},
 	{
 		ConsumerID: "nvim.highlight.SnacksPickerListCursorLine.surface",
@@ -5528,7 +5573,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:452",
+		Source:     "nvim/lua/plugins/colorscheme.lua:457",
 	},
 	{
 		ConsumerID: "nvim.highlight.SnacksPickerMatch",
@@ -5546,7 +5591,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:453",
+		Source:     "nvim/lua/plugins/colorscheme.lua:458",
 	},
 	{
 		ConsumerID: "nvim.highlight.SnacksPickerSelection.surface",
@@ -5555,7 +5600,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:453",
+		Source:     "nvim/lua/plugins/colorscheme.lua:458",
 	},
 	{
 		ConsumerID: "nvim.highlight.Special",
@@ -5573,7 +5618,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:363",
+		Source:     "nvim/lua/plugins/colorscheme.lua:368",
 	},
 	{
 		ConsumerID: "nvim.highlight.Statement",
@@ -5600,7 +5645,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:244",
+		Source:     "nvim/lua/plugins/colorscheme.lua:249",
 	},
 	{
 		ConsumerID: "nvim.highlight.Substitute.surface",
@@ -5609,7 +5654,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:244",
+		Source:     "nvim/lua/plugins/colorscheme.lua:249",
 	},
 	{
 		ConsumerID: "nvim.highlight.TabLine",
@@ -5618,7 +5663,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:432",
+		Source:     "nvim/lua/plugins/colorscheme.lua:437",
 	},
 	{
 		ConsumerID: "nvim.highlight.TabLineSel",
@@ -5627,7 +5672,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:433",
+		Source:     "nvim/lua/plugins/colorscheme.lua:438",
 	},
 	{
 		ConsumerID: "nvim.highlight.TermCursor.surface",
@@ -5636,7 +5681,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:256",
+		Source:     "nvim/lua/plugins/colorscheme.lua:261",
 	},
 	{
 		ConsumerID: "nvim.highlight.TermCursorNC.surface",
@@ -5645,7 +5690,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:257",
+		Source:     "nvim/lua/plugins/colorscheme.lua:262",
 	},
 	{
 		ConsumerID: "nvim.highlight.Title",
@@ -5663,7 +5708,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:228",
+		Source:     "nvim/lua/plugins/colorscheme.lua:233",
 	},
 	{
 		ConsumerID: "nvim.highlight.TreesitterContext.surface",
@@ -5672,7 +5717,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:228",
+		Source:     "nvim/lua/plugins/colorscheme.lua:233",
 	},
 	{
 		ConsumerID: "nvim.highlight.TreesitterContextBottom.indicator",
@@ -5682,7 +5727,7 @@ var generatedPairs = []PairSpec{
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "indicator",
 		Reason:     "undercurl or underline shape provides a non-color cue",
-		Source:     "nvim/lua/plugins/colorscheme.lua:229",
+		Source:     "nvim/lua/plugins/colorscheme.lua:234",
 	},
 	{
 		ConsumerID: "nvim.highlight.TreesitterContextLineNumber",
@@ -5691,7 +5736,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:230",
+		Source:     "nvim/lua/plugins/colorscheme.lua:235",
 	},
 	{
 		ConsumerID: "nvim.highlight.TreesitterContextLineNumber.surface",
@@ -5700,7 +5745,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:230",
+		Source:     "nvim/lua/plugins/colorscheme.lua:235",
 	},
 	{
 		ConsumerID: "nvim.highlight.TroubleCode",
@@ -5709,7 +5754,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:351",
+		Source:     "nvim/lua/plugins/colorscheme.lua:356",
 	},
 	{
 		ConsumerID: "nvim.highlight.TroubleCount",
@@ -5718,7 +5763,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:355",
+		Source:     "nvim/lua/plugins/colorscheme.lua:360",
 	},
 	{
 		ConsumerID: "nvim.highlight.TroubleError",
@@ -5727,7 +5772,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:356",
+		Source:     "nvim/lua/plugins/colorscheme.lua:361",
 	},
 	{
 		ConsumerID: "nvim.highlight.TroubleFile",
@@ -5736,7 +5781,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:353",
+		Source:     "nvim/lua/plugins/colorscheme.lua:358",
 	},
 	{
 		ConsumerID: "nvim.highlight.TroubleFoldIcon",
@@ -5745,7 +5790,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:354",
+		Source:     "nvim/lua/plugins/colorscheme.lua:359",
 	},
 	{
 		ConsumerID: "nvim.highlight.TroubleHint",
@@ -5754,7 +5799,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:358",
+		Source:     "nvim/lua/plugins/colorscheme.lua:363",
 	},
 	{
 		ConsumerID: "nvim.highlight.TroubleInformation",
@@ -5763,7 +5808,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:359",
+		Source:     "nvim/lua/plugins/colorscheme.lua:364",
 	},
 	{
 		ConsumerID: "nvim.highlight.TroubleLocation",
@@ -5772,7 +5817,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:352",
+		Source:     "nvim/lua/plugins/colorscheme.lua:357",
 	},
 	{
 		ConsumerID: "nvim.highlight.TroubleSource",
@@ -5781,7 +5826,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:350",
+		Source:     "nvim/lua/plugins/colorscheme.lua:355",
 	},
 	{
 		ConsumerID: "nvim.highlight.TroubleText",
@@ -5790,7 +5835,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:349",
+		Source:     "nvim/lua/plugins/colorscheme.lua:354",
 	},
 	{
 		ConsumerID: "nvim.highlight.TroubleWarning",
@@ -5799,11 +5844,11 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:357",
+		Source:     "nvim/lua/plugins/colorscheme.lua:362",
 	},
 	{
 		ConsumerID: "nvim.highlight.Type",
-		Foreground: "blues_slates.sky_slate",
+		Foreground: "semantic.type",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -5817,7 +5862,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:248",
+		Source:     "nvim/lua/plugins/colorscheme.lua:253",
 	},
 	{
 		ConsumerID: "nvim.highlight.Visual.surface",
@@ -5826,7 +5871,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:248",
+		Source:     "nvim/lua/plugins/colorscheme.lua:253",
 	},
 	{
 		ConsumerID: "nvim.highlight.VisualNOS",
@@ -5835,7 +5880,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:249",
+		Source:     "nvim/lua/plugins/colorscheme.lua:254",
 	},
 	{
 		ConsumerID: "nvim.highlight.VisualNOS.surface",
@@ -5844,7 +5889,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:249",
+		Source:     "nvim/lua/plugins/colorscheme.lua:254",
 	},
 	{
 		ConsumerID: "nvim.highlight.WarningMsg",
@@ -5853,7 +5898,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:237",
+		Source:     "nvim/lua/plugins/colorscheme.lua:242",
 	},
 	{
 		ConsumerID: "nvim.highlight.WhichKey",
@@ -5862,7 +5907,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:299",
+		Source:     "nvim/lua/plugins/colorscheme.lua:304",
 	},
 	{
 		ConsumerID: "nvim.highlight.WhichKeyBorder",
@@ -5871,7 +5916,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:304",
+		Source:     "nvim/lua/plugins/colorscheme.lua:309",
 	},
 	{
 		ConsumerID: "nvim.highlight.WhichKeyDesc",
@@ -5880,7 +5925,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:301",
+		Source:     "nvim/lua/plugins/colorscheme.lua:306",
 	},
 	{
 		ConsumerID: "nvim.highlight.WhichKeyGroup",
@@ -5889,7 +5934,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:300",
+		Source:     "nvim/lua/plugins/colorscheme.lua:305",
 	},
 	{
 		ConsumerID: "nvim.highlight.WhichKeySeparator",
@@ -5898,7 +5943,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:302",
+		Source:     "nvim/lua/plugins/colorscheme.lua:307",
 	},
 	{
 		ConsumerID: "nvim.highlight.WhichKeyValue",
@@ -5907,7 +5952,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:305",
+		Source:     "nvim/lua/plugins/colorscheme.lua:310",
 	},
 	{
 		ConsumerID: "nvim.highlight.Whitespace",
@@ -5916,7 +5961,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:364",
+		Source:     "nvim/lua/plugins/colorscheme.lua:369",
 	},
 	{
 		ConsumerID: "nvim.highlight.WildMenu",
@@ -5925,7 +5970,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:369",
+		Source:     "nvim/lua/plugins/colorscheme.lua:374",
 	},
 	{
 		ConsumerID: "nvim.highlight.WildMenu.surface",
@@ -5934,7 +5979,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:369",
+		Source:     "nvim/lua/plugins/colorscheme.lua:374",
 	},
 	{
 		ConsumerID: "nvim.highlight.WinBar",
@@ -5943,7 +5988,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:371",
+		Source:     "nvim/lua/plugins/colorscheme.lua:376",
 	},
 	{
 		ConsumerID: "nvim.highlight.WinBarNC",
@@ -5952,7 +5997,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:372",
+		Source:     "nvim/lua/plugins/colorscheme.lua:377",
 	},
 	{
 		ConsumerID: "nvim.highlight.lCursor",
@@ -5961,7 +6006,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:254",
+		Source:     "nvim/lua/plugins/colorscheme.lua:259",
 	},
 	{
 		ConsumerID: "nvim.highlight.lCursor.surface",
@@ -5970,7 +6015,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:254",
+		Source:     "nvim/lua/plugins/colorscheme.lua:259",
 	},
 	{
 		ConsumerID: "nvim.lualine.command.a",
@@ -6249,7 +6294,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-addition.inherited",
@@ -6258,7 +6303,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-attribute",
@@ -6267,7 +6312,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-built_in",
@@ -6276,7 +6321,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-builtin-name",
@@ -6285,7 +6330,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-bullet",
@@ -6294,7 +6339,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-class_hljs-title",
@@ -6303,7 +6348,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-comment",
@@ -6312,7 +6357,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-deletion.inherited",
@@ -6321,7 +6366,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-doctag",
@@ -6330,7 +6375,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-keyword",
@@ -6339,7 +6384,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-link",
@@ -6348,7 +6393,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-literal",
@@ -6357,7 +6402,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-meta",
@@ -6366,7 +6411,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-name",
@@ -6375,7 +6420,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-number",
@@ -6384,7 +6429,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-quote",
@@ -6393,7 +6438,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-regexp",
@@ -6402,7 +6447,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-section",
@@ -6411,7 +6456,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-selector-id",
@@ -6420,7 +6465,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-selector-tag",
@@ -6429,7 +6474,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-string",
@@ -6438,7 +6483,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-subst",
@@ -6447,7 +6492,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-symbol",
@@ -6456,7 +6501,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-tag",
@@ -6465,7 +6510,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-tag_hljs-attr",
@@ -6474,7 +6519,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-template-variable",
@@ -6483,7 +6528,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-title",
@@ -6492,7 +6537,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-type",
@@ -6501,7 +6546,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-variable",
@@ -6510,7 +6555,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1393",
+		Source:     "scripts/cmd/generate-colors/main.go:1401",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.blockquote",
@@ -6519,7 +6564,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1073",
+		Source:     "scripts/cmd/generate-colors/main.go:1081",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.h1",
@@ -6528,7 +6573,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1073",
+		Source:     "scripts/cmd/generate-colors/main.go:1081",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.h2",
@@ -6537,7 +6582,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1073",
+		Source:     "scripts/cmd/generate-colors/main.go:1081",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.h3",
@@ -6546,7 +6591,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1073",
+		Source:     "scripts/cmd/generate-colors/main.go:1081",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.h4",
@@ -6555,7 +6600,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1073",
+		Source:     "scripts/cmd/generate-colors/main.go:1081",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.h5",
@@ -6564,7 +6609,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1073",
+		Source:     "scripts/cmd/generate-colors/main.go:1081",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.h6",
@@ -6573,7 +6618,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1073",
+		Source:     "scripts/cmd/generate-colors/main.go:1081",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.kbd",
@@ -6582,7 +6627,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1073",
+		Source:     "scripts/cmd/generate-colors/main.go:1081",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.link",
@@ -6591,7 +6636,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1073",
+		Source:     "scripts/cmd/generate-colors/main.go:1081",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.page-header",
@@ -6600,7 +6645,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1073",
+		Source:     "scripts/cmd/generate-colors/main.go:1081",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.table",
@@ -6609,7 +6654,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1073",
+		Source:     "scripts/cmd/generate-colors/main.go:1081",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.text-primary",
@@ -6618,7 +6663,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1073",
+		Source:     "scripts/cmd/generate-colors/main.go:1081",
 	},
 	{
 		ConsumerID: "nvim.scrollbar.GitAdd",
@@ -6726,7 +6771,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:402",
+		Source:     "nvim/lua/plugins/colorscheme.lua:407",
 	},
 	{
 		ConsumerID: "nvim.terminal.color1",
@@ -6735,7 +6780,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:403",
+		Source:     "nvim/lua/plugins/colorscheme.lua:408",
 	},
 	{
 		ConsumerID: "nvim.terminal.color10",
@@ -6744,7 +6789,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:412",
+		Source:     "nvim/lua/plugins/colorscheme.lua:417",
 	},
 	{
 		ConsumerID: "nvim.terminal.color11",
@@ -6753,7 +6798,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:413",
+		Source:     "nvim/lua/plugins/colorscheme.lua:418",
 	},
 	{
 		ConsumerID: "nvim.terminal.color12",
@@ -6762,7 +6807,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:414",
+		Source:     "nvim/lua/plugins/colorscheme.lua:419",
 	},
 	{
 		ConsumerID: "nvim.terminal.color13",
@@ -6771,7 +6816,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:415",
+		Source:     "nvim/lua/plugins/colorscheme.lua:420",
 	},
 	{
 		ConsumerID: "nvim.terminal.color14",
@@ -6780,7 +6825,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:416",
+		Source:     "nvim/lua/plugins/colorscheme.lua:421",
 	},
 	{
 		ConsumerID: "nvim.terminal.color15",
@@ -6789,7 +6834,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:417",
+		Source:     "nvim/lua/plugins/colorscheme.lua:422",
 	},
 	{
 		ConsumerID: "nvim.terminal.color2",
@@ -6798,7 +6843,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:404",
+		Source:     "nvim/lua/plugins/colorscheme.lua:409",
 	},
 	{
 		ConsumerID: "nvim.terminal.color3",
@@ -6807,7 +6852,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:405",
+		Source:     "nvim/lua/plugins/colorscheme.lua:410",
 	},
 	{
 		ConsumerID: "nvim.terminal.color4",
@@ -6816,7 +6861,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:406",
+		Source:     "nvim/lua/plugins/colorscheme.lua:411",
 	},
 	{
 		ConsumerID: "nvim.terminal.color5",
@@ -6825,7 +6870,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:407",
+		Source:     "nvim/lua/plugins/colorscheme.lua:412",
 	},
 	{
 		ConsumerID: "nvim.terminal.color6",
@@ -6834,7 +6879,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:408",
+		Source:     "nvim/lua/plugins/colorscheme.lua:413",
 	},
 	{
 		ConsumerID: "nvim.terminal.color7",
@@ -6843,7 +6888,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:409",
+		Source:     "nvim/lua/plugins/colorscheme.lua:414",
 	},
 	{
 		ConsumerID: "nvim.terminal.color8",
@@ -6852,7 +6897,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:410",
+		Source:     "nvim/lua/plugins/colorscheme.lua:415",
 	},
 	{
 		ConsumerID: "nvim.terminal.color9",
@@ -6861,7 +6906,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:411",
+		Source:     "nvim/lua/plugins/colorscheme.lua:416",
 	},
 	{
 		ConsumerID: "statusline.busy.background",
@@ -6870,7 +6915,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2151",
+		Source:     "scripts/cmd/generate-colors/main.go:2159",
 	},
 	{
 		ConsumerID: "statusline.busy.background.surface",
@@ -6879,7 +6924,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2151",
+		Source:     "scripts/cmd/generate-colors/main.go:2159",
 	},
 	{
 		ConsumerID: "statusline.busy.codex",
@@ -6888,7 +6933,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2150",
+		Source:     "scripts/cmd/generate-colors/main.go:2158",
 	},
 	{
 		ConsumerID: "statusline.busy.codex.surface",
@@ -6897,7 +6942,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2150",
+		Source:     "scripts/cmd/generate-colors/main.go:2158",
 	},
 	{
 		ConsumerID: "statusline.context.critical",
@@ -6906,7 +6951,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2146",
+		Source:     "scripts/cmd/generate-colors/main.go:2154",
 	},
 	{
 		ConsumerID: "statusline.context.safe",
@@ -6915,7 +6960,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2146",
+		Source:     "scripts/cmd/generate-colors/main.go:2154",
 	},
 	{
 		ConsumerID: "statusline.context.surface",
@@ -6924,7 +6969,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2146",
+		Source:     "scripts/cmd/generate-colors/main.go:2154",
 	},
 	{
 		ConsumerID: "statusline.context.warning",
@@ -6933,7 +6978,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2146",
+		Source:     "scripts/cmd/generate-colors/main.go:2154",
 	},
 	{
 		ConsumerID: "statusline.directory",
@@ -6942,7 +6987,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2155",
+		Source:     "scripts/cmd/generate-colors/main.go:2163",
 	},
 	{
 		ConsumerID: "statusline.directory.surface",
@@ -6951,7 +6996,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2155",
+		Source:     "scripts/cmd/generate-colors/main.go:2163",
 	},
 	{
 		ConsumerID: "statusline.git",
@@ -6960,7 +7005,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2156",
+		Source:     "scripts/cmd/generate-colors/main.go:2164",
 	},
 	{
 		ConsumerID: "statusline.git.surface",
@@ -6969,7 +7014,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2156",
+		Source:     "scripts/cmd/generate-colors/main.go:2164",
 	},
 	{
 		ConsumerID: "statusline.model",
@@ -6978,7 +7023,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2145",
+		Source:     "scripts/cmd/generate-colors/main.go:2153",
 	},
 	{
 		ConsumerID: "statusline.model.surface",
@@ -6987,7 +7032,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2145",
+		Source:     "scripts/cmd/generate-colors/main.go:2153",
 	},
 	{
 		ConsumerID: "statusline.rate.critical",
@@ -6996,7 +7041,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2148",
+		Source:     "scripts/cmd/generate-colors/main.go:2156",
 	},
 	{
 		ConsumerID: "statusline.rate.safe",
@@ -7005,7 +7050,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2148",
+		Source:     "scripts/cmd/generate-colors/main.go:2156",
 	},
 	{
 		ConsumerID: "statusline.rate.surface",
@@ -7014,7 +7059,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2148",
+		Source:     "scripts/cmd/generate-colors/main.go:2156",
 	},
 	{
 		ConsumerID: "statusline.rate.warning",
@@ -7023,7 +7068,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2148",
+		Source:     "scripts/cmd/generate-colors/main.go:2156",
 	},
 	{
 		ConsumerID: "vim.highlight.Boolean",
@@ -7032,7 +7077,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2050",
+		Source:     "scripts/cmd/generate-colors/main.go:2058",
 	},
 	{
 		ConsumerID: "vim.highlight.Character",
@@ -7041,7 +7086,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2045",
+		Source:     "scripts/cmd/generate-colors/main.go:2053",
 	},
 	{
 		ConsumerID: "vim.highlight.ColorColumn.surface",
@@ -7050,7 +7095,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2036",
+		Source:     "scripts/cmd/generate-colors/main.go:2044",
 	},
 	{
 		ConsumerID: "vim.highlight.Comment",
@@ -7059,7 +7104,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2039",
+		Source:     "scripts/cmd/generate-colors/main.go:2047",
 	},
 	{
 		ConsumerID: "vim.highlight.Conceal",
@@ -7068,7 +7113,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2065",
+		Source:     "scripts/cmd/generate-colors/main.go:2073",
 	},
 	{
 		ConsumerID: "vim.highlight.Conditional",
@@ -7077,7 +7122,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2042",
+		Source:     "scripts/cmd/generate-colors/main.go:2050",
 	},
 	{
 		ConsumerID: "vim.highlight.Constant",
@@ -7086,7 +7131,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2052",
+		Source:     "scripts/cmd/generate-colors/main.go:2060",
 	},
 	{
 		ConsumerID: "vim.highlight.CursorColumn.surface",
@@ -7095,7 +7140,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2035",
+		Source:     "scripts/cmd/generate-colors/main.go:2043",
 	},
 	{
 		ConsumerID: "vim.highlight.CursorLine.surface",
@@ -7104,7 +7149,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2034",
+		Source:     "scripts/cmd/generate-colors/main.go:2042",
 	},
 	{
 		ConsumerID: "vim.highlight.CursorLineNr",
@@ -7113,7 +7158,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2031",
+		Source:     "scripts/cmd/generate-colors/main.go:2039",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffAdd",
@@ -7122,7 +7167,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2096",
+		Source:     "scripts/cmd/generate-colors/main.go:2104",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffAdd.surface",
@@ -7131,7 +7176,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2096",
+		Source:     "scripts/cmd/generate-colors/main.go:2104",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffChange",
@@ -7140,7 +7185,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2097",
+		Source:     "scripts/cmd/generate-colors/main.go:2105",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffChange.surface",
@@ -7149,7 +7194,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2097",
+		Source:     "scripts/cmd/generate-colors/main.go:2105",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffDelete",
@@ -7158,7 +7203,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2098",
+		Source:     "scripts/cmd/generate-colors/main.go:2106",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffDelete.surface",
@@ -7167,7 +7212,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2098",
+		Source:     "scripts/cmd/generate-colors/main.go:2106",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffText",
@@ -7176,7 +7221,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2099",
+		Source:     "scripts/cmd/generate-colors/main.go:2107",
 	},
 	{
 		ConsumerID: "vim.highlight.Directory",
@@ -7185,7 +7230,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2084",
+		Source:     "scripts/cmd/generate-colors/main.go:2092",
 	},
 	{
 		ConsumerID: "vim.highlight.ErrorMsg",
@@ -7194,7 +7239,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2092",
+		Source:     "scripts/cmd/generate-colors/main.go:2100",
 	},
 	{
 		ConsumerID: "vim.highlight.Float",
@@ -7203,7 +7248,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2049",
+		Source:     "scripts/cmd/generate-colors/main.go:2057",
 	},
 	{
 		ConsumerID: "vim.highlight.FoldColumn",
@@ -7212,7 +7257,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2069",
+		Source:     "scripts/cmd/generate-colors/main.go:2077",
 	},
 	{
 		ConsumerID: "vim.highlight.Folded",
@@ -7221,7 +7266,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2086",
+		Source:     "scripts/cmd/generate-colors/main.go:2094",
 	},
 	{
 		ConsumerID: "vim.highlight.Folded.surface",
@@ -7230,7 +7275,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2086",
+		Source:     "scripts/cmd/generate-colors/main.go:2094",
 	},
 	{
 		ConsumerID: "vim.highlight.Function",
@@ -7239,7 +7284,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2046",
+		Source:     "scripts/cmd/generate-colors/main.go:2054",
 	},
 	{
 		ConsumerID: "vim.highlight.Identifier",
@@ -7248,7 +7293,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2047",
+		Source:     "scripts/cmd/generate-colors/main.go:2055",
 	},
 	{
 		ConsumerID: "vim.highlight.IncSearch",
@@ -7257,7 +7302,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2080",
+		Source:     "scripts/cmd/generate-colors/main.go:2088",
 	},
 	{
 		ConsumerID: "vim.highlight.IncSearch.surface",
@@ -7266,7 +7311,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2080",
+		Source:     "scripts/cmd/generate-colors/main.go:2088",
 	},
 	{
 		ConsumerID: "vim.highlight.Keyword",
@@ -7275,7 +7320,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2040",
+		Source:     "scripts/cmd/generate-colors/main.go:2048",
 	},
 	{
 		ConsumerID: "vim.highlight.LineNr",
@@ -7284,7 +7329,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2030",
+		Source:     "scripts/cmd/generate-colors/main.go:2038",
 	},
 	{
 		ConsumerID: "vim.highlight.MatchParen",
@@ -7293,7 +7338,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2081",
+		Source:     "scripts/cmd/generate-colors/main.go:2089",
 	},
 	{
 		ConsumerID: "vim.highlight.MatchParen.surface",
@@ -7302,7 +7347,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2081",
+		Source:     "scripts/cmd/generate-colors/main.go:2089",
 	},
 	{
 		ConsumerID: "vim.highlight.ModeMsg",
@@ -7311,7 +7356,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2090",
+		Source:     "scripts/cmd/generate-colors/main.go:2098",
 	},
 	{
 		ConsumerID: "vim.highlight.MoreMsg",
@@ -7320,7 +7365,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2089",
+		Source:     "scripts/cmd/generate-colors/main.go:2097",
 	},
 	{
 		ConsumerID: "vim.highlight.NonText",
@@ -7329,7 +7374,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2026",
+		Source:     "scripts/cmd/generate-colors/main.go:2034",
 	},
 	{
 		ConsumerID: "vim.highlight.Normal",
@@ -7338,7 +7383,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2024",
+		Source:     "scripts/cmd/generate-colors/main.go:2032",
 	},
 	{
 		ConsumerID: "vim.highlight.NormalNC",
@@ -7347,7 +7392,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2025",
+		Source:     "scripts/cmd/generate-colors/main.go:2033",
 	},
 	{
 		ConsumerID: "vim.highlight.Number",
@@ -7356,7 +7401,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2048",
+		Source:     "scripts/cmd/generate-colors/main.go:2056",
 	},
 	{
 		ConsumerID: "vim.highlight.Operator",
@@ -7365,7 +7410,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2053",
+		Source:     "scripts/cmd/generate-colors/main.go:2061",
 	},
 	{
 		ConsumerID: "vim.highlight.Pmenu",
@@ -7374,7 +7419,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2077",
+		Source:     "scripts/cmd/generate-colors/main.go:2085",
 	},
 	{
 		ConsumerID: "vim.highlight.Pmenu.surface",
@@ -7383,7 +7428,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2077",
+		Source:     "scripts/cmd/generate-colors/main.go:2085",
 	},
 	{
 		ConsumerID: "vim.highlight.PmenuSel",
@@ -7392,7 +7437,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2078",
+		Source:     "scripts/cmd/generate-colors/main.go:2086",
 	},
 	{
 		ConsumerID: "vim.highlight.PmenuSel.surface",
@@ -7401,7 +7446,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2078",
+		Source:     "scripts/cmd/generate-colors/main.go:2086",
 	},
 	{
 		ConsumerID: "vim.highlight.PreProc",
@@ -7410,7 +7455,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2054",
+		Source:     "scripts/cmd/generate-colors/main.go:2062",
 	},
 	{
 		ConsumerID: "vim.highlight.Question",
@@ -7419,7 +7464,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2088",
+		Source:     "scripts/cmd/generate-colors/main.go:2096",
 	},
 	{
 		ConsumerID: "vim.highlight.QuickFixLine.surface",
@@ -7428,7 +7473,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2091",
+		Source:     "scripts/cmd/generate-colors/main.go:2099",
 	},
 	{
 		ConsumerID: "vim.highlight.Repeat",
@@ -7437,7 +7482,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2043",
+		Source:     "scripts/cmd/generate-colors/main.go:2051",
 	},
 	{
 		ConsumerID: "vim.highlight.Search",
@@ -7446,7 +7491,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2079",
+		Source:     "scripts/cmd/generate-colors/main.go:2087",
 	},
 	{
 		ConsumerID: "vim.highlight.Search.surface",
@@ -7455,7 +7500,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2079",
+		Source:     "scripts/cmd/generate-colors/main.go:2087",
 	},
 	{
 		ConsumerID: "vim.highlight.Special",
@@ -7464,7 +7509,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2055",
+		Source:     "scripts/cmd/generate-colors/main.go:2063",
 	},
 	{
 		ConsumerID: "vim.highlight.SpellBad",
@@ -7473,7 +7518,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2102",
+		Source:     "scripts/cmd/generate-colors/main.go:2110",
 	},
 	{
 		ConsumerID: "vim.highlight.SpellCap",
@@ -7482,7 +7527,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2103",
+		Source:     "scripts/cmd/generate-colors/main.go:2111",
 	},
 	{
 		ConsumerID: "vim.highlight.Statement",
@@ -7491,7 +7536,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2041",
+		Source:     "scripts/cmd/generate-colors/main.go:2049",
 	},
 	{
 		ConsumerID: "vim.highlight.StatusLine",
@@ -7500,7 +7545,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2071",
+		Source:     "scripts/cmd/generate-colors/main.go:2079",
 	},
 	{
 		ConsumerID: "vim.highlight.StatusLineNC",
@@ -7509,7 +7554,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2072",
+		Source:     "scripts/cmd/generate-colors/main.go:2080",
 	},
 	{
 		ConsumerID: "vim.highlight.String",
@@ -7518,7 +7563,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2044",
+		Source:     "scripts/cmd/generate-colors/main.go:2052",
 	},
 	{
 		ConsumerID: "vim.highlight.TabLine",
@@ -7527,7 +7572,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2073",
+		Source:     "scripts/cmd/generate-colors/main.go:2081",
 	},
 	{
 		ConsumerID: "vim.highlight.TabLineSel",
@@ -7536,7 +7581,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2074",
+		Source:     "scripts/cmd/generate-colors/main.go:2082",
 	},
 	{
 		ConsumerID: "vim.highlight.Title",
@@ -7545,7 +7590,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2085",
+		Source:     "scripts/cmd/generate-colors/main.go:2093",
 	},
 	{
 		ConsumerID: "vim.highlight.Todo",
@@ -7554,7 +7599,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2056",
+		Source:     "scripts/cmd/generate-colors/main.go:2064",
 	},
 	{
 		ConsumerID: "vim.highlight.Type",
@@ -7563,7 +7608,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2051",
+		Source:     "scripts/cmd/generate-colors/main.go:2059",
 	},
 	{
 		ConsumerID: "vim.highlight.Underlined",
@@ -7572,7 +7617,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2064",
+		Source:     "scripts/cmd/generate-colors/main.go:2072",
 	},
 	{
 		ConsumerID: "vim.highlight.VertSplit",
@@ -7581,7 +7626,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2070",
+		Source:     "scripts/cmd/generate-colors/main.go:2078",
 	},
 	{
 		ConsumerID: "vim.highlight.Visual",
@@ -7590,7 +7635,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2076",
+		Source:     "scripts/cmd/generate-colors/main.go:2084",
 	},
 	{
 		ConsumerID: "vim.highlight.Visual.surface",
@@ -7599,7 +7644,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2076",
+		Source:     "scripts/cmd/generate-colors/main.go:2084",
 	},
 	{
 		ConsumerID: "vim.highlight.WarningMsg",
@@ -7608,7 +7653,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2093",
+		Source:     "scripts/cmd/generate-colors/main.go:2101",
 	},
 	{
 		ConsumerID: "vim.highlight.WildMenu",
@@ -7617,7 +7662,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2087",
+		Source:     "scripts/cmd/generate-colors/main.go:2095",
 	},
 	{
 		ConsumerID: "vim.highlight.WildMenu.surface",
@@ -7626,7 +7671,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2087",
+		Source:     "scripts/cmd/generate-colors/main.go:2095",
 	},
 	{
 		ConsumerID: "vim.highlight.markdownCodeDelimiter",
@@ -7635,7 +7680,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2061",
+		Source:     "scripts/cmd/generate-colors/main.go:2069",
 	},
 	{
 		ConsumerID: "vim.highlight.markdownHeadingDelimiter",
@@ -7644,7 +7689,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2063",
+		Source:     "scripts/cmd/generate-colors/main.go:2071",
 	},
 	{
 		ConsumerID: "wezterm.ansi.black",
@@ -8079,7 +8124,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:988",
+		Source:     "scripts/cmd/generate-colors/main.go:996",
 	},
 	{
 		ConsumerID: "zsh.completion.class.cd",
@@ -8088,7 +8133,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:989",
+		Source:     "scripts/cmd/generate-colors/main.go:997",
 	},
 	{
 		ConsumerID: "zsh.completion.class.di",
@@ -8097,7 +8142,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:985",
+		Source:     "scripts/cmd/generate-colors/main.go:993",
 	},
 	{
 		ConsumerID: "zsh.completion.class.ex",
@@ -8106,7 +8151,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:992",
+		Source:     "scripts/cmd/generate-colors/main.go:1000",
 	},
 	{
 		ConsumerID: "zsh.completion.class.fi",
@@ -8115,7 +8160,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:984",
+		Source:     "scripts/cmd/generate-colors/main.go:992",
 	},
 	{
 		ConsumerID: "zsh.completion.class.ln",
@@ -8124,7 +8169,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:986",
+		Source:     "scripts/cmd/generate-colors/main.go:994",
 	},
 	{
 		ConsumerID: "zsh.completion.class.or",
@@ -8133,7 +8178,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1064",
+		Source:     "scripts/cmd/generate-colors/main.go:1072",
 	},
 	{
 		ConsumerID: "zsh.completion.class.pi",
@@ -8142,7 +8187,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:987",
+		Source:     "scripts/cmd/generate-colors/main.go:995",
 	},
 	{
 		ConsumerID: "zsh.completion.class.so",
@@ -8151,7 +8196,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:990",
+		Source:     "scripts/cmd/generate-colors/main.go:998",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.age",
@@ -8160,7 +8205,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1048",
+		Source:     "scripts/cmd/generate-colors/main.go:1056",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.bak",
@@ -8169,7 +8214,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1051",
+		Source:     "scripts/cmd/generate-colors/main.go:1059",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.flac",
@@ -8178,7 +8223,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1047",
+		Source:     "scripts/cmd/generate-colors/main.go:1055",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.go",
@@ -8187,7 +8232,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1054",
+		Source:     "scripts/cmd/generate-colors/main.go:1062",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.gz",
@@ -8196,7 +8241,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1050",
+		Source:     "scripts/cmd/generate-colors/main.go:1058",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.jpg",
@@ -8205,7 +8250,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1044",
+		Source:     "scripts/cmd/generate-colors/main.go:1052",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.js",
@@ -8214,7 +8259,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1054",
+		Source:     "scripts/cmd/generate-colors/main.go:1062",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.key",
@@ -8223,7 +8268,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1049",
+		Source:     "scripts/cmd/generate-colors/main.go:1057",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.lua",
@@ -8232,7 +8277,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1054",
+		Source:     "scripts/cmd/generate-colors/main.go:1062",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.mkv",
@@ -8241,7 +8286,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1045",
+		Source:     "scripts/cmd/generate-colors/main.go:1053",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.mp3",
@@ -8250,7 +8295,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1046",
+		Source:     "scripts/cmd/generate-colors/main.go:1054",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.mp4",
@@ -8259,7 +8304,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1045",
+		Source:     "scripts/cmd/generate-colors/main.go:1053",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.ninja",
@@ -8268,7 +8313,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1053",
+		Source:     "scripts/cmd/generate-colors/main.go:1061",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.o",
@@ -8277,7 +8322,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1052",
+		Source:     "scripts/cmd/generate-colors/main.go:1060",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.ogg",
@@ -8286,7 +8331,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1046",
+		Source:     "scripts/cmd/generate-colors/main.go:1054",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.pdf",
@@ -8295,7 +8340,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1049",
+		Source:     "scripts/cmd/generate-colors/main.go:1057",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.pem",
@@ -8304,7 +8349,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1048",
+		Source:     "scripts/cmd/generate-colors/main.go:1056",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.png",
@@ -8313,7 +8358,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1044",
+		Source:     "scripts/cmd/generate-colors/main.go:1052",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.py",
@@ -8322,7 +8367,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1054",
+		Source:     "scripts/cmd/generate-colors/main.go:1062",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.rs",
@@ -8331,7 +8376,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1054",
+		Source:     "scripts/cmd/generate-colors/main.go:1062",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.so",
@@ -8340,7 +8385,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1052",
+		Source:     "scripts/cmd/generate-colors/main.go:1060",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.svg",
@@ -8349,7 +8394,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1044",
+		Source:     "scripts/cmd/generate-colors/main.go:1052",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.tar",
@@ -8358,7 +8403,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1050",
+		Source:     "scripts/cmd/generate-colors/main.go:1058",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.tar_gz",
@@ -8367,7 +8412,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1050",
+		Source:     "scripts/cmd/generate-colors/main.go:1058",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.tmp",
@@ -8376,7 +8421,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1051",
+		Source:     "scripts/cmd/generate-colors/main.go:1059",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.ts",
@@ -8385,7 +8430,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1054",
+		Source:     "scripts/cmd/generate-colors/main.go:1062",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.wav",
@@ -8394,7 +8439,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1047",
+		Source:     "scripts/cmd/generate-colors/main.go:1055",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.zip",
@@ -8403,7 +8448,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1050",
+		Source:     "scripts/cmd/generate-colors/main.go:1058",
 	},
 	{
 		ConsumerID: "zsh.completion.menu-select",
@@ -8412,7 +8457,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:983",
+		Source:     "scripts/cmd/generate-colors/main.go:991",
 	},
 	{
 		ConsumerID: "zsh.fzf.prompt",
@@ -8435,11 +8480,11 @@ var generatedPairs = []PairSpec{
 }
 
 var generatedCoverageNotes = []CoverageNote{
-	{ID: "herdr.theme.panel_bg.reset", Reason: "panel_bg is strictly checked as the fixed string \"reset\"; it restores the terminal default background after Clear, so the effective color depends on WezTerm #202A42 at 0.90 opacity composited with the wallpaper and cannot be represented as a static color pair", Source: "scripts/cmd/generate-colors/main.go:1557"},
-	{ID: "herdr.theme.peach.unused", Reason: "herdr 0.7.4 has no consumer for peach because AgentState has no Interrupted variant and no rendering branch uses it; the key is still generated to keep all 16 custom theme keys managed, but it has no visible color pair", Source: "scripts/cmd/generate-colors/main.go:1571"},
-	{ID: "herdr.theme.surface0.reset", Reason: "surface0 is strictly checked as the fixed string \"reset\"; it restores the terminal default background after Clear, so the effective color depends on WezTerm #202A42 at 0.90 opacity composited with the wallpaper and cannot be represented as a static color pair", Source: "scripts/cmd/generate-colors/main.go:1558"},
+	{ID: "herdr.theme.panel_bg.reset", Reason: "panel_bg is strictly checked as the fixed string \"reset\"; it restores the terminal default background after Clear, so the effective color depends on WezTerm #202A42 at 0.90 opacity composited with the wallpaper and cannot be represented as a static color pair", Source: "scripts/cmd/generate-colors/main.go:1565"},
+	{ID: "herdr.theme.peach.unused", Reason: "herdr 0.7.4 has no consumer for peach because AgentState has no Interrupted variant and no rendering branch uses it; the key is still generated to keep all 16 custom theme keys managed, but it has no visible color pair", Source: "scripts/cmd/generate-colors/main.go:1579"},
+	{ID: "herdr.theme.surface0.reset", Reason: "surface0 is strictly checked as the fixed string \"reset\"; it restores the terminal default background after Clear, so the effective color depends on WezTerm #202A42 at 0.90 opacity composited with the wallpaper and cannot be represented as a static color pair", Source: "scripts/cmd/generate-colors/main.go:1566"},
 	{ID: "nvim.bufferline.runtime-default-groups", Reason: "BufferLine groups not present in opts.highlights are discovered at runtime; their background is ambient, but plugin-default foregrounds are not statically attributable to palette tokens", Source: "nvim/lua/plugins/ui.lua"},
-	{ID: "zsh.completion.file-type-subset", Reason: "zsh list-colors statically covers only the generated extension set; other extensions, exact filenames such as README and Makefile, temporary-name suffixes, and source-adjacent compiled inference fall back to fi while eza keeps its internal file_type classification. LS_COLORS is unset by interactive zsh only, so future non-interactive scripts invoking eza must unset it themselves; no repository scripts currently invoke eza", Source: "scripts/cmd/generate-colors/main.go:983"},
+	{ID: "zsh.completion.file-type-subset", Reason: "zsh list-colors statically covers only the generated extension set; other extensions, exact filenames such as README and Makefile, temporary-name suffixes, and source-adjacent compiled inference fall back to fi while eza keeps its internal file_type classification. LS_COLORS is unset by interactive zsh only, so future non-interactive scripts invoking eza must unset it themselves; no repository scripts currently invoke eza", Source: "scripts/cmd/generate-colors/main.go:991"},
 }
 
 // END GENERATED COLOR INVENTORY

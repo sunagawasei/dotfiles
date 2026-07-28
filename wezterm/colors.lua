@@ -63,6 +63,7 @@ return {
     function_color = "#58CAF8",
     type_color = "#AFB8D9",
     variable = "#CDE9F5",
+    builtin_variable = "#88CBEA",
     number = "#9FDBF7",
     operator = "#92BFD9",
     constant = "#D0D4F0",
