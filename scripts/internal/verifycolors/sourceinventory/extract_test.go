@@ -1447,7 +1447,77 @@ func TestHerdrThemeUsesExpectedTokensAndFixedValues(t *testing.T) {
 	}
 }
 
-func TestKeybindsModeIndicatorUsesMutedPurple(t *testing.T) {
+func TestWezTermKeyTableIndicatorsUseExpectedPairs(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := Extract(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pairs := pairMap(result.Pairs)
+
+	expected := map[string]struct {
+		foreground verifycolors.TokenRef
+		background verifycolors.TokenRef
+	}{
+		"copy_mode":       {foreground: "ansi.bright_white", background: "blues_slates.slate_mid"},
+		"resize_pane":     {foreground: "core.darkest_bg", background: "semantic.string"},
+		"pane_navigation": {foreground: "core.darkest_bg", background: "foregrounds.dim"},
+		"search_mode":     {foreground: "core.darkest_bg", background: "semantic.operator"},
+		"other":           {foreground: "core.darkest_bg", background: "purples.muted_purple"},
+	}
+	pairCount := 0
+	for _, pair := range result.Pairs {
+		if strings.HasPrefix(pair.ConsumerID, "wezterm.key_table.") {
+			pairCount++
+		}
+	}
+	if pairCount != len(expected)*2 {
+		t.Fatalf("WezTerm key-table pair count = %d, want %d", pairCount, len(expected)*2)
+	}
+
+	for name, want := range expected {
+		consumerID := "wezterm.key_table." + name
+		assertPair(
+			t,
+			pairs,
+			consumerID,
+			want.foreground,
+			want.background,
+			false,
+			verifycolors.ClassEnforced,
+		)
+		pair := pairs[consumerID]
+		if pair.Role != verifycolors.RoleText {
+			t.Errorf("%s role = %q, want %q", consumerID, pair.Role, verifycolors.RoleText)
+		}
+		if len(pair.Profiles) != 1 || pair.Profiles[0] != verifycolors.ProfileTruecolor {
+			t.Errorf("%s profiles = %v, want [truecolor]", consumerID, pair.Profiles)
+		}
+
+		surfaceID := consumerID + ".surface"
+		assertPair(
+			t,
+			pairs,
+			surfaceID,
+			want.background,
+			"",
+			true,
+			verifycolors.ClassReportOnly,
+		)
+		surface := pairs[surfaceID]
+		if surface.Role != verifycolors.RoleSurface {
+			t.Errorf("%s role = %q, want %q", surfaceID, surface.Role, verifycolors.RoleSurface)
+		}
+		if len(surface.Profiles) != 1 || surface.Profiles[0] != verifycolors.ProfileTruecolor {
+			t.Errorf("%s profiles = %v, want [truecolor]", surfaceID, surface.Profiles)
+		}
+	}
+}
+
+func TestWezTermKeyTableExtractorRejectsMalformedBranches(t *testing.T) {
 	root, err := palette.FindRepositoryRoot()
 	if err != nil {
 		t.Fatal(err)
@@ -1457,14 +1527,95 @@ func TestKeybindsModeIndicatorUsesMutedPurple(t *testing.T) {
 		t.Fatal(err)
 	}
 	contents := string(data)
+	copyForeground := `table.insert(elements, { Foreground = { Color = colors.ansi.bright_white } })`
+	resizeBackground := `table.insert(elements, { Background = { Color = colors.semantic.string } })`
+	tests := map[string]string{
+		"missing": strings.Replace(contents, copyForeground, "", 1),
+		"duplicate": strings.Replace(
+			contents,
+			copyForeground,
+			copyForeground+"\n\t\t\t"+copyForeground,
+			1,
+		),
+		"cross-branch": strings.Replace(
+			strings.Replace(contents, copyForeground, "", 1),
+			resizeBackground,
+			resizeBackground+"\n\t\t\t"+copyForeground,
+			1,
+		),
+	}
+	for name, input := range tests {
+		t.Run(name, func(t *testing.T) {
+			if _, err := parseWezTermKeyTables(input, "wezterm/keybinds.lua"); err == nil {
+				t.Fatal("parseWezTermKeyTables succeeded, want error")
+			}
+		})
+	}
+}
 
-	// wezterm/keybinds.lua は sourceinventory の抽出対象外のため、参照文字列を直接固定する。
-	if !strings.Contains(contents, "colors.purples.muted_purple") {
-		t.Error("key-table mode indicator does not reference colors.purples.muted_purple")
+func TestWezTermKeyTableIndicatorContrastRatios(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
 	}
-	if strings.Contains(contents, "colors.semantic.keyword") {
-		t.Error("key-table mode indicator still references colors.semantic.keyword")
+	colorPalette, err := verifycolors.LoadPalette(filepath.Join(root, "colors", "ghost-visor.toml"))
+	if err != nil {
+		t.Fatal(err)
 	}
+	values := colorPalette.TokenValues()
+	for _, test := range []struct {
+		name       string
+		foreground verifycolors.TokenRef
+		background verifycolors.TokenRef
+		want       float64
+	}{
+		{"copy_mode", "ansi.bright_white", "blues_slates.slate_mid", 8.583},
+		{"resize_pane", "core.darkest_bg", "semantic.string", 8.723},
+		{"pane_navigation", "core.darkest_bg", "foregrounds.dim", 8.693},
+		{"search_mode", "core.darkest_bg", "semantic.operator", 8.720},
+		{"other", "core.darkest_bg", "purples.muted_purple", 8.693},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			ratio, err := colorutil.ContrastRatio(values[test.foreground], values[test.background])
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Logf("%s on %s = %.4f", test.foreground, test.background, ratio)
+			if math.Abs(ratio-test.want) > 0.001 {
+				t.Errorf("%s/%s contrast = %.4f, want %.3f", test.foreground, test.background, ratio, test.want)
+			}
+		})
+	}
+}
+
+func TestWezTermRuntimeCoverageGapIsExplicit(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := Extract(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, note := range result.CoverageNotes {
+		if note.ID != "wezterm.runtime-dynamic-colors" {
+			continue
+		}
+		for _, phrase := range []string{
+			"window_background_gradient",
+			"compose_cursor",
+			"format-tab-title",
+			"Claude state icon",
+			"dynamic Lua branches",
+			"could diverge without detection",
+		} {
+			if !strings.Contains(note.Reason, phrase) {
+				t.Errorf("coverage note reason does not mention %q: %s", phrase, note.Reason)
+			}
+		}
+		return
+	}
+	t.Fatal("WezTerm runtime dynamic-color coverage note not found")
 }
 
 func TestBufferlineRuntimeCoverageGapIsExplicit(t *testing.T) {

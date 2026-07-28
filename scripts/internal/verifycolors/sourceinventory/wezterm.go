@@ -11,14 +11,22 @@ import (
 )
 
 var (
-	weztermFieldPattern = regexp.MustCompile(`^\s*([a-z_]+)\s*=\s*(?:\{\s*Color\s*=\s*)?colors\.([a-z_]+\.[a-z_]+)`)
-	weztermTabPattern   = regexp.MustCompile(`^\s*(active_tab|inactive_tab|inactive_tab_hover|new_tab|new_tab_hover)\s*=\s*\{`)
-	weztermArrayPattern = regexp.MustCompile(`^\s*colors\.([a-z_]+\.[a-z_]+),`)
+	weztermFieldPattern          = regexp.MustCompile(`^\s*([a-z_]+)\s*=\s*(?:\{\s*Color\s*=\s*)?colors\.([a-z_]+\.[a-z_]+)`)
+	weztermTabPattern            = regexp.MustCompile(`^\s*(active_tab|inactive_tab|inactive_tab_hover|new_tab|new_tab_hover)\s*=\s*\{`)
+	weztermArrayPattern          = regexp.MustCompile(`^\s*colors\.([a-z_]+\.[a-z_]+),`)
+	weztermKeyTableStartPattern  = regexp.MustCompile(`^\s*wezterm\.on\("update-right-status",\s*function\(window,\s*pane\)\s*$`)
+	weztermKeyTableBranchPattern = regexp.MustCompile(`^\s*(?:if|elseif)\s+name\s*==\s*"([a-z_]+)"\s+then\s*$`)
+	weztermKeyTableColorPattern  = regexp.MustCompile(`^\s*table\.insert\(elements,\s*\{\s*(Background|Foreground)\s*=\s*\{\s*Color\s*=\s*colors\.([a-z_]+\.[a-z_]+)\s*\}\s*\}\)\s*$`)
 )
 
 type weztermField struct {
 	token  verifycolors.TokenRef
 	source string
+}
+
+type weztermKeyTableStyle struct {
+	background weztermField
+	foreground weztermField
 }
 
 func extractWezTerm(root string, result *Result) error {
@@ -171,7 +179,145 @@ func extractWezTerm(root string, result *Result) error {
 			})
 		}
 	}
+	if err := extractWezTermKeyTables(root, result); err != nil {
+		return err
+	}
+	result.addCoverageNote(verifycolors.CoverageNote{
+		ID: "wezterm.runtime-dynamic-colors",
+		Reason: "window_background_gradient, compose_cursor, and runtime format-tab-title pairs are not statically extracted; " +
+			"format-tab-title requires parsing dynamic Lua branches, including Claude state icon teals.bright/foregrounds.bright " +
+			"on explicit inactive or hover tab backgrounds, so runtime pairs matching config.colors today could diverge without detection",
+		Source: "wezterm/wezterm.lua:165,220,365-420",
+	})
 	return nil
+}
+
+func extractWezTermKeyTables(root string, result *Result) error {
+	const relative = "wezterm/keybinds.lua"
+	data, err := os.ReadFile(sourcePath(root, relative))
+	if err != nil {
+		return err
+	}
+	styles, err := parseWezTermKeyTables(string(data), relative)
+	if err != nil {
+		return err
+	}
+	for _, name := range []string{"copy_mode", "resize_pane", "pane_navigation", "search_mode", "other"} {
+		style := styles[name]
+		consumerID := "wezterm.key_table." + name
+		result.addPair(defaultTextPair(
+			consumerID,
+			style.foreground.token,
+			verifycolors.TokenBackground(style.background.token),
+			[]verifycolors.RenderProfile{verifycolors.ProfileTruecolor},
+			style.foreground.source,
+		))
+		result.addPair(surfacePair(consumerID+".surface", style.background.token, style.background.source))
+	}
+	return nil
+}
+
+func parseWezTermKeyTables(contents, relative string) (map[string]weztermKeyTableStyle, error) {
+	expectedBranches := map[string]bool{
+		"copy_mode":       true,
+		"resize_pane":     true,
+		"pane_navigation": true,
+		"search_mode":     true,
+		"other":           true,
+	}
+	styles := make(map[string]weztermKeyTableStyle, len(expectedBranches))
+	inHandler := false
+	handlerComplete := false
+	currentBranch := ""
+	handlerCount := 0
+
+	scanner := bufio.NewScanner(strings.NewReader(contents))
+	lineNumber := 0
+	for scanner.Scan() {
+		lineNumber++
+		line := scanner.Text()
+		source := fmt.Sprintf("%s:%d", relative, lineNumber)
+		if weztermKeyTableStartPattern.MatchString(line) {
+			handlerCount++
+			if handlerCount > 1 {
+				return nil, fmt.Errorf("%s: duplicate update-right-status handler", source)
+			}
+			inHandler = true
+			continue
+		}
+		if !inHandler {
+			continue
+		}
+		if strings.Contains(line, "window:set_right_status(wezterm.format(elements))") {
+			inHandler = false
+			handlerComplete = true
+			currentBranch = ""
+			continue
+		}
+		if match := weztermKeyTableBranchPattern.FindStringSubmatch(line); match != nil {
+			currentBranch = match[1]
+			if !expectedBranches[currentBranch] {
+				return nil, fmt.Errorf("%s: unexpected key-table branch %q", source, currentBranch)
+			}
+			if _, exists := styles[currentBranch]; exists {
+				return nil, fmt.Errorf("%s: duplicate key-table branch %q", source, currentBranch)
+			}
+			styles[currentBranch] = weztermKeyTableStyle{}
+			continue
+		}
+		if strings.TrimSpace(line) == "else" {
+			currentBranch = "other"
+			if _, exists := styles[currentBranch]; exists {
+				return nil, fmt.Errorf("%s: duplicate key-table branch %q", source, currentBranch)
+			}
+			styles[currentBranch] = weztermKeyTableStyle{}
+			continue
+		}
+		match := weztermKeyTableColorPattern.FindStringSubmatch(line)
+		if match == nil {
+			continue
+		}
+		if currentBranch == "" {
+			return nil, fmt.Errorf("%s: key-table %s color is outside a named branch", source, match[1])
+		}
+		style := styles[currentBranch]
+		field := weztermField{token: verifycolors.TokenRef(match[2]), source: source}
+		switch match[1] {
+		case "Background":
+			if style.background.token != "" {
+				return nil, fmt.Errorf("%s: duplicate Background for key-table branch %q", source, currentBranch)
+			}
+			style.background = field
+		case "Foreground":
+			if style.foreground.token != "" {
+				return nil, fmt.Errorf("%s: duplicate Foreground for key-table branch %q", source, currentBranch)
+			}
+			style.foreground = field
+		}
+		styles[currentBranch] = style
+	}
+	if err := scanner.Err(); err != nil {
+		return nil, err
+	}
+	if handlerCount == 0 {
+		return nil, fmt.Errorf("%s: update-right-status handler was not found", relative)
+	}
+	if !handlerComplete {
+		return nil, fmt.Errorf("%s: update-right-status handler did not format key-table elements", relative)
+	}
+	for branch := range expectedBranches {
+		style, ok := styles[branch]
+		if !ok {
+			return nil, fmt.Errorf("%s: required key-table branch %q was not found", relative, branch)
+		}
+		if style.background.token == "" {
+			return nil, fmt.Errorf("%s: key-table branch %q is missing Background", relative, branch)
+		}
+		if style.foreground.token == "" {
+			return nil, fmt.Errorf("%s: key-table branch %q is missing Foreground", relative, branch)
+		}
+	}
+	return styles, nil
 }
 
 func requireWezTermField(fields map[string]weztermField, name string) (weztermField, error) {
