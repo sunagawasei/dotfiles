@@ -256,6 +256,25 @@ build_meter() {
   done
 }
 
+# リセットまでの残り時間を最大単位1つで整形
+format_remaining() {
+  local resets_at=$1
+  local now remaining_seconds
+
+  FORMATTED_REMAINING=""
+  now=$(date +%s)
+  if [[ "$resets_at" =~ ^[0-9]+$ ]] && [ "$resets_at" -gt "$now" ]; then
+    remaining_seconds=$((resets_at - now))
+    if [ "$remaining_seconds" -ge 86400 ]; then
+      FORMATTED_REMAINING="$((remaining_seconds / 86400))d"
+    elif [ "$remaining_seconds" -ge 3600 ]; then
+      FORMATTED_REMAINING="$((remaining_seconds / 3600))h"
+    else
+      FORMATTED_REMAINING="$((remaining_seconds / 60))m"
+    fi
+  fi
+}
+
 # BEGIN GENERATED COLORS: ANSI
 # セクション本体テキスト用前景色
 C_MODEL="\e[38;2;205;233;245m"   # #CDE9F5 foregrounds.main
@@ -293,20 +312,8 @@ if [[ "$RATE_USED" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
   rate_bar_filled=$METER_FILLED
   rate_bar_track=$METER_TRACK
 
-  rate_remaining=""
-  rate_now=$(date +%s)
-  if [[ "$RATE_RESET" =~ ^[0-9]+$ ]] && [ "$RATE_RESET" -gt "$rate_now" ]; then
-    rate_remaining_seconds=$((RATE_RESET - rate_now))
-    if [ "$rate_remaining_seconds" -ge 86400 ]; then
-      rate_days=$((rate_remaining_seconds / 86400))
-      rate_hours=$(((rate_remaining_seconds % 86400) / 3600))
-      rate_remaining="${rate_days}d${rate_hours}h"
-    else
-      rate_hours=$((rate_remaining_seconds / 3600))
-      rate_minutes=$(((rate_remaining_seconds % 3600) / 60))
-      printf -v rate_remaining '%dh%02dm' "$rate_hours" "$rate_minutes"
-    fi
-  fi
+  format_remaining "$RATE_RESET"
+  rate_remaining=$FORMATTED_REMAINING
 fi
 
 # 週次リミット使用率とバー
@@ -328,20 +335,8 @@ if [[ "$WEEK_USED" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
   week_bar_filled=$METER_FILLED
   week_bar_track=$METER_TRACK
 
-  week_remaining=""
-  week_now=$(date +%s)
-  if [[ "$WEEK_RESET" =~ ^[0-9]+$ ]] && [ "$WEEK_RESET" -gt "$week_now" ]; then
-    week_remaining_seconds=$((WEEK_RESET - week_now))
-    if [ "$week_remaining_seconds" -ge 86400 ]; then
-      week_days=$((week_remaining_seconds / 86400))
-      week_hours=$(((week_remaining_seconds % 86400) / 3600))
-      week_remaining="${week_days}d${week_hours}h"
-    else
-      week_hours=$((week_remaining_seconds / 3600))
-      week_minutes=$(((week_remaining_seconds % 3600) / 60))
-      printf -v week_remaining '%dh%02dm' "$week_hours" "$week_minutes"
-    fi
-  fi
+  format_remaining "$WEEK_RESET"
+  week_remaining=$FORMATTED_REMAINING
 fi
 
 # END GENERATED COLORS: ANSI
