@@ -1164,16 +1164,7 @@ func TestEzaAndZshCompletionUseSharedExpectedTokens(t *testing.T) {
 			)
 		}
 	}
-	assertPair(
-		t,
-		pairs,
-		"zsh.completion.menu-select",
-		"core.selection_fg",
-		"core.selection_bg",
-		false,
-		verifycolors.ClassEnforced,
-	)
-	if want := len(expectedClasses) + expectedExtensionCount + 1; zshCount != want {
+	if want := len(expectedClasses) + expectedExtensionCount; zshCount != want {
 		t.Fatalf("zsh completion pair count = %d, want %d", zshCount, want)
 	}
 

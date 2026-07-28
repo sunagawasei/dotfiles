@@ -162,13 +162,6 @@ func extractEzaTheme(root string, result *Result) error {
 	}
 
 	source := fmt.Sprintf("%s:%d", relative, startLine)
-	result.addPair(defaultTextPair(
-		"zsh.completion.menu-select",
-		"core.selection_fg",
-		verifycolors.TokenBackground("core.selection_bg"),
-		[]verifycolors.RenderProfile{verifycolors.ProfileTruecolor},
-		source,
-	))
 	result.addCoverageNote(verifycolors.CoverageNote{
 		ID:     "zsh.completion.file-type-subset",
 		Reason: "zsh list-colors statically covers only the generated extension set; other extensions, exact filenames such as README and Makefile, temporary-name suffixes, and source-adjacent compiled inference fall back to fi while eza keeps its internal file_type classification. LS_COLORS is unset by interactive zsh only, so future non-interactive scripts invoking eza must unset it themselves; no repository scripts currently invoke eza",
@@ -379,7 +372,7 @@ func validateZshCompletionConfig(path string, specs []ezaSourceSpec) error {
 		}
 	}
 
-	expectedEntries := map[string]bool{"ma": true}
+	expectedEntries := map[string]bool{}
 	for _, spec := range specs {
 		if spec.completionCode != "" {
 			expectedEntries[spec.completionCode] = true
@@ -400,9 +393,6 @@ func validateZshCompletionConfig(path string, specs []ezaSourceSpec) error {
 		}
 		seenEntries[key] = true
 		pattern := regexp.MustCompile(`^38;2;(?:\d+;){2}\d+$`)
-		if key == "ma" {
-			pattern = regexp.MustCompile(`^48;2;(?:\d+;){2}\d+;38;2;(?:\d+;){2}\d+$`)
-		}
 		if !pattern.MatchString(style) {
 			return fmt.Errorf("%s: invalid truecolor SGR for zsh completion entry %q", path, key)
 		}

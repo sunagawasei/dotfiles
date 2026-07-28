@@ -290,7 +290,6 @@ in
         # Non-interactive shells do not read this block; scripts invoking eza must unset LS_COLORS themselves.
         unset LS_COLORS
         typeset -ga ZSH_COMPLETION_COLORS=(
-          'ma=48;2;81;153;194;38;2;20;27;45'
           'fi=38;2;205;233;245'
           'di=38;2;136;203;234'
           'ln=38;2;191;173;255'

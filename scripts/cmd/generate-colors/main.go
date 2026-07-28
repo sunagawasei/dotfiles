@@ -329,9 +329,9 @@ func buildEzaThemeTemplate(specs []ezaStyleSpec) string {
 }
 
 func buildZshCompletionTemplate(specs []ezaStyleSpec) string {
-	entries := []string{
-		"ma=48;2;{{rgb:core.selection_bg}};38;2;{{rgb:core.selection_fg}}",
-	}
+	// ma is intentionally not generated: `zstyle ':completion:*' menu no` and fzf-tab
+	// mean the standard completion menu selection never renders, so this pair has no use-site.
+	entries := []string{}
 	for _, spec := range specs {
 		if spec.completionCode != "" {
 			entries = append(entries, spec.completionCode+"=38;2;{{rgb:"+spec.token+"}}")

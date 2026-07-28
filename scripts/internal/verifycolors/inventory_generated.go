@@ -8595,22 +8595,13 @@ var generatedPairs = []PairSpec{
 		Source:     "scripts/cmd/generate-colors/main.go:1057",
 	},
 	{
-		ConsumerID: "zsh.completion.menu-select",
-		Foreground: "core.selection_fg",
-		Background: TokenBackground("core.selection_bg"),
-		Class:      "enforced",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:990",
-	},
-	{
 		ConsumerID: "zsh.fzf.prompt",
 		Foreground: "ui.accent_fg",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/zsh.nix:337",
+		Source:     "home-manager/zsh.nix:336",
 	},
 	{
 		ConsumerID: "zsh.fzf.spinner",
@@ -8619,7 +8610,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/zsh.nix:337",
+		Source:     "home-manager/zsh.nix:336",
 	},
 }
 
