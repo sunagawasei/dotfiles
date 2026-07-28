@@ -1,0 +1,323 @@
+diff --git a/src/app/input/copy_mode.rs b/src/app/input/copy_mode.rs
+index e6c0d074..eccd1211 100644
+--- a/src/app/input/copy_mode.rs
++++ b/src/app/input/copy_mode.rs
+@@ -114,11 +114,11 @@ impl AppState {
+                     }
+                     return;
+                 }
+-                self.exit_copy_mode(terminal_runtimes, false);
++                self.exit_copy_mode(terminal_runtimes);
+                 return;
+             }
+             KeyCode::Enter => {
+-                self.exit_copy_mode(terminal_runtimes, true);
++                self.yank_selection(terminal_runtimes);
+                 return;
+             }
+             KeyCode::Left => {
+@@ -176,8 +176,8 @@ impl AppState {
+             return;
+         };
+         match ch {
+-            'q' => self.exit_copy_mode(terminal_runtimes, false),
+-            'y' => self.exit_copy_mode(terminal_runtimes, true),
++            'q' => self.exit_copy_mode(terminal_runtimes),
++            'y' => self.yank_selection(terminal_runtimes),
+             'v' | ' ' => self.begin_copy_mode_selection(terminal_runtimes),
+             'V' => self.select_copy_mode_line(terminal_runtimes),
+             'h' => self.move_copy_cursor(terminal_runtimes, 0, -1),
+@@ -382,19 +382,20 @@ impl AppState {
+     }
+ 
+     pub(crate) fn cancel_copy_mode(&mut self, terminal_runtimes: &TerminalRuntimeRegistry) {
+-        self.exit_copy_mode(terminal_runtimes, false);
++        self.exit_copy_mode(terminal_runtimes);
+     }
+ 
+-    fn exit_copy_mode(&mut self, terminal_runtimes: &TerminalRuntimeRegistry, copy: bool) {
++    fn yank_selection(&mut self, terminal_runtimes: &TerminalRuntimeRegistry) {
++        self.copy_selection(terminal_runtimes);
++        self.clear_copy_mode_selection();
++    }
++
++    fn exit_copy_mode(&mut self, terminal_runtimes: &TerminalRuntimeRegistry) {
+         let restore_scroll = self
+             .copy_mode
+             .as_ref()
+             .map(|copy_mode| (copy_mode.pane_id, copy_mode.entry_offset_from_bottom));
+-        if copy {
+-            self.copy_selection(terminal_runtimes);
+-        } else {
+-            self.clear_selection();
+-        }
++        self.clear_selection();
+         if let Some((pane_id, offset_from_bottom)) = restore_scroll {
+             self.set_pane_scroll_offset(terminal_runtimes, pane_id, offset_from_bottom);
+         }
+@@ -464,7 +465,7 @@ impl AppState {
+         let mut cursor_row = copy_mode.cursor_row;
+         let mut cursor_col = copy_mode.cursor_col;
+         let Some(info) = self.pane_info_by_id(pane_id).cloned() else {
+-            self.exit_copy_mode(terminal_runtimes, false);
++            self.exit_copy_mode(terminal_runtimes);
+             return;
+         };
+ 
+@@ -514,7 +515,7 @@ impl AppState {
+         let pane_id = copy_mode.pane_id;
+         let mut cursor_row = copy_mode.cursor_row;
+         let Some(info) = self.pane_info_by_id(pane_id).cloned() else {
+-            self.exit_copy_mode(terminal_runtimes, false);
++            self.exit_copy_mode(terminal_runtimes);
+             return;
+         };
+         let lines = copy_mode_page_lines(info.inner_rect.height, half_page);
+@@ -581,7 +582,7 @@ impl AppState {
+         };
+         let pane_id = copy_mode.pane_id;
+         let Some(info) = self.pane_info_by_id(pane_id) else {
+-            self.exit_copy_mode(terminal_runtimes, false);
++            self.exit_copy_mode(terminal_runtimes);
+             return;
+         };
+         let cursor_row = info.inner_rect.height.saturating_sub(1);
+@@ -599,7 +600,7 @@ impl AppState {
+         let pane_id = copy_mode.pane_id;
+         let cursor_row = copy_mode.cursor_row;
+         let Some(info) = self.pane_info_by_id(pane_id) else {
+-            self.exit_copy_mode(terminal_runtimes, false);
++            self.exit_copy_mode(terminal_runtimes);
+             return;
+         };
+         let cursor_col = if end {
+@@ -674,7 +675,7 @@ impl AppState {
+             .pane_info_by_id(pane_id)
+             .map(|info| info.inner_rect.height)
+         else {
+-            self.exit_copy_mode(terminal_runtimes, false);
++            self.exit_copy_mode(terminal_runtimes);
+             return;
+         };
+         let limit = self
+@@ -1777,7 +1778,16 @@ mod tests {
+         app.handle_copy_mode_key(TerminalKey::new(KeyCode::Char('y'), KeyModifiers::empty()));
+ 
+         assert_eq!(copy_mode_clipboard_text(&mut app), "beta");
+-        assert_eq!(app.state.mode, Mode::Terminal);
++        assert_eq!(app.state.mode, Mode::Copy);
++        assert!(app.state.copy_mode.is_some());
++        assert!(app.state.selection.is_none());
++        assert!(app
++            .state
++            .copy_mode
++            .as_ref()
++            .expect("copy mode")
++            .selection
++            .is_none());
+     }
+ 
+     #[tokio::test]
+@@ -1861,6 +1871,7 @@ mod tests {
+         app.handle_copy_mode_key(TerminalKey::new(KeyCode::Char('v'), KeyModifiers::SHIFT));
+         app.handle_copy_mode_key(TerminalKey::new(KeyCode::PageUp, KeyModifiers::empty()));
+         let cursor_row = copy_mode_viewport_top_row(&app, pane_id);
++        let yank_offset = copy_mode_offset_from_bottom(&app, pane_id);
+         app.handle_copy_mode_key(TerminalKey::new(KeyCode::Char('y'), KeyModifiers::empty()));
+ 
+         assert!(cursor_row < anchor_row);
+@@ -1869,7 +1880,17 @@ mod tests {
+             .collect::<Vec<_>>()
+             .join("\n");
+         assert_eq!(copy_mode_clipboard_text(&mut app), expected);
+-        assert_eq!(copy_mode_offset_from_bottom(&app, pane_id), 0);
++        assert_eq!(app.state.mode, Mode::Copy);
++        assert!(app.state.copy_mode.is_some());
++        assert!(app.state.selection.is_none());
++        assert!(app
++            .state
++            .copy_mode
++            .as_ref()
++            .expect("copy mode")
++            .selection
++            .is_none());
++        assert_eq!(copy_mode_offset_from_bottom(&app, pane_id), yank_offset);
+     }
+ 
+     #[tokio::test]
+@@ -2012,7 +2033,7 @@ mod tests {
+     }
+ 
+     #[tokio::test]
+-    async fn copy_mode_v_y_copies_selection_and_exits() {
++    async fn copy_mode_v_y_copies_selection_and_stays() {
+         let (mut app, _) = app_with_copy_screen(b"alpha\nbeta\n");
+         app.state.enter_copy_mode(&app.terminal_runtimes);
+         if let Some(copy_mode) = app.state.copy_mode.as_mut() {
+@@ -2028,8 +2049,148 @@ mod tests {
+             AppEvent::ClipboardWrite { content } => assert_eq!(content, b"alp"),
+             other => panic!("unexpected event: {other:?}"),
+         }
++        assert_eq!(app.state.mode, Mode::Copy);
++        assert!(app.state.copy_mode.is_some());
++        assert!(app.state.selection.is_none());
++        assert!(app
++            .state
++            .copy_mode
++            .as_ref()
++            .expect("copy mode")
++            .selection
++            .is_none());
++    }
++
++    #[tokio::test]
++    async fn copy_mode_v_enter_copies_selection_and_stays() {
++        let (mut app, _) = app_with_copy_screen(b"alpha\nbeta\n");
++        app.state.enter_copy_mode(&app.terminal_runtimes);
++        if let Some(copy_mode) = app.state.copy_mode.as_mut() {
++            copy_mode.cursor_row = 0;
++            copy_mode.cursor_col = 0;
++        }
++        app.handle_copy_mode_key(TerminalKey::new(KeyCode::Char('v'), KeyModifiers::empty()));
++        app.handle_copy_mode_key(TerminalKey::new(KeyCode::Char('l'), KeyModifiers::empty()));
++        app.handle_copy_mode_key(TerminalKey::new(KeyCode::Char('l'), KeyModifiers::empty()));
++        app.handle_copy_mode_key(TerminalKey::new(KeyCode::Enter, KeyModifiers::empty()));
++
++        assert_eq!(copy_mode_clipboard_text(&mut app), "alp");
++        assert_eq!(app.state.mode, Mode::Copy);
++        assert!(app.state.copy_mode.is_some());
++        assert!(app.state.selection.is_none());
++        assert!(app
++            .state
++            .copy_mode
++            .as_ref()
++            .expect("copy mode")
++            .selection
++            .is_none());
++    }
++
++    #[tokio::test]
++    async fn copy_mode_y_without_selection_stays_without_clipboard_event() {
++        let (mut app, _) = app_with_copy_screen(b"alpha\nbeta\n");
++        app.state.enter_copy_mode(&app.terminal_runtimes);
++
++        app.handle_copy_mode_key(TerminalKey::new(KeyCode::Char('y'), KeyModifiers::empty()));
++
++        assert_eq!(app.state.mode, Mode::Copy);
++        assert!(app.state.selection.is_none());
++        assert!(app
++            .state
++            .copy_mode
++            .as_ref()
++            .expect("copy mode")
++            .selection
++            .is_none());
++        assert!(app.state.request_clipboard_write.is_none());
++        assert!(app.event_rx.try_recv().is_err());
++    }
++
++    #[tokio::test]
++    async fn copy_mode_enter_without_selection_stays_without_clipboard_event() {
++        let (mut app, _) = app_with_copy_screen(b"alpha\nbeta\n");
++        app.state.enter_copy_mode(&app.terminal_runtimes);
++
++        app.handle_copy_mode_key(TerminalKey::new(KeyCode::Enter, KeyModifiers::empty()));
++
++        assert_eq!(app.state.mode, Mode::Copy);
++        assert!(app.state.selection.is_none());
++        assert!(app
++            .state
++            .copy_mode
++            .as_ref()
++            .expect("copy mode")
++            .selection
++            .is_none());
++        assert!(app.state.request_clipboard_write.is_none());
++        assert!(app.event_rx.try_recv().is_err());
++    }
++
++    #[tokio::test]
++    async fn copy_mode_yank_preserves_scrollback_cursor_and_viewport() {
++        let bytes = numbered_lines_bytes(64);
++        let (mut app, pane_id) = app_with_copy_scrollback(&bytes);
++        app.state.enter_copy_mode(&app.terminal_runtimes);
++        app.handle_copy_mode_key(TerminalKey::new(KeyCode::PageUp, KeyModifiers::empty()));
++        app.handle_copy_mode_key(TerminalKey::new(KeyCode::Char('v'), KeyModifiers::empty()));
++        app.handle_copy_mode_key(TerminalKey::new(KeyCode::Char('l'), KeyModifiers::empty()));
++        let copy_mode = app.state.copy_mode.as_ref().expect("copy mode");
++        let before = (
++            copy_mode.cursor_row,
++            copy_mode.cursor_col,
++            copy_mode_offset_from_bottom(&app, pane_id),
++        );
++
++        app.handle_copy_mode_key(TerminalKey::new(KeyCode::Char('y'), KeyModifiers::empty()));
++
++        assert!(!copy_mode_clipboard_text(&mut app).is_empty());
++        let copy_mode = app.state.copy_mode.as_ref().expect("copy mode");
++        assert_eq!(
++            (
++                copy_mode.cursor_row,
++                copy_mode.cursor_col,
++                copy_mode_offset_from_bottom(&app, pane_id),
++            ),
++            before
++        );
++        assert_eq!(app.state.mode, Mode::Copy);
++        assert!(app.state.selection.is_none());
++        assert!(copy_mode.selection.is_none());
++    }
++
++    #[tokio::test]
++    async fn copy_mode_yank_then_escape_restores_entry_scrollback_offset() {
++        let bytes = numbered_lines_bytes(64);
++        let (mut app, pane_id) = app_with_copy_scrollback(&bytes);
++        let entry_offset = 3;
++        app.state
++            .set_pane_scroll_offset(&app.terminal_runtimes, pane_id, entry_offset);
++        app.state.enter_copy_mode(&app.terminal_runtimes);
++        app.handle_copy_mode_key(TerminalKey::new(KeyCode::PageUp, KeyModifiers::empty()));
++        let yank_offset = copy_mode_offset_from_bottom(&app, pane_id);
++        assert!(yank_offset > entry_offset);
++        app.handle_copy_mode_key(TerminalKey::new(KeyCode::Char('v'), KeyModifiers::SHIFT));
++
++        app.handle_copy_mode_key(TerminalKey::new(KeyCode::Char('y'), KeyModifiers::empty()));
++
++        assert!(!copy_mode_clipboard_text(&mut app).is_empty());
++        assert_eq!(app.state.mode, Mode::Copy);
++        assert!(app.state.selection.is_none());
++        assert!(app
++            .state
++            .copy_mode
++            .as_ref()
++            .expect("copy mode")
++            .selection
++            .is_none());
++        assert_eq!(copy_mode_offset_from_bottom(&app, pane_id), yank_offset);
++
++        app.handle_copy_mode_key(TerminalKey::new(KeyCode::Esc, KeyModifiers::empty()));
++
+         assert_eq!(app.state.mode, Mode::Terminal);
+         assert!(app.state.copy_mode.is_none());
++        assert_eq!(copy_mode_offset_from_bottom(&app, pane_id), entry_offset);
+     }
+ 
+     #[tokio::test]
+@@ -2048,7 +2209,15 @@ mod tests {
+ 
+         app.handle_copy_mode_key(TerminalKey::new(KeyCode::Char('y'), KeyModifiers::empty()));
+         assert_eq!(copy_mode_clipboard_text(&mut app), "alp");
+-        assert_eq!(app.state.mode, Mode::Terminal);
+-        assert!(app.state.copy_mode.is_none());
++        assert_eq!(app.state.mode, Mode::Copy);
++        assert!(app.state.copy_mode.is_some());
++        assert!(app.state.selection.is_none());
++        assert!(app
++            .state
++            .copy_mode
++            .as_ref()
++            .expect("copy mode")
++            .selection
++            .is_none());
+     }
+ }

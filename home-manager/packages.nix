@@ -16,6 +16,9 @@ let
   # 同一覧の2行目のdirラベルは0.7.4のrows設定+$dirメタデータで表示
   # （herdr/config.tomlのrows設定とherdr-task-label hookの分業。パッチ不使用）。
   # sidebarトークンの区切りを" · "から" › "へ変更（spaces/agents両パネル共通）。
+  # copy modeでy/Enterによるyank後もcopy modeに留まる（上流はyank後に必ず抜ける実装で
+  # 設定キーなし）。選択ハイライトは解除しカーソル・スクロール位置は維持、q/Escでの
+  # 退出時のみ進入時スクロール位置へ復元する。
   # combined-frame-digestは個別機能ではなく、上記UIパッチ全部の合成描画を固定する
   # integration fixture。必ず最後に適用し、UIパッチを変えたらdigestを再生成する。
   herdrPatched = herdr.overrideAttrs (old: {
@@ -26,6 +29,7 @@ let
       ./patches/herdr-panel-contrast-fg-bright.patch
       ./patches/herdr-expanded-sidebar-space-numbers.patch
       ./patches/herdr-sidebar-token-separator.patch
+      ./patches/herdr-copy-mode-yank-stay.patch
       ./patches/herdr-combined-frame-digest.patch
     ];
   });
