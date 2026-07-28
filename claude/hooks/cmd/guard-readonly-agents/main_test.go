@@ -2,10 +2,6 @@ package main
 
 import "testing"
 
-// このディレクトリには複数の package main フックが同居し go.mod を置けないため、
-// テストは明示ファイル指定で実行する:
-//   go test guard-readonly-agents.go guard-readonly-agents_test.go
-
 func TestIsAllowed(t *testing.T) {
 	cases := []struct {
 		name string

@@ -26,6 +26,9 @@ cd scripts && go run ./cmd/generate-color-inventory
 cd scripts && go run ./cmd/generate-color-inventory --check
 cd scripts && go run ./cmd/verify-colors
 
+# Claude Code hooks（Goソース変更後は必ず両方）
+cd claude/hooks && go test ./... && go build -o . ./...
+
 # Raycast拡張機能
 cd raycast/extensions/<name> && npm run lint && npm run build
 
