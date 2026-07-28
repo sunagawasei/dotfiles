@@ -146,8 +146,14 @@ read -r BG_BUSY <<< "$PROCESS_STATE"
 # 実行中のサブエージェントが残したマーカーを同じbusy表示へ合流
 if [[ -n "$SESSION_ID" && "$SESSION_ID" =~ ^[0-9a-fA-F-]+$ ]]; then
   SUBAGENT_RUN_DIR=/Users/s23159/.config/claude/run
+  # 観測最長17分に対して45分を確保し、生存中の誤判定を避けつつ異常終了の残留を打ち切る
+  SUBAGENT_MARKER_TTL=2700
+  subagent_marker_now=$(date +%s)
   for marker in "$SUBAGENT_RUN_DIR"/subagent."$SESSION_ID".*; do
     [ -f "$marker" ] || continue
+    marker_mtime=$(stat -f %m "$marker" 2>/dev/null) || continue
+    (( subagent_marker_now - marker_mtime > SUBAGENT_MARKER_TTL )) && continue
+
     marker_pid=""
     IFS= read -r marker_pid < "$marker"
     [[ "$marker_pid" =~ ^[0-9]+$ ]] || continue
