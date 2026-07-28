@@ -201,11 +201,11 @@ return {
         -- リンク・クォート
         RenderMarkdownLink  = { fg = colors.cyan, underline = true },
         RenderMarkdownQuote = { fg = colors.light_gray, italic = true },
-        -- アラート（Info=bright_cyan / Warn=bright_magenta / Error=magenta）
-        RenderMarkdownInfo    = { fg = colors.bright_cyan,    bold = true },
-        RenderMarkdownHint    = { fg = colors.cyan,           bold = true },
+        -- アラート（重大度ごとのsemantic aliasを使用）
+        RenderMarkdownInfo    = { fg = colors.diagnostic_info,  bold = true },
+        RenderMarkdownHint    = { fg = colors.diagnostic_hint,  bold = true },
         RenderMarkdownSuccess = { fg = colors.success,        bold = true },
-        RenderMarkdownWarn    = { fg = colors.bright_magenta, bold = true },
+        RenderMarkdownWarn    = { fg = colors.diagnostic_warn,  bold = true },
         RenderMarkdownError   = { fg = colors.diagnostic_error, bold = true },
         ["@markup.list"] = { fg = colors.light_gray },
         ["@markup.list.markdown"] = { fg = colors.light_gray },
@@ -329,18 +329,18 @@ return {
 
         -- Notify（noice.nvimが使用）
         NotifyERRORBorder = { fg = colors.diagnostic_error },
-        NotifyWARNBorder = { fg = colors.bright_magenta },
-        NotifyINFOBorder = { fg = colors.bright_cyan },
+        NotifyWARNBorder = { fg = colors.diagnostic_warn },
+        NotifyINFOBorder = { fg = colors.diagnostic_info },
         NotifyDEBUGBorder = { fg = colors.subdued_fg },
         NotifyTRACEBorder = { fg = colors.border },
         NotifyERRORIcon = { fg = colors.diagnostic_error },
-        NotifyWARNIcon = { fg = colors.bright_magenta },
-        NotifyINFOIcon = { fg = colors.bright_cyan },
+        NotifyWARNIcon = { fg = colors.diagnostic_warn },
+        NotifyINFOIcon = { fg = colors.diagnostic_info },
         NotifyDEBUGIcon = { fg = colors.subdued_fg },
         NotifyTRACEIcon = { fg = colors.border },
         NotifyERRORTitle = { fg = colors.diagnostic_error },
-        NotifyWARNTitle = { fg = colors.bright_magenta },
-        NotifyINFOTitle = { fg = colors.bright_cyan },
+        NotifyWARNTitle = { fg = colors.diagnostic_warn },
+        NotifyINFOTitle = { fg = colors.diagnostic_info },
         NotifyDEBUGTitle = { fg = colors.subdued_fg },
         NotifyTRACETitle = { fg = colors.border },
         NotifyERRORBody = { fg = colors.fg },
@@ -359,9 +359,9 @@ return {
         TroubleFoldIcon = { fg = colors.border },
         TroubleCount = { fg = colors.diagnostic_error, bold = true },
         TroubleError = { fg = colors.diagnostic_error },
-        TroubleWarning = { fg = colors.bright_magenta },
-        TroubleHint = { fg = colors.cyan },
-        TroubleInformation = { fg = colors.bright_cyan },
+        TroubleWarning = { fg = colors.diagnostic_warn },
+        TroubleHint = { fg = colors.diagnostic_hint },
+        TroubleInformation = { fg = colors.diagnostic_info },
 
         -- その他ビルトイングループ
         NonText = { fg = colors.border },

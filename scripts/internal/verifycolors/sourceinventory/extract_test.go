@@ -414,6 +414,57 @@ func TestDiagnosticFamiliesUseCanonicalTokens(t *testing.T) {
 	} {
 		assertPair(t, pairs, consumerID, token, "", true, verifycolors.ClassWaived)
 	}
+
+	severityConsumers := map[verifycolors.TokenRef][]string{
+		"semantic.error": {
+			"nvim.highlight.RenderMarkdownError",
+			"nvim.highlight.NotifyERRORBorder",
+			"nvim.highlight.NotifyERRORIcon",
+			"nvim.highlight.NotifyERRORTitle",
+			"nvim.highlight.TroubleCount",
+			"nvim.highlight.TroubleError",
+			"nvim.bufferline.error",
+			"nvim.bufferline.error_visible",
+			"nvim.bufferline.error_selected",
+		},
+		"semantic.warning": {
+			"nvim.highlight.RenderMarkdownWarn",
+			"nvim.highlight.NotifyWARNBorder",
+			"nvim.highlight.NotifyWARNIcon",
+			"nvim.highlight.NotifyWARNTitle",
+			"nvim.highlight.TroubleWarning",
+			"nvim.bufferline.warning",
+			"nvim.bufferline.warning_visible",
+			"nvim.bufferline.warning_selected",
+		},
+		"semantic.info": {
+			"nvim.highlight.RenderMarkdownInfo",
+			"nvim.highlight.NotifyINFOBorder",
+			"nvim.highlight.NotifyINFOIcon",
+			"nvim.highlight.NotifyINFOTitle",
+			"nvim.highlight.TroubleInformation",
+			"nvim.bufferline.info",
+			"nvim.bufferline.info_visible",
+			"nvim.bufferline.info_selected",
+		},
+		"semantic.hint": {
+			"nvim.highlight.RenderMarkdownHint",
+			"nvim.highlight.TroubleHint",
+			"nvim.bufferline.hint",
+			"nvim.bufferline.hint_visible",
+			"nvim.bufferline.hint_selected",
+		},
+	}
+	severityConsumerCount := 0
+	for token, consumerIDs := range severityConsumers {
+		for _, consumerID := range consumerIDs {
+			assertPair(t, pairs, consumerID, token, "", true, verifycolors.ClassReportOnly)
+			severityConsumerCount++
+		}
+	}
+	if severityConsumerCount != 30 {
+		t.Fatalf("severity consumer count = %d, want 30", severityConsumerCount)
+	}
 }
 
 func TestZshErrorTokenAndReferencesAreRemoved(t *testing.T) {

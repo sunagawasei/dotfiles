@@ -2405,7 +2405,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.bufferline.hint",
-		Foreground: "teals.bright",
+		Foreground: "semantic.hint",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -2414,7 +2414,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.bufferline.hint_selected",
-		Foreground: "teals.bright",
+		Foreground: "semantic.hint",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -2423,7 +2423,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.bufferline.hint_visible",
-		Foreground: "teals.bright",
+		Foreground: "semantic.hint",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -2441,7 +2441,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.bufferline.info",
-		Foreground: "foregrounds.heading",
+		Foreground: "semantic.info",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -2450,7 +2450,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.bufferline.info_selected",
-		Foreground: "foregrounds.heading",
+		Foreground: "semantic.info",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -2459,7 +2459,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.bufferline.info_visible",
-		Foreground: "foregrounds.heading",
+		Foreground: "semantic.info",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -2630,7 +2630,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.bufferline.warning",
-		Foreground: "blues_slates.cloud_slate",
+		Foreground: "semantic.warning",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -2639,7 +2639,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.bufferline.warning_selected",
-		Foreground: "blues_slates.cloud_slate",
+		Foreground: "semantic.warning",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -2648,7 +2648,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.bufferline.warning_visible",
-		Foreground: "blues_slates.cloud_slate",
+		Foreground: "semantic.warning",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -4911,7 +4911,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyINFOBorder",
-		Foreground: "foregrounds.heading",
+		Foreground: "semantic.info",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -4920,7 +4920,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyINFOIcon",
-		Foreground: "foregrounds.heading",
+		Foreground: "semantic.info",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -4929,7 +4929,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyINFOTitle",
-		Foreground: "foregrounds.heading",
+		Foreground: "semantic.info",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -4983,7 +4983,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyWARNBorder",
-		Foreground: "blues_slates.cloud_slate",
+		Foreground: "semantic.warning",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -4992,7 +4992,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyWARNIcon",
-		Foreground: "blues_slates.cloud_slate",
+		Foreground: "semantic.warning",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -5001,7 +5001,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyWARNTitle",
-		Foreground: "blues_slates.cloud_slate",
+		Foreground: "semantic.warning",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -5307,7 +5307,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownHint",
-		Foreground: "teals.bright",
+		Foreground: "semantic.hint",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -5316,7 +5316,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownInfo",
-		Foreground: "foregrounds.heading",
+		Foreground: "semantic.info",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -5388,7 +5388,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownWarn",
-		Foreground: "blues_slates.cloud_slate",
+		Foreground: "semantic.warning",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -5794,7 +5794,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.TroubleHint",
-		Foreground: "teals.bright",
+		Foreground: "semantic.hint",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -5803,7 +5803,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.TroubleInformation",
-		Foreground: "foregrounds.heading",
+		Foreground: "semantic.info",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -5839,7 +5839,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "nvim.highlight.TroubleWarning",
-		Foreground: "blues_slates.cloud_slate",
+		Foreground: "semantic.warning",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
