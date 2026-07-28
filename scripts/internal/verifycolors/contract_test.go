@@ -29,6 +29,14 @@ func TestDefaultContractCoversEveryPaletteToken(t *testing.T) {
 	}
 }
 
+func TestSemanticInfoHasNoProjectionDisposition(t *testing.T) {
+	for _, disposition := range tokenDispositions() {
+		if disposition.Token == "semantic.info" {
+			t.Fatalf("semantic.info disposition = %q, want none after canonical use sites were added", disposition.Kind)
+		}
+	}
+}
+
 func TestWezTermCustomANSIResolution(t *testing.T) {
 	palettePath := filepath.Join("..", "..", "..", "colors", "ghost-visor.toml")
 	colorPalette, err := LoadPalette(palettePath)

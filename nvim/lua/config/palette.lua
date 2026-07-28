@@ -29,13 +29,17 @@ M.colors = {
   -- アクセントカラー
   cyan = "#58CAF8",         -- Vibrant Teal [teals.bright]
   bright_cyan = "#88CBEA",  -- Heading Cyan [foregrounds.heading]
-  magenta = "#CEADE1",      -- Glitch Purple (error accent)
+  magenta = "#CEADE1",      -- Glitch Purple (error accent) [semantic.error]
   bright_magenta = "#B8BCD8", -- Cloud Slate [blues_slates.cloud_slate]
 
   -- 拡張セマンティック
   purple_accent = "#B4B6DA", -- Muted Purple (Keyword) [purples.muted_purple]
   syntax_violet = "#BFADFF", -- Syntax Violet [semantic.keyword]
   success = "#62C9C2",       -- Success indicator [semantic.success]
+  diagnostic_error = "#CEADE1", -- Diagnostic error [semantic.error]
+  diagnostic_warn = "#B8BCD8", -- Diagnostic warning [semantic.warning]
+  diagnostic_info = "#88CBEA", -- Diagnostic info [semantic.info]
+  diagnostic_hint = "#58CAF8", -- Diagnostic hint [semantic.hint]
   git_added = "#62C9C2",         -- Git added [git.added]
   git_changed = "#CEADE1",     -- Git changed [git.changed]
   git_deleted = "#ADBAC9",     -- Git deleted [git.deleted]

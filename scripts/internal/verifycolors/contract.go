@@ -189,7 +189,6 @@ func tokenDispositions() []TokenDisposition {
 		{Token: "nvim.type", Kind: DispositionProjection, Reason: projectionReason},
 		{Token: "nvim.variable", Kind: DispositionProjection, Reason: projectionReason},
 		{Token: "semantic.git_blame", Kind: DispositionProjection, Reason: projectionReason},
-		{Token: "semantic.info", Kind: DispositionProjection, Reason: projectionReason},
 		{Token: "wezterm.tab_bar", Kind: DispositionProjection, Reason: projectionReason},
 
 		{Token: "blues_slates.ocean_blue", Kind: DispositionOutOfScope, Reason: outOfScopeReason + " (LazyGit author color)"},

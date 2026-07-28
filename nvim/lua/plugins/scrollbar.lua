@@ -9,10 +9,10 @@ return {
     local colors = {
       handle = p.mid_gray,      -- blues_slates.slate_mid (handle fill)
       search = p.operator,      -- semantic.operator
-      error = p.magenta,        -- semantic.error
-      warn = p.lavender,        -- semantic.warning
-      info = p.cyan,            -- semantic.info
-      hint = p.operator,        -- semantic.operator
+      error = p.diagnostic_error, -- semantic.error
+      warn = p.diagnostic_warn,   -- semantic.warning
+      info = p.diagnostic_info,   -- semantic.info
+      hint = p.diagnostic_hint,   -- semantic.hint
       misc = p.light_gray,      -- foregrounds.dim (ハンドル上でも視認可能)
       GitAdd = p.git_added,       -- git.added
       GitChange = p.git_changed, -- git.changed

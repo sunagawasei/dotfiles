@@ -51,9 +51,10 @@
   };
   semantic = {
     success = "#62C9C2";
-    warning = "#D0D4F0";
-    error = "#CDACEC";
-    info = "#58CAF8";
+    warning = "#B8BCD8";
+    error = "#CEADE1";
+    info = "#88CBEA";
+    hint = "#58CAF8";
     comment = "#B1B9CA";
     git_blame = "#B1B9CD";
     string = "#9ABED3";
@@ -124,6 +125,5 @@
     string = "#9ABED3";
     option = "#AFB8D9";
     comment = "#B1B9CA";
-    error = "#CEADE1";
   };
 }

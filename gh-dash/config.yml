@@ -86,9 +86,9 @@ theme:
             secondary: "#ADBAC9"
             inverted: "#141B2D"
             faint: "#949DB0"
-            warning: "#D0D4F0"
+            warning: "#B8BCD8"
             success: "#62C9C2"
-            error: "#CDACEC"
+            error: "#CEADE1"
             actor: "#88CBEA"
         background:
             selected: "#314463"
@@ -99,9 +99,9 @@ theme:
         icon:
             newcontributor: "#62C9C2"
             contributor: "#88CBEA"
-            collaborator: "#D0D4F0"
-            member: "#D0D4F0"
-            owner: "#D0D4F0"
+            collaborator: "#B8BCD8"
+            member: "#B8BCD8"
+            owner: "#B8BCD8"
         # END GENERATED COLORS
     ui:
         sectionsShowCount: true

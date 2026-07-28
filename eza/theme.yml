@@ -26,7 +26,7 @@ perms:
   user_read:
     foreground: "#ADBAC9"
   user_write:
-    foreground: "#D0D4F0"
+    foreground: "#B8BCD8"
   user_execute_file:
     foreground: "#62C9C2"
   user_execute_other:
@@ -34,13 +34,13 @@ perms:
   group_read:
     foreground: "#ADBAC9"
   group_write:
-    foreground: "#D0D4F0"
+    foreground: "#B8BCD8"
   group_execute:
     foreground: "#62C9C2"
   other_read:
     foreground: "#ADBAC9"
   other_write:
-    foreground: "#D0D4F0"
+    foreground: "#B8BCD8"
   other_execute:
     foreground: "#62C9C2"
   special_user_file:
@@ -78,7 +78,7 @@ users:
   user_you:
     foreground: "#62C9C2"
   user_root:
-    foreground: "#CDACEC"
+    foreground: "#CEADE1"
   user_other:
     foreground: "#ADBAC9"
   group_yours:
@@ -86,12 +86,12 @@ users:
   group_other:
     foreground: "#ADBAC9"
   group_root:
-    foreground: "#CDACEC"
+    foreground: "#CEADE1"
 links:
   normal:
     foreground: "#ADBAC9"
   multi_link_file:
-    foreground: "#D0D4F0"
+    foreground: "#B8BCD8"
 git:
   new:
     foreground: "#62C9C2"
@@ -106,7 +106,7 @@ git:
   ignored:
     foreground: "#949DB0"
   conflicted:
-    foreground: "#CDACEC"
+    foreground: "#CEADE1"
 git_repo:
   branch_main:
     foreground: "#88CBEA"
@@ -115,7 +115,7 @@ git_repo:
   git_clean:
     foreground: "#62C9C2"
   git_dirty:
-    foreground: "#D0D4F0"
+    foreground: "#B8BCD8"
 security_context:
   none:
     foreground: "#949DB0"
@@ -171,10 +171,10 @@ flags:
 symlink_path:
   foreground: "#ADBAC9"
 control_char:
-  foreground: "#CDACEC"
+  foreground: "#CEADE1"
 broken_symlink:
-  foreground: "#CDACEC"
+  foreground: "#CEADE1"
 broken_path_overlay:
-  foreground: "#CDACEC"
+  foreground: "#CEADE1"
 filenames: {}
 extensions: {}

@@ -201,7 +201,7 @@ return {
         RenderMarkdownHint    = { fg = colors.cyan,           bold = true },
         RenderMarkdownSuccess = { fg = colors.success,        bold = true },
         RenderMarkdownWarn    = { fg = colors.bright_magenta, bold = true },
-        RenderMarkdownError   = { fg = colors.magenta,        bold = true },
+        RenderMarkdownError   = { fg = colors.diagnostic_error, bold = true },
         ["@markup.list"] = { fg = colors.light_gray },
         ["@markup.list.markdown"] = { fg = colors.light_gray },
         ["@markup.list.checked"] = { fg = colors.cyan },
@@ -230,12 +230,12 @@ return {
         TreesitterContextLineNumber = { bg = colors.dark_shadow, fg = colors.subdued_fg },
 
         -- 診断関連（bufferline、LSP診断などが参照）
-        DiagnosticError = { fg = colors.magenta },
-        DiagnosticWarn = { fg = colors.bright_magenta },
-        DiagnosticInfo = { fg = colors.bright_cyan },
-        DiagnosticHint = { fg = colors.cyan },
-        WarningMsg = { fg = colors.bright_magenta },
-        ErrorMsg = { fg = colors.magenta },
+        DiagnosticError = { fg = colors.diagnostic_error },
+        DiagnosticWarn = { fg = colors.diagnostic_warn },
+        DiagnosticInfo = { fg = colors.diagnostic_info },
+        DiagnosticHint = { fg = colors.diagnostic_hint },
+        WarningMsg = { fg = colors.diagnostic_warn },
+        ErrorMsg = { fg = colors.diagnostic_error },
 
         -- 検索・マッチ関連
         Search = { bg = colors.dark_shadow, fg = colors.cyan },
@@ -258,22 +258,22 @@ return {
         ColorColumn = { bg = colors.dark_shadow },
 
         -- LSP診断拡張（VirtualText、Underline、Sign、Floating）
-        DiagnosticVirtualTextError = { fg = colors.magenta },
-        DiagnosticVirtualTextWarn = { fg = colors.bright_magenta },
-        DiagnosticVirtualTextInfo = { fg = colors.bright_cyan },
-        DiagnosticVirtualTextHint = { fg = colors.cyan },
-        DiagnosticUnderlineError = { sp = colors.magenta, undercurl = true },
-        DiagnosticUnderlineWarn = { sp = colors.bright_magenta, undercurl = true },
-        DiagnosticUnderlineInfo = { sp = colors.bright_cyan, undercurl = true },
-        DiagnosticUnderlineHint = { sp = colors.cyan, undercurl = true },
-        DiagnosticSignError = { fg = colors.magenta },
-        DiagnosticSignWarn = { fg = colors.bright_magenta },
-        DiagnosticSignInfo = { fg = colors.bright_cyan },
-        DiagnosticSignHint = { fg = colors.cyan },
-        DiagnosticFloatingError = { fg = colors.magenta },
-        DiagnosticFloatingWarn = { fg = colors.bright_magenta },
-        DiagnosticFloatingInfo = { fg = colors.bright_cyan },
-        DiagnosticFloatingHint = { fg = colors.cyan },
+        DiagnosticVirtualTextError = { fg = colors.diagnostic_error },
+        DiagnosticVirtualTextWarn = { fg = colors.diagnostic_warn },
+        DiagnosticVirtualTextInfo = { fg = colors.diagnostic_info },
+        DiagnosticVirtualTextHint = { fg = colors.diagnostic_hint },
+        DiagnosticUnderlineError = { sp = colors.diagnostic_error, undercurl = true },
+        DiagnosticUnderlineWarn = { sp = colors.diagnostic_warn, undercurl = true },
+        DiagnosticUnderlineInfo = { sp = colors.diagnostic_info, undercurl = true },
+        DiagnosticUnderlineHint = { sp = colors.diagnostic_hint, undercurl = true },
+        DiagnosticSignError = { fg = colors.diagnostic_error },
+        DiagnosticSignWarn = { fg = colors.diagnostic_warn },
+        DiagnosticSignInfo = { fg = colors.diagnostic_info },
+        DiagnosticSignHint = { fg = colors.diagnostic_hint },
+        DiagnosticFloatingError = { fg = colors.diagnostic_error },
+        DiagnosticFloatingWarn = { fg = colors.diagnostic_warn },
+        DiagnosticFloatingInfo = { fg = colors.diagnostic_info },
+        DiagnosticFloatingHint = { fg = colors.diagnostic_hint },
 
         -- LSP参照・インレイヒント
         LspReferenceText = { bg = colors.dark_shadow },
@@ -323,17 +323,17 @@ return {
         NoiceVirtualText = { fg = colors.subdued_fg },
 
         -- Notify（noice.nvimが使用）
-        NotifyERRORBorder = { fg = colors.magenta },
+        NotifyERRORBorder = { fg = colors.diagnostic_error },
         NotifyWARNBorder = { fg = colors.bright_magenta },
         NotifyINFOBorder = { fg = colors.bright_cyan },
         NotifyDEBUGBorder = { fg = colors.subdued_fg },
         NotifyTRACEBorder = { fg = colors.border },
-        NotifyERRORIcon = { fg = colors.magenta },
+        NotifyERRORIcon = { fg = colors.diagnostic_error },
         NotifyWARNIcon = { fg = colors.bright_magenta },
         NotifyINFOIcon = { fg = colors.bright_cyan },
         NotifyDEBUGIcon = { fg = colors.subdued_fg },
         NotifyTRACEIcon = { fg = colors.border },
-        NotifyERRORTitle = { fg = colors.magenta },
+        NotifyERRORTitle = { fg = colors.diagnostic_error },
         NotifyWARNTitle = { fg = colors.bright_magenta },
         NotifyINFOTitle = { fg = colors.bright_cyan },
         NotifyDEBUGTitle = { fg = colors.subdued_fg },
@@ -352,8 +352,8 @@ return {
         TroubleLocation = { fg = colors.subdued_fg },
         TroubleFile = { fg = colors.cyan },
         TroubleFoldIcon = { fg = colors.border },
-        TroubleCount = { fg = colors.magenta, bold = true },
-        TroubleError = { fg = colors.magenta },
+        TroubleCount = { fg = colors.diagnostic_error, bold = true },
+        TroubleError = { fg = colors.diagnostic_error },
         TroubleWarning = { fg = colors.bright_magenta },
         TroubleHint = { fg = colors.cyan },
         TroubleInformation = { fg = colors.bright_cyan },
@@ -469,7 +469,7 @@ return {
 
         -- Neotestのハイライトグループ設定（モノクロ基調＋アクセント）
         vim.api.nvim_set_hl(0, "NeotestPassed", { fg = colors.cyan })
-        vim.api.nvim_set_hl(0, "NeotestFailed", { fg = colors.magenta })
+        vim.api.nvim_set_hl(0, "NeotestFailed", { fg = colors.diagnostic_error })
         vim.api.nvim_set_hl(0, "NeotestRunning", { fg = colors.fg })
         vim.api.nvim_set_hl(0, "NeotestSkipped", { fg = colors.fg })
         vim.api.nvim_set_hl(0, "NeotestMarked", { fg = colors.cyan })
@@ -488,10 +488,10 @@ return {
         -- Scrollbar関連のハイライトグループ
         vim.api.nvim_set_hl(0, "ScrollbarHandle", { bg = colors.mid_gray })
         vim.api.nvim_set_hl(0, "ScrollbarSearch", { fg = colors.cyan })
-        vim.api.nvim_set_hl(0, "ScrollbarError", { fg = colors.magenta })
-        vim.api.nvim_set_hl(0, "ScrollbarWarn", { fg = colors.bright_magenta })
-        vim.api.nvim_set_hl(0, "ScrollbarInfo", { fg = colors.bright_cyan })
-        vim.api.nvim_set_hl(0, "ScrollbarHint", { fg = colors.cyan })
+        vim.api.nvim_set_hl(0, "ScrollbarError", { fg = colors.diagnostic_error })
+        vim.api.nvim_set_hl(0, "ScrollbarWarn", { fg = colors.diagnostic_warn })
+        vim.api.nvim_set_hl(0, "ScrollbarInfo", { fg = colors.diagnostic_info })
+        vim.api.nvim_set_hl(0, "ScrollbarHint", { fg = colors.diagnostic_hint })
         vim.api.nvim_set_hl(0, "ScrollbarMisc", { fg = colors.light_gray })
         vim.api.nvim_set_hl(0, "ScrollbarGitAdd", { fg = colors.git_added })
         vim.api.nvim_set_hl(0, "ScrollbarGitChange", { fg = colors.git_changed })

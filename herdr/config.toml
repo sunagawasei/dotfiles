@@ -22,7 +22,7 @@ yellow = "#C2B08D"
 red = "#D38AA6"
 blue = "#6393D7"
 teal = "#58CAF8"
-peach = "#D0D4F0" # herdr 0.7.4では未使用
+peach = "#B8BCD8" # herdr 0.7.4では未使用
 # END GENERATED COLORS
 [ui.toast]
 delivery = "terminal"

@@ -692,13 +692,17 @@ M.colors = {
   -- アクセントカラー
   cyan = "{{teals.bright}}",         -- Vibrant Teal [teals.bright]
   bright_cyan = "{{foregrounds.heading}}",  -- Heading Cyan [foregrounds.heading]
-  magenta = "{{zsh.error}}",      -- Glitch Purple (error accent)
+  magenta = "{{semantic.error}}",      -- Glitch Purple (error accent) [semantic.error]
   bright_magenta = "{{blues_slates.cloud_slate}}", -- Cloud Slate [blues_slates.cloud_slate]
 
   -- 拡張セマンティック
   purple_accent = "{{purples.muted_purple}}", -- Muted Purple (Keyword) [purples.muted_purple]
   syntax_violet = "{{semantic.keyword}}", -- Syntax Violet [semantic.keyword]
   success = "{{semantic.success}}",       -- Success indicator [semantic.success]
+  diagnostic_error = "{{semantic.error}}", -- Diagnostic error [semantic.error]
+  diagnostic_warn = "{{semantic.warning}}", -- Diagnostic warning [semantic.warning]
+  diagnostic_info = "{{semantic.info}}", -- Diagnostic info [semantic.info]
+  diagnostic_hint = "{{semantic.hint}}", -- Diagnostic hint [semantic.hint]
   git_added = "{{git.added}}",         -- Git added [git.added]
   git_changed = "{{git.changed}}",     -- Git changed [git.changed]
   git_deleted = "{{git.deleted}}",     -- Git deleted [git.deleted]
@@ -799,6 +803,7 @@ return {
     warning = "{{semantic.warning}}",
     error = "{{semantic.error}}",
     info = "{{semantic.info}}",
+    hint = "{{semantic.hint}}",
     comment = "{{semantic.comment}}",
     git_blame = "{{semantic.git_blame}}",
     string = "{{semantic.string}}",
@@ -898,6 +903,7 @@ const nixColorsTemplate = `# ` + generatedNotice + `
     warning = "{{semantic.warning}}";
     error = "{{semantic.error}}";
     info = "{{semantic.info}}";
+    hint = "{{semantic.hint}}";
     comment = "{{semantic.comment}}";
     git_blame = "{{semantic.git_blame}}";
     string = "{{semantic.string}}";
@@ -968,7 +974,6 @@ const nixColorsTemplate = `# ` + generatedNotice + `
     string = "{{zsh.string}}";
     option = "{{zsh.option}}";
     comment = "{{zsh.comment}}";
-    error = "{{zsh.error}}";
   };
 }
 `
@@ -2085,7 +2090,7 @@ highlight MoreMsg guifg={{semantic.function}} ctermfg={{xterm:semantic.function}
 highlight ModeMsg guifg={{foregrounds.main}} ctermfg={{xterm:foregrounds.main}} gui=bold cterm=bold
 highlight QuickFixLine guibg={{core.ui_shadow}} ctermbg={{xterm:core.ui_shadow}}
 highlight ErrorMsg guifg={{semantic.error}} ctermfg={{xterm:semantic.error}}
-highlight WarningMsg guifg={{blues_slates.cloud_slate}} ctermfg={{xterm:blues_slates.cloud_slate}}
+highlight WarningMsg guifg={{semantic.warning}} ctermfg={{xterm:semantic.warning}}
 
 " Diff
 highlight DiffAdd guifg={{git.added}} guibg={{nvim.diff_add_bg}} ctermfg={{xterm:git.added}} ctermbg={{xterm:nvim.diff_add_bg}}
@@ -2095,7 +2100,7 @@ highlight DiffText guifg={{foregrounds.heading}} guibg=NONE ctermfg={{xterm:fore
 
 " スペルチェック
 highlight SpellBad guifg={{semantic.error}} ctermfg={{xterm:semantic.error}} gui=undercurl cterm=underline
-highlight SpellCap guifg={{blues_slates.cloud_slate}} ctermfg={{xterm:blues_slates.cloud_slate}} gui=undercurl cterm=underline
+highlight SpellCap guifg={{semantic.warning}} ctermfg={{xterm:semantic.warning}} gui=undercurl cterm=underline
 " END GENERATED COLORS
 `
 

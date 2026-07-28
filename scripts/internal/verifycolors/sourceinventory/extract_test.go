@@ -11,6 +11,7 @@ import (
 	"github.com/sunagawasei/dotfiles/scripts/internal/colorutil"
 	"github.com/sunagawasei/dotfiles/scripts/internal/palette"
 	"github.com/sunagawasei/dotfiles/scripts/internal/verifycolors"
+	"github.com/sunagawasei/dotfiles/scripts/internal/xterm"
 )
 
 func TestRepresentativeBackgroundResolution(t *testing.T) {
@@ -224,7 +225,7 @@ func TestGitRolesUseCanonicalTokensAcrossConsumers(t *testing.T) {
 	)
 }
 
-func TestMagentaAliasRemainsDiagnosticOnly(t *testing.T) {
+func TestErrorGroupsUseCanonicalToken(t *testing.T) {
 	root, err := palette.FindRepositoryRoot()
 	if err != nil {
 		t.Fatal(err)
@@ -234,38 +235,155 @@ func TestMagentaAliasRemainsDiagnosticOnly(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	expected := map[string]bool{
-		"nvim.highlight.DiagnosticError":                    true,
-		"nvim.highlight.ErrorMsg":                           true,
-		"nvim.highlight.RenderMarkdownError":                true,
-		"nvim.highlight.DiagnosticVirtualTextError":         true,
-		"nvim.highlight.DiagnosticUnderlineError.indicator": true,
-		"nvim.highlight.DiagnosticSignError":                true,
-		"nvim.highlight.DiagnosticFloatingError":            true,
-		"nvim.highlight.NotifyERRORBorder":                  true,
-		"nvim.highlight.NotifyERRORIcon":                    true,
-		"nvim.highlight.NotifyERRORTitle":                   true,
-		"nvim.highlight.TroubleCount":                       true,
-		"nvim.highlight.TroubleError":                       true,
-		"nvim.highlight.NeotestFailed":                      true,
-		"nvim.highlight.ScrollbarError":                     true,
-		"nvim.scrollbar.error":                              true,
-		"nvim.bufferline.error":                             true,
-		"nvim.bufferline.error_visible":                     true,
-		"nvim.bufferline.error_selected":                    true,
+	expected := []string{
+		"nvim.highlight.DiagnosticError",
+		"nvim.highlight.ErrorMsg",
+		"nvim.highlight.RenderMarkdownError",
+		"nvim.highlight.DiagnosticVirtualTextError",
+		"nvim.highlight.DiagnosticUnderlineError.indicator",
+		"nvim.highlight.DiagnosticSignError",
+		"nvim.highlight.DiagnosticFloatingError",
+		"nvim.highlight.NotifyERRORBorder",
+		"nvim.highlight.NotifyERRORIcon",
+		"nvim.highlight.NotifyERRORTitle",
+		"nvim.highlight.TroubleCount",
+		"nvim.highlight.TroubleError",
+		"nvim.highlight.NeotestFailed",
+		"nvim.highlight.ScrollbarError",
+		"nvim.scrollbar.error",
+		"nvim.bufferline.error",
+		"nvim.bufferline.error_visible",
+		"nvim.bufferline.error_selected",
 	}
-	actual := make(map[string]bool)
-	for _, pair := range result.Pairs {
-		if pair.Foreground == "zsh.error" {
-			actual[pair.ConsumerID] = true
+	if len(expected) != 18 {
+		t.Fatalf("error consumer count = %d, want 18", len(expected))
+	}
+	pairs := pairMap(result.Pairs)
+	for _, consumerID := range expected {
+		pair, ok := pairs[consumerID]
+		if !ok {
+			t.Errorf("canonical error pair %s not found", consumerID)
+			continue
+		}
+		if pair.Foreground != "semantic.error" {
+			t.Errorf("%s foreground = %q, want semantic.error", consumerID, pair.Foreground)
 		}
 	}
-	if len(actual) != len(expected) {
-		t.Fatalf("zsh.error pair count = %d, want %d: %v", len(actual), len(expected), actual)
+}
+
+func TestDiagnosticFamiliesUseCanonicalTokens(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
 	}
-	for consumerID := range expected {
-		if !actual[consumerID] {
-			t.Errorf("zsh.error diagnostic pair %s not found", consumerID)
+	result, err := Extract(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pairs := pairMap(result.Pairs)
+	severities := map[string]verifycolors.TokenRef{
+		"Error": "semantic.error",
+		"Warn":  "semantic.warning",
+		"Info":  "semantic.info",
+		"Hint":  "semantic.hint",
+	}
+
+	count := 0
+	for severity, token := range severities {
+		for _, family := range []string{"Diagnostic", "DiagnosticVirtualText", "DiagnosticSign", "DiagnosticFloating"} {
+			assertPair(
+				t,
+				pairs,
+				"nvim.highlight."+family+severity,
+				token,
+				"",
+				true,
+				verifycolors.ClassReportOnly,
+			)
+			count++
+		}
+		assertPair(
+			t,
+			pairs,
+			"nvim.highlight.DiagnosticUnderline"+severity+".indicator",
+			token,
+			"",
+			true,
+			verifycolors.ClassWaived,
+		)
+		count++
+	}
+	if count != 20 {
+		t.Fatalf("Diagnostic pair count = %d, want 20", count)
+	}
+
+	for consumerID, token := range map[string]verifycolors.TokenRef{
+		"nvim.highlight.ErrorMsg":       "semantic.error",
+		"nvim.highlight.WarningMsg":     "semantic.warning",
+		"vim.highlight.ErrorMsg":        "semantic.error",
+		"vim.highlight.WarningMsg":      "semantic.warning",
+		"vim.highlight.SpellBad":        "semantic.error",
+		"vim.highlight.SpellCap":        "semantic.warning",
+		"nvim.highlight.ScrollbarError": "semantic.error",
+		"nvim.highlight.ScrollbarWarn":  "semantic.warning",
+		"nvim.highlight.ScrollbarInfo":  "semantic.info",
+		"nvim.highlight.ScrollbarHint":  "semantic.hint",
+	} {
+		assertPair(t, pairs, consumerID, token, "", true, verifycolors.ClassReportOnly)
+	}
+	for consumerID, token := range map[string]verifycolors.TokenRef{
+		"nvim.scrollbar.error": "semantic.error",
+		"nvim.scrollbar.warn":  "semantic.warning",
+		"nvim.scrollbar.info":  "semantic.info",
+		"nvim.scrollbar.hint":  "semantic.hint",
+	} {
+		assertPair(t, pairs, consumerID, token, "", true, verifycolors.ClassWaived)
+	}
+}
+
+func TestZshErrorTokenAndReferencesAreRemoved(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	colorPalette, err := verifycolors.LoadPalette(filepath.Join(root, "colors", "ghost-visor.toml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	removedToken := "zsh" + ".error"
+	if _, ok := colorPalette.TokenValues()[verifycolors.TokenRef(removedToken)]; ok {
+		t.Fatalf("%s still exists in the palette", removedToken)
+	}
+	for _, relative := range []string{
+		"scripts/cmd/generate-colors/main.go",
+		"scripts/internal/verifycolors/sourceinventory/aliases.go",
+		"scripts/internal/verifycolors/inventory_generated.go",
+		"home-manager/zsh.nix",
+		"home-manager/colors.nix",
+		"nvim/lua/config/palette.lua",
+	} {
+		data, err := os.ReadFile(filepath.Join(root, filepath.FromSlash(relative)))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if strings.Contains(string(data), removedToken) {
+			t.Errorf("%s still references %s", relative, removedToken)
+		}
+	}
+}
+
+func TestSemanticHintIsExported(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, relative := range []string{"home-manager/colors.nix", "wezterm/colors.lua"} {
+		data, err := os.ReadFile(filepath.Join(root, filepath.FromSlash(relative)))
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !strings.Contains(string(data), `hint = "#58CAF8"`) {
+			t.Errorf("%s does not export semantic.hint", relative)
 		}
 	}
 }
@@ -346,6 +464,71 @@ func TestGitAndUITargetContrastRatios(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestCanonicalDiagnosticContrastProfiles(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	colorPalette, err := verifycolors.LoadPalette(filepath.Join(root, "colors", "ghost-visor.toml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	values := colorPalette.TokenValues()
+	if values["semantic.error"] != values["git.changed"] {
+		t.Fatalf("semantic.error = %s, git.changed = %s; want equal rendered colors", values["semantic.error"], values["git.changed"])
+	}
+
+	batRatio, err := colorutil.ContrastRatio(values["semantic.error"], values["core.background"])
+	if err != nil {
+		t.Fatal(err)
+	}
+	if math.Abs(batRatio-7.265) > 0.001 {
+		t.Errorf("bat invalid.illegal truecolor ratio = %.4f, want 7.265", batRatio)
+	}
+	t.Logf("bat invalid.illegal truecolor: %s on %s = %.4f", values["semantic.error"], values["core.background"], batRatio)
+
+	vimRatio, err := colorutil.ContrastRatio(values["git.changed"], values["nvim.diff_change_bg"])
+	if err != nil {
+		t.Fatal(err)
+	}
+	if math.Abs(vimRatio-7.146) > 0.001 {
+		t.Errorf("Vim DiffChange truecolor ratio = %.4f, want 7.146", vimRatio)
+	}
+	t.Logf("Vim DiffChange truecolor: %s on %s = %.4f", values["git.changed"], values["nvim.diff_change_bg"], vimRatio)
+
+	foregroundIndex, _, err := xterm.Nearest256(values["git.changed"])
+	if err != nil {
+		t.Fatal(err)
+	}
+	backgroundIndex, _, err := xterm.Nearest256(values["nvim.diff_change_bg"])
+	if err != nil {
+		t.Fatal(err)
+	}
+	if foregroundIndex != 182 || backgroundIndex != 237 {
+		t.Errorf("Vim DiffChange cterm indices = %d/%d, want 182/237", foregroundIndex, backgroundIndex)
+	}
+	ansi, err := colorPalette.WezTermANSI()
+	if err != nil {
+		t.Fatal(err)
+	}
+	foreground, err := xterm.Resolve256(foregroundIndex, ansi)
+	if err != nil {
+		t.Fatal(err)
+	}
+	background, err := xterm.Resolve256(backgroundIndex, ansi)
+	if err != nil {
+		t.Fatal(err)
+	}
+	ctermRatio, err := colorutil.ContrastRatio(foreground.Hex(), background.Hex())
+	if err != nil {
+		t.Fatal(err)
+	}
+	if math.Abs(ctermRatio-5.960) > 0.001 {
+		t.Errorf("Vim DiffChange cterm ratio = %.4f, want 5.960", ctermRatio)
+	}
+	t.Logf("Vim DiffChange cterm: index %d %s on index %d %s = %.4f", foregroundIndex, foreground.Hex(), backgroundIndex, background.Hex(), ctermRatio)
 }
 
 func TestNvimTerminalColorsUseANSIOnly(t *testing.T) {

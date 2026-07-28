@@ -138,7 +138,7 @@ highlight Question guifg=#58CAF8 ctermfg=81
 highlight MoreMsg guifg=#58CAF8 ctermfg=81
 highlight ModeMsg guifg=#CDE9F5 ctermfg=189 gui=bold cterm=bold
 highlight QuickFixLine guibg=#242F48 ctermbg=236
-highlight ErrorMsg guifg=#CDACEC ctermfg=183
+highlight ErrorMsg guifg=#CEADE1 ctermfg=182
 highlight WarningMsg guifg=#B8BCD8 ctermfg=146
 
 " Diff
@@ -148,7 +148,7 @@ highlight DiffDelete guifg=#ADBAC9 guibg=#302230 ctermfg=146 ctermbg=236
 highlight DiffText guifg=#88CBEA guibg=NONE ctermfg=116 ctermbg=NONE gui=bold cterm=bold
 
 " スペルチェック
-highlight SpellBad guifg=#CDACEC ctermfg=183 gui=undercurl cterm=underline
+highlight SpellBad guifg=#CEADE1 ctermfg=182 gui=undercurl cterm=underline
 highlight SpellCap guifg=#B8BCD8 ctermfg=146 gui=undercurl cterm=underline
 " END GENERATED COLORS
 " ========================================

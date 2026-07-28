@@ -327,7 +327,7 @@ in
           '*.ts=38;2;175;184;217'
           '*.lua=38;2;175;184;217'
           '*.js=38;2;175;184;217'
-          'or=38;2;205;172;236'
+          'or=38;2;206;173;225'
         )
         # END GENERATED COLORS: ZSH COMPLETION
         # FZF カラー設定
@@ -403,7 +403,7 @@ in
           ZSH_HIGHLIGHT_STYLES[builtin]="fg=${colors.zsh.command},bold"
           ZSH_HIGHLIGHT_STYLES[alias]="fg=${colors.zsh.command},bold"
           ZSH_HIGHLIGHT_STYLES[function]="fg=${colors.zsh.command},bold"
-          ZSH_HIGHLIGHT_STYLES[unknown-token]="fg=${colors.zsh.error},bold"
+          ZSH_HIGHLIGHT_STYLES[unknown-token]="fg=${colors.semantic.error},bold"
           ZSH_HIGHLIGHT_STYLES[path]="fg=${colors.zsh.path},underline"
           ZSH_HIGHLIGHT_STYLES[single-quoted-argument]="fg=${colors.zsh.string}"
           ZSH_HIGHLIGHT_STYLES[double-quoted-argument]="fg=${colors.zsh.string}"
