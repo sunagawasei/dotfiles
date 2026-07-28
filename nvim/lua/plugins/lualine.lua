@@ -86,9 +86,9 @@ return {
             show_ahead_behind = false,
             colored = true,
             diff_color = {
-              added = { fg = p.success },
-              modified = { fg = p.lavender },
-              removed = { fg = p.magenta },
+              added = { fg = p.git_added },
+              modified = { fg = p.git_changed },
+              removed = { fg = p.git_deleted },
             },
           },
         },

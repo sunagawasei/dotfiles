@@ -334,7 +334,7 @@ in
         export FZF_DEFAULT_OPTS='
           --color=bg+:${colors.core.selection_bg},bg:-1,fg:${colors.foregrounds.main},fg+:${colors.core.selection_fg}
           --color=hl:${colors.teals.bright},hl+:${colors.core.selection_fg},info:${colors.blues_slates.comment_gray},marker:${colors.core.selection_fg}
-          --color=prompt:${colors.zsh.error},spinner:${colors.zsh.error},pointer:${colors.core.selection_fg},header:${colors.blues_slates.comment_gray}
+          --color=prompt:${colors.ui.accent_fg},spinner:${colors.ui.accent_fg},pointer:${colors.core.selection_fg},header:${colors.blues_slates.comment_gray}
           --color=border:${colors.teals.border},gutter:-1
         '
 

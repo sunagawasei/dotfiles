@@ -28,7 +28,7 @@ gui:
       - '#375F98'
     # Git関連の色
     unstagedChangesColor:
-      - '#CEADE1' # Glitch Purple
+      - '#CEADE1' # Git changed
     cherryPickedCommitFgColor:
       - '#58CAF8'
     cherryPickedCommitBgColor:

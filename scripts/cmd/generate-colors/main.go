@@ -30,6 +30,8 @@ type colorPalette struct {
 	BluesSlates map[string]string `toml:"blues_slates"`
 	Purples     map[string]string `toml:"purples"`
 	Semantic    map[string]string `toml:"semantic"`
+	Git         map[string]string `toml:"git"`
+	UI          map[string]string `toml:"ui"`
 	ANSI        map[string]string `toml:"ansi"`
 	WezTerm     map[string]string `toml:"wezterm"`
 	Nvim        map[string]string `toml:"nvim"`
@@ -154,6 +156,10 @@ func (p *colorPalette) section(name string) (map[string]string, error) {
 		return p.Purples, nil
 	case "semantic":
 		return p.Semantic, nil
+	case "git":
+		return p.Git, nil
+	case "ui":
+		return p.UI, nil
 	case "ansi":
 		return p.ANSI, nil
 	case "wezterm":
@@ -693,6 +699,11 @@ M.colors = {
   purple_accent = "{{purples.muted_purple}}", -- Muted Purple (Keyword) [purples.muted_purple]
   syntax_violet = "{{semantic.keyword}}", -- Syntax Violet [semantic.keyword]
   success = "{{semantic.success}}",       -- Success indicator [semantic.success]
+  git_added = "{{git.added}}",         -- Git added [git.added]
+  git_changed = "{{git.changed}}",     -- Git changed [git.changed]
+  git_deleted = "{{git.deleted}}",     -- Git deleted [git.deleted]
+  ui_target_bg = "{{ui.target_bg}}",   -- UI target background [ui.target_bg]
+  ui_accent_fg = "{{ui.accent_fg}}",   -- UI ambient accent [ui.accent_fg]
   ocean_blue = "{{blues_slates.ocean_blue}}",    -- Ocean Blue [blues_slates.ocean_blue]
   lavender = "{{purples.lavender}}",      -- Lavender (Constant) [purples.lavender]
 
@@ -899,6 +910,15 @@ const nixColorsTemplate = `# ` + generatedNotice + `
     operator = "{{semantic.operator}}";
     constant = "{{semantic.constant}}";
   };
+  git = {
+    added = "{{git.added}}";
+    changed = "{{git.changed}}";
+    deleted = "{{git.deleted}}";
+  };
+  ui = {
+    target_bg = "{{ui.target_bg}}";
+    accent_fg = "{{ui.accent_fg}}";
+  };
   ansi = {
     black = "{{ansi.black}}";
     red = "{{ansi.red}}";
@@ -999,9 +1019,9 @@ users.group_other|foregrounds.dim|||
 users.group_root|semantic.error|||
 links.normal|foregrounds.dim|||
 links.multi_link_file|semantic.warning|||
-git.new|semantic.success|||
-git.modified|semantic.warning|||
-git.deleted|semantic.error|||
+git.new|git.added|||
+git.modified|git.changed|||
+git.deleted|git.deleted|||
 git.renamed|semantic.keyword|||
 git.typechange|semantic.keyword|||
 git.ignored|foregrounds.subdued|||
@@ -1491,7 +1511,7 @@ const lazygitTemplate = `    # BEGIN GENERATED COLORS
       - '{{blues_slates.ocean_blue}}'
     # Git関連の色
     unstagedChangesColor:
-      - '{{zsh.error}}' # Glitch Purple
+      - '{{git.changed}}' # Git changed
     cherryPickedCommitFgColor:
       - '{{teals.bright}}'
     cherryPickedCommitBgColor:
@@ -2068,9 +2088,9 @@ highlight ErrorMsg guifg={{semantic.error}} ctermfg={{xterm:semantic.error}}
 highlight WarningMsg guifg={{blues_slates.cloud_slate}} ctermfg={{xterm:blues_slates.cloud_slate}}
 
 " Diff
-highlight DiffAdd guifg={{semantic.function}} guibg={{nvim.diff_add_bg}} ctermfg={{xterm:semantic.function}} ctermbg={{xterm:nvim.diff_add_bg}}
-highlight DiffChange guifg={{semantic.error}} guibg={{nvim.diff_change_bg}} ctermfg={{xterm:semantic.error}} ctermbg={{xterm:nvim.diff_change_bg}}
-highlight DiffDelete guifg={{foregrounds.dim}} guibg={{nvim.diff_delete_bg}} ctermfg={{xterm:foregrounds.dim}} ctermbg={{xterm:nvim.diff_delete_bg}}
+highlight DiffAdd guifg={{git.added}} guibg={{nvim.diff_add_bg}} ctermfg={{xterm:git.added}} ctermbg={{xterm:nvim.diff_add_bg}}
+highlight DiffChange guifg={{git.changed}} guibg={{nvim.diff_change_bg}} ctermfg={{xterm:git.changed}} ctermbg={{xterm:nvim.diff_change_bg}}
+highlight DiffDelete guifg={{git.deleted}} guibg={{nvim.diff_delete_bg}} ctermfg={{xterm:git.deleted}} ctermbg={{xterm:nvim.diff_delete_bg}}
 highlight DiffText guifg={{foregrounds.heading}} guibg=NONE ctermfg={{xterm:foregrounds.heading}} ctermbg=NONE gui=bold cterm=bold
 
 " スペルチェック

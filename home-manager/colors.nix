@@ -66,6 +66,15 @@
     operator = "#92BFD9";
     constant = "#D0D4F0";
   };
+  git = {
+    added = "#62C9C2";
+    changed = "#CEADE1";
+    deleted = "#ADBAC9";
+  };
+  ui = {
+    target_bg = "#CEADE1";
+    accent_fg = "#CEADE1";
+  };
   ansi = {
     black = "#141B2D";
     red = "#C67F9E";

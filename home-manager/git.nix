@@ -48,8 +48,8 @@ in
       plus-emph-style = "${colors.ansi.bright_white} ${colors.nvim.diff_add_inline_bg}";
       minus-emph-style = "${colors.ansi.bright_white} ${colors.nvim.diff_delete_inline_bg}";
       syntax-theme = "ghost-visor";
-      line-numbers-plus-style = "${colors.semantic.success}";
-      line-numbers-minus-style = "${colors.semantic.error}";
+      line-numbers-plus-style = "${colors.git.added}";
+      line-numbers-minus-style = "${colors.git.deleted}";
       line-numbers-zero-style = "${colors.foregrounds.subdued}";
       line-numbers-left-style = "${colors.foregrounds.subdued}";
       line-numbers-right-style = "${colors.foregrounds.subdued}";

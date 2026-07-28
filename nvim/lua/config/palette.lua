@@ -36,6 +36,11 @@ M.colors = {
   purple_accent = "#B4B6DA", -- Muted Purple (Keyword) [purples.muted_purple]
   syntax_violet = "#BFADFF", -- Syntax Violet [semantic.keyword]
   success = "#62C9C2",       -- Success indicator [semantic.success]
+  git_added = "#62C9C2",         -- Git added [git.added]
+  git_changed = "#CEADE1",     -- Git changed [git.changed]
+  git_deleted = "#ADBAC9",     -- Git deleted [git.deleted]
+  ui_target_bg = "#CEADE1",   -- UI target background [ui.target_bg]
+  ui_accent_fg = "#CEADE1",   -- UI ambient accent [ui.accent_fg]
   ocean_blue = "#375F98",    -- Ocean Blue [blues_slates.ocean_blue]
   lavender = "#D0D4F0",      -- Lavender (Constant) [purples.lavender]
 

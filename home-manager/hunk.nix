@@ -33,21 +33,21 @@ in
         addedContentBg = colors.nvim.diff_add_inline_bg;
         removedContentBg = colors.nvim.diff_delete_inline_bg;
         contextContentBg = colors.core.background;
-        addedSignColor = colors.semantic.success;
-        removedSignColor = colors.semantic.error;
+        addedSignColor = colors.git.added;
+        removedSignColor = colors.git.deleted;
 
         lineNumberBg = colors.core.background;
         lineNumberFg = colors.foregrounds.subdued;
         selectedHunk = colors.core.selection_bg;
 
-        badgeAdded = colors.semantic.success;
-        badgeRemoved = colors.semantic.error;
+        badgeAdded = colors.git.added;
+        badgeRemoved = colors.git.deleted;
         badgeNeutral = colors.blues_slates.punctuation_gray;
 
-        fileNew = colors.semantic.success;
-        fileDeleted = colors.semantic.error;
+        fileNew = colors.git.added;
+        fileDeleted = colors.git.deleted;
         fileRenamed = colors.purples.muted_purple;
-        fileModified = colors.teals.bright;
+        fileModified = colors.git.changed;
         fileUntracked = colors.foregrounds.dim;
 
         noteBorder = colors.teals.border;

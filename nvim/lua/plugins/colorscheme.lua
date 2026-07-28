@@ -94,18 +94,18 @@ return {
         MiniIconsYellow = { fg = colors.white },
 
         -- GitSigns ハイライトグループ - モノクロ基調＋アクセント
-        GitSignsAdd = { fg = colors.success },
-        GitSignsChange = { fg = colors.magenta },
-        GitSignsDelete = { fg = colors.light_gray },
-        GitSignsAddNr = { fg = colors.success },
-        GitSignsChangeNr = { fg = colors.magenta },
-        GitSignsDeleteNr = { fg = colors.light_gray },
+        GitSignsAdd = { fg = colors.git_added },
+        GitSignsChange = { fg = colors.git_changed },
+        GitSignsDelete = { fg = colors.git_deleted },
+        GitSignsAddNr = { fg = colors.git_added },
+        GitSignsChangeNr = { fg = colors.git_changed },
+        GitSignsDeleteNr = { fg = colors.git_deleted },
         GitSignsCurrentLineBlame = { fg = colors.git_blame_gray },  -- コメントより明るく
 
         -- Diff関連のハイライトグループ
-        DiffAdd = { fg = colors.cyan, bg = colors.diff_add_bg },
-        DiffChange = { fg = colors.magenta, bg = colors.diff_change_bg },
-        DiffDelete = { fg = colors.light_gray, bg = colors.diff_delete_bg },
+        DiffAdd = { fg = colors.git_added, bg = colors.diff_add_bg },
+        DiffChange = { fg = colors.git_changed, bg = colors.diff_change_bg },
+        DiffDelete = { fg = colors.git_deleted, bg = colors.diff_delete_bg },
         DiffText = { fg = colors.highlight_white, bg = colors.diff_change_inline_bg, bold = true }, -- bg明示で変更語の可読性確保
 
         -- word_diff（行内差分）ハイライト - 行背景より明るいtint＋明色文字で可読性確保
@@ -192,7 +192,7 @@ return {
         RenderMarkdownBullet    = { fg = colors.punctuation_gray },
         RenderMarkdownChecked   = { fg = colors.ansi_green },
         RenderMarkdownUnchecked = { fg = colors.light_gray },
-        RenderMarkdownTodo      = { fg = colors.magenta },
+        RenderMarkdownTodo      = { fg = colors.ui_accent_fg },
         -- リンク・クォート
         RenderMarkdownLink  = { fg = colors.cyan, underline = true },
         RenderMarkdownQuote = { fg = colors.light_gray, italic = true },
@@ -221,7 +221,7 @@ return {
         -- Oil.nvim固有グループ
         OilDir = { fg = colors.cyan },
         OilDirIcon = { fg = colors.cyan },
-        OilLink = { fg = colors.magenta },
+        OilLink = { fg = colors.syntax_violet },
         OilFile = { fg = colors.fg },
 
         -- TreesitterContext (スティッキースクロール) ハイライトグループ
@@ -241,7 +241,7 @@ return {
         Search = { bg = colors.dark_shadow, fg = colors.cyan },
         IncSearch = { bg = colors.cyan, fg = colors.bg },
         CurSearch = { bg = colors.bright_cyan, fg = colors.bg },
-        Substitute = { bg = colors.magenta, fg = colors.bg },
+        Substitute = { bg = colors.ui_target_bg, fg = colors.bg },
         MatchParen = { bg = colors.border, fg = colors.highlight_white, bold = true },
 
         -- カーソル・選択関連
@@ -291,7 +291,7 @@ return {
         FlashBackdrop = { fg = colors.mid_gray },
         FlashMatch = { bg = colors.dark_shadow, fg = colors.cyan },
         FlashCurrent = { bg = colors.cyan, fg = colors.bg },
-        FlashLabel = { bg = colors.magenta, fg = colors.bg, bold = true },
+        FlashLabel = { bg = colors.ui_target_bg, fg = colors.bg, bold = true },
         FlashPrompt = { fg = colors.fg },
         FlashPromptIcon = { fg = colors.cyan },
 
@@ -493,9 +493,9 @@ return {
         vim.api.nvim_set_hl(0, "ScrollbarInfo", { fg = colors.bright_cyan })
         vim.api.nvim_set_hl(0, "ScrollbarHint", { fg = colors.cyan })
         vim.api.nvim_set_hl(0, "ScrollbarMisc", { fg = colors.light_gray })
-        vim.api.nvim_set_hl(0, "ScrollbarGitAdd", { fg = colors.cyan })
-        vim.api.nvim_set_hl(0, "ScrollbarGitChange", { fg = colors.magenta })
-        vim.api.nvim_set_hl(0, "ScrollbarGitDelete", { fg = colors.light_gray })
+        vim.api.nvim_set_hl(0, "ScrollbarGitAdd", { fg = colors.git_added })
+        vim.api.nvim_set_hl(0, "ScrollbarGitChange", { fg = colors.git_changed })
+        vim.api.nvim_set_hl(0, "ScrollbarGitDelete", { fg = colors.git_deleted })
       end
 
       -- 初回実行

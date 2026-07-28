@@ -14,9 +14,9 @@ return {
       info = p.cyan,            -- semantic.info
       hint = p.operator,        -- semantic.operator
       misc = p.light_gray,      -- foregrounds.dim (ハンドル上でも視認可能)
-      GitAdd = p.operator,      -- semantic.operator
-      GitChange = p.magenta,    -- semantic.error
-      GitDelete = p.light_gray, -- foregrounds.dim
+      GitAdd = p.git_added,       -- git.added
+      GitChange = p.git_changed, -- git.changed
+      GitDelete = p.git_deleted, -- git.deleted
     }
 
     require("scrollbar").setup({

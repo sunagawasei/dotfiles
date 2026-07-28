@@ -96,9 +96,9 @@ git:
   new:
     foreground: "#62C9C2"
   modified:
-    foreground: "#D0D4F0"
+    foreground: "#CEADE1"
   deleted:
-    foreground: "#CDACEC"
+    foreground: "#ADBAC9"
   renamed:
     foreground: "#BFADFF"
   typechange:

@@ -17,6 +17,8 @@ type Palette struct {
 	BluesSlates map[string]string `toml:"blues_slates"`
 	Purples     map[string]string `toml:"purples"`
 	Semantic    map[string]string `toml:"semantic"`
+	Git         map[string]string `toml:"git"`
+	UI          map[string]string `toml:"ui"`
 	ANSI        map[string]string `toml:"ansi"`
 	WezTerm     map[string]string `toml:"wezterm"`
 	Nvim        map[string]string `toml:"nvim"`
@@ -92,6 +94,8 @@ func (p *Palette) sections() map[string]map[string]string {
 		"blues_slates": p.BluesSlates,
 		"purples":      p.Purples,
 		"semantic":     p.Semantic,
+		"git":          p.Git,
+		"ui":           p.UI,
 		"ansi":         p.ANSI,
 		"wezterm":      p.WezTerm,
 		"nvim":         p.Nvim,

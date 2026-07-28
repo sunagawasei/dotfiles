@@ -2,11 +2,13 @@ package sourceinventory
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"path/filepath"
 	"strings"
 	"testing"
 
+	"github.com/sunagawasei/dotfiles/scripts/internal/colorutil"
 	"github.com/sunagawasei/dotfiles/scripts/internal/palette"
 	"github.com/sunagawasei/dotfiles/scripts/internal/verifycolors"
 )
@@ -128,6 +130,224 @@ func TestSyntaxAndUIRoleSeparation(t *testing.T) {
 	)
 }
 
+func TestGitRolesUseCanonicalTokensAcrossConsumers(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := Extract(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pairs := pairMap(result.Pairs)
+
+	nvimExpected := map[string]verifycolors.TokenRef{
+		"nvim.highlight.GitSignsAdd":        "git.added",
+		"nvim.highlight.GitSignsChange":     "git.changed",
+		"nvim.highlight.GitSignsDelete":     "git.deleted",
+		"nvim.highlight.GitSignsAddNr":      "git.added",
+		"nvim.highlight.GitSignsChangeNr":   "git.changed",
+		"nvim.highlight.GitSignsDeleteNr":   "git.deleted",
+		"nvim.highlight.DiffAdd":            "git.added",
+		"nvim.highlight.DiffChange":         "git.changed",
+		"nvim.highlight.DiffDelete":         "git.deleted",
+		"nvim.scrollbar.GitAdd":             "git.added",
+		"nvim.scrollbar.GitChange":          "git.changed",
+		"nvim.scrollbar.GitDelete":          "git.deleted",
+		"nvim.highlight.ScrollbarGitAdd":    "git.added",
+		"nvim.highlight.ScrollbarGitChange": "git.changed",
+		"nvim.highlight.ScrollbarGitDelete": "git.deleted",
+		"nvim.lualine.diff.added":           "git.added",
+		"nvim.lualine.diff.modified":        "git.changed",
+		"nvim.lualine.diff.removed":         "git.deleted",
+	}
+	if len(nvimExpected) != 18 {
+		t.Fatalf("Neovim git consumer count = %d, want 18", len(nvimExpected))
+	}
+	for consumerID, token := range nvimExpected {
+		pair, ok := pairs[consumerID]
+		if !ok {
+			t.Fatalf("pair %s not found", consumerID)
+		}
+		if pair.Foreground != token {
+			t.Errorf("%s foreground = %q, want %q", consumerID, pair.Foreground, token)
+		}
+	}
+
+	for consumerID, expected := range map[string]struct {
+		foreground verifycolors.TokenRef
+		background verifycolors.TokenRef
+	}{
+		"vim.highlight.DiffAdd":                {"git.added", "nvim.diff_add_bg"},
+		"vim.highlight.DiffChange":             {"git.changed", "nvim.diff_change_bg"},
+		"vim.highlight.DiffDelete":             {"git.deleted", "nvim.diff_delete_bg"},
+		"hunk.theme.addedSignColor":            {"git.added", ""},
+		"hunk.theme.removedSignColor":          {"git.deleted", ""},
+		"hunk.theme.badgeAdded":                {"git.added", ""},
+		"hunk.theme.badgeRemoved":              {"git.deleted", ""},
+		"hunk.theme.fileNew":                   {"git.added", ""},
+		"hunk.theme.fileModified":              {"git.changed", ""},
+		"hunk.theme.fileDeleted":               {"git.deleted", ""},
+		"delta.style.line-numbers-plus-style":  {"git.added", ""},
+		"delta.style.line-numbers-minus-style": {"git.deleted", ""},
+		"eza.theme.git.new":                    {"git.added", ""},
+		"eza.theme.git.modified":               {"git.changed", ""},
+		"eza.theme.git.deleted":                {"git.deleted", ""},
+		"lazygit.theme.unstagedChangesColor":   {"git.changed", ""},
+	} {
+		class := verifycolors.ClassReportOnly
+		ambient := true
+		if expected.background != "" {
+			class = verifycolors.ClassEnforced
+			ambient = false
+		}
+		assertPair(t, pairs, consumerID, expected.foreground, expected.background, ambient, class)
+	}
+
+	assertPair(
+		t,
+		pairs,
+		"delta.style.whitespace-error-style",
+		"semantic.error",
+		"",
+		true,
+		verifycolors.ClassReportOnly,
+	)
+	assertPair(
+		t,
+		pairs,
+		"eza.theme.git.conflicted",
+		"semantic.error",
+		"",
+		true,
+		verifycolors.ClassReportOnly,
+	)
+}
+
+func TestMagentaAliasRemainsDiagnosticOnly(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := Extract(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	expected := map[string]bool{
+		"nvim.highlight.DiagnosticError":                    true,
+		"nvim.highlight.ErrorMsg":                           true,
+		"nvim.highlight.RenderMarkdownError":                true,
+		"nvim.highlight.DiagnosticVirtualTextError":         true,
+		"nvim.highlight.DiagnosticUnderlineError.indicator": true,
+		"nvim.highlight.DiagnosticSignError":                true,
+		"nvim.highlight.DiagnosticFloatingError":            true,
+		"nvim.highlight.NotifyERRORBorder":                  true,
+		"nvim.highlight.NotifyERRORIcon":                    true,
+		"nvim.highlight.NotifyERRORTitle":                   true,
+		"nvim.highlight.TroubleCount":                       true,
+		"nvim.highlight.TroubleError":                       true,
+		"nvim.highlight.NeotestFailed":                      true,
+		"nvim.highlight.ScrollbarError":                     true,
+		"nvim.scrollbar.error":                              true,
+		"nvim.bufferline.error":                             true,
+		"nvim.bufferline.error_visible":                     true,
+		"nvim.bufferline.error_selected":                    true,
+	}
+	actual := make(map[string]bool)
+	for _, pair := range result.Pairs {
+		if pair.Foreground == "zsh.error" {
+			actual[pair.ConsumerID] = true
+		}
+	}
+	if len(actual) != len(expected) {
+		t.Fatalf("zsh.error pair count = %d, want %d: %v", len(actual), len(expected), actual)
+	}
+	for consumerID := range expected {
+		if !actual[consumerID] {
+			t.Errorf("zsh.error diagnostic pair %s not found", consumerID)
+		}
+	}
+}
+
+func TestUIAccentRolesAreSeparated(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	result, err := Extract(root)
+	if err != nil {
+		t.Fatal(err)
+	}
+	pairs := pairMap(result.Pairs)
+
+	for _, consumerID := range []string{"nvim.highlight.Substitute", "nvim.highlight.FlashLabel"} {
+		assertPair(
+			t,
+			pairs,
+			consumerID,
+			"core.background",
+			"ui.target_bg",
+			false,
+			verifycolors.ClassEnforced,
+		)
+	}
+	for _, consumerID := range []string{
+		"nvim.highlight.RenderMarkdownTodo",
+		"nvim.bufferline.close_button_selected",
+		"nvim.bufferline.pick",
+		"nvim.bufferline.pick_visible",
+		"nvim.bufferline.pick_selected",
+		"zsh.fzf.prompt",
+		"zsh.fzf.spinner",
+	} {
+		assertPair(t, pairs, consumerID, "ui.accent_fg", "", true, verifycolors.ClassReportOnly)
+	}
+	assertPair(
+		t,
+		pairs,
+		"nvim.highlight.OilLink",
+		"semantic.keyword",
+		"",
+		true,
+		verifycolors.ClassReportOnly,
+	)
+}
+
+func TestGitAndUITargetContrastRatios(t *testing.T) {
+	root, err := palette.FindRepositoryRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	colorPalette, err := verifycolors.LoadPalette(filepath.Join(root, "colors", "ghost-visor.toml"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	values := colorPalette.TokenValues()
+	for _, test := range []struct {
+		name       string
+		foreground verifycolors.TokenRef
+		background verifycolors.TokenRef
+		want       float64
+	}{
+		{"DiffAdd", "git.added", "nvim.diff_add_bg", 6.109},
+		{"DiffChange", "git.changed", "nvim.diff_change_bg", 7.146},
+		{"DiffDelete", "git.deleted", "nvim.diff_delete_bg", 7.618},
+		{"Substitute/FlashLabel", "core.background", "ui.target_bg", 7.265},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			ratio, err := colorutil.ContrastRatio(values[test.foreground], values[test.background])
+			if err != nil {
+				t.Fatal(err)
+			}
+			t.Logf("%s on %s = %.4f", test.foreground, test.background, ratio)
+			if math.Abs(ratio-test.want) > 0.001 {
+				t.Errorf("%s/%s contrast = %.4f, want %.3f", test.foreground, test.background, ratio, test.want)
+			}
+		})
+	}
+}
+
 func TestNvimTerminalColorsUseANSIOnly(t *testing.T) {
 	root, err := palette.FindRepositoryRoot()
 	if err != nil {
@@ -245,8 +465,8 @@ func TestDeltaStylesUseExpectedTokens(t *testing.T) {
 	expectedAmbient := map[string]verifycolors.TokenRef{
 		"plus-style":                    "nvim.diff_add_bg",
 		"minus-style":                   "nvim.diff_delete_bg",
-		"line-numbers-plus-style":       "semantic.success",
-		"line-numbers-minus-style":      "semantic.error",
+		"line-numbers-plus-style":       "git.added",
+		"line-numbers-minus-style":      "git.deleted",
 		"line-numbers-zero-style":       "foregrounds.subdued",
 		"line-numbers-left-style":       "foregrounds.subdued",
 		"line-numbers-right-style":      "foregrounds.subdued",
@@ -466,11 +686,11 @@ func TestEzaAndZshCompletionUseSharedExpectedTokens(t *testing.T) {
 			"filekinds.executable",
 			"perms.user_execute_file", "perms.user_execute_other", "perms.group_execute", "perms.other_execute",
 			"users.user_you", "users.group_yours",
-			"git.new", "git_repo.git_clean",
+			"git_repo.git_clean",
 		},
 		"semantic.warning": {
 			"perms.user_write", "perms.group_write", "perms.other_write",
-			"links.multi_link_file", "git.modified", "git_repo.git_dirty",
+			"links.multi_link_file", "git_repo.git_dirty",
 		},
 		"purples.bright_purple": {
 			"perms.special_user_file", "perms.special_other", "file_type.music", "file_type.lossless",
@@ -487,9 +707,12 @@ func TestEzaAndZshCompletionUseSharedExpectedTokens(t *testing.T) {
 		},
 		"semantic.error": {
 			"users.user_root", "users.group_root",
-			"git.deleted", "git.conflicted",
+			"git.conflicted",
 			"control_char", "broken_symlink", "broken_path_overlay",
 		},
+		"git.added":                {"git.new"},
+		"git.changed":              {"git.modified"},
+		"git.deleted":              {"git.deleted"},
 		"purples.lavender":         {"file_type.image"},
 		"purples.muted_purple":     {"file_type.video"},
 		"ansi.bright_yellow":       {"file_type.crypto"},
