@@ -31,11 +31,11 @@ heading = "#88CBEA"
 bright = "#58CAF8"
 mid_bright = "#92BFD9"
 standard = "#9ABED3"
-muted = "#3E6E8E"
-deep = "#2E6589"
+muted = "#3E6E8E"      # 予備（役割未割当）
+deep = "#2E6589"       # 予備（役割未割当）
 border = "#45799D"
 dark_accent = "#1C3A5E"
-sea_green = "#2F7D72"
+sea_green = "#2F7D72"  # 予備（役割未割当）
 
 [blues_slates]
 slate_mid = "#4A4953" # Background fills and intentional dimming only
@@ -46,15 +46,15 @@ slate_dark = "#1F3265"
 ocean_blue = "#375F98"
 sky_slate = "#AFB8D9"
 cloud_slate = "#B8BCD8"
-deep_ocean = "#42547A"
+deep_ocean = "#42547A" # 予備（役割未割当）
 
 [purples]
 lavender = "#D0D4F0"
 muted_purple = "#B4B6DA"
 bright_purple = "#CDACEC"
-dark_purple = "#4A3070"
-deep_glitch = "#6455C8"
-soft_magenta = "#C9B0D7"
+dark_purple = "#4A3070"  # 予備（役割未割当）
+deep_glitch = "#6455C8"  # 予備（役割未割当）
+soft_magenta = "#C9B0D7" # 予備（役割未割当）
 dark_rose = "#3A2A3E"
 
 [semantic]

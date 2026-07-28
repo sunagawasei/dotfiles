@@ -171,7 +171,10 @@ func joinTokenRefs(tokens []TokenRef) string {
 func tokenDispositions() []TokenDisposition {
 	projectionReason := "generated alias/export of a canonical token that is evaluated at its canonical use sites"
 	outOfScopeReason := "used by a configuration surface outside the static use-site inventory"
-	unusedReason := "no use site was found in the repository"
+	// 予備色は raw palette に意図的に残している。"no use site" だけでは
+	// 削除漏れと区別がつかないため、意図まで書く。
+	unusedReason := "intentional raw-palette reserve with no semantic role assigned; " +
+		"contrast and CVD separation stay unevaluated until it gains a use site"
 	return []TokenDisposition{
 		{Token: "nvim.bg", Kind: DispositionProjection, Reason: projectionReason},
 		{Token: "nvim.border", Kind: DispositionProjection, Reason: projectionReason},
