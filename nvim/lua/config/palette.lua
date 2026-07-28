@@ -23,14 +23,13 @@ M.colors = {
   git_blame_gray = "#B1B9CD",    -- Git blame [blues_slates.git_blame_gray]
   operator = "#92BFD9",     -- Clear Teal [teals.mid_bright]
   fg = "#CDE9F5",           -- Main Text [foregrounds.main]
-  near_white = "#9FDBF7",   -- Brightest [foregrounds.bright]
+  foreground_bright = "#9FDBF7",   -- Bright foreground [foregrounds.bright]
   highlight_white = "#F8FCFD", -- Purest [ansi.bright_white]
 
   -- アクセントカラー
-  cyan = "#58CAF8",         -- Vibrant Teal [teals.bright]
-  bright_cyan = "#88CBEA",  -- Heading Cyan [foregrounds.heading]
-  magenta = "#CEADE1",      -- Glitch Purple (error accent) [semantic.error]
-  bright_magenta = "#B8BCD8", -- Cloud Slate [blues_slates.cloud_slate]
+  teal_bright = "#58CAF8",         -- Bright Teal [teals.bright]
+  foreground_heading = "#88CBEA",  -- Heading foreground [foregrounds.heading]
+  cloud_slate = "#B8BCD8", -- Cloud Slate [blues_slates.cloud_slate]
 
   -- 拡張セマンティック
   purple_accent = "#B4B6DA", -- Muted Purple (Keyword) [purples.muted_purple]
@@ -73,7 +72,7 @@ M.colors = {
   ansi_bright_white = "#F8FCFD", -- ANSI Bright White [ansi.bright_white]
 
   -- その他
-  white = "#AFB8D9",        -- Sky Slate (Icon) [blues_slates.sky_slate]
+  sky_slate = "#AFB8D9",        -- Sky Slate (Icon) [blues_slates.sky_slate]
   selection = "#5199C2",    -- Clear Teal [core.selection_bg]
   selection_fg = "#141B2D", -- Background for contrast
   string = "#9ABED3",       -- Base Teal [semantic.string]

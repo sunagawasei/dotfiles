@@ -27,12 +27,12 @@ return {
         WinSeparator = { bg = colors.bg },
 
         -- 基本UI - 追加分
-        Directory = { fg = colors.cyan },
-        Title = { fg = colors.bright_cyan, bold = true },
+        Directory = { fg = colors.teal_bright },
+        Title = { fg = colors.foreground_heading, bold = true },
         Special = { fg = colors.punctuation_gray },
         Identifier = { fg = colors.syntax_variable },
         Statement = { fg = colors.syntax_violet },
-        PreProc = { fg = colors.cyan },
+        PreProc = { fg = colors.teal_bright },
         Type = { fg = colors.syntax_type },
         Constant = { fg = colors.syntax_constant },
         String = { fg = colors.string },
@@ -45,7 +45,7 @@ return {
 
         -- IMEやフローティングウィンドウの設定
         NormalFloat = { bg = colors.dark_shadow, fg = colors.fg },
-        FloatBorder = { bg = colors.dark_shadow, fg = colors.cyan },
+        FloatBorder = { bg = colors.dark_shadow, fg = colors.teal_bright },
         Pmenu = { bg = colors.dark_shadow, fg = colors.fg },
         PmenuSel = { bg = colors.dark_shadow, fg = colors.highlight_white },
         PmenuSbar = { bg = colors.dark_shadow },
@@ -53,12 +53,12 @@ return {
 
         -- Blink.cmp 用のハイライトグループ
         BlinkCmpMenu = { bg = colors.dark_shadow, fg = colors.fg },
-        BlinkCmpMenuBorder = { bg = colors.dark_shadow, fg = colors.cyan },
+        BlinkCmpMenuBorder = { bg = colors.dark_shadow, fg = colors.teal_bright },
         BlinkCmpMenuSelection = { bg = colors.dark_shadow, fg = colors.highlight_white },
         BlinkCmpDoc = { bg = colors.dark_shadow, fg = colors.fg },
-        BlinkCmpDocBorder = { bg = colors.dark_shadow, fg = colors.cyan },
+        BlinkCmpDocBorder = { bg = colors.dark_shadow, fg = colors.teal_bright },
         BlinkCmpLabel = { bg = colors.dark_shadow, fg = colors.fg },
-        BlinkCmpLabelMatch = { bg = colors.dark_shadow, fg = colors.cyan },
+        BlinkCmpLabelMatch = { bg = colors.dark_shadow, fg = colors.teal_bright },
         BlinkCmpKind = { bg = colors.dark_shadow, fg = colors.subdued_fg },
         BlinkCmpSource = { bg = colors.dark_shadow, fg = colors.subdued_fg },
 
@@ -71,7 +71,7 @@ return {
         SnacksPickerPathHidden = { bg = "none" },
         SnacksPickerBox = { bg = "none" },
         SnacksPickerPrompt = { bg = "none" },
-        SnacksPickerMatch = { bg = "none", fg = colors.cyan },
+        SnacksPickerMatch = { bg = "none", fg = colors.teal_bright },
         SnacksPickerList = { bg = "none" },
         SnacksPickerListCursorLine = { bg = colors.selection, fg = colors.selection_fg, bold = true },
         SnacksPickerSelection      = { bg = colors.selection, fg = colors.selection_fg, bold = true },
@@ -83,15 +83,15 @@ return {
         CursorLineNr = { bg = "none", fg = colors.highlight_white, bold = true },
 
         -- MiniIcons ハイライトグループ - 白色統一表示
-        MiniIconsAzure = { fg = colors.white },
-        MiniIconsBlue = { fg = colors.white },
-        MiniIconsCyan = { fg = colors.white },
-        MiniIconsGreen = { fg = colors.white },
-        MiniIconsGrey = { fg = colors.white },
-        MiniIconsOrange = { fg = colors.white },
-        MiniIconsPurple = { fg = colors.white },
-        MiniIconsRed = { fg = colors.white },
-        MiniIconsYellow = { fg = colors.white },
+        MiniIconsAzure = { fg = colors.sky_slate },
+        MiniIconsBlue = { fg = colors.sky_slate },
+        MiniIconsCyan = { fg = colors.sky_slate },
+        MiniIconsGreen = { fg = colors.sky_slate },
+        MiniIconsGrey = { fg = colors.sky_slate },
+        MiniIconsOrange = { fg = colors.sky_slate },
+        MiniIconsPurple = { fg = colors.sky_slate },
+        MiniIconsRed = { fg = colors.sky_slate },
+        MiniIconsYellow = { fg = colors.sky_slate },
 
         -- GitSigns ハイライトグループ - モノクロ基調＋アクセント
         GitSignsAdd = { fg = colors.git_added },
@@ -118,7 +118,7 @@ return {
         ["@keyword.function"] = { fg = colors.syntax_violet },
         ["@keyword.operator"] = { fg = colors.syntax_violet },
         ["@keyword.return"] = { fg = colors.syntax_violet },
-        ["@keyword.import"] = { fg = colors.cyan },
+        ["@keyword.import"] = { fg = colors.teal_bright },
         ["@string"] = { fg = colors.string },
         ["@number"] = { fg = colors.syntax_number },
         ["@boolean"] = { fg = colors.syntax_constant },
@@ -147,38 +147,38 @@ return {
         ["@punctuation.delimiter"] = { fg = colors.punctuation_gray },
         ["@punctuation.delimiter.yaml"] = { fg = colors.light_gray }, -- YAML list marker visibility
         -- YAML: 値の型で色分け（キー=cyan / 数値=lavender / 真偽・null=syntax violet。文字列は@string既定を維持）
-        ["@property.yaml"] = { fg = colors.cyan },
+        ["@property.yaml"] = { fg = colors.teal_bright },
         ["@boolean.yaml"] = { fg = colors.syntax_violet },
         ["@number.yaml"] = { fg = colors.lavender },
         ["@constant.builtin.yaml"] = { fg = colors.syntax_violet },
         ["@namespace"] = { fg = colors.fg },
         ["@module"] = { fg = colors.fg },
-        ["@tag"] = { fg = colors.cyan },
-        ["@tag.attribute"] = { fg = colors.bright_cyan },
+        ["@tag"] = { fg = colors.teal_bright },
+        ["@tag.attribute"] = { fg = colors.foreground_heading },
         ["@tag.delimiter"] = { fg = colors.subdued_fg },
 
         -- Treesitter Markup（Markdown用）
         ["@markup.heading"] = { fg = colors.highlight_white, bold = true },
         ["@markup.heading.1"] = { fg = colors.highlight_white, bold = true },
-        ["@markup.heading.2"] = { fg = colors.near_white, bold = true },
+        ["@markup.heading.2"] = { fg = colors.foreground_bright, bold = true },
         ["@markup.heading.3"] = { fg = colors.fg, bold = true },
         ["@markup.heading.4"] = { fg = colors.operator, bold = true },
         ["@markup.heading.5"] = { fg = colors.light_gray, bold = true },
         ["@markup.heading.6"] = { fg = colors.subdued_fg, bold = true },
         -- Markdown 見出し背景: teal グラデーション（treesitter + render-markdown.nvim 共有）
-        ["@markup.heading.1.markdown"] = { bg = colors.bright_cyan,    fg = colors.bg, bold = true },
-        ["@markup.heading.2.markdown"] = { bg = colors.cyan,           fg = colors.bg, bold = true },
+        ["@markup.heading.1.markdown"] = { bg = colors.foreground_heading, fg = colors.bg, bold = true },
+        ["@markup.heading.2.markdown"] = { bg = colors.teal_bright,        fg = colors.bg, bold = true },
         ["@markup.heading.3.markdown"] = { bg = colors.operator,       fg = colors.bg, bold = true },
         ["@markup.heading.4.markdown"] = { bg = colors.fg,             fg = colors.bg, bold = true },
-        ["@markup.heading.5.markdown"] = { bg = colors.bright_magenta, fg = colors.bg, bold = true },
+        ["@markup.heading.5.markdown"] = { bg = colors.cloud_slate,        fg = colors.bg, bold = true },
         ["@markup.heading.6.markdown"] = { bg = colors.light_gray,     fg = colors.bg, bold = true },
         -- render-markdown.nvim: インライン編集レンダリング用ハイライト
         -- 見出し行背景: @markup.heading.<N>.markdown.bg と同じ teal グラデーション（palette 参照）
-        RenderMarkdownH1Bg = { bg = colors.bright_cyan },
-        RenderMarkdownH2Bg = { bg = colors.cyan },
+        RenderMarkdownH1Bg = { bg = colors.foreground_heading },
+        RenderMarkdownH2Bg = { bg = colors.teal_bright },
         RenderMarkdownH3Bg = { bg = colors.operator },
         RenderMarkdownH4Bg = { bg = colors.fg },
-        RenderMarkdownH5Bg = { bg = colors.bright_magenta },
+        RenderMarkdownH5Bg = { bg = colors.cloud_slate },
         RenderMarkdownH6Bg = { bg = colors.light_gray },
         -- 見出しアイコン: teal 背景上で読みやすい黒
         RenderMarkdownH1 = { fg = colors.bg, bold = true },
@@ -191,7 +191,7 @@ return {
         RenderMarkdownCode       = { bg = colors.panel_bg },
         RenderMarkdownCodeInline = { bg = colors.panel_bg, fg = colors.fg },
         -- テーブル
-        RenderMarkdownTableHead = { fg = colors.bright_cyan, bold = true },
+        RenderMarkdownTableHead = { fg = colors.foreground_heading, bold = true },
         RenderMarkdownTableRow  = { fg = colors.fg },
         -- リスト・チェックボックス
         RenderMarkdownBullet    = { fg = colors.punctuation_gray },
@@ -199,7 +199,7 @@ return {
         RenderMarkdownUnchecked = { fg = colors.light_gray },
         RenderMarkdownTodo      = { fg = colors.ui_accent_fg },
         -- リンク・クォート
-        RenderMarkdownLink  = { fg = colors.cyan, underline = true },
+        RenderMarkdownLink  = { fg = colors.teal_bright, underline = true },
         RenderMarkdownQuote = { fg = colors.light_gray, italic = true },
         -- アラート（重大度ごとのsemantic aliasを使用）
         RenderMarkdownInfo    = { fg = colors.diagnostic_info,  bold = true },
@@ -209,10 +209,10 @@ return {
         RenderMarkdownError   = { fg = colors.diagnostic_error, bold = true },
         ["@markup.list"] = { fg = colors.light_gray },
         ["@markup.list.markdown"] = { fg = colors.light_gray },
-        ["@markup.list.checked"] = { fg = colors.cyan },
+        ["@markup.list.checked"] = { fg = colors.teal_bright },
         ["@markup.list.unchecked"] = { fg = colors.light_gray },
-        ["@markup.link"] = { fg = colors.cyan, underline = true },
-        ["@markup.link.label"] = { fg = colors.cyan },
+        ["@markup.link"] = { fg = colors.teal_bright, underline = true },
+        ["@markup.link.label"] = { fg = colors.teal_bright },
         ["@markup.link.url"] = { fg = colors.subdued_fg, underline = true },
         ["@markup.raw"] = { fg = colors.fg },
         ["@markup.raw.markdown_inline"] = { bg = colors.dark_shadow, fg = colors.fg },
@@ -224,8 +224,8 @@ return {
         ["@punctuation.special.markdown"] = { fg = colors.light_gray },
 
         -- Oil.nvim固有グループ
-        OilDir = { fg = colors.cyan },
-        OilDirIcon = { fg = colors.cyan },
+        OilDir = { fg = colors.teal_bright },
+        OilDirIcon = { fg = colors.teal_bright },
         OilLink = { fg = colors.syntax_violet },
         OilFile = { fg = colors.fg },
 
@@ -243,9 +243,9 @@ return {
         ErrorMsg = { fg = colors.diagnostic_error },
 
         -- 検索・マッチ関連
-        Search = { bg = colors.dark_shadow, fg = colors.cyan },
-        IncSearch = { bg = colors.cyan, fg = colors.bg },
-        CurSearch = { bg = colors.bright_cyan, fg = colors.bg },
+        Search = { bg = colors.dark_shadow, fg = colors.teal_bright },
+        IncSearch = { bg = colors.teal_bright, fg = colors.bg },
+        CurSearch = { bg = colors.foreground_heading, fg = colors.bg },
         Substitute = { bg = colors.ui_target_bg, fg = colors.bg },
         MatchParen = { bg = colors.border, fg = colors.highlight_white, bold = true },
 
@@ -284,7 +284,7 @@ return {
         LspReferenceText = { bg = colors.dark_shadow },
         LspReferenceRead = { bg = colors.dark_shadow },
         LspReferenceWrite = { bg = colors.dark_shadow, bold = true },
-        LspSignatureActiveParameter = { fg = colors.cyan, bold = true },
+        LspSignatureActiveParameter = { fg = colors.teal_bright, bold = true },
         LspCodeLens = { fg = colors.subdued_fg },
         LspInlayHint = { fg = colors.subdued_fg, italic = true },
 
@@ -294,15 +294,15 @@ return {
 
         -- Flash.nvim
         FlashBackdrop = { fg = colors.mid_gray },
-        FlashMatch = { bg = colors.dark_shadow, fg = colors.cyan },
-        FlashCurrent = { bg = colors.cyan, fg = colors.bg },
+        FlashMatch = { bg = colors.dark_shadow, fg = colors.teal_bright },
+        FlashCurrent = { bg = colors.teal_bright, fg = colors.bg },
         FlashLabel = { bg = colors.ui_target_bg, fg = colors.bg, bold = true },
         FlashPrompt = { fg = colors.fg },
-        FlashPromptIcon = { fg = colors.cyan },
+        FlashPromptIcon = { fg = colors.teal_bright },
 
         -- Which-Key.nvim
-        WhichKey = { fg = colors.cyan },
-        WhichKeyGroup = { fg = colors.bright_cyan },
+        WhichKey = { fg = colors.teal_bright },
+        WhichKeyGroup = { fg = colors.foreground_heading },
         WhichKeyDesc = { fg = colors.fg },
         WhichKeySeparator = { fg = colors.border },
         WhichKeyFloat = { bg = "none" },
@@ -311,19 +311,19 @@ return {
 
         -- Noice.nvim
         NoiceCmdline = { fg = colors.fg },
-        NoiceCmdlineIcon = { fg = colors.cyan },
-        NoiceCmdlineIconSearch = { fg = colors.cyan },
+        NoiceCmdlineIcon = { fg = colors.teal_bright },
+        NoiceCmdlineIconSearch = { fg = colors.teal_bright },
         NoiceCmdlinePopup = { bg = "none" },
-        NoiceCmdlinePopupBorder = { fg = colors.cyan },
-        NoiceCmdlinePopupTitle = { fg = colors.cyan },
+        NoiceCmdlinePopupBorder = { fg = colors.teal_bright },
+        NoiceCmdlinePopupTitle = { fg = colors.teal_bright },
         NoiceConfirm = { bg = "none" },
-        NoiceConfirmBorder = { fg = colors.cyan },
+        NoiceConfirmBorder = { fg = colors.teal_bright },
         NoiceMini = { bg = "none" },
         NoicePopup = { bg = "none" },
-        NoicePopupBorder = { fg = colors.cyan },
+        NoicePopupBorder = { fg = colors.teal_bright },
         NoicePopupmenu = { bg = "none" },
-        NoicePopupmenuBorder = { fg = colors.cyan },
-        NoicePopupmenuMatch = { fg = colors.cyan, bold = true },
+        NoicePopupmenuBorder = { fg = colors.teal_bright },
+        NoicePopupmenuMatch = { fg = colors.teal_bright, bold = true },
         NoicePopupmenuSelected = { bg = colors.dark_shadow },
         NoiceVirtualText = { fg = colors.subdued_fg },
 
@@ -355,7 +355,7 @@ return {
         TroubleSource = { fg = colors.subdued_fg },
         TroubleCode = { fg = colors.subdued_fg },
         TroubleLocation = { fg = colors.subdued_fg },
-        TroubleFile = { fg = colors.cyan },
+        TroubleFile = { fg = colors.teal_bright },
         TroubleFoldIcon = { fg = colors.border },
         TroubleCount = { fg = colors.diagnostic_error, bold = true },
         TroubleError = { fg = colors.diagnostic_error },
@@ -368,8 +368,8 @@ return {
         SpecialKey = { fg = colors.border },
         Whitespace = { fg = colors.border },
         Conceal = { fg = colors.mid_gray },
-        Question = { fg = colors.cyan },
-        MoreMsg = { fg = colors.cyan },
+        Question = { fg = colors.teal_bright },
+        MoreMsg = { fg = colors.teal_bright },
         ModeMsg = { fg = colors.fg, bold = true },
         WildMenu = { bg = colors.dark_shadow, fg = colors.highlight_white },
         QuickFixLine = { bg = colors.dark_shadow },
@@ -380,22 +380,22 @@ return {
         LazyButton = { bg = "none", fg = colors.subdued_fg },
         LazyButtonActive = { bg = colors.selection, fg = colors.darkest_bg, bold = true },
         LazyH1 = { fg = colors.highlight_white, bold = true },
-        LazyH2 = { fg = colors.cyan, bold = true },
-        LazySpecial = { fg = colors.cyan },
+        LazyH2 = { fg = colors.teal_bright, bold = true },
+        LazySpecial = { fg = colors.teal_bright },
         LazyCommit = { fg = colors.subdued_fg },
-        LazyCommitType = { fg = colors.cyan },
+        LazyCommitType = { fg = colors.teal_bright },
         LazyDimmed = { fg = colors.mid_gray },
         LazyProp = { fg = colors.light_gray },
-        LazyValue = { fg = colors.bright_magenta },
-        LazyLocal = { fg = colors.cyan },
-        LazyProgressDone = { fg = colors.cyan },
+        LazyValue = { fg = colors.cloud_slate },
+        LazyLocal = { fg = colors.teal_bright },
+        LazyProgressDone = { fg = colors.teal_bright },
         LazyProgressTodo = { fg = colors.border },
-        LazyReasonCmd = { fg = colors.cyan },
-        LazyReasonEvent = { fg = colors.bright_cyan },
-        LazyReasonFt = { fg = colors.bright_cyan },
-        LazyReasonKeys = { fg = colors.cyan },
-        LazyReasonPlugin = { fg = colors.cyan },
-        LazyReasonStart = { fg = colors.cyan },
+        LazyReasonCmd = { fg = colors.teal_bright },
+        LazyReasonEvent = { fg = colors.foreground_heading },
+        LazyReasonFt = { fg = colors.foreground_heading },
+        LazyReasonKeys = { fg = colors.teal_bright },
+        LazyReasonPlugin = { fg = colors.teal_bright },
+        LazyReasonStart = { fg = colors.teal_bright },
       }
 
       -- ハイライトグループを適用
@@ -473,26 +473,26 @@ return {
         vim.api.nvim_set_hl(0, "ClaudeCodeWinBarNC", { bg = "none" })
 
         -- Neotestのハイライトグループ設定（モノクロ基調＋アクセント）
-        vim.api.nvim_set_hl(0, "NeotestPassed", { fg = colors.cyan })
+        vim.api.nvim_set_hl(0, "NeotestPassed", { fg = colors.teal_bright })
         vim.api.nvim_set_hl(0, "NeotestFailed", { fg = colors.diagnostic_error })
         vim.api.nvim_set_hl(0, "NeotestRunning", { fg = colors.fg })
         vim.api.nvim_set_hl(0, "NeotestSkipped", { fg = colors.fg })
-        vim.api.nvim_set_hl(0, "NeotestMarked", { fg = colors.cyan })
-        vim.api.nvim_set_hl(0, "NeotestWinSelect", { fg = colors.cyan })
+        vim.api.nvim_set_hl(0, "NeotestMarked", { fg = colors.teal_bright })
+        vim.api.nvim_set_hl(0, "NeotestWinSelect", { fg = colors.teal_bright })
         vim.api.nvim_set_hl(0, "NeotestAdapterName", { fg = colors.subdued_fg })
         vim.api.nvim_set_hl(0, "NeotestBorder", { fg = colors.dark_shadow })
         vim.api.nvim_set_hl(0, "NeotestDir", { fg = colors.subdued_fg })
         vim.api.nvim_set_hl(0, "NeotestFile", { fg = colors.fg })
-        vim.api.nvim_set_hl(0, "NeotestNamespace", { fg = colors.cyan })
+        vim.api.nvim_set_hl(0, "NeotestNamespace", { fg = colors.teal_bright })
         vim.api.nvim_set_hl(0, "NeotestIndent", { fg = colors.dark_shadow })
         vim.api.nvim_set_hl(0, "NeotestExpandMarker", { fg = colors.subdued_fg })
-        vim.api.nvim_set_hl(0, "NeotestFocused", { fg = colors.cyan, bold = true })
+        vim.api.nvim_set_hl(0, "NeotestFocused", { fg = colors.teal_bright, bold = true })
         vim.api.nvim_set_hl(0, "NeotestUnknown", { fg = colors.subdued_fg })
-        vim.api.nvim_set_hl(0, "NeotestTarget", { fg = colors.cyan })
+        vim.api.nvim_set_hl(0, "NeotestTarget", { fg = colors.teal_bright })
 
         -- Scrollbar関連のハイライトグループ
         vim.api.nvim_set_hl(0, "ScrollbarHandle", { bg = colors.mid_gray })
-        vim.api.nvim_set_hl(0, "ScrollbarSearch", { fg = colors.cyan })
+        vim.api.nvim_set_hl(0, "ScrollbarSearch", { fg = colors.teal_bright })
         vim.api.nvim_set_hl(0, "ScrollbarError", { fg = colors.diagnostic_error })
         vim.api.nvim_set_hl(0, "ScrollbarWarn", { fg = colors.diagnostic_warn })
         vim.api.nvim_set_hl(0, "ScrollbarInfo", { fg = colors.diagnostic_info })

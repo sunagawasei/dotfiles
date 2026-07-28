@@ -686,14 +686,13 @@ M.colors = {
   git_blame_gray = "{{blues_slates.git_blame_gray}}",    -- Git blame [blues_slates.git_blame_gray]
   operator = "{{teals.mid_bright}}",     -- Clear Teal [teals.mid_bright]
   fg = "{{foregrounds.main}}",           -- Main Text [foregrounds.main]
-  near_white = "{{foregrounds.bright}}",   -- Brightest [foregrounds.bright]
+  foreground_bright = "{{foregrounds.bright}}",   -- Bright foreground [foregrounds.bright]
   highlight_white = "{{ansi.bright_white}}", -- Purest [ansi.bright_white]
 
   -- アクセントカラー
-  cyan = "{{teals.bright}}",         -- Vibrant Teal [teals.bright]
-  bright_cyan = "{{foregrounds.heading}}",  -- Heading Cyan [foregrounds.heading]
-  magenta = "{{semantic.error}}",      -- Glitch Purple (error accent) [semantic.error]
-  bright_magenta = "{{blues_slates.cloud_slate}}", -- Cloud Slate [blues_slates.cloud_slate]
+  teal_bright = "{{teals.bright}}",         -- Bright Teal [teals.bright]
+  foreground_heading = "{{foregrounds.heading}}",  -- Heading foreground [foregrounds.heading]
+  cloud_slate = "{{blues_slates.cloud_slate}}", -- Cloud Slate [blues_slates.cloud_slate]
 
   -- 拡張セマンティック
   purple_accent = "{{purples.muted_purple}}", -- Muted Purple (Keyword) [purples.muted_purple]
@@ -736,7 +735,7 @@ M.colors = {
   ansi_bright_white = "{{ansi.bright_white}}", -- ANSI Bright White [ansi.bright_white]
 
   -- その他
-  white = "{{blues_slates.sky_slate}}",        -- Sky Slate (Icon) [blues_slates.sky_slate]
+  sky_slate = "{{blues_slates.sky_slate}}",        -- Sky Slate (Icon) [blues_slates.sky_slate]
   selection = "{{core.selection_bg}}",    -- Clear Teal [core.selection_bg]
   selection_fg = "{{core.selection_fg}}", -- Background for contrast
   string = "{{semantic.string}}",       -- Base Teal [semantic.string]
