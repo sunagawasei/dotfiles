@@ -11,7 +11,6 @@ M.colors = {
   darkest_bg = "#141B2D",   -- Deepest Shadow [core.darkest_bg]
   panel_bg = "#324664",     -- Dark Teal Panel [core.panel_bg]
   dark_shadow = "#242F48",  -- UI Shadow [core.ui_shadow]
-  gutter_bg = "#1A2235",    -- Gutter background [nvim.gutter_bg]
   border = "#45799D",       -- UI Border [teals.border]
   mid_gray = "#4A4953",     -- Background fill / intentional dim only [blues_slates.slate_mid]
   subdued_fg = "#949DB0",   -- Subdued foreground [foregrounds.subdued]

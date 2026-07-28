@@ -6,6 +6,7 @@ return {
   core = {
     background = "#202A42",
     darkest_bg = "#141B2D",
+    sunken_bg = "#1A2235",
     panel_bg = "#324664",
     ui_shadow = "#242F48",
     active_line = "#314463",

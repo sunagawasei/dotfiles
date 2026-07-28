@@ -6,6 +6,7 @@
   core = {
     background = "#202A42";
     darkest_bg = "#141B2D";
+    sunken_bg = "#1A2235";
     panel_bg = "#324664";
     ui_shadow = "#242F48";
     active_line = "#314463";
@@ -98,7 +99,6 @@
   nvim = {
     bg = "#202A42";
     dark_shadow = "#242F48";
-    gutter_bg = "#1A2235";
     selection = "#5199C2";
     border = "#45799D";
     comment = "#B1B9CA";

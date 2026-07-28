@@ -11,7 +11,6 @@ var nvimAliases = map[string]verifycolors.TokenRef{
 	"darkest_bg":            "core.darkest_bg",
 	"panel_bg":              "core.panel_bg",
 	"dark_shadow":           "core.ui_shadow",
-	"gutter_bg":             "nvim.gutter_bg",
 	"border":                "teals.border",
 	"mid_gray":              "blues_slates.slate_mid",
 	"subdued_fg":            "foregrounds.subdued",

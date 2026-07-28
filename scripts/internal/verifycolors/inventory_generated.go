@@ -484,7 +484,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "claude.theme.diffAddedDimmed",
-		Foreground: "nvim.gutter_bg",
+		Foreground: "core.sunken_bg",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -6911,7 +6911,7 @@ var generatedPairs = []PairSpec{
 	{
 		ConsumerID: "statusline.busy.background",
 		Foreground: "purples.bright_purple",
-		Background: TokenBackground("nvim.gutter_bg"),
+		Background: TokenBackground("core.sunken_bg"),
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
@@ -6919,7 +6919,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "statusline.busy.background.surface",
-		Foreground: "nvim.gutter_bg",
+		Foreground: "core.sunken_bg",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -6947,7 +6947,7 @@ var generatedPairs = []PairSpec{
 	{
 		ConsumerID: "statusline.context.critical",
 		Foreground: "purples.bright_purple",
-		Background: TokenBackground("nvim.gutter_bg"),
+		Background: TokenBackground("core.sunken_bg"),
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
@@ -6956,7 +6956,7 @@ var generatedPairs = []PairSpec{
 	{
 		ConsumerID: "statusline.context.safe",
 		Foreground: "teals.mid_bright",
-		Background: TokenBackground("nvim.gutter_bg"),
+		Background: TokenBackground("core.sunken_bg"),
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
@@ -6964,7 +6964,7 @@ var generatedPairs = []PairSpec{
 	},
 	{
 		ConsumerID: "statusline.context.surface",
-		Foreground: "nvim.gutter_bg",
+		Foreground: "core.sunken_bg",
 		Background: AmbientBackground(),
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
@@ -6974,7 +6974,7 @@ var generatedPairs = []PairSpec{
 	{
 		ConsumerID: "statusline.context.warning",
 		Foreground: "purples.lavender",
-		Background: TokenBackground("nvim.gutter_bg"),
+		Background: TokenBackground("core.sunken_bg"),
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",

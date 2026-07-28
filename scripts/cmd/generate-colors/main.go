@@ -644,7 +644,7 @@ const claudeThemeTemplate = `{
     "fastModeShimmer": "{{ansi.bright_white}}",
     "diffAdded": "{{nvim.diff_add_bg}}",
     "diffRemoved": "{{nvim.diff_delete_bg}}",
-    "diffAddedDimmed": "{{nvim.gutter_bg}}",
+    "diffAddedDimmed": "{{core.sunken_bg}}",
     "diffRemovedDimmed": "{{core.ui_shadow}}",
     "diffAddedWord": "{{nvim.diff_add_inline_bg}}",
     "diffRemovedWord": "{{nvim.diff_delete_inline_bg}}",
@@ -674,7 +674,6 @@ M.colors = {
   darkest_bg = "{{core.darkest_bg}}",   -- Deepest Shadow [core.darkest_bg]
   panel_bg = "{{core.panel_bg}}",     -- Dark Teal Panel [core.panel_bg]
   dark_shadow = "{{core.ui_shadow}}",  -- UI Shadow [core.ui_shadow]
-  gutter_bg = "{{nvim.gutter_bg}}",    -- Gutter background [nvim.gutter_bg]
   border = "{{teals.border}}",       -- UI Border [teals.border]
   mid_gray = "{{blues_slates.slate_mid}}",     -- Background fill / intentional dim only [blues_slates.slate_mid]
   subdued_fg = "{{foregrounds.subdued}}",   -- Subdued foreground [foregrounds.subdued]
@@ -760,6 +759,7 @@ return {
   core = {
     background = "{{core.background}}",
     darkest_bg = "{{core.darkest_bg}}",
+    sunken_bg = "{{core.sunken_bg}}",
     panel_bg = "{{core.panel_bg}}",
     ui_shadow = "{{core.ui_shadow}}",
     active_line = "{{core.active_line}}",
@@ -861,6 +861,7 @@ const nixColorsTemplate = `# ` + generatedNotice + `
   core = {
     background = "{{core.background}}";
     darkest_bg = "{{core.darkest_bg}}";
+    sunken_bg = "{{core.sunken_bg}}";
     panel_bg = "{{core.panel_bg}}";
     ui_shadow = "{{core.ui_shadow}}";
     active_line = "{{core.active_line}}";
@@ -953,7 +954,6 @@ const nixColorsTemplate = `# ` + generatedNotice + `
   nvim = {
     bg = "{{nvim.bg}}";
     dark_shadow = "{{nvim.dark_shadow}}";
-    gutter_bg = "{{nvim.gutter_bg}}";
     selection = "{{nvim.selection}}";
     border = "{{nvim.border}}";
     comment = "{{nvim.comment}}";
@@ -2182,7 +2182,7 @@ const statuslineSegmentsTemplate = `# BEGIN GENERATED COLORS: SEGMENTS
 # --- 1段目: モデル / コンテキスト使用率 / ディレクトリ / Gitブランチ ---
 row1=()
 row1+=("{{core.darkest_bg}}|${C_MODEL}${MODEL}")
-row1+=("{{nvim.gutter_bg}}|${C_PCT}󰍛 ${pct}%")
+row1+=("{{core.sunken_bg}}|${C_PCT}󰍛 ${pct}%")
 row1+=("{{core.background}}|${C_DIR}${DIR_NAME}")
 [ -n "$GIT_BRANCH" ] && row1+=("{{core.darkest_bg}}|${C_GIT}${GIT_BRANCH}")
 
@@ -2190,7 +2190,7 @@ row1+=("{{core.background}}|${C_DIR}${DIR_NAME}")
 row2=()
 # herdrが画面下の非空3行だけを走査するため、busyマーカーを下段先頭に置く
 [ "$CODEX_BUSY" = "1" ] && row2+=("{{core.darkest_bg}}|${C_BUSY}󰚩")
-[ "$BG_BUSY" = "1" ] && row2+=("{{nvim.gutter_bg}}|${C_BUSY}󰜎")
+[ "$BG_BUSY" = "1" ] && row2+=("{{core.sunken_bg}}|${C_BUSY}󰜎")
 if [ -n "$rate_used_int" ]; then
   row2+=("{{core.background}}|${C_RATE}5h ${rate_bar_filled}${C_RATETRACK}${rate_bar_track}${C_RATE} ${rate_used_int}%${rate_remaining:+ ${rate_remaining}}")
 fi
