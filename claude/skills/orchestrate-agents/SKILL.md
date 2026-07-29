@@ -5,7 +5,7 @@ description: codex-research(調査)・codex-impl(自走実装)・codex(オンデ
 
 # チーム協業ワークフロー
 
-codex-research(コードベース内調査・データ収集)・codex-impl(実質的な機能実装の自走)・codex(オンデマンド査読)への委譲を、`ask --wait`(ブロック待機)ではなく非同期`send`+agmsg Monitorの自動再開で回す。2026-07-12〜、実質的な実装はcodex-implへ委譲し、メイン(Fable)は起案者として質問対応と検収を担う。同日cursorはオーケストレーションから外れた(調査はcodex-researchへ。以後Claude+codex系で完結)。役割分担の全体はグローバルCLAUDE.mdの「エージェント役割分担」。
+codex-research(コードベース内調査・データ収集)・codex-impl(実質的な機能実装の自走)・codex(オンデマンド査読)への委譲を、`ask --wait`(ブロック待機)ではなく非同期`send`+agmsg Monitorの自動再開で回す。2026-07-12〜、実質的な実装はcodex-implへ委譲し、メインは起案者として質問対応と検収を担う。同日cursorはオーケストレーションから外れた(調査はcodex-researchへ。以後Claude+codex系で完結)。役割分担の全体はグローバルCLAUDE.mdの「エージェント役割分担」。
 
 ## 概要
 
@@ -75,7 +75,7 @@ codex系ワーカーの出力そのものは転載せず、採用した内容と
 
 ## codex-impl自走実装ワークフロー（2026-07-12〜）
 
-実質的な機能実装(新機能・refactor・複数ファイル変更)はcodex-implに自走させ、メイン(Fable)は起案者として質問対応と検収を担う。codex-implはimplementer layout(cwd=対象repo・permission profileでrepo書き込み可・network遮断)のheadless codexワーカー(gpt-5.6-sol)。些細な編集(1行config・typo等)はこのフローに乗せない(従来どおりsonnet/メイン直接)。
+実質的な機能実装(新機能・refactor・複数ファイル変更)はcodex-implに自走させ、メインは起案者として質問対応と検収を担う。codex-implはimplementer layout(cwd=対象repo・permission profileでrepo書き込み可・network遮断)のheadless codexワーカー(gpt-5.6-sol)。些細な編集(1行config・typo等)はこのフローに乗せない(従来どおりsonnet/メイン直接)。
 
 ### 1. 壁打ち→プラン確定
 
@@ -110,7 +110,7 @@ codex-implは判断に迷うと質問を返信してターンを終える(role f
 - ユーザー判断が要る論点はユーザーに確認してから回答を返信
 - 返信するまでcodex-implは止まっている。放置しない
 
-### 5. [done]受領→検収(Fable単独)
+### 5. [done]受領→検収(メイン単独)
 
 [done]報告を鵜呑みにせず実物を確認する:
 
@@ -154,8 +154,8 @@ codex系ワーカーへ送るパケットの書式、Claude側の検品・収束
 codexへのレビューには3つの独立した位置づけがある。**「いつ・必須かどうか」の判断規約はグローバル`CLAUDE.md`を正本とし、このファイルはパケット書式・収束条件・実務ノウハウの正本**とする:
 
 1. **プラン査読(常時必須)**: 実装・検証計画をユーザーに提示する前に必ずcodex査読を通す(`claude/CLAUDE.md`「対話・確認の規約」の常時ゲート)。指摘の採否は「指摘→対応」対応表で示してから承認を求める
-2. **実装後のdiff査読(オンデマンド)**: 大規模diffの第二意見等、明示的に必要と判断した時だけ使う。対象は**実質的な実装のみ**(1行修正など些細な編集は対象外)。標準フローの検収はFableが単独で担うため、このレビューは必須ではない(`claude/CLAUDE.md`「エージェント役割分担」)
-3. **検収(Fable単独・必須)**: codex-implの[done]報告はFableが`git status`/`git diff`/`git log`を読んで単独で検収する(上記「codex-impl自走実装ワークフロー」5.)。codex査読はこの検収の代替にならない
+2. **実装後のdiff査読(オンデマンド)**: 大規模diffの第二意見等、明示的に必要と判断した時だけ使う。対象は**実質的な実装のみ**(1行修正など些細な編集は対象外)。標準フローの検収はメインが単独で担うため、このレビューは必須ではない(`claude/CLAUDE.md`「エージェント役割分担」)
+3. **検収(メイン単独・必須)**: codex-implの[done]報告はメインが`git status`/`git diff`/`git log`を読んで単独で検収する(上記「codex-impl自走実装ワークフロー」5.)。codex査読はこの検収の代替にならない
 
 以下はプラン査読・オンデマンドdiff査読どちらにも使う共通のパケット書式:
 
@@ -182,7 +182,7 @@ codexへのレビューには3つの独立した位置づけがある。**「い
 チームで協業して: codex-researchに既存コード内のXの使用箇所・依存関係の棚卸しを頼みながら、私は外部ライブラリYのAPI仕様をsonnetサブエージェントに調査させる
 ```
 
-codex-researchへ`[research]`パケット(コードベース内スコープ)を非同期送信 → 待たずに自分は外部ライブラリ調査(sonnetサブエージェント+WebFetch/WebSearchまたはcontext7 MCP)を進める → codex-researchの返信がMonitor通知で届いたら検品(不足があれば差し戻し) → 検品を通ったらプランを固めてcodex-implへ`[implement]`を送り、[done]をFableが検収する。
+codex-researchへ`[research]`パケット(コードベース内スコープ)を非同期送信 → 待たずに自分は外部ライブラリ調査(sonnetサブエージェント+WebFetch/WebSearchまたはcontext7 MCP)を進める → codex-researchの返信がMonitor通知で届いたら検品(不足があれば差し戻し) → 検品を通ったらプランを固めてcodex-implへ`[implement]`を送り、[done]をメインが検収する。
 
 ### 例2: codex-researchの調査完了後、codex-implへ実装を委譲しつつ次の独立タスクを走らせる
 
