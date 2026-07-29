@@ -62,8 +62,8 @@ in
 
     # 開発ツール
     gh lazygit neovim deno bun luarocks lua-language-server hadolint markdownlint-cli
-    grpcurl gitui imagemagick gifski pwgen tmux ansifilter
-    ripgrep oxlint unzip
+    grpcurl buf gitui imagemagick gifski pwgen tmux ansifilter
+    ripgrep oxlint unzip yamlfmt
 
     # GitHub PR/issue TUI
     gh-dash
