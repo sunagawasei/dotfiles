@@ -52,6 +52,8 @@ if [[ -n "$SESSION_ID" && "$SESSION_ID" =~ ^[0-9a-fA-F-]+$ ]]; then
     while IFS='=' read -r key value; do
       case "$key" in
         team) meta_team="$value" ;;
+        # 新形式: identities=<team>/<name>（team= 行が無い meta への追従）
+        identities) [ -z "$meta_team" ] && meta_team="${value%%/*}" ;;
         type) meta_type="$value" ;;
       esac
     done < "$metafile"
@@ -187,8 +189,13 @@ for index in "${!CODEX_BRIDGE_PIDS[@]}"; do
 
   padded_command=" $bridge_command "
   [[ "$bridge_command" == *"codex-bridge.js"* ]] || continue
-  [[ "$padded_command" == *" --team ${AGMSG_TEAM} "* ]] || continue
-  [[ "$padded_command" == *" --name ${bridge_name} "* ]] || continue
+  # 旧: --team/--name 引数、新: --identity-key base64(team\tname): のどちらかで照合
+  bridge_identity_key=$(printf '%s\t%s' "$AGMSG_TEAM" "$bridge_name" | base64 | tr -d '\r\n' | tr '+/' '-_')
+  if [[ "$padded_command" != *" --identity-key ${bridge_identity_key}: "* ]] &&
+     ! { [[ "$padded_command" == *" --team ${AGMSG_TEAM} "* ]] &&
+         [[ "$padded_command" == *" --name ${bridge_name} "* ]]; }; then
+    continue
+  fi
   [ -r "$logfile" ] || continue
 
   lifecycle_state=$(tail -n 400 "$logfile" 2>/dev/null | awk \
