@@ -10,7 +10,7 @@
 - **セキュリティ**: `claude/rules/shell-security.md`
 - **Claude Code構造規約**: `claude/rules/claude-structure.md`
 - **Datadog**: `claude/rules/datadog.md`（社内情報を含むためローカル限定・非公開）
-- **Pull Request運用**: `claude/rules/pull-request.md`（draft/readyの事前確認・アサイン・body書式）
+- **Pull Request運用**: `claude/rules/pull-request.md`（draft/readyの事前確認・アサイン・body書式。pathsは`.github`配下のみでPR作成時に自動発火しないため、PR作成前に明示的に読む）
 
 ## スクリプト言語
 
@@ -54,9 +54,9 @@
 
 ## エージェント役割分担
 
-メイン=起案者(要件壁打ち・プラン化・実装中の相談対応・検収・実行・安全判断・統括)。実装の実働は別課金プールのcodex系へ、機械的編集・調査の実働はsonnetサブエージェントへ出し、メインは指揮・検証・判断に徹する。別課金プールのcodexへの外注がトークン削減の本質。
+メイン=起案者(壁打ち・プラン化・検収・実行・安全判断・統括)。実働は下表の各役へ委譲し、メインは指揮・検証・判断に徹する。
 
-モデル指定はalias自動追従を正とし、固定model IDは書かない(2026-07-29時点の解決先: `sonnet`=Sonnet 5, `fable`=Fable 5)。既定メインは`opus[1m]`=Opus 5+1M context(settings.json)。この環境はOrg defaultがOpus 4.8のため素の`opus`は4.8側に解決されるおそれがあり、`opus[1m]`がOpus 5を既定にする実効手段(2026-07-29の/model picker実測)。メインは`opus[1m]`か`fable`(さらに上位のMythosクラスtier)のどちらかで運用する(ユーザーが`/model`で切替)。tier序列: fable > opus > sonnet > haiku。サブエージェントは`env.CLAUDE_CODE_SUBAGENT_MODEL=sonnet`で一元強制済み(呼び出し時の`model`パラメータ・agent定義frontmatterより優先される公式仕様。詳細・経緯: `claude/skills/orchestrate-agents/references/delegation-policy.md`)。
+モデル指定はalias自動追従を正とし、固定model IDは書かない。メインは`opus[1m]`か`fable`(Mythosクラス上位tier)のどちらかで運用する(素の`opus`はこの環境ではOrg default=Opus 4.8に解決されるおそれがあり使わない)。tier序列: fable > opus > sonnet > haiku。サブエージェントは`env.CLAUDE_CODE_SUBAGENT_MODEL=sonnet`で一元強制済み。alias解決先・優先仕様・採用経緯: `claude/skills/orchestrate-agents/references/delegation-policy.md`。
 
 | 役 | 担当 | 権限 |
 |---|---|---|
@@ -83,5 +83,3 @@
 - codex査読は大規模diffの第二意見等、オンデマンドのみ。advisorをレビューの代用にしない(着手前のアプローチ点検・行き詰まり相談専用)
 - sonnetの「編集した」報告は鵜呑みにせず、grep/存在確認でスポットチェックする
 - 重要な判断はサブエージェントに委譲せず、メインが直接行う
-
-トークン節約(中〜大タスク時): codex-researchの結果返却まで対象領域のRead/Grep/Globを控え、citeされたファイルを起点に開く。codex系の出力は要約転載せず、採用項目だけプラン・検収・報告に反映する。

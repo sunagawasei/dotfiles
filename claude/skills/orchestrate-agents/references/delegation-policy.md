@@ -36,3 +36,4 @@
 - 既定メインは`opus[1m]`=Opus 5+1M context(settings.jsonの`model`)。公式docs上は「`opus`=Opus 5・`[1m]`はno-op」だが、この環境はOrg defaultがOpus 4.8のため素の`opus`は4.8側に解決されるおそれがあり、/model pickerの実測(2026-07-29)で`opus[1m]`がOpus 5を既定にする実効手段と確認した — 一般論の公式仕様より環境実測を優先した判断
 - メインは`opus[1m]`か`fable`(Mythosクラスの上位tier)のどちらかで運用する(ユーザーが`/model`で切替。当初「fable=手動投入の切り札・通常メイン候補にしない」としたが同日のユーザー指示で両方を通常メインに改めた)。旧「Fable温存プラン」(メイン=Opus 4.8固定案)は2026-07-29に破棄済み
 - `CLAUDE_CODE_SUBAGENT_MODEL`はaliasを受け付けて自動追従し、呼び出し時の`model`パラメータ・agent定義frontmatterより優先される(公式仕様で確認済み)。v2.1.196以降、`inherit`を設定した場合は「未設定」と同じ扱いになり通常のモデル解決(呼び出し時パラメータ→frontmatter→メインモデル)が続行される(旧版はメインモデルへ強制だった)
+- 役割分担の経済的根拠(来歴): 別課金プールのcodexへの外注がトークン削減の本質。Anthropicプール内では上位tierメインとsonnetサブエージェントの単価差が委譲の裁定になる
