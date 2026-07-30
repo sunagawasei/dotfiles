@@ -42,6 +42,8 @@ rows = [
 ]
 
 [keys]
+# ctrl+shift+英字はレガシーTUIが区別できないためルートレベルで奪ってもペイン側の損失がない
+copy_mode = ["ctrl+shift+y", "prefix+["]
 previous_agent = "prefix+alt+p"
 next_agent = "prefix+alt+n"
 switch_workspace = "prefix+1..9"
