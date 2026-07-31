@@ -221,6 +221,51 @@ role file は `db/spawn-roles/codex-research.codex.md`（規約名でensure-code
 
 agmsg configのper-workerキー（`spawn.codex_model.<name>` / `spawn.codex_effort.<name>`）によるワーカー名別モデル+effortプリセット、codex-deepの使い捨て運用、既知のgpt-5.6-sol 400エラー対処は `references/model-routing.md` を参照。
 
+## roleチームモード（2026-08-01〜）
+
+旧来の直委譲(このファイルの標準フロー)と並ぶ第二の委譲形態。manager(claude-code headless、`opus[1m]`/high)がworker/reviewerへの分解・発注・差し戻し・完了判定を肩代わりし、メインは起動・エスカレーション応答・[team-done]検収だけを持つ。構成メンバー・モデル配分・実測挙動の正本はメモリ`project_agmsg_role_team.md`。
+
+### 使い分け判定（タスク受領時にメインが自動判定してサジェストする）
+
+roleチームをサジェストする条件: 以下のシグナルのうち**2つ以上**該当し、かつcost vetoに掛からないこと。
+
+- s1. 独立サブタスク3件以上に分解でき、並行実行の利得がある
+- s2. 調査→実装→レビューのフルサイクルを2周以上回す見込み(数え方: 並行2案件の各1周も、1案件の差し戻しreworkによる2周目もカウントする)
+- s3. メインセッションは稼働し続けエスカレーションに即応できる前提で、ユーザーが張り付かずに進めたい案件(メインが応答不能になればチームは止まる — ユーザー不在の代替にはなるが、メイン不在の代替にはならない)
+- s4. 異なる専門性(調査+実装+査読)の同時併用が必要
+
+**cost veto**: シグナル数に関わらず、想定並行利得がmanagerの固定費(`opus[1m]`のturnコスト)を上回らない小粒案件は旧来へ。逆に大規模でも直列な案件(s2のみ該当)は並行価値が無いため旧来が正解 — これは閾値の意図した挙動。
+
+既定は旧来フロー(シグナル1つ以下、またはveto該当)。**codex-implへの実装委譲が明示不要の標準フローである点は不変** — 承認ゲートが増えるのはroleチームの起動・投入だけ。
+
+サジェスト書式: 判定(該当シグナル)+根拠(分解数・想定worker・概算コスト)+両案の帰結1行ずつを提示し、ユーザー承認を待つ。**承認は[task:<id>]単位** — チームが既に常駐していても、新しいタスクの投入には毎回承認を得る。承認なしに起動・投入しない。
+
+### 起動手順
+
+1. 必要roleをspawnする(モデル等のconfigはグローバル永続なのでコマンドのみ):
+   - codex系(worker-1/2, hard-worker-1, reviewer-1/2, research-1, strategist): `ensure-codex.sh <project> <name>`
+   - claude-code系(manager, research-2..5): `spawn.sh claude-code <name> --team <session team> --project <path> --headless`
+   - role fileは`db/spawn-roles/<name>.<type>.md`の規約名で自動解決される
+2. **発注前にreadiness確認**: `team.sh <team>`で必須role(manager+担当worker+担当reviewer)の登録を確認する。不足があるうちはパケットを送らない(managerが開始後に詰まる)
+3. managerへ`[task:<id>]`付き自己完結パケット(ゴール/制約/完了条件/検収観点)を送る。**完了報告に「どのreviewerがどのworkerの成果を承認したか」の明記を必須にする**(固定ペアはprompt強制のみで軟らかいため、検収時に照合する)
+
+### 運用中のメインの義務
+
+- managerからのエスカレーション(設計判断・非常駐roleの起動依頼)に即応する。返信までmanagerは止まっている
+- **roster消失の扱い**: watchdog respawn中は一時的にrosterから消えるが、即loss扱いも即正常扱いもしない。`team.sh <team>`+pgrepで確認し、数分待って再出現しなければensure/spawnで再起動、それでも戻らなければユーザーへ報告する(一律の正常扱いは本物のcrash・respawn失敗を見逃す)
+- turn実行中のworkerをkill/teardownするとそのturnは丸ごと失われ、誰も再駆動しない(respawnはモデル側threadを引き継がない)
+
+### 検収・終了
+
+- [team-done]はメインが検収する: 要件適合+実物(diff/artifact)確認+承認reviewerの照合。team内のreviewer承認はメイン検収の代替にならない。git commitはメインのみ
+- SessionEnd teardownでsession teamのheadless worker全員(旧来系・role系の区別なし)が自動回収される。これは仕様であり巻き込みではない。次セッションでは必要roleをspawnし直す(config永続なので同モデルで立つ)
+
+### 混在ルール（旧来と同一teamで併用する場合）
+
+- `[task:<id>]`は両系を通してセッション内で一意にする
+- roleチームmember(worker/reviewer/research系)へのdispatchはmanager経由のみ。メインから直接パケットを送らない(旧来member=codex-impl/codex-research/codexへの直送は従来どおり)
+- 完了済み・破棄済みタスクのstale messageが遅延して届いたら破棄する(既読化して無視)
+
 ## 関連スキル
 
 - `/agmsg` - inbox確認・送信・履歴

@@ -74,6 +74,7 @@
 - コードを読んで挙動を突き止める調査 → codex-research(対象が外部リポジトリのソースでも同様)
 - 外部情報収集(Web/ドキュメント/ライブラリ仕様/GitHub APIメタデータ/パッケージ選定) → sonnet(WebFetch/WebSearch標準装備)またはメイン(gh CLI)。ソースコード読解はここに含めない
 - 中〜大の調査テーマはcodex-research(コード内)+sonnet(外部)を同時に投げて併走させ、メインが突き合わせて検品する
+- 複数サブタスク並行・多段の大型案件はroleチーム(manager統括)をサジェストする。判定シグナル・cost veto・起動手順は`claude/skills/orchestrate-agents/SKILL.md`のroleチームモード節が正本。起動もタスク投入も毎回ユーザー承認([task:id]単位)
 - codex系への送信は非同期send既定(返信はagmsg Monitorの自動再開で受ける)。送信前のensure-codex・パケット書式・Q&Aループ・検収ゲートの詳細: `claude/skills/orchestrate-agents/SKILL.md`
 - メイン自身がsonnetで動くセッションでは、sonnet委譲のコスト裁定が消えるため編集・調査もメインが直接行う(codex系への委譲は課金プールが別なので不変)
 
