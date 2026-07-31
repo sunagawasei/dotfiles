@@ -2,9 +2,9 @@
 name: herdr-english-reply
 description: >-
   別workspaceのAIエージェントとの会話で、相手の最新返信を読んだうえでユーザーの返信案を
-  カジュアルな英語に添削し、代替表現とニュアンス差を示す。Use when the user wants English
-  reply help / 英文添削 for a chat with an AI agent running in another herdr workspace,
-  or invokes this skill with a workspace number.
+  平易でカジュアルな英語に添削・英訳し、代替表現とニュアンス差を示す。Use when the user wants
+  English reply help / 英文添削 / 日本語からの英訳 for a chat with an AI agent running in
+  another herdr workspace, or invokes this skill with a workspace number.
 ---
 
 # herdr English Reply
@@ -39,11 +39,18 @@ herdr pane read <pane_id> --source recent-unwrapped --lines 80
 
 TUI装飾・spinner・入力プロンプト行は捨て、エージェント側の**最新の実質的な発言**だけを文脈にする。途中で切れていたら `--lines` を増やす。まだ何も出力がない場合は文脈なしで添削してよいが、そのことを明示する。
 
-### 4. 添削する
+### 4. 添削または英訳する
 
-入力は日本語でも英語でもよい。ユーザーの意図を保ったまま、AIエージェント相手のチャットとして自然な英語にする。
+入力が英語なら添削、日本語なら英訳する。どちらの場合も出力フォーマットは同じ。ユーザーが英作文できなくて日本語をそのまま送ってくるのは想定内なので、英語で書き直すよう促さない。
 
-- 省略形・命令形・短い文でよい。`I would appreciate it if you could` 系の枕は落とす
+**返信したい本文なのか、直前の提案へのコメントなのかを取り違えない。** 短い発言は両方の意味になりうる（例: 「そのままでいいや」は「Replyはこの案でいいから送る内容として使って」の意にも「直前の質問への回答」の意にも読める）。`"..."` や `「...」` で囲まれた文字列は常に「返信したい内容そのもの」として扱う。囲みがなく判別できない場合は、対象paneへの返信案として扱ってよいか一言確認してから進める。
+
+**平易な英語を最優先する。** ユーザーが自分で読めて、次回は自分で書ける語彙に落とす。
+
+- 中高レベルの語で言えることに難しい語を使わない（`utilize`→`use`、`ascertain`→`check`、`in the event that`→`if`）
+- 凝ったイディオム・句動詞・比喩表現を持ち込まない。直球で言う
+- 一文を短く切る。関係代名詞で伸ばすより2文に割る
+- 省略形・命令形でよい。`I would appreciate it if you could` 系の枕は落とす
 - ビジネスメール調・教科書英語にしない。逆にスラングや皮肉を足すのも禁止
 - コード識別子・パス・技術用語・エラーメッセージは原文のまま残す
 - 「よしなに」「いい感じに」のような曖昧語は具体的な英語に落とす。落とし方が複数あるなら断定せず選択肢として出す
@@ -54,9 +61,11 @@ TUI装飾・spinner・入力プロンプト行は捨て、エージェント側�
 
 - **Context** — 相手の最新返信の要点を1〜3文。長い引用はしない
 - **Reply** — コピペ用の英文
-- **Notes** — 直した点と、代替表現を1〜2個（各1行でニュアンス差を添える）
+- **Notes** — 直した点と、代替表現を1〜2個（各1行でニュアンス差を添える）。代替案にも平易さの基準を同じく適用する
 
 「もっとカジュアルに」「短く」「この単語は残して」などの指示が来たら、同じフォーマットで出し直す。
+
+`Reply` の文構造・文法を聞かれたら、都度Context/Reply/Notesの形式には拘らず、該当箇所を要素分解して日本語で説明する（例: 決まり文句なら由来と直訳、`動詞+目的語+補語`のような型なら型の名前と他の用例）。平易な英語を保つ方針と同様、文法用語も必要最小限にする。
 
 ## 禁止事項
 
@@ -68,4 +77,4 @@ TUI装飾・spinner・入力プロンプト行は捨て、エージェント側�
 
 ユーザー: `それで進めて。終わったら結果だけ見せて`
 
-→ paneを読み、Context「実装方針に合意済みで、テストを回すか確認してきている」／Reply `Sounds good, go ahead. Just show me the results when you're done.`／Notes「別案 `Cool, proceed — ping me with the outcome.`（もう少し軽く、急かさない感じ）」
+→ paneを読み、Context「実装方針に合意済みで、テストを回すか確認してきている」／Reply `Sounds good, go ahead. Just show me the results when you're done.`／Notes「別案 `OK, please go ahead. Send me the results at the end.`（少し落ち着いた言い方）」
