@@ -15,9 +15,11 @@ description: >-
 
 ## ワークフロー
 
-### 1. workspace番号を待つ
+### 1. workspace番号を受け取る
 
-起動直後は**何も読まない**。ユーザーが対象のworkspace番号（`herdr workspace list` の `number`）を送ってくるのを待つ。番号が来たら解決して「準備できた、返信案を送って」とだけ返す。
+`/herdr-english-reply <番号>`（例: `/herdr-english-reply 3`）のようにARGUMENTSへworkspace番号（`herdr workspace list` の `number`）が渡されていれば、それを使ってすぐ手順2へ進む。
+
+ARGUMENTSが空、または番号として読み取れない場合は、起動直後は**何も読まない**まま、ユーザーが番号を送ってくるのを待つ。番号を解決したら「準備できた、返信案を送って」とだけ返す。
 
 ### 2. 対象paneを解決する
 
@@ -73,7 +75,7 @@ TUI装飾・spinner・入力プロンプト行は捨て、エージェント側�
 
 ## 使用例
 
-ユーザー: `3` → workspace 3 のエージェントpaneを解決して待機。
+`/herdr-english-reply 3` または ユーザー: `3` → workspace 3 のエージェントpaneを解決して待機。
 
 ユーザー: `それで進めて。終わったら結果だけ見せて`
 
