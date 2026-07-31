@@ -265,6 +265,7 @@ roleチームをサジェストする条件: 以下のシグナルのうち**2�
 - `[task:<id>]`は両系を通してセッション内で一意にする
 - roleチームmember(worker/reviewer/research系)へのdispatchはmanager経由のみ。メインから直接パケットを送らない(旧来member=codex-impl/codex-research/codexへの直送は従来どおり)
 - 完了済み・破棄済みタスクのstale messageが遅延して届いたら破棄する(既読化して無視)
+- **チーム解体(despawn)時は、そのチームのin-flight dispatch(worker宛の未消化サブタスク)を棚卸しし、破棄をmanager/worker宛に明示するか同名の再利用を避ける**。同名workerを後から再spawnすると旧dispatchが再駆動される(2026-08-01実例: 解体済み初代チームのサブタスクが再spawn後のworkerで蘇生し、幽霊タスクにcycleを浪費・現行タスクの遅延原因になった)
 
 ## 関連スキル
 
