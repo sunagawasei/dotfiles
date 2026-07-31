@@ -1,5 +1,6 @@
 ---
 name: herdr-english-reply
+argument-hint: "[workspace_number]"
 description: >-
   別workspaceのAIエージェントとの会話で、相手の最新返信を読んだうえでユーザーの返信案を
   平易でカジュアルな英語に添削・英訳し、代替表現とニュアンス差を示す。Use when the user wants
