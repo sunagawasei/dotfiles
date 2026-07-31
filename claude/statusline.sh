@@ -41,37 +41,42 @@ CODEX_BUSY=0
 CODEX_BRIDGE_PIDS=()
 CODEX_BRIDGE_NAMES=()
 CODEX_BRIDGE_LOGS=()
+CODEX_BRIDGE_TYPES=()
 if [[ -n "$SESSION_ID" && "$SESSION_ID" =~ ^[0-9a-fA-F-]+$ ]]; then
   AGMSG_TEAM="s-${SESSION_ID}"
   AGMSG_RUN_DIR=/Users/s23159/.agents/skills/agmsg/run
-  for metafile in "$AGMSG_RUN_DIR"/codex-bridge."$AGMSG_TEAM".*.meta; do
-    [ -f "$metafile" ] || continue
+  # headless bridgeはtype毎に <type>-bridge.<team>.<name>.* を作る（codex/claude-code）
+  for bridge_type in codex claude-code; do
+    for metafile in "$AGMSG_RUN_DIR"/"$bridge_type"-bridge."$AGMSG_TEAM".*.meta; do
+      [ -f "$metafile" ] || continue
 
-    meta_team=""
-    meta_type=""
-    while IFS='=' read -r key value; do
-      case "$key" in
-        team) meta_team="$value" ;;
-        # 新形式: identities=<team>/<name>（team= 行が無い meta への追従）
-        identities) [ -z "$meta_team" ] && meta_team="${value%%/*}" ;;
-        type) meta_type="$value" ;;
-      esac
-    done < "$metafile"
-    [ "$meta_team" = "$AGMSG_TEAM" ] && [ "$meta_type" = "codex" ] || continue
+      meta_team=""
+      meta_type=""
+      while IFS='=' read -r key value; do
+        case "$key" in
+          team) meta_team="$value" ;;
+          # 新形式: identities=<team>/<name>（team= 行が無い meta への追従）
+          identities) [ -z "$meta_team" ] && meta_team="${value%%/*}" ;;
+          type) meta_type="$value" ;;
+        esac
+      done < "$metafile"
+      [ "$meta_team" = "$AGMSG_TEAM" ] && [ "$meta_type" = "$bridge_type" ] || continue
 
-    bridge_name=${metafile#"$AGMSG_RUN_DIR/codex-bridge.${AGMSG_TEAM}."}
-    bridge_name=${bridge_name%.meta}
-    [ -n "$bridge_name" ] || continue
+      bridge_name=${metafile#"$AGMSG_RUN_DIR/${bridge_type}-bridge.${AGMSG_TEAM}."}
+      bridge_name=${bridge_name%.meta}
+      [ -n "$bridge_name" ] || continue
 
-    pidfile=${metafile%.meta}.pid
-    bridge_pid=""
-    [ -r "$pidfile" ] && IFS= read -r bridge_pid < "$pidfile"
-    [[ "$bridge_pid" =~ ^[0-9]+$ ]] || continue
-    kill -0 "$bridge_pid" 2>/dev/null || continue
+      pidfile=${metafile%.meta}.pid
+      bridge_pid=""
+      [ -r "$pidfile" ] && IFS= read -r bridge_pid < "$pidfile"
+      [[ "$bridge_pid" =~ ^[0-9]+$ ]] || continue
+      kill -0 "$bridge_pid" 2>/dev/null || continue
 
-    CODEX_BRIDGE_PIDS+=("$bridge_pid")
-    CODEX_BRIDGE_NAMES+=("$bridge_name")
-    CODEX_BRIDGE_LOGS+=("${metafile%.meta}.log")
+      CODEX_BRIDGE_PIDS+=("$bridge_pid")
+      CODEX_BRIDGE_NAMES+=("$bridge_name")
+      CODEX_BRIDGE_LOGS+=("${metafile%.meta}.log")
+      CODEX_BRIDGE_TYPES+=("$bridge_type")
+    done
   done
 fi
 
@@ -179,6 +184,7 @@ for index in "${!CODEX_BRIDGE_PIDS[@]}"; do
   bridge_pid=${CODEX_BRIDGE_PIDS[$index]}
   bridge_name=${CODEX_BRIDGE_NAMES[$index]}
   logfile=${CODEX_BRIDGE_LOGS[$index]}
+  bridge_type=${CODEX_BRIDGE_TYPES[$index]}
   bridge_command=""
   while read -r process_pid process_ppid process_command; do
     if [ "$process_pid" = "$bridge_pid" ]; then
@@ -188,7 +194,8 @@ for index in "${!CODEX_BRIDGE_PIDS[@]}"; do
   done <<< "$PROCESS_SNAPSHOT"
 
   padded_command=" $bridge_command "
-  [[ "$bridge_command" == *"codex-bridge.js"* ]] || continue
+  # bridge実体はtypeで拡張子が違う（codex-bridge.js / claude-code-bridge.sh）
+  [[ "$bridge_command" == *"${bridge_type}-bridge."* ]] || continue
   # 旧: --team/--name 引数、新: --identity-key base64(team\tname): のどちらかで照合
   bridge_identity_key=$(printf '%s\t%s' "$AGMSG_TEAM" "$bridge_name" | base64 | tr -d '\r\n' | tr '+/' '-_')
   if [[ "$padded_command" != *" --identity-key ${bridge_identity_key}: "* ]] &&
@@ -199,11 +206,11 @@ for index in "${!CODEX_BRIDGE_PIDS[@]}"; do
   [ -r "$logfile" ] || continue
 
   lifecycle_state=$(tail -n 400 "$logfile" 2>/dev/null | awk \
-    -v identity="${AGMSG_TEAM}/${bridge_name}" '
+    -v identity="${AGMSG_TEAM}/${bridge_name}" -v btype="$bridge_type" '
     BEGIN {
-      wakeup_prefix = "codex-bridge: wakeup "
+      wakeup_prefix = btype "-bridge: wakeup "
       wakeup_suffix = " for " identity
-      armed_line = "codex-bridge: armed " identity
+      armed_line = btype "-bridge: armed " identity
       state = 0
     }
     $0 == armed_line {
