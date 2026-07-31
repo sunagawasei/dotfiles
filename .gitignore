@@ -192,6 +192,7 @@ claude/skills/*
 !claude/skills/japanese-tech-writing/
 !claude/skills/cognitive-rhythm-writing/
 !claude/skills/herdr/
+!claude/skills/herdr-english-reply/
 !claude/skills/split-commits/
 !claude/docs/
 !claude/agents/
