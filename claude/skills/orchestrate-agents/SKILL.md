@@ -238,11 +238,24 @@ roleチームをサジェストする条件: 以下のシグナルのうち**2�
 
 既定は旧来フロー(シグナル1つ以下、またはveto該当)。**codex-implへの実装委譲が明示不要の標準フローである点は不変** — 承認ゲートが増えるのはroleチームの起動・投入だけ。
 
-サジェスト書式: 判定(該当シグナル)+根拠(分解数・想定worker・概算コスト)+両案の帰結1行ずつを提示し、ユーザー承認を待つ。**承認は[task:<id>]単位** — チームが既に常駐していても、新しいタスクの投入には毎回承認を得る。承認なしに起動・投入しない。
+サジェスト書式: 判定(該当シグナル)+根拠(分解数・プリセット(`lean`/`full`)・概算コスト)+両案の帰結1行ずつを提示し、ユーザー承認を待つ。**承認は[task:<id>]単位** — チームが既に常駐していても、新しいタスクの投入には毎回承認を得る。承認なしに起動・投入しない。
+
+### 起動プリセット
+
+編成は`lean`/`full`の2択。サジェスト時にどちらかを明示し、承認を得てから起動する。
+
+| プリセット | 常駐メンバー | 人数 | 選ぶ基準 |
+|---|---|---|---|
+| `lean` | manager, worker-1, reviewer-1 | 3 | 実装1本+固定査読で足りる。シグナル2つ該当の下限ケース |
+| `full` | manager, worker-1, worker-2, hard-worker-1, reviewer-1, reviewer-2, research-1 | 7 | 並行3本以上。固定ペア2組が両方埋まり調査役も常駐 |
+
+どちらでも`strategist`と`research-2..5`は非常駐 — managerからの起動依頼をメインが受けてその場でspawnする。`full`で足りない場合もこの経路で足し、プリセットは増やさない。
+
+`lean`で始めて足りなくなったら不足roleを追加spawnして`full`相当へ広げてよい(managerへ増員を通知する)。逆向きの縮小はdespawnなので混在ルールのin-flight棚卸しに従う。
 
 ### 起動手順
 
-1. 必要roleをspawnする(モデル等のconfigはグローバル永続なのでコマンドのみ):
+1. プリセットのroleをspawnする(モデル等のconfigはグローバル永続なのでコマンドのみ):
    - codex系(worker-1/2, hard-worker-1, reviewer-1/2, research-1, strategist): `ensure-codex.sh <project> <name>`
    - claude-code系(manager, research-2..5): `spawn.sh claude-code <name> --team <session team> --project <path> --headless`
    - role fileは`db/spawn-roles/<name>.<type>.md`の規約名で自動解決される
