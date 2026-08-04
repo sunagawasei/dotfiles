@@ -9,6 +9,11 @@
   nix.enable = false; # Nix daemon は外部インストーラー（Determinate Systems）で管理
   system.configurationRevision = self.rev or self.dirtyRev or null;
   security.pam.services.sudo_local.touchIdAuth = true;
+  # ワイルドカード不使用: darwin-rebuildは後続引数でactionを上書きするため
+  # (switch --rollback等)、実際に使う呼び出し形の完全一致のみ許可する
+  security.sudo.extraConfig = ''
+    %admin ALL=(root) NOPASSWD: /run/current-system/sw/bin/darwin-rebuild switch --flake /Users/s23159/.config, /run/current-system/sw/bin/darwin-rebuild switch --flake /Users/s23159/.config\#CA-20021145, /run/current-system/sw/bin/darwin-rebuild switch --flake /Users/s23159/.config\#CA-20038442
+  '';
 
   programs.zsh.shellInit = ''
     export ZDOTDIR="$HOME/.config/zsh"
