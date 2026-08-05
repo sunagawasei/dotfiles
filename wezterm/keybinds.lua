@@ -28,6 +28,66 @@ local function tab_relative_or_passthrough(direction, passthrough_mods)
 	end)
 end
 
+-- 英語返信ヘルパー(herdrの外に常駐させる右pane)の表示/非表示トグル。
+-- weztermにpane単位のhide/showが無いため、herdr paneのzoomで代替する。
+-- ヘルパーpaneが無ければこのキーで新規起動する
+local helper_spawn = {
+	direction = "Right",
+	-- 1.0未満は利用可能幅に対する割合。外部モニタ接続で全体幅が変わっても比率を保つ
+	size = 0.27,
+	-- sh -cでcdする(splitのcwd指定はcursor-agentのworkspaceに反映されない)。
+	-- env -u: herdr管理下から起動してもHERDR_PANE_ID等を継承させない(内部mode誤判定の防止)。
+	-- 初期プロンプトは平文で渡す("/herdr-english-reply"だとTUIのslash補完と干渉して化ける)
+	args = {
+		"/bin/sh",
+		"-c",
+		'cd "$HOME/.config/herdr-helper" && exec /usr/bin/env -u HERDR_PANE_ID -u HERDR_WORKSPACE_ID -u HERDR_TAB_ID'
+			.. ' HERDR_ENV=1 "$HOME/.local/bin/cursor-agent" --model composer-2.5'
+			.. ' "herdr-english-reply skill を focused追従モードで開始して待機して"',
+	},
+}
+
+local function toggle_helper_pane(window, _pane)
+	local tab = window:active_tab()
+	if not tab then
+		return
+	end
+	local panes = tab:panes_with_info()
+	-- zoom中(=ヘルパー非表示)なら元のsplitへ戻してヘルパーにフォーカス
+	for _, info in ipairs(panes) do
+		if info.is_zoomed then
+			tab:set_zoomed(false)
+			for _, other in ipairs(panes) do
+				if not is_herdr_pane(other.pane) then
+					other.pane:activate()
+					break
+				end
+			end
+			return
+		end
+	end
+	local herdr_info = nil
+	local helper_exists = false
+	for _, info in ipairs(panes) do
+		if is_herdr_pane(info.pane) then
+			herdr_info = info
+		else
+			helper_exists = true
+		end
+	end
+	if not herdr_info then
+		return
+	end
+	if helper_exists then
+		-- 表示中→herdrをzoomしてヘルパーを隠す(プロセスは生存)
+		herdr_info.pane:activate()
+		tab:set_zoomed(true)
+	else
+		-- ヘルパー不在→右splitで新規起動(フォーカスは新paneへ移る)
+		herdr_info.pane:split(helper_spawn)
+	end
+end
+
 local function close_tab_smart(window, pane)
 	local tab = pane:tab()
 	if not tab then
@@ -241,6 +301,10 @@ return {
 		{ key = "L", mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Right") },
 		{ key = "K", mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Up") },
 		{ key = "J", mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Down") },
+
+		-- 英語返信ヘルパーpaneとの往復・表示切り替え
+		{ key = "E", mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Next") },
+		{ key = "U", mods = "CTRL|SHIFT", action = wezterm.action_callback(toggle_helper_pane) },
 
 		-- ペイン回転
 		{ key = "R", mods = "LEADER|SHIFT", action = act.RotatePanes("Clockwise") },

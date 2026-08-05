@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Shell(herdr)",
+      "Shell(printenv)",
+      "Shell(echo)",
+      "Shell(env)"
+    ],
+    "deny": [
+      "Shell(herdr pane send-text*)",
+      "Shell(herdr pane send-keys*)",
+      "Shell(herdr pane run*)",
+      "Shell(herdr pane close*)",
+      "Shell(herdr workspace close*)",
+      "Shell(herdr server*)"
+    ]
+  }
+}

@@ -237,6 +237,20 @@ MacBook内蔵キーボードとroBa（ZMK自作キーボード）の両方で押
   - フォアグラウンドプロセスが`herdr`の時は、この2つはwezterm自身のタブ切り替えではなくherdr側へ素通し（`SendKey`）される
   - roBaのARROWレイヤー（かな/LANG1ホールド）で `R`/`W` を押すとこのCtrl+Tab系が送出される
 
+## ペイン移動
+
+- `Ctrl+Shift+H` / `Ctrl+Shift+L` / `Ctrl+Shift+K` / `Ctrl+Shift+J`: 左/右/上/下のペインへ（`ActivatePaneDirection`）
+- `Leader+z`: ペインのズーム切り替え（`TogglePaneZoomState`）
+
+## 英語返信ヘルパー（herdr外の常駐pane）
+
+- `Ctrl+Shift+E`: フォーカス入れ替え（`ActivatePaneDirection("Next")`。2ペイン構成なら1キーで往復する）
+- `Ctrl+Shift+U`: ヘルパーの起動/表示/非表示トグル
+  - ヘルパーペインが無ければ右27%幅でcursor-agentを新規起動する（初回起動もこのキー1つ。手動コマンド不要）
+  - 表示中なら隠す（weztermにペイン単位のhide/showが無いため、herdrペインのズームで代替。非表示中もヘルパーのプロセスと会話は生存）。非表示中なら表示に戻してヘルパーへフォーカス
+  - herdrペインの判定はフォアグラウンドプロセス名（`keybinds.lua`の`is_herdr_pane`）
+- copy modeやペインナビゲーションモード（`Leader+q`）がactiveな間はそのkey tableが優先されるため、往復前にmodeを抜ける
+
 # herdr
 
 ## タブ移動

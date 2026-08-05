@@ -1,0 +1,45 @@
+{
+  "permissions": {
+    "defaultMode": "default",
+    "deny": [
+      "Bash(herdr pane send-text*)",
+      "Bash(herdr pane send-keys*)",
+      "Bash(herdr pane run*)",
+      "Bash(herdr pane focus*)",
+      "Bash(herdr pane close*)",
+      "Bash(herdr pane split*)",
+      "Bash(herdr pane resize*)",
+      "Bash(herdr pane zoom*)",
+      "Bash(herdr pane rename*)",
+      "Bash(herdr pane swap*)",
+      "Bash(herdr pane move*)",
+      "Bash(herdr pane report-agent*)",
+      "Bash(herdr pane release-agent*)",
+      "Bash(herdr pane report-metadata*)",
+      "Bash(herdr workspace create*)",
+      "Bash(herdr workspace focus*)",
+      "Bash(herdr workspace rename*)",
+      "Bash(herdr workspace close*)",
+      "Bash(herdr workspace report-metadata*)",
+      "Bash(herdr tab *)",
+      "Bash(herdr worktree *)",
+      "Bash(herdr notification *)",
+      "Bash(herdr agent *)",
+      "Bash(herdr session *)",
+      "Bash(herdr integration *)",
+      "Bash(herdr server *)",
+      "Bash(herdr config *)",
+      "Bash(herdr channel *)",
+      "Bash(herdr update*)"
+    ],
+    "allow": [
+      "Bash(herdr workspace list*)",
+      "Bash(herdr pane list*)",
+      "Bash(herdr pane read*)",
+      "Bash(herdr api snapshot*)"
+    ]
+  },
+  "sandbox": {
+    "autoAllow": false
+  }
+}
