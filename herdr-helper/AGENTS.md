@@ -19,5 +19,6 @@
 
 - `Ctrl+Shift+U`: ヘルパーペインの起動/表示/非表示トグル(初回起動もこのキー。非表示中もプロセスは生存)
 - `Ctrl+Shift+E`: herdrペインとヘルパーペインのフォーカス入れ替え
+- `Ctrl+Shift+Y`: herdrペインから`translate`を下書き投入してフォーカス移動(確定は手動)
 
 起動コマンドの実体は `wezterm/keybinds.lua` の `helper_spawn`(右27%幅・cwd=このディレクトリ・`env -u HERDR_PANE_ID`等で内部mode誤判定を防いだ上で `HERDR_ENV=1` を注入)。手動で作り直す場合も同じ形を使う。

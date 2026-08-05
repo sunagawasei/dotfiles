@@ -248,7 +248,10 @@ MacBook内蔵キーボードとroBa（ZMK自作キーボード）の両方で押
 - `Ctrl+Shift+U`: ヘルパーの起動/表示/非表示トグル
   - ヘルパーペインが無ければ右27%幅でcursor-agentを新規起動する（初回起動もこのキー1つ。手動コマンド不要）
   - 表示中なら隠す（weztermにペイン単位のhide/showが無いため、herdrペインのズームで代替。非表示中もヘルパーのプロセスと会話は生存）。非表示中なら表示に戻してヘルパーへフォーカス
-  - herdrペインの判定はフォアグラウンドプロセス名（`keybinds.lua`の`is_herdr_pane`）
+- `Ctrl+Shift+Y`: herdrペインからヘルパーへ `translate` を**下書き**してフォーカス移動（Enterは自分で押す）
+  - 確定を送らないのは、実Enterとの等価性が未実測で、ヘルパー側に下書きが残っていた場合の連結やモーダルの誤確定を避けるため
+  - herdrペイン以外で押しても何もしない。ヘルパー不在時も何もしない
+- ヘルパーペインの識別は起動時に立てるuser var `herdr_helper=1`（`keybinds.lua`の`is_helper_pane`）。プロセス名や「herdrでない」判定では別TUIのペインを誤爆しうるため使わない。herdrペイン自体の判定は`is_herdr_pane`（フォアグラウンドプロセス名）
 - copy modeやペインナビゲーションモード（`Leader+q`）がactiveな間はそのkey tableが優先されるため、往復前にmodeを抜ける
 
 # herdr

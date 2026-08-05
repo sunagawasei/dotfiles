@@ -41,11 +41,27 @@ local helper_spawn = {
 	args = {
 		"/bin/sh",
 		"-c",
-		'cd "$HOME/.config/herdr-helper" && exec /usr/bin/env -u HERDR_PANE_ID -u HERDR_WORKSPACE_ID -u HERDR_TAB_ID'
+		-- SetUserVar(base64 "1")でこのpaneをヘルパーとして名乗らせる。
+		-- プロセス名や「herdrでない」判定では別TUIのpaneを誤爆しうるため識別は必ずこのマーカーで行う
+		'printf "\\033]1337;SetUserVar=herdr_helper=MQ==\\007"; cd "$HOME/.config/herdr-helper"'
+			.. " && exec /usr/bin/env -u HERDR_PANE_ID -u HERDR_WORKSPACE_ID -u HERDR_TAB_ID"
 			.. ' HERDR_ENV=1 "$HOME/.local/bin/cursor-agent" --model composer-2.5'
 			.. ' "herdr-english-reply skill を focused追従モードで開始して待機して"',
 	},
 }
+
+local function is_helper_pane(pane)
+	return pane:get_user_vars().herdr_helper == "1"
+end
+
+local function find_helper_info(panes)
+	for _, info in ipairs(panes) do
+		if is_helper_pane(info.pane) then
+			return info
+		end
+	end
+	return nil
+end
 
 local function toggle_helper_pane(window, _pane)
 	local tab = window:active_tab()
@@ -53,39 +69,54 @@ local function toggle_helper_pane(window, _pane)
 		return
 	end
 	local panes = tab:panes_with_info()
-	-- zoom中(=ヘルパー非表示)なら元のsplitへ戻してヘルパーにフォーカス
-	for _, info in ipairs(panes) do
-		if info.is_zoomed then
-			tab:set_zoomed(false)
-			for _, other in ipairs(panes) do
-				if not is_herdr_pane(other.pane) then
-					other.pane:activate()
-					break
-				end
-			end
-			return
-		end
-	end
+	local helper_info = find_helper_info(panes)
 	local herdr_info = nil
-	local helper_exists = false
 	for _, info in ipairs(panes) do
 		if is_herdr_pane(info.pane) then
 			herdr_info = info
-		else
-			helper_exists = true
 		end
 	end
 	if not herdr_info then
 		return
 	end
-	if helper_exists then
-		-- 表示中→herdrをzoomしてヘルパーを隠す(プロセスは生存)
-		herdr_info.pane:activate()
-		tab:set_zoomed(true)
-	else
+	if not helper_info then
 		-- ヘルパー不在→右splitで新規起動(フォーカスは新paneへ移る)
 		herdr_info.pane:split(helper_spawn)
+		return
 	end
+	-- zoom中(=ヘルパー非表示)なら元のsplitへ戻してヘルパーにフォーカス
+	for _, info in ipairs(panes) do
+		if info.is_zoomed then
+			tab:set_zoomed(false)
+			helper_info.pane:activate()
+			return
+		end
+	end
+	-- 表示中→herdrをzoomしてヘルパーを隠す(プロセスは生存)
+	herdr_info.pane:activate()
+	tab:set_zoomed(true)
+end
+
+-- herdr paneからヘルパーへtranslateトリガーを下書きするだけ。
+-- 確定(Enter)は送らない: 実Enterとの等価性が未実測で、下書き連結やmodal誤確定の恐れがある
+local function inject_translate(window, pane)
+	local tab = window:active_tab()
+	if not tab or not is_herdr_pane(pane) then
+		return
+	end
+	local panes = tab:panes_with_info()
+	local helper_info = find_helper_info(panes)
+	if not helper_info then
+		return
+	end
+	for _, info in ipairs(panes) do
+		if info.is_zoomed then
+			tab:set_zoomed(false)
+			break
+		end
+	end
+	helper_info.pane:send_text("translate")
+	helper_info.pane:activate()
 end
 
 local function close_tab_smart(window, pane)
@@ -305,6 +336,7 @@ return {
 		-- 英語返信ヘルパーpaneとの往復・表示切り替え
 		{ key = "E", mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Next") },
 		{ key = "U", mods = "CTRL|SHIFT", action = wezterm.action_callback(toggle_helper_pane) },
+		{ key = "Y", mods = "CTRL|SHIFT", action = wezterm.action_callback(inject_translate) },
 
 		-- ペイン回転
 		{ key = "R", mods = "LEADER|SHIFT", action = act.RotatePanes("Clockwise") },
