@@ -60,6 +60,22 @@ let
     };
     cargoLock.lockFile = ./mdroll-Cargo.lock;
   };
+
+  # Claudeへ`sudo darwin-rebuild switch`だけを開放するための引数なしラッパー。
+  # settings.jsonの`Bash(sudo:*)` denyは維持したまま`Bash(darwin-apply)`のみallowする
+  # (denyはallowより先に評価されるため、sudoを含む形では例外を作れない)。
+  darwinApply = pkgs.writeShellApplication {
+    name = "darwin-apply";
+    text = ''
+      if [ "$#" -ne 0 ]; then
+        echo "darwin-apply: takes no arguments (flake target is fixed to this host)" >&2
+        exit 2
+      fi
+      host=$(/bin/hostname -s)
+      exec sudo /run/current-system/sw/bin/darwin-rebuild switch \
+        --flake "$HOME/.config#$host"
+    '';
+  };
 in
 {
   home.packages = with pkgs; [
@@ -97,6 +113,9 @@ in
 
     # AIエージェント用ターミナルマルチプレクサ
     herdrPatched
+
+    # nix-darwin適用ラッパー(Claudeへの限定開放用)
+    darwinApply
   ];
 
   # eza/bat のテーマ配置先を用意し、bat のテーマキャッシュを毎回再構築する
