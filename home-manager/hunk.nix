@@ -12,6 +12,7 @@ in
       theme = "custom";
       mode = "auto";
       line_numbers = true;
+      wrap_lines = true;
 
       custom_theme = {
         label = colors.metadata.name;
