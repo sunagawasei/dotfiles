@@ -32,11 +32,10 @@ in
       extraFlags = [ "--force-cleanup" ];
     };
 
-    taps = [
-      "cycloud-io/tap"
-      "datadog-labs/pack"
-      "perman/tap"
-    ];
+    # private tap は extraConfig 側で `trusted: true` 付きで宣言する。
+    # --force-cleanup が trust store を Brewfile の宣言だけで全置換するため、
+    # ここに書くと untrusted 扱いになり brew bundle が formula 読込を拒否する。
+    taps = [ ];
 
     brews = [
       # カスタム tap
@@ -76,6 +75,14 @@ in
       "font-ibm-plex"
       "font-plemol-jp-nf"
     ];
+
+    # nix-darwin の taps オプションに trusted 属性が無いため Brewfile へ直接書く。
+    # Brewfile が trust の唯一のソース: 手動 brew trust は次回 switch で消える。
+    extraConfig = ''
+      tap "cycloud-io/tap", trusted: true
+      tap "datadog-labs/pack", trusted: true
+      tap "perman/tap", trusted: true
+    '';
   };
 
   # nix-darwin の activation は #!/usr/bin/env -i bash で全環境変数をワイプするため
