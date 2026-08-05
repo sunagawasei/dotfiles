@@ -336,7 +336,8 @@ return {
 		-- 英語返信ヘルパーpaneとの往復・表示切り替え
 		{ key = "E", mods = "CTRL|SHIFT", action = act.ActivatePaneDirection("Next") },
 		{ key = "U", mods = "CTRL|SHIFT", action = wezterm.action_callback(toggle_helper_pane) },
-		{ key = "Y", mods = "CTRL|SHIFT", action = wezterm.action_callback(inject_translate) },
+		-- Yはherdrのcopy_modeが使うため空けておく
+		{ key = "T", mods = "CTRL|SHIFT", action = wezterm.action_callback(inject_translate) },
 
 		-- ペイン回転
 		{ key = "R", mods = "LEADER|SHIFT", action = act.RotatePanes("Clockwise") },
