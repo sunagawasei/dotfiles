@@ -7,12 +7,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 設定変更を反映するには、フレークルート (`~/.config`) から実行：
 
 ```bash
-sudo darwin-rebuild switch --flake ~/.config#CA-20021145
+darwin-apply
 ```
 
-`zsh.nix` にエイリアスが定義されているため、シェルからは以下も使用可：
-- `nswitch` — `darwin-rebuild switch`（設定の適用のみ）
-- `nupdate` — `nix flake update` + `darwin-rebuild switch`（パッケージ更新 + 適用）
+`darwin-apply`（`../home-manager/packages.nix`）は `sudo darwin-rebuild switch --flake ~/.config`
+のラッパー。flake attrを省略しているため hostname（`scutil --get LocalHostName`）で解決される。
+**Claudeもこれを実行できる**: permission ruleは deny→ask→allow の順で評価され specificity が
+効かないため、`Bash(sudo:*)` deny を残したまま sudo を含む形で例外は作れない。sudo を含まない
+コマンド名にして `Bash(darwin-apply)` のみ allow することで、他の sudo は一律拒否のまま維持している。
+引数は受け取らない（渡すと exit 2）。sudoers 側の NOPASSWD は `configuration.nix` の
+`security.sudo.extraConfig` で呼び出し形の完全一致のみ許可している。
+
+`zsh.nix` のエイリアス：
+- `nupdate` — `nix flake update` + `darwin-apply`（パッケージ更新 + 適用）
 
 > home-manager は nix-darwin の darwinModule として統合されているため、単独の `home-manager switch` は使わない。
 
@@ -22,7 +29,7 @@ sudo darwin-rebuild switch --flake ~/.config#CA-20021145
 
 ```
 ~/.config/flake.nix
-  └── darwinConfigurations."CA-20021145"
+  └── darwinConfigurations."<hostname>"    ← 現在は "CA-20038442"（PC交換時は改名する）
         ├── ./nix-darwin/configuration.nix        ← システム設定（このディレクトリ）
         ├── home-manager.darwinModules             ← home_manager.nix → ../home-manager/home.nix
         └── nix-homebrew.darwinModules             ← homebrew.nix

@@ -71,9 +71,9 @@ let
         echo "darwin-apply: takes no arguments (flake target is fixed to this host)" >&2
         exit 2
       fi
-      host=$(/bin/hostname -s)
-      exec sudo /run/current-system/sw/bin/darwin-rebuild switch \
-        --flake "$HOME/.config#$host"
+      # attrを省略するとdarwin-rebuildがscutil --get LocalHostNameで解決するため、
+      # PC交換でhostnameが変わってもここは触らなくてよい。
+      exec sudo /run/current-system/sw/bin/darwin-rebuild switch --flake "$HOME/.config"
     '';
   };
 in

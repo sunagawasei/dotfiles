@@ -7,7 +7,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 設定変更を反映するには、フレークルート (`~/.config`) から実行：
 
 ```bash
-sudo darwin-rebuild switch --flake ~/.config#CA-20021145
+darwin-apply
 ```
 
 > この home-manager 設定は nix-darwin の darwinModule として統合されているため、単独の `home-manager switch` は使わず、上記コマンドで適用する。
@@ -15,7 +15,7 @@ sudo darwin-rebuild switch --flake ~/.config#CA-20021145
 ## アーキテクチャ
 
 フレーク構成 (`~/.config/flake.nix`):
-- **nix-darwin** (hostname: `CA-20021145`) + **home-manager** + **nix-homebrew** を統合
+- **nix-darwin** (darwinConfigurations の attr名 = hostname。現在は `CA-20038442`) + **home-manager** + **nix-homebrew** を統合
 - nix-darwin 設定: `~/.config/nix-darwin/configuration.nix`
 - home-manager の統合: `~/.config/nix-darwin/home_manager.nix` が `../home-manager/home.nix` を参照
 

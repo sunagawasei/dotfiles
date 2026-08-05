@@ -10,9 +10,11 @@
   system.configurationRevision = self.rev or self.dirtyRev or null;
   security.pam.services.sudo_local.touchIdAuth = true;
   # ワイルドカード不使用: darwin-rebuildは後続引数でactionを上書きするため
-  # (switch --rollback等)、実際に使う呼び出し形の完全一致のみ許可する
+  # (switch --rollback等)、実際に使う呼び出し形の完全一致のみ許可する。
+  # 1つ目=attr省略形(darwin-applyが使う。hostnameはdarwin-rebuildが解決)、
+  # 2つ目=手動でattrを明示する場合。引数中の#は\#エスケープが必須。
   security.sudo.extraConfig = ''
-    %admin ALL=(root) NOPASSWD: /run/current-system/sw/bin/darwin-rebuild switch --flake /Users/s23159/.config, /run/current-system/sw/bin/darwin-rebuild switch --flake /Users/s23159/.config\#CA-20021145, /run/current-system/sw/bin/darwin-rebuild switch --flake /Users/s23159/.config\#CA-20038442
+    %admin ALL=(root) NOPASSWD: /run/current-system/sw/bin/darwin-rebuild switch --flake /Users/s23159/.config, /run/current-system/sw/bin/darwin-rebuild switch --flake /Users/s23159/.config\#CA-20038442
   '';
 
   programs.zsh.shellInit = ''

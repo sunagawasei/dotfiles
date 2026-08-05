@@ -39,8 +39,8 @@ in
       ls = "eza --color=auto";
       vtmp = ''nvim "''${TMPDIR%/}/$(date "+%Y%m%d_%H%M%S").md"'';
       ssh = ''TERM=xterm-256color \ssh'';
-      nswitch = "sudo darwin-rebuild switch --flake ~/.config#CA-20021145";
-      nupdate = "nix flake update --flake ~/.config && sudo darwin-rebuild switch --flake ~/.config#CA-20021145";
+      # 適用はdarwin-apply(packages.nix)に一本化。hostnameもflake refもそちらが持つ
+      nupdate = "nix flake update --flake ~/.config && darwin-apply";
     };
 
     # Zinit の zsh-completions が compinit より前にロードされるため

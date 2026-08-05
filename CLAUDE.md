@@ -32,18 +32,19 @@ cd claude/hooks && go test ./... && go build -o . ./...
 # Raycast拡張機能
 cd raycast/extensions/<name> && npm run lint && npm run build
 
-# nix-darwin / home-manager の反映
-sudo darwin-rebuild switch --flake ~/.config#CA-20021145
-
-# Claudeが自分で適用する場合はこちら（sudoを含まないためBash(sudo:*) denyに掛からない）
+# nix-darwin / home-manager の反映（ユーザー・Claude共通。Claudeも実行できる）
 darwin-apply
 ```
+
+`darwin-apply` は `sudo darwin-rebuild switch --flake ~/.config` のラッパー。flake attrを
+省略しているため、hostname（`scutil --get LocalHostName`）でdarwin-rebuildが解決する。
+`Bash(sudo:*)` denyに掛からない名前にすることでClaudeにも開放している（詳細は`nix-darwin/CLAUDE.md`）。
 
 ### darwin-rebuild の既知事象
 
 - **新規ファイル（`home-manager/patches/` 等）は `git add` してから rebuild する** — flakeはgit追跡ファイルしか見ないため、未追跡だと "Path ... is not tracked by Git" でNix評価が失敗する
 - `--cleanup` 非推奨警告は無害・無視してよい。**brew bundle の untrusted tap `Error: Refusing to load formula ...`は無害ではない** — `darwin-rebuild switch`全体をそこで中断させ、home-manager側の変更（activation）が一切適用されないまま終わる（2026-07-07実例）。`/run/current-system`のリンク先ハッシュが更新されているかで検知できる。`brew trust <tap>`（または`brew trust --formula <formula>`）で解消してから再実行する
-- **sudo不要で評価・ビルドのみ検証できる**: `darwin-rebuild build --flake ~/.config#CA-20021145` — システムには適用せず、Nix評価エラーやビルド失敗を先に潰せる。実際に適用する前の下調べに使う
+- **sudo不要で評価・ビルドのみ検証できる**: `darwin-rebuild build --flake ~/.config` — システムには適用せず、Nix評価エラーやビルド失敗を先に潰せる。実際に適用する前の下調べに使う
 - **commit前のbuildとcommit後のbuild/switchではsystemハッシュが変わる**（flake self revがdarwin-version.jsonに焼き込まれるため。dirty treeとcommit済みtreeでも変わる）。パッケージ反映の検証はsystemハッシュの一致比較ではなく `nix-store -qR /run/current-system | grep <pkg>` → `nix-store -q --deriver <path>` でパッケージ単位のderivationを確認する
 
 ## コード規約

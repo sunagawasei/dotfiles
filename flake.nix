@@ -33,14 +33,8 @@
       ...
     }:
     {
-      darwinConfigurations."CA-20021145" = nix-darwin.lib.darwinSystem {
-        specialArgs = { inherit self nix-homebrew gws-cli herdr hunk; };
-        modules = [
-          ./nix-darwin/configuration.nix
-          home-manager.darwinModules.home-manager
-          nix-homebrew.darwinModules.nix-homebrew
-        ];
-      };
+      # attr名はhostname。darwin-rebuildは--flakeでattrを省略すると
+      # scutil --get LocalHostName で解決するため、PC交換時はここを改名する。
       darwinConfigurations."CA-20038442" = nix-darwin.lib.darwinSystem {
         specialArgs = { inherit self nix-homebrew gws-cli herdr hunk; };
         modules = [
