@@ -34,6 +34,9 @@ cd raycast/extensions/<name> && npm run lint && npm run build
 
 # nix-darwin / home-manager の反映
 sudo darwin-rebuild switch --flake ~/.config#CA-20021145
+
+# Claudeが自分で適用する場合はこちら（sudoを含まないためBash(sudo:*) denyに掛からない）
+darwin-apply
 ```
 
 ### darwin-rebuild の既知事象
