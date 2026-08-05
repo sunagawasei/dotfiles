@@ -2,7 +2,7 @@
 # This is not an individual feature patch and must always be applied last.
 # If any preceding UI patch is changed or removed, regenerate this frame digest.
 diff --git a/src/ui/tab_surface.rs b/src/ui/tab_surface.rs
-index 1594f83..dc97606 100644
+index 1594f83d..dc976060 100644
 --- a/src/ui/tab_surface.rs
 +++ b/src/ui/tab_surface.rs
 @@ -304,7 +304,7 @@ mod tests {

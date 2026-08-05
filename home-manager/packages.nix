@@ -1,8 +1,6 @@
 { config, lib, pkgs, gws, herdr, ... }:
 let
   # アクティブpane枠=白 / 非アクティブ=青（デフォルトは逆）にするための上流パッチ。
-  # レガシー制御バイト31(US)の逆デコードがCtrl+-になっておりCtrl+_/Ctrl+/が
-  # kittyキーボードプロトコル配下（例: Neovim）で別キーに化けるバグの修正。
   # pane削除(prefix+x)時、フォーカスpane内でshell以外のプロセス（neovim等）が
   # 実行中なら閉じる前に確認ダイアログを出す機能追加（wezterm skip_close_confirmation
   # _for_processes_named の逆相当）。config `confirm_close_running_process`(既定true)。
@@ -21,15 +19,16 @@ let
   # 退出時のみ進入時スクロール位置へ復元する。
   # combined-frame-digestは個別機能ではなく、上記UIパッチ全部の合成描画を固定する
   # integration fixture。必ず最後に適用し、UIパッチを変えたらdigestを再生成する。
+  # 並び順は開発branch(~/poc/herdr の v080-upgrade)のcommit順と一致させる。
+  # 各パッチは親commit時点のツリーに対するdiffなので、順を崩すとoffset依存になる。
   herdrPatched = herdr.overrideAttrs (old: {
     patches = (old.patches or [ ]) ++ [
       ./patches/herdr-active-pane-border-white.patch
-      ./patches/herdr-ctrl-underscore-decode.patch
       ./patches/herdr-confirm-close-running-process.patch
       ./patches/herdr-panel-contrast-fg-bright.patch
-      ./patches/herdr-expanded-sidebar-space-numbers.patch
       ./patches/herdr-sidebar-token-separator.patch
       ./patches/herdr-copy-mode-yank-stay.patch
+      ./patches/herdr-expanded-sidebar-space-numbers.patch
       ./patches/herdr-combined-frame-digest.patch
     ];
   });

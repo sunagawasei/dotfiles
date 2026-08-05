@@ -1,8 +1,8 @@
 diff --git a/src/app/input/copy_mode.rs b/src/app/input/copy_mode.rs
-index e6c0d074..eccd1211 100644
+index b744d2ce..187823aa 100644
 --- a/src/app/input/copy_mode.rs
 +++ b/src/app/input/copy_mode.rs
-@@ -114,11 +114,11 @@ impl AppState {
+@@ -106,11 +106,11 @@ impl AppState {
                      }
                      return;
                  }
@@ -16,7 +16,7 @@ index e6c0d074..eccd1211 100644
                  return;
              }
              KeyCode::Left => {
-@@ -176,8 +176,8 @@ impl AppState {
+@@ -168,8 +168,8 @@ impl AppState {
              return;
          };
          match ch {
@@ -27,7 +27,7 @@ index e6c0d074..eccd1211 100644
              'v' | ' ' => self.begin_copy_mode_selection(terminal_runtimes),
              'V' => self.select_copy_mode_line(terminal_runtimes),
              'h' => self.move_copy_cursor(terminal_runtimes, 0, -1),
-@@ -382,19 +382,20 @@ impl AppState {
+@@ -374,19 +374,20 @@ impl AppState {
      }
  
      pub(crate) fn cancel_copy_mode(&mut self, terminal_runtimes: &TerminalRuntimeRegistry) {
@@ -55,7 +55,7 @@ index e6c0d074..eccd1211 100644
          if let Some((pane_id, offset_from_bottom)) = restore_scroll {
              self.set_pane_scroll_offset(terminal_runtimes, pane_id, offset_from_bottom);
          }
-@@ -464,7 +465,7 @@ impl AppState {
+@@ -456,7 +457,7 @@ impl AppState {
          let mut cursor_row = copy_mode.cursor_row;
          let mut cursor_col = copy_mode.cursor_col;
          let Some(info) = self.pane_info_by_id(pane_id).cloned() else {
@@ -64,7 +64,7 @@ index e6c0d074..eccd1211 100644
              return;
          };
  
-@@ -514,7 +515,7 @@ impl AppState {
+@@ -506,7 +507,7 @@ impl AppState {
          let pane_id = copy_mode.pane_id;
          let mut cursor_row = copy_mode.cursor_row;
          let Some(info) = self.pane_info_by_id(pane_id).cloned() else {
@@ -73,7 +73,7 @@ index e6c0d074..eccd1211 100644
              return;
          };
          let lines = copy_mode_page_lines(info.inner_rect.height, half_page);
-@@ -581,7 +582,7 @@ impl AppState {
+@@ -573,7 +574,7 @@ impl AppState {
          };
          let pane_id = copy_mode.pane_id;
          let Some(info) = self.pane_info_by_id(pane_id) else {
@@ -82,7 +82,7 @@ index e6c0d074..eccd1211 100644
              return;
          };
          let cursor_row = info.inner_rect.height.saturating_sub(1);
-@@ -599,7 +600,7 @@ impl AppState {
+@@ -591,7 +592,7 @@ impl AppState {
          let pane_id = copy_mode.pane_id;
          let cursor_row = copy_mode.cursor_row;
          let Some(info) = self.pane_info_by_id(pane_id) else {
@@ -91,7 +91,7 @@ index e6c0d074..eccd1211 100644
              return;
          };
          let cursor_col = if end {
-@@ -674,7 +675,7 @@ impl AppState {
+@@ -666,7 +667,7 @@ impl AppState {
              .pane_info_by_id(pane_id)
              .map(|info| info.inner_rect.height)
          else {
@@ -100,7 +100,7 @@ index e6c0d074..eccd1211 100644
              return;
          };
          let limit = self
-@@ -1777,7 +1778,16 @@ mod tests {
+@@ -1769,7 +1770,16 @@ mod tests {
          app.handle_copy_mode_key(TerminalKey::new(KeyCode::Char('y'), KeyModifiers::empty()));
  
          assert_eq!(copy_mode_clipboard_text(&mut app), "beta");
@@ -118,7 +118,7 @@ index e6c0d074..eccd1211 100644
      }
  
      #[tokio::test]
-@@ -1861,6 +1871,7 @@ mod tests {
+@@ -1853,6 +1863,7 @@ mod tests {
          app.handle_copy_mode_key(TerminalKey::new(KeyCode::Char('v'), KeyModifiers::SHIFT));
          app.handle_copy_mode_key(TerminalKey::new(KeyCode::PageUp, KeyModifiers::empty()));
          let cursor_row = copy_mode_viewport_top_row(&app, pane_id);
@@ -126,7 +126,7 @@ index e6c0d074..eccd1211 100644
          app.handle_copy_mode_key(TerminalKey::new(KeyCode::Char('y'), KeyModifiers::empty()));
  
          assert!(cursor_row < anchor_row);
-@@ -1869,7 +1880,17 @@ mod tests {
+@@ -1861,7 +1872,17 @@ mod tests {
              .collect::<Vec<_>>()
              .join("\n");
          assert_eq!(copy_mode_clipboard_text(&mut app), expected);
@@ -145,7 +145,7 @@ index e6c0d074..eccd1211 100644
      }
  
      #[tokio::test]
-@@ -2012,7 +2033,7 @@ mod tests {
+@@ -2004,7 +2025,7 @@ mod tests {
      }
  
      #[tokio::test]
@@ -154,7 +154,7 @@ index e6c0d074..eccd1211 100644
          let (mut app, _) = app_with_copy_screen(b"alpha\nbeta\n");
          app.state.enter_copy_mode(&app.terminal_runtimes);
          if let Some(copy_mode) = app.state.copy_mode.as_mut() {
-@@ -2028,8 +2049,148 @@ mod tests {
+@@ -2020,8 +2041,148 @@ mod tests {
              AppEvent::ClipboardWrite { content } => assert_eq!(content, b"alp"),
              other => panic!("unexpected event: {other:?}"),
          }
@@ -303,7 +303,7 @@ index e6c0d074..eccd1211 100644
      }
  
      #[tokio::test]
-@@ -2048,7 +2209,15 @@ mod tests {
+@@ -2040,7 +2201,15 @@ mod tests {
  
          app.handle_copy_mode_key(TerminalKey::new(KeyCode::Char('y'), KeyModifiers::empty()));
          assert_eq!(copy_mode_clipboard_text(&mut app), "alp");

@@ -1,8 +1,8 @@
 diff --git a/src/ui.rs b/src/ui.rs
-index 6d5c02f..af72335 100644
+index 9bda5afd..b26b50bd 100644
 --- a/src/ui.rs
 +++ b/src/ui.rs
-@@ -1092,7 +1092,7 @@ mod tests {
+@@ -1167,7 +1167,7 @@ mod tests {
          let custom_style = buffer[(custom_rect.x + 1, custom_rect.y)].style();
  
          assert_eq!(custom_style.bg, Some(app.palette.accent));
@@ -12,7 +12,7 @@ index 6d5c02f..af72335 100644
      }
  
 diff --git a/src/ui/menus.rs b/src/ui/menus.rs
-index 763c0ea..c60bdfc 100644
+index 763c0ea8..c60bdfc9 100644
 --- a/src/ui/menus.rs
 +++ b/src/ui/menus.rs
 @@ -6,7 +6,7 @@ use ratatui::{
@@ -34,7 +34,7 @@ index 763c0ea..c60bdfc 100644
          .add_modifier(Modifier::BOLD);
  
 diff --git a/src/ui/status.rs b/src/ui/status.rs
-index ede38b8..e02382d 100644
+index a7399285..f4be787e 100644
 --- a/src/ui/status.rs
 +++ b/src/ui/status.rs
 @@ -7,7 +7,7 @@ use ratatui::{
@@ -56,7 +56,7 @@ index ede38b8..e02382d 100644
          .add_modifier(Modifier::BOLD);
  
 diff --git a/src/ui/widgets.rs b/src/ui/widgets.rs
-index ef41613..28e1840 100644
+index ef416134..28e18407 100644
 --- a/src/ui/widgets.rs
 +++ b/src/ui/widgets.rs
 @@ -30,6 +30,15 @@ pub(super) fn render_panel_shell(

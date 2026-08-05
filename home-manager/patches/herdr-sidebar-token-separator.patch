@@ -1,8 +1,8 @@
 diff --git a/src/ui/sidebar.rs b/src/ui/sidebar.rs
-index 30cff935f35ab7a61adf83c74aa65b789f26a4a6..e255dc1362de11a84328659b1a25490cbd8b54bb 100644
+index d9f6197f..776d9de6 100644
 --- a/src/ui/sidebar.rs
 +++ b/src/ui/sidebar.rs
-@@ -1659,7 +1659,7 @@ rows = [[{ token = "$hype", fg = "#abcdef", bold = true, dim = false }, "workspa
+@@ -1735,7 +1735,7 @@ rows = [[{ token = "$hype", fg = "#abcdef", bold = true, dim = false }, "workspa
          let buffer = terminal.backend().buffer();
          let h = buffer[(find_symbol_x(buffer, row, 25, "H"), row)].style();
          let i = buffer[(find_symbol_x(buffer, row, 25, "I"), row)].style();
@@ -11,7 +11,7 @@ index 30cff935f35ab7a61adf83c74aa65b789f26a4a6..e255dc1362de11a84328659b1a25490c
  
          for style in [h, i] {
              assert_eq!(style.fg, Some(ratatui::style::Color::Rgb(0xab, 0xcd, 0xef)));
-@@ -1764,7 +1764,7 @@ rows = [[{ token = "git_status", fg = "#123456" }]]
+@@ -1840,7 +1840,7 @@ rows = [[{ token = "git_status", fg = "#123456" }]]
          let first = row_text(buffer, body.y, 17);
  
          assert!(first.contains("logs"), "rendered row: {first:?}");
@@ -21,7 +21,7 @@ index 30cff935f35ab7a61adf83c74aa65b789f26a4a6..e255dc1362de11a84328659b1a25490c
  
      #[test]
 diff --git a/src/ui/sidebar/tokens.rs b/src/ui/sidebar/tokens.rs
-index c578e13fd96cc5d1a4cfca8ddccda3a1f0755dab..a89e46e52870f5a248b485f06d49158658994c03 100644
+index c578e13f..a89e46e5 100644
 --- a/src/ui/sidebar/tokens.rs
 +++ b/src/ui/sidebar/tokens.rs
 @@ -147,7 +147,7 @@ pub(super) fn separator(previous: &ResolvedToken, current: &ResolvedToken) -> &'
