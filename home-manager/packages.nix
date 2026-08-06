@@ -45,21 +45,6 @@ let
     vendorHash = "sha256-WWtAt0+W/ewLNuNgrqrgho5emntw3rZL9JTTbNo4GsI=";
   };
 
-  # cargoHash経路のvendorスクリプト(python-requests)はcrates.ioのAPIポリシーで403に
-  # なるため、nixのfetchurlで各crateを取るcargoLock経路を使う。
-  # lockは上流からコピー（`"${src}/Cargo.lock"`はsystem evalごとにsrc取得を強制する）。
-  mdroll = pkgs.rustPlatform.buildRustPackage rec {
-    pname = "mdroll";
-    version = "0.4.2";
-    src = pkgs.fetchFromGitHub {
-      owner = "tokuhirom";
-      repo = "mdroll";
-      rev = "v${version}";
-      hash = "sha256-f3rXbLi9WFRid/BG2PcNF0JPWOE3scWhz3Smmohzy5w=";
-    };
-    cargoLock.lockFile = ./mdroll-Cargo.lock;
-  };
-
   # Claudeへ`sudo darwin-rebuild switch`だけを開放するための引数なしラッパー。
   # settings.jsonの`Bash(sudo:*)` denyは維持したまま`Bash(darwin-apply)`のみallowする
   # (denyはallowより先に評価されるため、sudoを含む形では例外を作れない)。
@@ -106,9 +91,6 @@ in
 
     # TUI スプレッドシート
     sheets
-
-    # ターミナル Markdown ビューア
-    mdroll
 
     # AIエージェント用ターミナルマルチプレクサ
     herdrPatched
