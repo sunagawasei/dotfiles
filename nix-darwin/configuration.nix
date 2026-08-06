@@ -81,7 +81,6 @@
     "/System/Applications/Apps.app"
     "/System/Applications/Calendar.app"
     "/System/Applications/System Settings.app"
-    "/Applications/FortiClient.app"
     "/Applications/Slack.app"
   ];
 
