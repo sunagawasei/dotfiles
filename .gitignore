@@ -98,6 +98,9 @@ yarn-error.log*
 !.claude/skills/
 .claude/skills/*
 !.claude/skills/claude-audit/
+!.claude/rules/
+.claude/rules/*
+!.claude/rules/color-system.md
 
 # MCP Serena設定・キャッシュ（ローカル環境固有）
 .serena/
