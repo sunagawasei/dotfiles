@@ -1,0 +1,21 @@
+# gh-board のカラーテーマ。colors/ghost-visor.toml から生成されるので直接編集しない。
+[theme]
+# BEGIN GENERATED COLORS
+text = "#CDE9F5"
+text_dim = "#ADBAC9"
+text_muted = "#949DB0"
+text_inverted = "#141B2D"
+border_focused = "#58CAF8"
+border_unfocused = "#45799D"
+accent = "#58CAF8"
+shadow_fg = "#242F48"
+shadow_bg = "#141B2D"
+blue = "#88CBEA"
+gray = "#949DB0"
+green = "#62C9C2"
+orange = "#DFBE90"
+pink = "#EBC1F8"
+purple = "#BFADFF"
+red = "#D38AA6"
+yellow = "#C2B08D"
+# END GENERATED COLORS

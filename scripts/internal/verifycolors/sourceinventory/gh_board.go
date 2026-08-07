@@ -9,12 +9,9 @@ import (
 	"github.com/sunagawasei/dotfiles/scripts/internal/verifycolors"
 )
 
-var (
-	ghDashSectionPattern = regexp.MustCompile(`^        ([a-z][a-z0-9]*):$`)
-	ghDashColorPattern   = regexp.MustCompile(`^            ([a-z][a-z0-9]*):\s*"\{\{([a-z_]+\.[a-z_]+)\}\}"$`)
-)
+var ghBoardColorPattern = regexp.MustCompile(`^([a-z][a-z0-9_]*)\s*=\s*"\{\{([a-z_]+\.[a-z_]+)\}\}"$`)
 
-func extractGhDashTheme(root string, result *Result) error {
+func extractGhBoardTheme(root string, result *Result) error {
 	const relative = "scripts/cmd/generate-colors/main.go"
 	path := sourcePath(root, relative)
 	file, err := os.Open(path)
@@ -25,7 +22,6 @@ func extractGhDashTheme(root string, result *Result) error {
 
 	inTemplate := false
 	foundTemplate := false
-	section := ""
 	seen := make(map[string]bool)
 	scanner := bufio.NewScanner(file)
 	lineNumber := 0
@@ -33,7 +29,7 @@ func extractGhDashTheme(root string, result *Result) error {
 		lineNumber++
 		line := scanner.Text()
 		if !inTemplate {
-			if line == "const ghDashTemplate = `        # BEGIN GENERATED COLORS" {
+			if line == "const ghBoardTemplate = `# BEGIN GENERATED COLORS" {
 				inTemplate = true
 				foundTemplate = true
 			}
@@ -43,31 +39,22 @@ func extractGhDashTheme(root string, result *Result) error {
 			inTemplate = false
 			break
 		}
-		if match := ghDashSectionPattern.FindStringSubmatch(line); match != nil {
-			section = match[1]
-			continue
-		}
-		match := ghDashColorPattern.FindStringSubmatch(line)
+		match := ghBoardColorPattern.FindStringSubmatch(line)
 		if match == nil {
 			continue
 		}
-		if section == "" {
-			return fmt.Errorf("%s:%d: gh-dash color %q has no section", relative, lineNumber, match[1])
-		}
 
-		fieldPath := section + "." + match[1]
-		if seen[fieldPath] {
-			return fmt.Errorf("%s:%d: duplicate gh-dash color %q", relative, lineNumber, fieldPath)
+		key := match[1]
+		if seen[key] {
+			return fmt.Errorf("%s:%d: duplicate gh-board color %q", relative, lineNumber, key)
 		}
-		seen[fieldPath] = true
+		seen[key] = true
 
 		token := verifycolors.TokenRef(match[2])
 		source := fmt.Sprintf("%s:%d", relative, lineNumber)
-		consumerID := "gh-dash.theme." + fieldPath
-		switch section {
-		case "background":
-			result.addPair(surfacePair(consumerID, token, source))
-		case "border":
+		consumerID := "gh-board.theme." + key
+		switch key {
+		case "border_focused", "border_unfocused":
 			result.addPair(verifycolors.PairSpec{
 				ConsumerID: consumerID,
 				Foreground: token,
@@ -77,6 +64,8 @@ func extractGhDashTheme(root string, result *Result) error {
 				Role:       verifycolors.RoleBorder,
 				Source:     source,
 			})
+		case "shadow_bg", "shadow_fg", "text_inverted":
+			result.addPair(surfacePair(consumerID, token, source))
 		default:
 			result.addPair(defaultTextPair(
 				consumerID,
@@ -91,13 +80,13 @@ func extractGhDashTheme(root string, result *Result) error {
 		return err
 	}
 	if !foundTemplate {
-		return fmt.Errorf("%s: ghDashTemplate was not found", relative)
+		return fmt.Errorf("%s: ghBoardTemplate was not found", relative)
 	}
 	if inTemplate {
-		return fmt.Errorf("%s: ghDashTemplate is not terminated", relative)
+		return fmt.Errorf("%s: ghBoardTemplate is not terminated", relative)
 	}
 	if len(seen) == 0 {
-		return fmt.Errorf("%s: ghDashTemplate contains no color placeholders", relative)
+		return fmt.Errorf("%s: ghBoardTemplate contains no color placeholders", relative)
 	}
 	return nil
 }

@@ -763,7 +763,7 @@ func TestNvimTerminalColorsUseANSIOnly(t *testing.T) {
 	}
 }
 
-func TestGhDashThemeColorsUseExpectedTokens(t *testing.T) {
+func TestGhBoardThemeColorsUseExpectedTokens(t *testing.T) {
 	root, err := palette.FindRepositoryRoot()
 	if err != nil {
 		t.Fatal(err)
@@ -774,44 +774,51 @@ func TestGhDashThemeColorsUseExpectedTokens(t *testing.T) {
 	}
 	pairs := pairMap(result.Pairs)
 
-	expected := map[string]verifycolors.TokenRef{
-		"text.primary":        "foregrounds.main",
-		"text.secondary":      "foregrounds.dim",
-		"text.inverted":       "core.darkest_bg",
-		"text.faint":          "foregrounds.subdued",
-		"text.warning":        "semantic.warning",
-		"text.success":        "semantic.success",
-		"text.error":          "semantic.error",
-		"text.actor":          "foregrounds.heading",
-		"background.selected": "core.active_line",
-		"border.primary":      "teals.border",
-		"border.secondary":    "teals.border",
-		"border.faint":        "core.ui_shadow",
-		"icon.newcontributor": "semantic.success",
-		"icon.contributor":    "foregrounds.heading",
-		"icon.collaborator":   "semantic.warning",
-		"icon.member":         "semantic.warning",
-		"icon.owner":          "semantic.warning",
+	expected := map[string]struct {
+		token verifycolors.TokenRef
+		role  verifycolors.PairRole
+	}{
+		"text":             {"foregrounds.main", verifycolors.RoleText},
+		"text_dim":         {"foregrounds.dim", verifycolors.RoleText},
+		"text_muted":       {"foregrounds.subdued", verifycolors.RoleText},
+		"text_inverted":    {"core.darkest_bg", verifycolors.RoleSurface},
+		"border_focused":   {"teals.bright", verifycolors.RoleBorder},
+		"border_unfocused": {"teals.border", verifycolors.RoleBorder},
+		"accent":           {"teals.bright", verifycolors.RoleText},
+		"shadow_fg":        {"core.ui_shadow", verifycolors.RoleSurface},
+		"shadow_bg":        {"core.darkest_bg", verifycolors.RoleSurface},
+		"blue":             {"foregrounds.heading", verifycolors.RoleText},
+		"gray":             {"foregrounds.subdued", verifycolors.RoleText},
+		"green":            {"semantic.success", verifycolors.RoleText},
+		"orange":           {"ansi.bright_yellow", verifycolors.RoleText},
+		"pink":             {"ansi.bright_magenta", verifycolors.RoleText},
+		"purple":           {"semantic.keyword", verifycolors.RoleText},
+		"red":              {"ansi.bright_red", verifycolors.RoleText},
+		"yellow":           {"ansi.yellow", verifycolors.RoleText},
 	}
 	count := 0
 	for _, pair := range result.Pairs {
-		if strings.HasPrefix(pair.ConsumerID, "gh-dash.theme.") {
+		if strings.HasPrefix(pair.ConsumerID, "gh-board.theme.") {
 			count++
 		}
 	}
 	if count != len(expected) {
-		t.Fatalf("gh-dash theme pair count = %d, want %d", count, len(expected))
+		t.Fatalf("gh-board theme pair count = %d, want %d", count, len(expected))
 	}
-	for fieldPath, token := range expected {
+	for key, want := range expected {
+		consumerID := "gh-board.theme." + key
 		assertPair(
 			t,
 			pairs,
-			"gh-dash.theme."+fieldPath,
-			token,
+			consumerID,
+			want.token,
 			"",
 			true,
 			verifycolors.ClassReportOnly,
 		)
+		if pair := pairs[consumerID]; pair.Role != want.role {
+			t.Errorf("%s role = %q, want %q", consumerID, pair.Role, want.role)
+		}
 	}
 }
 

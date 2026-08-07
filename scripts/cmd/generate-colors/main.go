@@ -402,8 +402,8 @@ func generateOutputs(root, sourceName string, palette *colorPalette) ([]outputFi
 			template: lazygitTemplate,
 		},
 		{
-			path: filepath.Join(root, "gh-dash/config.yml"), begin: "        # BEGIN GENERATED COLORS", end: "        # END GENERATED COLORS",
-			template: ghDashTemplate,
+			path: filepath.Join(root, "gh-board/theme.toml"), begin: "# BEGIN GENERATED COLORS", end: "# END GENERATED COLORS",
+			template: ghBoardTemplate,
 		},
 		{
 			path: filepath.Join(root, "herdr/config.toml"), begin: "# BEGIN GENERATED COLORS", end: "# END GENERATED COLORS",
@@ -1534,29 +1534,25 @@ const lazygitTemplate = `    # BEGIN GENERATED COLORS
     # END GENERATED COLORS
 `
 
-const ghDashTemplate = `        # BEGIN GENERATED COLORS
-        text:
-            primary: "{{foregrounds.main}}"
-            secondary: "{{foregrounds.dim}}"
-            inverted: "{{core.darkest_bg}}"
-            faint: "{{foregrounds.subdued}}"
-            warning: "{{semantic.warning}}"
-            success: "{{semantic.success}}"
-            error: "{{semantic.error}}"
-            actor: "{{foregrounds.heading}}"
-        background:
-            selected: "{{core.active_line}}"
-        border:
-            primary: "{{teals.border}}"
-            secondary: "{{teals.border}}"
-            faint: "{{core.ui_shadow}}"
-        icon:
-            newcontributor: "{{semantic.success}}"
-            contributor: "{{foregrounds.heading}}"
-            collaborator: "{{semantic.warning}}"
-            member: "{{semantic.warning}}"
-            owner: "{{semantic.warning}}"
-        # END GENERATED COLORS
+const ghBoardTemplate = `# BEGIN GENERATED COLORS
+text = "{{foregrounds.main}}"
+text_dim = "{{foregrounds.dim}}"
+text_muted = "{{foregrounds.subdued}}"
+text_inverted = "{{core.darkest_bg}}"
+border_focused = "{{teals.bright}}"
+border_unfocused = "{{teals.border}}"
+accent = "{{teals.bright}}"
+shadow_fg = "{{core.ui_shadow}}"
+shadow_bg = "{{core.darkest_bg}}"
+blue = "{{foregrounds.heading}}"
+gray = "{{foregrounds.subdued}}"
+green = "{{semantic.success}}"
+orange = "{{ansi.bright_yellow}}"
+pink = "{{ansi.bright_magenta}}"
+purple = "{{semantic.keyword}}"
+red = "{{ansi.bright_red}}"
+yellow = "{{ansi.yellow}}"
+# END GENERATED COLORS
 `
 
 const herdrTemplate = `# BEGIN GENERATED COLORS

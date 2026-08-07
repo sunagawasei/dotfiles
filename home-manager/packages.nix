@@ -45,6 +45,39 @@ let
     vendorHash = "sha256-WWtAt0+W/ewLNuNgrqrgho5emntw3rZL9JTTbNo4GsI=";
   };
 
+  # gh-boardはnixpkgs未収録のためソースビルドする。crates.ioがpython-requestsのUAを403で
+  # 弾くためcargoHash(fetch-cargo-vendor)経路は使えず、fetchurlで取るimportCargoLockを使う。
+  ghBoardSchemaCommit = "baf144f319c7705e822de9a26f05d12e1c7c9df4";
+  ghBoardSchema = pkgs.fetchurl {
+    url = "https://raw.githubusercontent.com/octokit/graphql-schema/${ghBoardSchemaCommit}/schema.graphql";
+    hash = "sha256-PGLQUm0TPO5TIhyJ3ptFWt4k23i5561W1kLEwVvOJlQ=";
+  };
+
+  ghBoard = pkgs.rustPlatform.buildRustPackage rec {
+    pname = "gh-board";
+    version = "1.5.0";
+    src = pkgs.fetchFromGitHub {
+      owner = "uzimaru0000";
+      repo = "gh-board";
+      rev = "v${version}";
+      hash = "sha256-gYoNRBQiSAim3/PAo6DSAbDvlaWQnGDTZyXvfnu4Qsc=";
+    };
+    cargoDeps = pkgs.rustPlatform.importCargoLock { lockFile = "${src}/Cargo.lock"; };
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    # build.rsはschema.graphqlが無いとgh api経由で取りに行くため事前配置して短絡させる。
+    # version更新時に古いschemaが残るのを防ぐためCargo.tomlのpinと一致を検査する。
+    postPatch = ''
+      grep -q '${ghBoardSchemaCommit}' Cargo.toml \
+        || (echo "gh-board: schema commit mismatch, update ghBoardSchemaCommit" >&2; exit 1)
+      cp ${ghBoardSchema} schema.graphql
+    '';
+    # 認証をgh auth tokenへshell outするためPATHにghを埋める。
+    postInstall = ''
+      wrapProgram $out/bin/gh-board --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.gh ]}
+    '';
+    doCheck = false;
+  };
+
   # Claudeへ`sudo darwin-rebuild switch`だけを開放するための引数なしラッパー。
   # settings.jsonの`Bash(sudo:*)` denyは維持したまま`Bash(darwin-apply)`のみallowする
   # (denyはallowより先に評価されるため、sudoを含む形では例外を作れない)。
@@ -80,8 +113,8 @@ in
     grpcurl buf gitui imagemagick gifski pwgen tmux ansifilter
     ripgrep oxlint unzip yamlfmt
 
-    # GitHub PR/issue TUI
-    gh-dash
+    # GitHub Projects v2 TUI
+    ghBoard
 
     # その他
     zoxide
