@@ -1922,7 +1922,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:23",
+		Source:     "home-manager/hunk.nix:24",
 	},
 	{
 		ConsumerID: "hunk.theme.accentMuted",
@@ -1931,7 +1931,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:24",
+		Source:     "home-manager/hunk.nix:25",
 	},
 	{
 		ConsumerID: "hunk.theme.addedBg",
@@ -1940,7 +1940,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "home-manager/hunk.nix:28",
+		Source:     "home-manager/hunk.nix:29",
 	},
 	{
 		ConsumerID: "hunk.theme.addedContentBg",
@@ -1949,7 +1949,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "home-manager/hunk.nix:33",
+		Source:     "home-manager/hunk.nix:34",
 	},
 	{
 		ConsumerID: "hunk.theme.addedSignColor",
@@ -1958,7 +1958,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:36",
+		Source:     "home-manager/hunk.nix:37",
 	},
 	{
 		ConsumerID: "hunk.theme.background",
@@ -1967,7 +1967,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "home-manager/hunk.nix:19",
+		Source:     "home-manager/hunk.nix:20",
 	},
 	{
 		ConsumerID: "hunk.theme.badgeAdded",
@@ -1976,7 +1976,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:43",
+		Source:     "home-manager/hunk.nix:44",
 	},
 	{
 		ConsumerID: "hunk.theme.badgeNeutral",
@@ -1985,7 +1985,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:45",
+		Source:     "home-manager/hunk.nix:46",
 	},
 	{
 		ConsumerID: "hunk.theme.badgeRemoved",
@@ -1994,7 +1994,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:44",
+		Source:     "home-manager/hunk.nix:45",
 	},
 	{
 		ConsumerID: "hunk.theme.border",
@@ -2004,7 +2004,7 @@ var generatedPairs = []PairSpec{
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "border",
 		Reason:     "border shape provides a non-color cue",
-		Source:     "home-manager/hunk.nix:22",
+		Source:     "home-manager/hunk.nix:23",
 	},
 	{
 		ConsumerID: "hunk.theme.contextBg",
@@ -2013,7 +2013,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "home-manager/hunk.nix:32",
+		Source:     "home-manager/hunk.nix:33",
 	},
 	{
 		ConsumerID: "hunk.theme.contextContentBg",
@@ -2022,7 +2022,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "home-manager/hunk.nix:35",
+		Source:     "home-manager/hunk.nix:36",
 	},
 	{
 		ConsumerID: "hunk.theme.fileDeleted",
@@ -2031,7 +2031,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:48",
+		Source:     "home-manager/hunk.nix:49",
 	},
 	{
 		ConsumerID: "hunk.theme.fileModified",
@@ -2040,7 +2040,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:50",
+		Source:     "home-manager/hunk.nix:51",
 	},
 	{
 		ConsumerID: "hunk.theme.fileNew",
@@ -2049,7 +2049,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:47",
+		Source:     "home-manager/hunk.nix:48",
 	},
 	{
 		ConsumerID: "hunk.theme.fileRenamed",
@@ -2058,7 +2058,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:49",
+		Source:     "home-manager/hunk.nix:50",
 	},
 	{
 		ConsumerID: "hunk.theme.fileUntracked",
@@ -2067,7 +2067,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:51",
+		Source:     "home-manager/hunk.nix:52",
 	},
 	{
 		ConsumerID: "hunk.theme.lineNumberBg",
@@ -2076,7 +2076,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "home-manager/hunk.nix:39",
+		Source:     "home-manager/hunk.nix:40",
 	},
 	{
 		ConsumerID: "hunk.theme.lineNumberFg",
@@ -2085,7 +2085,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:40",
+		Source:     "home-manager/hunk.nix:41",
 	},
 	{
 		ConsumerID: "hunk.theme.movedAddedBg",
@@ -2094,7 +2094,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "home-manager/hunk.nix:30",
+		Source:     "home-manager/hunk.nix:31",
 	},
 	{
 		ConsumerID: "hunk.theme.movedRemovedBg",
@@ -2103,7 +2103,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "home-manager/hunk.nix:31",
+		Source:     "home-manager/hunk.nix:32",
 	},
 	{
 		ConsumerID: "hunk.theme.muted",
@@ -2112,7 +2112,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:26",
+		Source:     "home-manager/hunk.nix:27",
 	},
 	{
 		ConsumerID: "hunk.theme.noteBackground",
@@ -2121,7 +2121,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "home-manager/hunk.nix:54",
+		Source:     "home-manager/hunk.nix:55",
 	},
 	{
 		ConsumerID: "hunk.theme.noteBorder",
@@ -2131,7 +2131,7 @@ var generatedPairs = []PairSpec{
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "border",
 		Reason:     "border shape provides a non-color cue",
-		Source:     "home-manager/hunk.nix:53",
+		Source:     "home-manager/hunk.nix:54",
 	},
 	{
 		ConsumerID: "hunk.theme.noteTitleBackground",
@@ -2140,7 +2140,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "home-manager/hunk.nix:55",
+		Source:     "home-manager/hunk.nix:56",
 	},
 	{
 		ConsumerID: "hunk.theme.noteTitleText",
@@ -2149,7 +2149,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:56",
+		Source:     "home-manager/hunk.nix:57",
 	},
 	{
 		ConsumerID: "hunk.theme.panel",
@@ -2158,7 +2158,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "home-manager/hunk.nix:20",
+		Source:     "home-manager/hunk.nix:21",
 	},
 	{
 		ConsumerID: "hunk.theme.panelAlt",
@@ -2167,7 +2167,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "home-manager/hunk.nix:21",
+		Source:     "home-manager/hunk.nix:22",
 	},
 	{
 		ConsumerID: "hunk.theme.removedBg",
@@ -2176,7 +2176,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "home-manager/hunk.nix:29",
+		Source:     "home-manager/hunk.nix:30",
 	},
 	{
 		ConsumerID: "hunk.theme.removedContentBg",
@@ -2185,7 +2185,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "home-manager/hunk.nix:34",
+		Source:     "home-manager/hunk.nix:35",
 	},
 	{
 		ConsumerID: "hunk.theme.removedSignColor",
@@ -2194,7 +2194,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:37",
+		Source:     "home-manager/hunk.nix:38",
 	},
 	{
 		ConsumerID: "hunk.theme.selectedHunk",
@@ -2203,7 +2203,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "home-manager/hunk.nix:41",
+		Source:     "home-manager/hunk.nix:42",
 	},
 	{
 		ConsumerID: "hunk.theme.syntax.comment",
@@ -2212,7 +2212,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:62",
+		Source:     "home-manager/hunk.nix:63",
 	},
 	{
 		ConsumerID: "hunk.theme.syntax.default",
@@ -2221,7 +2221,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:59",
+		Source:     "home-manager/hunk.nix:60",
 	},
 	{
 		ConsumerID: "hunk.theme.syntax.function",
@@ -2230,7 +2230,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:64",
+		Source:     "home-manager/hunk.nix:65",
 	},
 	{
 		ConsumerID: "hunk.theme.syntax.keyword",
@@ -2239,7 +2239,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:60",
+		Source:     "home-manager/hunk.nix:61",
 	},
 	{
 		ConsumerID: "hunk.theme.syntax.number",
@@ -2248,7 +2248,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:63",
+		Source:     "home-manager/hunk.nix:64",
 	},
 	{
 		ConsumerID: "hunk.theme.syntax.operator",
@@ -2257,7 +2257,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:68",
+		Source:     "home-manager/hunk.nix:69",
 	},
 	{
 		ConsumerID: "hunk.theme.syntax.property",
@@ -2266,7 +2266,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:65",
+		Source:     "home-manager/hunk.nix:66",
 	},
 	{
 		ConsumerID: "hunk.theme.syntax.punctuation",
@@ -2275,7 +2275,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:69",
+		Source:     "home-manager/hunk.nix:70",
 	},
 	{
 		ConsumerID: "hunk.theme.syntax.string",
@@ -2284,7 +2284,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:61",
+		Source:     "home-manager/hunk.nix:62",
 	},
 	{
 		ConsumerID: "hunk.theme.syntax.type",
@@ -2293,7 +2293,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:66",
+		Source:     "home-manager/hunk.nix:67",
 	},
 	{
 		ConsumerID: "hunk.theme.syntax.variable",
@@ -2302,7 +2302,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:67",
+		Source:     "home-manager/hunk.nix:68",
 	},
 	{
 		ConsumerID: "hunk.theme.text",
@@ -2311,7 +2311,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/hunk.nix:25",
+		Source:     "home-manager/hunk.nix:26",
 	},
 	{
 		ConsumerID: "lazygit.theme.unstagedChangesColor",
@@ -8178,7 +8178,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/keybinds.lua:56",
+		Source:     "wezterm/keybinds.lua:149",
 	},
 	{
 		ConsumerID: "wezterm.key_table.copy_mode.surface",
@@ -8187,7 +8187,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/keybinds.lua:55",
+		Source:     "wezterm/keybinds.lua:148",
 	},
 	{
 		ConsumerID: "wezterm.key_table.other",
@@ -8196,7 +8196,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/keybinds.lua:76",
+		Source:     "wezterm/keybinds.lua:169",
 	},
 	{
 		ConsumerID: "wezterm.key_table.other.surface",
@@ -8205,7 +8205,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/keybinds.lua:75",
+		Source:     "wezterm/keybinds.lua:168",
 	},
 	{
 		ConsumerID: "wezterm.key_table.pane_navigation",
@@ -8214,7 +8214,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/keybinds.lua:66",
+		Source:     "wezterm/keybinds.lua:159",
 	},
 	{
 		ConsumerID: "wezterm.key_table.pane_navigation.surface",
@@ -8223,7 +8223,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/keybinds.lua:65",
+		Source:     "wezterm/keybinds.lua:158",
 	},
 	{
 		ConsumerID: "wezterm.key_table.resize_pane",
@@ -8232,7 +8232,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/keybinds.lua:61",
+		Source:     "wezterm/keybinds.lua:154",
 	},
 	{
 		ConsumerID: "wezterm.key_table.resize_pane.surface",
@@ -8241,7 +8241,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/keybinds.lua:60",
+		Source:     "wezterm/keybinds.lua:153",
 	},
 	{
 		ConsumerID: "wezterm.key_table.search_mode",
@@ -8250,7 +8250,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/keybinds.lua:71",
+		Source:     "wezterm/keybinds.lua:164",
 	},
 	{
 		ConsumerID: "wezterm.key_table.search_mode.surface",
@@ -8259,7 +8259,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/keybinds.lua:70",
+		Source:     "wezterm/keybinds.lua:163",
 	},
 	{
 		ConsumerID: "zsh.completion.class.bd",
