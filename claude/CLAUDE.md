@@ -58,7 +58,6 @@
 
 検収・レビュー運用:
 
-- codex-implの[done]はメインが単独検収する: `git status`/`git diff`/`git log`の実物確認+報告された検証の1-2コマンドでのスポット再現。差し戻しは「指摘→対応」対応表付き・収束は目安最大2巡
-- codex査読は大規模diffの第二意見等、オンデマンドのみ。advisorをレビューの代用にしない(着手前のアプローチ点検・行き詰まり相談専用)
 - sonnetの「編集した」報告は鵜呑みにせず、grep/存在確認でスポットチェックする
 - 重要な判断はサブエージェントに委譲せず、メインが直接行う
+- codex-implの検収手順とcodex査読の使いどころは`claude/skills/orchestrate-agents/SKILL.md`

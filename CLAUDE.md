@@ -6,31 +6,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 macOS上の開発ツール設定を管理する個人用dotfilesリポジトリ。stowなどの自動化ツールは使わず手動管理。
 
-- GitHub: `git@github.com:sunagawasei/dotfiles.git` / メインブランチ: `main`
-
 ## アーキテクチャ
 
 ### カラーシステム（単一ソース原則）
 
 `colors/ghost-visor.toml` が **唯一の真実のソース**。全アプリの配色はここから派生する（wezterm / nvim / lazygit / zsh）。詳細は `COLOR-SYSTEM.md`。
 
-### Neovim設定（LazyVim）
-
-`nvim/init.lua` → `nvim/lua/config/lazy.lua` がエントリポイント。プラグインは `nvim/lua/plugins/` に1プラグイン1ファイルで配置。詳細は `nvim/CLAUDE.md`。
+カラー関連ファイルを変更したら `color-validation` skill の検証手順を必ず通す。
 
 ## 開発コマンド
 
 ```bash
-# カラーバリデーション（カラー関連ファイル変更後は必須）
-cd scripts && go run ./cmd/generate-color-inventory
-cd scripts && go run ./cmd/generate-color-inventory --check
-cd scripts && go run ./cmd/verify-colors
-
 # Claude Code hooks（Goソース変更後は必ず両方）
 cd claude/hooks && go test ./... && go build -o . ./...
-
-# Raycast拡張機能
-cd raycast/extensions/<name> && npm run lint && npm run build
 
 # nix-darwin / home-manager の反映（ユーザー・Claude共通。Claudeも実行できる）
 darwin-apply

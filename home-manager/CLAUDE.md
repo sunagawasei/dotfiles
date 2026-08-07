@@ -12,27 +12,11 @@ darwin-apply
 
 > この home-manager 設定は nix-darwin の darwinModule として統合されているため、単独の `home-manager switch` は使わず、上記コマンドで適用する。
 
-## アーキテクチャ
+## モジュールの非自明な事情
 
-フレーク構成 (`~/.config/flake.nix`):
-- **nix-darwin** (darwinConfigurations の attr名 = hostname。現在は `CA-20038442`) + **home-manager** + **nix-homebrew** を統合
-- nix-darwin 設定: `~/.config/nix-darwin/configuration.nix`
-- home-manager の統合: `~/.config/nix-darwin/home_manager.nix` が `../home-manager/home.nix` を参照
-
-### モジュール構成
-
-`home.nix` がエントリポイントで、以下の8モジュールを import：
-
-| ファイル | 役割 |
-|----------|------|
-| `packages.nix` | 一般ツール群 + `programs.direnv` (nix-direnv) |
-| `dev.nix` | 言語ツールチェーン (Go, Node.js 22, pnpm, Python/uv) |
-| `git.nix` | Git 設定 + `programs.delta`（lazygitのpager専用、`enableGitIntegration=false`） + `diff.tool`/`difftool.hunk`（git difftool） |
-| `hunk.nix` | `programs.hunk`（AIエージェント差分レビューTUI）。`enableGitIntegration=true`で`core.pager`はhunk側、`enableClaudeIntegration=true`で`~/.claude/skills/hunk-review`を自動リンク。custom_themeはghost-visor.toml準拠。パッケージ本体はflake input `hunk`の`homeManagerModules.default`を`nix-darwin/home_manager.nix`でimportして提供（`home.packages`への直接追加はしない） |
-| `shell.nix` | 環境変数・PATH (XDG Base Dir, EDITOR, CLAUDE_CONFIG_DIR 等) |
-| `zsh.nix` | Zinit プラグイン管理、Pure プロンプト、カラー設定 (304行、最大モジュール) |
-| `fzf.nix` | fzf 有効化のみ (ZSH 統合は無効化) |
-| `cloud.nix` | クラウド/インフラツール (awscli2, google-cloud-sdk, terraform, kubectl 等) |
+- `git.nix`: `programs.delta` は lazygit の pager 専用（`enableGitIntegration=false`）。git 本体の差分は `diff.tool`/`difftool.hunk` に回す
+- `hunk.nix`: パッケージ本体は flake input `hunk` の `homeManagerModules.default` を `nix-darwin/home_manager.nix` で import して提供する（`home.packages` への直接追加はしない）。`enableGitIntegration=true` で `core.pager` は hunk 側、`enableClaudeIntegration=true` で `~/.claude/skills/hunk-review` を自動リンクする
+- `zsh.nix`: 最大モジュール。初期化順序の制御が入っているため下の「注意点」も参照
 
 ### パッケージ追加の判断基準
 
