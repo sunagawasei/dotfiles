@@ -37,7 +37,9 @@ local helper_spawn = {
 	size = 0.27,
 	-- sh -cでcdする(splitのcwd指定はcursor-agentのworkspaceに反映されない)。
 	-- env -u: herdr管理下から起動してもHERDR_PANE_ID等を継承させない(内部mode誤判定の防止)。
-	-- 初期プロンプトは平文で渡す("/herdr-english-reply"だとTUIのslash補完と干渉して化ける)
+	-- 初期プロンプトは平文で渡す("/herdr-english-reply"だとTUIのslash補完と干渉して化ける)。
+	-- --force(TUIの"Run Everything"): allowlist外の読み取りコマンドで毎回承認待ちになるのを避ける。
+	-- .cursor/cli.jsonのdenyは--forceでも優先されるため、herdrの変更系は塞がったまま
 	args = {
 		"/bin/sh",
 		"-c",
@@ -45,7 +47,7 @@ local helper_spawn = {
 		-- プロセス名や「herdrでない」判定では別TUIのpaneを誤爆しうるため識別は必ずこのマーカーで行う
 		'printf "\\033]1337;SetUserVar=herdr_helper=MQ==\\007"; cd "$HOME/.config/herdr-helper"'
 			.. " && exec /usr/bin/env -u HERDR_PANE_ID -u HERDR_WORKSPACE_ID -u HERDR_TAB_ID"
-			.. ' HERDR_ENV=1 "$HOME/.local/bin/cursor-agent" --model composer-2.5'
+			.. ' HERDR_ENV=1 "$HOME/.local/bin/cursor-agent" --model composer-2.5 --force'
 			.. ' "herdr-english-reply skill を focused追従モードで開始して待機して"',
 	},
 }

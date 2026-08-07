@@ -247,6 +247,7 @@ MacBook内蔵キーボードとroBa（ZMK自作キーボード）の両方で押
 - `Ctrl+Shift+E`: フォーカス入れ替え（`ActivatePaneDirection("Next")`。2ペイン構成なら1キーで往復する）
 - `Ctrl+Shift+U`: ヘルパーの起動/表示/非表示トグル
   - ヘルパーペインが無ければ右27%幅でcursor-agentを新規起動する（初回起動もこのキー1つ。手動コマンド不要）
+  - 起動時に`--force`（TUIの`Run Everything`）を付けるため、allowlist外のコマンドで承認プロンプトが出ない。`.cursor/cli.json`の`deny`は`--force`より優先されるので、herdrの変更系（`pane send-text`等）は引き続き拒否される
   - 表示中なら隠す（weztermにペイン単位のhide/showが無いため、herdrペインのズームで代替。非表示中もヘルパーのプロセスと会話は生存）。非表示中なら表示に戻してヘルパーへフォーカス
 - `Ctrl+Shift+T`: herdrペインからヘルパーへ `translate` を**下書き**してフォーカス移動（Enterは自分で押す）
   - 確定を送らないのは、実Enterとの等価性が未実測で、ヘルパー側に下書きが残っていた場合の連結やモーダルの誤確定を避けるため
