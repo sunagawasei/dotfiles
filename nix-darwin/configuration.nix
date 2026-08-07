@@ -122,6 +122,9 @@
 
   # ── カスタムキーボードショートカット ────────────────────────────────
   system.defaults.CustomUserPreferences.NSGlobalDomain.NSUserKeyEquivalents."タブを複製" = "^t";
+  # azooKeyのIMEメニューがCtrl+Sを奪うため退避する。バックエンド無効時はタイトルが変わるので両方に割り当てる
+  system.defaults.CustomUserPreferences.NSGlobalDomain.NSUserKeyEquivalents."いい感じ変換" = "^~$s";
+  system.defaults.CustomUserPreferences.NSGlobalDomain.NSUserKeyEquivalents."いい感じ変換（無効/バックエンドなし）" = "^~$s";
 
   # ── 日本語IME（Kotoeri）────────────────────────────────────────────
   system.defaults.CustomUserPreferences."com.apple.inputmethod.Kotoeri" = {
