@@ -84,7 +84,9 @@ height = "90%"
 [[keys.command]]
 key = "prefix+d"
 type = "popup"
-command = "gh-board --owner cycloud-io"
+# dotfilesとcontainerregistry-deployでは移設projectを直接開く。他所は選択画面のまま
+# （board内の p でいつでも切り替えられる）。cwdはherdrがpopupへenvで渡す。
+command = 'case "$HERDR_ACTIVE_PANE_CWD" in */containerregistry-deploy*|*/.config*) exec gh-board --owner cycloud-io 30 ;; *) exec gh-board --owner cycloud-io ;; esac'
 description = "gh-boardをpopupで開く（GitHub Projects v2）"
 width = "90%"
 height = "90%"
