@@ -55,7 +55,7 @@ in
       [ -x /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
 
       # Homebrew GitHub API token (cycloud-io/tap に必要)
-      # gh auth token --hostname でローカルキーリングから直接読む（GHEへのネットワークアクセスなし）
+      # --hostname 明示でローカルキーリングから直接読む（ネットワークアクセスなし）
       if command -v gh &>/dev/null; then
         HOMEBREW_GITHUB_API_TOKEN=$(gh auth token --hostname github.com 2>/dev/null) && export HOMEBREW_GITHUB_API_TOKEN
       fi
