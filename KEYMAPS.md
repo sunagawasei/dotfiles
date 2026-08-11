@@ -95,10 +95,14 @@ Git統合:
 
 ※ VSCodeの`gh`（定義をフローティング表示）相当は、Neovimでは`K`が同等の機能を提供
 
-## ファイル検索・エクスプローラー（Snacks.nvim）
+## ファイル検索・エクスプローラー
 
-- <leader>fe: ファイルエクスプローラーを開く
-- <leader>ff: ファイル検索（隠しファイル・gitignoreファイルもデフォルトで表示）
+- <leader>e / -: ファイルエクスプローラー（oil.nvim。`-`は親ディレクトリ）
+- <leader><Space>: ファイル検索（Snacks picker）
+- <leader>sg: プロジェクト内grep（Snacks picker）
+
+Snacksの`<leader>f*`・`<leader>s*`の大半は1ヶ月の実測で未使用だったため無効化してある。
+無効化したキーの一覧は`nvim/lua/plugins/zz-disabled-keys.lua`にあり、該当行を消せば復活する。
 
 ## claudecode.nvim（Neovim統合、Claude Code CLIとの連携）
 
