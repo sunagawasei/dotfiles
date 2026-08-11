@@ -40,6 +40,7 @@ codex-research(コードベース内調査・データ収集)・codex-impl(実�
 
 - **codex系宛(codex/codex-research/codex-impl共通)**: 必ず先に `~/.agents/skills/agmsg/scripts/ensure-codex.sh <project> [worker名]` を実行して遅延spawnを発火させる(起動済みならno-op。worker名省略時は`codex`。role fileは規約名`db/spawn-roles/<worker名>.codex.md`が自動解決される。`CLAUDE_CODE_SESSION_ID`が環境に無ければセッションUUIDを明示して渡す)。`send.sh`自体は一方向送信やctrl系がdespawn済みworkerを蘇生させないよう、意図的にこの入口へ配線されていない
 - 怠ると依頼は未読のままDBに滞留し、返信が永遠に来ない(実例: 2026-07-05)
+- **`ensure-codex.sh`/`spawn.sh`は単独のsimple commandで呼ぶ**: セッションUUIDは`CLAUDE_CODE_SESSION_ID=<リテラルUUID>`と直書きする(`$SID`等のシェル変数にするとsandbox除外が効かず、codexが自分のseatbeltを張れずspawnが失敗する)。`spawn.sh`は`--team`を明示すればenv前置き自体が不要。for/`;`/`&&`/パイプ/コマンド置換の中に入れない(マッチが壊れる、または併記した別コマンドまでsandbox外へ出る)。機構は`references/troubleshooting.md`項10
 - **送信後は既読(read_at)を確認してから「依頼中」と報告する**: `sqlite3 ~/.agents/skills/agmsg/db/messages.db "SELECT id, read_at IS NOT NULL FROM messages WHERE team='<team>' AND from_agent='claude' ORDER BY id DESC LIMIT 1;"` をスポット実行。send 自体は bridge が死んでいても成功するため、既読確認なしの「依頼済み」報告は空振りに気づけない(実例: 2026-07-11、bridge死亡で未読滞留のままユーザーに指摘された)。数分待って未読なら despawn --force → ensure-codex で bridge を入れ替える(未読は自動再処理される)
 
 ```bash
@@ -86,9 +87,10 @@ codex系ワーカーの出力そのものは転載せず、採用した内容と
 ### 2. codex-implの確認・起動
 
 ```bash
-pgrep -f "codex-bridge.*<team>.*codex-impl" >/dev/null || \
-  CLAUDE_CODE_SESSION_ID=<session-uuid> ~/.agents/skills/agmsg/scripts/ensure-codex.sh <対象repo> codex-impl
+CLAUDE_CODE_SESSION_ID=<リテラルUUID> ~/.agents/skills/agmsg/scripts/ensure-codex.sh <対象repo> codex-impl
 ```
+
+`ensure-codex.sh`が生存確認を兼ねるno-opなのでpgrepガードは不要。`||`で繋ぐとBashリクエスト全体がsandbox外へ出る。
 
 configの`spawn.codex_implementer.codex-impl: true`によりensure-codex.sh経由でもimplementer layoutが適用され、role fileは規約名`db/spawn-roles/codex-impl.codex.md`が自動解決される。明示spawnする場合:
 
