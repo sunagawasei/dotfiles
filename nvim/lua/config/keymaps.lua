@@ -28,7 +28,7 @@ local function copy_diagnostics()
 end
 
 -- 診断コピー
-vim.keymap.set("n", "gy", copy_diagnostics, { desc = "Yank diagnostics" })
+vim.keymap.set("n", "<leader>dy", copy_diagnostics, { desc = "Yank diagnostics" })
 
 -- ファイル保存（Normal、Insert、Visual モード）
 vim.keymap.set({ "n", "i", "v" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save file" })
@@ -244,3 +244,34 @@ end, { desc = "Yank GitHub line URL" })
 vim.keymap.set({ "n", "t" }, "<C-w>z", function()
   Snacks.zen.zoom()
 end, { desc = "Toggle Zoom" })
+
+-- LazyVim標準のうち1ヶ月の実測で未使用だったものを削除する。
+-- 上流の定義が変わったら気づけるよう、不在時は黙って通らず警告する。
+local unused_lazyvim_keys = {
+  { "n", "<leader>L" },
+  { "n", "<leader>fT" },
+  { "n", "<leader>ft" },
+  { "n", "<leader>gB" },
+  { "x", "<leader>gB" },
+  { "n", "<leader>gG" },
+  { "n", "<leader>gL" },
+  { "n", "<leader>gY" },
+  { "x", "<leader>gY" },
+  { "n", "<leader>gf" },
+  { "n", "<leader>uI" },
+  { "n", "<leader>xl" },
+  { "n", "<leader>xq" },
+  { "n", "[w" },
+  { "n", "]w" },
+}
+for _, spec in ipairs(unused_lazyvim_keys) do
+  local mode, lhs = spec[1], spec[2]
+  if vim.fn.maparg(lhs, mode) == "" then
+    vim.notify(("usage-audit: %s:%s が見つからない（LazyVim側の変更?）"):format(mode, lhs), vim.log.levels.WARN)
+  else
+    local ok, err = pcall(vim.keymap.del, mode, lhs)
+    if not ok then
+      vim.notify(("usage-audit: %s:%s の削除に失敗: %s"):format(mode, lhs, err), vim.log.levels.WARN)
+    end
+  end
+end

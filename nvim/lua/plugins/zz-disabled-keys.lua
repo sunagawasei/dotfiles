@@ -48,6 +48,7 @@ return {
       { "<leader>E", false },
       { "<leader>S", false },
       { "<leader>dps", false },
+      { "<leader>e", false },
       { "<leader>fB", false },
       { "<leader>fE", false },
       { "<leader>fF", false },
