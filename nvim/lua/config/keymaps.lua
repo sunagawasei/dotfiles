@@ -2,27 +2,12 @@
 -- Default keymaps that are always set: https://github.com/LazyVim/LazyVim/blob/main/lua/lazyvim/config/keymaps.lua
 -- Add any additional keymaps here
 
--- フォーマット用のキーマップ
-vim.keymap.set({ "n", "v" }, "<leader>fm", function()
-  require("conform").format({
-    async = true,
-    lsp_fallback = true,
-  })
-end, { desc = "Format file or range" })
-
 -- 診断表示用のキーマップ
 vim.keymap.set("n", "gl", vim.diagnostic.open_float, { desc = "Line diagnostics" })
-vim.keymap.set("n", "<leader>ld", vim.diagnostic.open_float, { desc = "Line diagnostics" })
 
 -- 診断間の移動
 vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "Previous diagnostic" })
 vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "Next diagnostic" })
-vim.keymap.set("n", "[e", function() vim.diagnostic.goto_prev({ severity = vim.diagnostic.severity.ERROR }) end, { desc = "Previous error" })
-vim.keymap.set("n", "]e", function() vim.diagnostic.goto_next({ severity = vim.diagnostic.severity.ERROR }) end, { desc = "Next error" })
-
--- 診断リスト
-vim.keymap.set("n", "<leader>dl", vim.diagnostic.setloclist, { desc = "Diagnostic location list" })
-vim.keymap.set("n", "<leader>dq", vim.diagnostic.setqflist, { desc = "Diagnostic quickfix list" })
 
 -- 診断メッセージコピー関数
 local function copy_diagnostics()
@@ -43,7 +28,6 @@ local function copy_diagnostics()
 end
 
 -- 診断コピー
-vim.keymap.set("n", "<leader>dc", copy_diagnostics, { desc = "Copy diagnostics" })
 vim.keymap.set("n", "gy", copy_diagnostics, { desc = "Yank diagnostics" })
 
 -- ファイル保存（Normal、Insert、Visual モード）
@@ -204,17 +188,6 @@ vim.keymap.set("n", "<leader>yr", function()
   end
 end, { desc = "Yank relative path" })
 
-vim.keymap.set("n", "<leader>yf", function()
-  local path = get_file_path()
-  if path and path ~= "" then
-    local filename = vim.fn.fnamemodify(path, ':t')
-    vim.fn.setreg('+', filename)
-    vim.notify("Copied filename: " .. filename, vim.log.levels.INFO)
-  else
-    vim.notify("No file path available", vim.log.levels.WARN)
-  end
-end, { desc = "Yank filename" })
-
 -- GitHub URLをクリップボードにコピー
 vim.keymap.set("n", "<leader>yg", function()
   local path = get_file_path()
@@ -266,22 +239,6 @@ vim.keymap.set({ "n", "v" }, "<leader>yl", function()
   vim.fn.setreg('+', link)
   vim.notify("Copied GitHub line URL: " .. link, vim.log.levels.INFO)
 end, { desc = "Yank GitHub line URL" })
-
--- インラインヒントの表示/非表示を切り替え
-vim.keymap.set("n", "<leader>uh", function()
-  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled())
-end, { desc = "Toggle Inlay Hints" })
-
--- LSP定義ジャンプ（別バッファ）
-vim.keymap.set("n", "gvd", function()
-  vim.cmd("vsplit")
-  vim.lsp.buf.definition()
-end, { desc = "Go to definition (vsplit)" })
-
-vim.keymap.set("n", "ghd", function()
-  vim.cmd("split")
-  vim.lsp.buf.definition()
-end, { desc = "Go to definition (split)" })
 
 -- ウィンドウZoom（全画面化トグル）
 vim.keymap.set({ "n", "t" }, "<C-w>z", function()

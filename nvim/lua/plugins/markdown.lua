@@ -2,9 +2,6 @@ return {
   {
     "tadmccorkle/markdown.nvim",
     ft = "markdown",
-    keys = {
-      { "<leader>mt", "<cmd>MDTaskToggle<cr>", desc = "Toggle Checkbox" },
-    },
     opts = {
       on_attach = function(bufnr)
         local map = vim.keymap.set

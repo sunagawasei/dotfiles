@@ -3,8 +3,6 @@
 ## LSP定義ジャンプ
 
 - gd: 定義へジャンプ（カレントバッファ）
-- gvd: 定義へジャンプ（垂直split）
-- ghd: 定義へジャンプ（水平split）
 
 ## 診断全般のジャンプ（warning/error/info含む）
 
@@ -20,18 +18,6 @@
 - za: 折り畳みの開閉（トグル）
 - zM: すべての折り畳みを閉じる
 - zR: すべての折り畳みを開く
-
-## 囲み文字
-
-1. 囲み文字を追加 (gsa)
-
-- gsaiw" - カーソル位置の単語を""で囲む
-- v (ビジュアルモード) → 選択 → gsa"
-
-2. 囲み文字を削除 (gsd)
-   操作: gsd"
-3. 囲み文字を置換 (gsr)
-   操作: gsr"'
 
 ## GitHubのリンクをコピーするキーバインド
 
@@ -67,49 +53,25 @@ ctrlを押しながらfで1ページ進みます。forwardのfです。ctrlを�
 
 基本操作:
 
-- <leader>t1 / <leader>t2 / <leader>t3: 番号付きターミナル
+- <leader>t2: 番号付きターミナル
 - <C-/>: 最後のターミナルをトグル
-- <leader>ta: 全ターミナル一括トグル
-
-モード・方向切り替え:
-
-- <leader>tm: モード切り替え（Single/Side-by-Side）
-- <leader>th: Horizontal（下部横分割）
-- <leader>tv: Vertical（右側縦分割）
-- <leader>tf: Float（フローティング）
-- <leader>tD: 方向をサイクル切り替え（H→V→F）
+  - 端末はCtrl+/を`<C-_>`として送るため、設定側は両方を同じ動作に割り当てている
 
 サイズ変更:
 
 - <M-k> / <M-j>: 高さを1行ずつ増減（Alt + k/j）
-- <M-K> / <M-J>: 高さを5行ずつ増減（Alt + Shift + k/j）
-- <leader>t+: 最大化
-- <leader>t-: 小サイズ（10行）
 
-REPL機能（選択範囲送信）:
+ターミナル内操作:
 
-- <leader>ts: 選択範囲をターミナルに送信
-    - コマンド: ToggleTermSendVisualSelection
-    - 使い方: ビジュアルモード（v）で範囲を選択してから実行
-- <leader>tl: 選択行をターミナルに送信
-    - コマンド: ToggleTermSendVisualLines
-    - 使い方: ビジュアルラインモード（V）で行を選択してから実行
 - <leader>tc: ターミナル画面とスクロールバック（履歴）を両方クリア
     - 使い方: ターミナルモード（t）で実行。`reset`コマンドの代わりに使う
-
-管理機能:
-
-- <leader>tn: ターミナルに名前を付ける
-- <leader>tS: ターミナル選択UI
+- <Esc><Esc>: ノーマルモードへ
+- <C-h/j/k/l>: ウィンドウ移動（上記「ウィンドウ間移動」と同様）
 
 Git統合:
 
 - <leader>gg: LazyGit（フローティング）
-
-ターミナル内操作:
-
-- <Esc><Esc> / <C-q> / jk: ノーマルモードへ
-- <C-h/j/k/l>: ウィンドウ移動（上記「ウィンドウ間移動」と同様）
+- <leader>gr: Hunk（差分レビュー）
 
 ## scratch buffer
 
@@ -124,7 +86,7 @@ Git統合:
 - K: ホバー情報表示（定義・ドキュメントをフローティングウィンドウで表示）
 - gK: シグネチャヘルプ
 - <leader>cd: 診断を表示
-- gl / <leader>ld: 行の診断をフローティングで表示
+- gl: 行の診断をフローティングで表示
 - [e / ]e: 前/次のエラーへ移動
 - <leader>ca: コードアクション
 - <leader>cr: リネーム
@@ -138,72 +100,12 @@ Git統合:
 - <leader>fe: ファイルエクスプローラーを開く
 - <leader>ff: ファイル検索（隠しファイル・gitignoreファイルもデフォルトで表示）
 
-## CopilotChat
-
-- <leader>cc: チャットを開く
-- <leader>cE: コード説明（ビジュアルモードで選択範囲、未選択時はバッファ全体が対象）
-- <leader>cR: コードレビュー（同上）
-- コンテキスト指定（チャット内で使用）:
-    - `#file:path/to/file` - 特定ファイルを追加
-    - `#buffer:current` - 現在のバッファ
-    - `#buffers:visible` - 表示中の全バッファ
-    - `#gitdiff` - Git差分
-    - `#diagnostics:current` - 診断情報
-    - `#glob:*.lua` - パターンマッチするファイル一覧
-    - `#grep:TODO` - ワークスペース内検索
-
 ## claudecode.nvim（Neovim統合、Claude Code CLIとの連携）
 
-- <leader>aI: Claude Code起動
-- <leader>aS: Claude Code停止
-- <leader>ai: Claude Codeステータス確認
-
-## no-neck-pain.nvim
-
-- <leader>nn: 中央寄せ表示モードの切り替え
-
-## flash.nvim（高速移動・検索）
-
-- s: Flash jump（ラベル付きジャンプ）
-- S: Flash Treesitter（構文要素ジャンプ）
-- f / F: 前方/後方文字検索
-- ; / ,: 文字検索の繰り返し/逆方向
-- ※ `t`/`T`キーは無効化済み（Neotestのキーバインドとの競合回避のため。設定ファイル: `lua/plugins/flash-config.lua`）
-
-## テスト実行（Neotest）
-
-neotest + neotest-golang（Go言語テストアダプタ）。サブテスト/テーブルテスト実行、レース検出（`-race`）、カバレッジ測定（`-cover`）、Testifyサポート、DAP（Debug Adapter Protocol）連携に対応。
-
-### 基本
-
-- <leader>tr: カーソル位置のテストを実行（最も近いテスト）
-- <leader>tt: 現在のファイルのすべてのテストを実行
-- <leader>tT: プロジェクト全体のテストを実行
-- <leader>tl: 最後に実行したテストを再実行
-- <leader>td: カーソル位置のテストをデバッグ実行
-
-### 拡張
-
-- <leader>tp: パッケージ/ディレクトリ単位でテスト実行
-- <leader>tf: 失敗したテストのみ再実行（詳細出力付き）
-- <leader>ta: プロジェクト全体のテスト実行（詳細出力付き）
-- <leader>tA: プロジェクト全体のテスト実行（レース検出付き）
-- <leader>tc: 最寄りのテストをカバレッジ測定付きで実行
-- <leader>tC: 現在ファイルをカバレッジ測定付きで実行
-
-### 結果・出力操作
-
-- <leader>ts: テスト結果サマリーを表示/非表示
-- <leader>to: テスト出力を表示
-- <leader>tO: テスト出力パネルを切り替え
-- <leader>tx: 実行中のテストを停止
-- <leader>tq: テストquickfixウィンドウを閉じる
-- <leader>t?: テストステータスを開く
-- <leader>tw: テストウォッチモード切り替え
-
-視覚表示: テスト関数の横にインラインで成功(✓)/失敗(✗)/実行中(◐)/スキップ(○)アイコンを表示。サマリーパネルはツリー形式で構造・結果を表示。
-
-トラブルシューティング（"No tests found"等）: `.claude/docs/nvim-troubleshooting.md` 参照
+- <leader>ab: 現在のバッファをClaudeに追加
+- <leader>as: 選択範囲をClaudeへ送信（ビジュアルモード）
+- <leader>at: カーソル位置のファイルをClaudeに追加（oilバッファ専用）
+- <leader>aa: 差分の変更を受け入れる
 
 # Claude Code
 

@@ -17,9 +17,5 @@ return {
         textobject_field_outer = { "af", mode = { "o", "x" } },
       },
     },
-    keys = {
-      -- トグルキーの設定
-      { "<leader>cv", "<cmd>CsvViewToggle<cr>", desc = "Toggle CSV View" },
-    },
   },
 }

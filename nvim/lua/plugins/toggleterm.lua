@@ -257,18 +257,6 @@ return {
   keys = {
     -- 番号付きターミナル
     {
-      "<leader>t1",
-      function() _G.toggle_smart_terminal(1) end,
-      mode = "n",
-      desc = "Terminal 1",
-    },
-    {
-      "<leader>t1",
-      [[<C-\><C-n><cmd>lua _G.toggle_smart_terminal(1)<CR>]],
-      mode = "t",
-      desc = "Terminal 1",
-    },
-    {
       "<leader>t2",
       function() _G.toggle_smart_terminal(2) end,
       mode = "n",
@@ -280,63 +268,6 @@ return {
       mode = "t",
       desc = "Terminal 2",
     },
-    {
-      "<leader>t3",
-      function() _G.toggle_smart_terminal(3) end,
-      mode = "n",
-      desc = "Terminal 3",
-    },
-    {
-      "<leader>t3",
-      [[<C-\><C-n><cmd>lua _G.toggle_smart_terminal(3)<CR>]],
-      mode = "t",
-      desc = "Terminal 3",
-    },
-
-    -- ターミナルモード切り替え
-    {
-      "<leader>tm",
-      function()
-        _G.toggle_terminal_mode()
-      end,
-      mode = { "n" },
-      desc = "Toggle Terminal Mode (Single/Side-by-Side)",
-    },
-
-    -- ターミナル方向切り替え
-    {
-      "<leader>th",
-      function()
-        _G.change_terminal_direction("horizontal")
-      end,
-      mode = { "n", "t" },
-      desc = "Terminal Direction: Horizontal",
-    },
-    {
-      "<leader>tv",
-      function()
-        _G.change_terminal_direction("vertical")
-      end,
-      mode = { "n", "t" },
-      desc = "Terminal Direction: Vertical",
-    },
-    {
-      "<leader>tf",
-      function()
-        _G.change_terminal_direction("float")
-      end,
-      mode = { "n", "t" },
-      desc = "Terminal Direction: Float",
-    },
-    {
-      "<leader>tD",
-      function()
-        _G.cycle_terminal_direction()
-      end,
-      mode = { "n", "t" },
-      desc = "Cycle Terminal Direction (H→V→F)",
-    },
-
     -- 最後のターミナルトグル
     -- tモードは<C-\><C-n>でterminal normalに出てからクローズ。
     -- これにより閉じ時のModeChangedパターンがnt:nとなり、which-keyが正しく再アタッチできる。
@@ -385,26 +316,12 @@ return {
       desc = "Hunk (diff review)",
     },
 
-    -- ターミナルサイクル切り替え
-    {
-      "<C-g>",
-      function() _G.cycle_terminal() end,
-      mode = "t",
-      desc = "Cycle to next terminal",
-    },
-
     -- ターミナルモード操作
     {
       "<Esc><Esc>",
       [[<C-\><C-n>]],
       mode = "t",
       desc = "Exit terminal mode",
-    },
-    {
-      "<C-q>",
-      [[<C-\><C-n>]],
-      mode = "t",
-      desc = "Exit terminal mode (quick)",
     },
     {
       "<C-h>",
@@ -430,51 +347,6 @@ return {
       mode = "t",
       desc = "Go to right window",
     },
-
-    -- 追加機能
-    {
-      "<leader>ta",
-      "<cmd>ToggleTermToggleAll<CR>",
-      mode = { "n" },
-      desc = "Toggle All Terminals",
-    },
-
-    -- 選択範囲送信（REPL機能）
-    {
-      "<leader>ts",
-      "<cmd>ToggleTermSendVisualSelection<CR>",
-      mode = "v",
-      desc = "Send selection to terminal",
-    },
-    {
-      "<leader>tl",
-      "<cmd>ToggleTermSendVisualLines<CR>",
-      mode = "v",
-      desc = "Send lines to terminal",
-    },
-    {
-      "<leader>ts",
-      "<cmd>ToggleTermSendCurrentLine<CR>",
-      mode = "n",
-      desc = "Send current line to terminal",
-    },
-
-    -- ターミナル名前付け
-    {
-      "<leader>tn",
-      "<cmd>ToggleTermSetName<CR>",
-      mode = { "n" },
-      desc = "Set terminal name",
-    },
-
-    -- ターミナル選択UI
-    {
-      "<leader>tS",
-      "<cmd>TermSelect<CR>",
-      mode = { "n" },
-      desc = "Select terminal",
-    },
-
     -- ターミナルサイズ変更（Altキー）
     {
       "<M-k>",
@@ -491,40 +363,6 @@ return {
       end,
       mode = { "n", "t" },
       desc = "Decrease terminal height by 1",
-    },
-    {
-      "<M-K>",
-      function()
-        _G.resize_terminal(5)
-      end,
-      mode = { "n", "t" },
-      desc = "Increase terminal height by 5",
-    },
-    {
-      "<M-J>",
-      function()
-        _G.resize_terminal(-5)
-      end,
-      mode = { "n", "t" },
-      desc = "Decrease terminal height by 5",
-    },
-
-    -- ターミナルサイズプリセット（Leaderキー）
-    {
-      "<leader>t+",
-      function()
-        _G.maximize_terminal()
-      end,
-      mode = { "n", "t" },
-      desc = "Maximize terminal",
-    },
-    {
-      "<leader>t-",
-      function()
-        _G.set_terminal_size(10)
-      end,
-      mode = { "n", "t" },
-      desc = "Set terminal to small size (10 lines)",
     },
   },
 }

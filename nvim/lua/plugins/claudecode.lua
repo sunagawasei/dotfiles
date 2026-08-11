@@ -103,11 +103,6 @@ return {
   keys = {
     { "<leader>a", nil, desc = "AI/Claude Code" },
 
-    -- Claude Code統合の開始・停止
-    { "<leader>aI", "<cmd>ClaudeCodeStart<cr>", desc = "Start Claude Code integration" },
-    { "<leader>aS", "<cmd>ClaudeCodeStop<cr>", desc = "Stop Claude Code integration" },
-    { "<leader>ai", "<cmd>ClaudeCodeStatus<cr>", desc = "Show Claude Code status" },
-
     -- ファイル・コンテキスト管理
     { "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer to Claude" },
     { "<leader>as", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send selection to Claude" },
@@ -120,6 +115,5 @@ return {
 
     -- Diff管理（v0.3.0新機能）
     { "<leader>aa", "<cmd>ClaudeCodeDiffAccept<cr>", desc = "Accept diff changes" },
-    { "<leader>ad", "<cmd>ClaudeCodeDiffDeny<cr>", desc = "Deny diff changes" },
   },
 }
