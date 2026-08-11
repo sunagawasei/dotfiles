@@ -292,14 +292,6 @@ return {
         Folded = { bg = colors.dark_shadow, fg = colors.subdued_fg },
         FoldColumn = { bg = "none", fg = colors.border },
 
-        -- Flash.nvim
-        FlashBackdrop = { fg = colors.mid_gray },
-        FlashMatch = { bg = colors.dark_shadow, fg = colors.teal_bright },
-        FlashCurrent = { bg = colors.teal_bright, fg = colors.bg },
-        FlashLabel = { bg = colors.ui_target_bg, fg = colors.bg, bold = true },
-        FlashPrompt = { fg = colors.fg },
-        FlashPromptIcon = { fg = colors.teal_bright },
-
         -- Which-Key.nvim
         WhichKey = { fg = colors.teal_bright },
         WhichKeyGroup = { fg = colors.foreground_heading },
@@ -348,20 +340,6 @@ return {
         NotifyINFOBody = { fg = colors.fg },
         NotifyDEBUGBody = { fg = colors.fg },
         NotifyTRACEBody = { fg = colors.fg },
-
-        -- Trouble.nvim
-        TroubleNormal = { bg = "none" },
-        TroubleText = { fg = colors.fg },
-        TroubleSource = { fg = colors.subdued_fg },
-        TroubleCode = { fg = colors.subdued_fg },
-        TroubleLocation = { fg = colors.subdued_fg },
-        TroubleFile = { fg = colors.teal_bright },
-        TroubleFoldIcon = { fg = colors.border },
-        TroubleCount = { fg = colors.diagnostic_error, bold = true },
-        TroubleError = { fg = colors.diagnostic_error },
-        TroubleWarning = { fg = colors.diagnostic_warn },
-        TroubleHint = { fg = colors.diagnostic_hint },
-        TroubleInformation = { fg = colors.diagnostic_info },
 
         -- その他ビルトイングループ
         NonText = { fg = colors.border },

@@ -3535,7 +3535,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:370",
+		Source:     "nvim/lua/plugins/colorscheme.lua:348",
 	},
 	{
 		ConsumerID: "nvim.highlight.Constant",
@@ -3625,7 +3625,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:443",
+		Source:     "nvim/lua/plugins/colorscheme.lua:421",
 	},
 	{
 		ConsumerID: "nvim.highlight.DiagnosticError",
@@ -3902,87 +3902,6 @@ var generatedPairs = []PairSpec{
 		Source:     "nvim/lua/plugins/colorscheme.lua:243",
 	},
 	{
-		ConsumerID: "nvim.highlight.FlashBackdrop",
-		Foreground: "blues_slates.slate_mid",
-		Background: AmbientBackground(),
-		Class:      "report-only",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:296",
-	},
-	{
-		ConsumerID: "nvim.highlight.FlashCurrent",
-		Foreground: "core.background",
-		Background: TokenBackground("teals.bright"),
-		Class:      "enforced",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:298",
-	},
-	{
-		ConsumerID: "nvim.highlight.FlashCurrent.surface",
-		Foreground: "teals.bright",
-		Background: AmbientBackground(),
-		Class:      "report-only",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:298",
-	},
-	{
-		ConsumerID: "nvim.highlight.FlashLabel",
-		Foreground: "core.background",
-		Background: TokenBackground("ui.target_bg"),
-		Class:      "enforced",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:299",
-	},
-	{
-		ConsumerID: "nvim.highlight.FlashLabel.surface",
-		Foreground: "ui.target_bg",
-		Background: AmbientBackground(),
-		Class:      "report-only",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:299",
-	},
-	{
-		ConsumerID: "nvim.highlight.FlashMatch",
-		Foreground: "teals.bright",
-		Background: TokenBackground("core.ui_shadow"),
-		Class:      "enforced",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:297",
-	},
-	{
-		ConsumerID: "nvim.highlight.FlashMatch.surface",
-		Foreground: "core.ui_shadow",
-		Background: AmbientBackground(),
-		Class:      "report-only",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:297",
-	},
-	{
-		ConsumerID: "nvim.highlight.FlashPrompt",
-		Foreground: "foregrounds.main",
-		Background: AmbientBackground(),
-		Class:      "report-only",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:300",
-	},
-	{
-		ConsumerID: "nvim.highlight.FlashPromptIcon",
-		Foreground: "teals.bright",
-		Background: AmbientBackground(),
-		Class:      "report-only",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:301",
-	},
-	{
 		ConsumerID: "nvim.highlight.FloatBorder",
 		Foreground: "teals.bright",
 		Background: TokenBackground("core.ui_shadow"),
@@ -4007,7 +3926,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:444",
+		Source:     "nvim/lua/plugins/colorscheme.lua:422",
 	},
 	{
 		ConsumerID: "nvim.highlight.Folded",
@@ -4196,7 +4115,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:380",
+		Source:     "nvim/lua/plugins/colorscheme.lua:358",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyButtonActive",
@@ -4205,7 +4124,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:381",
+		Source:     "nvim/lua/plugins/colorscheme.lua:359",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyButtonActive.surface",
@@ -4214,7 +4133,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:381",
+		Source:     "nvim/lua/plugins/colorscheme.lua:359",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyCommit",
@@ -4223,7 +4142,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:385",
+		Source:     "nvim/lua/plugins/colorscheme.lua:363",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyCommitType",
@@ -4232,7 +4151,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:386",
+		Source:     "nvim/lua/plugins/colorscheme.lua:364",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyDimmed",
@@ -4241,7 +4160,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:387",
+		Source:     "nvim/lua/plugins/colorscheme.lua:365",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyH1",
@@ -4250,7 +4169,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:382",
+		Source:     "nvim/lua/plugins/colorscheme.lua:360",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyH2",
@@ -4259,7 +4178,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:383",
+		Source:     "nvim/lua/plugins/colorscheme.lua:361",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyLocal",
@@ -4268,7 +4187,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:390",
+		Source:     "nvim/lua/plugins/colorscheme.lua:368",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyProgressDone",
@@ -4277,7 +4196,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:391",
+		Source:     "nvim/lua/plugins/colorscheme.lua:369",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyProgressTodo",
@@ -4286,7 +4205,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:392",
+		Source:     "nvim/lua/plugins/colorscheme.lua:370",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyProp",
@@ -4295,7 +4214,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:388",
+		Source:     "nvim/lua/plugins/colorscheme.lua:366",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyReasonCmd",
@@ -4304,7 +4223,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:393",
+		Source:     "nvim/lua/plugins/colorscheme.lua:371",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyReasonEvent",
@@ -4313,7 +4232,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:394",
+		Source:     "nvim/lua/plugins/colorscheme.lua:372",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyReasonFt",
@@ -4322,7 +4241,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:395",
+		Source:     "nvim/lua/plugins/colorscheme.lua:373",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyReasonKeys",
@@ -4331,7 +4250,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:396",
+		Source:     "nvim/lua/plugins/colorscheme.lua:374",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyReasonPlugin",
@@ -4340,7 +4259,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:397",
+		Source:     "nvim/lua/plugins/colorscheme.lua:375",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyReasonStart",
@@ -4349,7 +4268,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:398",
+		Source:     "nvim/lua/plugins/colorscheme.lua:376",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazySpecial",
@@ -4358,7 +4277,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:384",
+		Source:     "nvim/lua/plugins/colorscheme.lua:362",
 	},
 	{
 		ConsumerID: "nvim.highlight.LazyValue",
@@ -4367,7 +4286,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:389",
+		Source:     "nvim/lua/plugins/colorscheme.lua:367",
 	},
 	{
 		ConsumerID: "nvim.highlight.LspCodeLens",
@@ -4529,7 +4448,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:373",
+		Source:     "nvim/lua/plugins/colorscheme.lua:351",
 	},
 	{
 		ConsumerID: "nvim.highlight.MoreMsg",
@@ -4538,7 +4457,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:372",
+		Source:     "nvim/lua/plugins/colorscheme.lua:350",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestAdapterName",
@@ -4547,7 +4466,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:482",
+		Source:     "nvim/lua/plugins/colorscheme.lua:460",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestBorder",
@@ -4556,7 +4475,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:483",
+		Source:     "nvim/lua/plugins/colorscheme.lua:461",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestDir",
@@ -4565,7 +4484,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:484",
+		Source:     "nvim/lua/plugins/colorscheme.lua:462",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestExpandMarker",
@@ -4574,7 +4493,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:488",
+		Source:     "nvim/lua/plugins/colorscheme.lua:466",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestFailed",
@@ -4583,7 +4502,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:477",
+		Source:     "nvim/lua/plugins/colorscheme.lua:455",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestFile",
@@ -4592,7 +4511,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:485",
+		Source:     "nvim/lua/plugins/colorscheme.lua:463",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestFocused",
@@ -4601,7 +4520,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:489",
+		Source:     "nvim/lua/plugins/colorscheme.lua:467",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestIndent",
@@ -4610,7 +4529,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:487",
+		Source:     "nvim/lua/plugins/colorscheme.lua:465",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestMarked",
@@ -4619,7 +4538,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:480",
+		Source:     "nvim/lua/plugins/colorscheme.lua:458",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestNamespace",
@@ -4628,7 +4547,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:486",
+		Source:     "nvim/lua/plugins/colorscheme.lua:464",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestPassed",
@@ -4637,7 +4556,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:476",
+		Source:     "nvim/lua/plugins/colorscheme.lua:454",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestRunning",
@@ -4646,7 +4565,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:478",
+		Source:     "nvim/lua/plugins/colorscheme.lua:456",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestSkipped",
@@ -4655,7 +4574,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:479",
+		Source:     "nvim/lua/plugins/colorscheme.lua:457",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestTarget",
@@ -4664,7 +4583,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:491",
+		Source:     "nvim/lua/plugins/colorscheme.lua:469",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestUnknown",
@@ -4673,7 +4592,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:490",
+		Source:     "nvim/lua/plugins/colorscheme.lua:468",
 	},
 	{
 		ConsumerID: "nvim.highlight.NeotestWinSelect",
@@ -4682,7 +4601,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:481",
+		Source:     "nvim/lua/plugins/colorscheme.lua:459",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoiceCmdline",
@@ -4691,7 +4610,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:313",
+		Source:     "nvim/lua/plugins/colorscheme.lua:305",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoiceCmdlineIcon",
@@ -4700,7 +4619,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:314",
+		Source:     "nvim/lua/plugins/colorscheme.lua:306",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoiceCmdlineIconSearch",
@@ -4709,7 +4628,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:315",
+		Source:     "nvim/lua/plugins/colorscheme.lua:307",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoiceCmdlinePopupBorder",
@@ -4718,7 +4637,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:317",
+		Source:     "nvim/lua/plugins/colorscheme.lua:309",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoiceCmdlinePopupTitle",
@@ -4727,7 +4646,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:318",
+		Source:     "nvim/lua/plugins/colorscheme.lua:310",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoiceConfirmBorder",
@@ -4736,7 +4655,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:320",
+		Source:     "nvim/lua/plugins/colorscheme.lua:312",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoicePopupBorder",
@@ -4745,7 +4664,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:323",
+		Source:     "nvim/lua/plugins/colorscheme.lua:315",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoicePopupmenuBorder",
@@ -4754,7 +4673,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:325",
+		Source:     "nvim/lua/plugins/colorscheme.lua:317",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoicePopupmenuMatch",
@@ -4763,7 +4682,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:326",
+		Source:     "nvim/lua/plugins/colorscheme.lua:318",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoicePopupmenuSelected.surface",
@@ -4772,7 +4691,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:327",
+		Source:     "nvim/lua/plugins/colorscheme.lua:319",
 	},
 	{
 		ConsumerID: "nvim.highlight.NoiceVirtualText",
@@ -4781,7 +4700,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:328",
+		Source:     "nvim/lua/plugins/colorscheme.lua:320",
 	},
 	{
 		ConsumerID: "nvim.highlight.NonText",
@@ -4790,7 +4709,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:367",
+		Source:     "nvim/lua/plugins/colorscheme.lua:345",
 	},
 	{
 		ConsumerID: "nvim.highlight.Normal",
@@ -4799,7 +4718,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:427",
+		Source:     "nvim/lua/plugins/colorscheme.lua:405",
 	},
 	{
 		ConsumerID: "nvim.highlight.NormalFloat",
@@ -4826,7 +4745,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:428",
+		Source:     "nvim/lua/plugins/colorscheme.lua:406",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyDEBUGBody",
@@ -4835,7 +4754,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:349",
+		Source:     "nvim/lua/plugins/colorscheme.lua:341",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyDEBUGBorder",
@@ -4844,7 +4763,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:334",
+		Source:     "nvim/lua/plugins/colorscheme.lua:326",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyDEBUGIcon",
@@ -4853,7 +4772,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:339",
+		Source:     "nvim/lua/plugins/colorscheme.lua:331",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyDEBUGTitle",
@@ -4862,7 +4781,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:344",
+		Source:     "nvim/lua/plugins/colorscheme.lua:336",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyERRORBody",
@@ -4871,7 +4790,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:346",
+		Source:     "nvim/lua/plugins/colorscheme.lua:338",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyERRORBorder",
@@ -4880,7 +4799,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:331",
+		Source:     "nvim/lua/plugins/colorscheme.lua:323",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyERRORIcon",
@@ -4889,7 +4808,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:336",
+		Source:     "nvim/lua/plugins/colorscheme.lua:328",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyERRORTitle",
@@ -4898,7 +4817,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:341",
+		Source:     "nvim/lua/plugins/colorscheme.lua:333",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyINFOBody",
@@ -4907,7 +4826,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:348",
+		Source:     "nvim/lua/plugins/colorscheme.lua:340",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyINFOBorder",
@@ -4916,7 +4835,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:333",
+		Source:     "nvim/lua/plugins/colorscheme.lua:325",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyINFOIcon",
@@ -4925,7 +4844,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:338",
+		Source:     "nvim/lua/plugins/colorscheme.lua:330",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyINFOTitle",
@@ -4934,7 +4853,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:343",
+		Source:     "nvim/lua/plugins/colorscheme.lua:335",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyTRACEBody",
@@ -4943,7 +4862,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:350",
+		Source:     "nvim/lua/plugins/colorscheme.lua:342",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyTRACEBorder",
@@ -4952,7 +4871,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:335",
+		Source:     "nvim/lua/plugins/colorscheme.lua:327",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyTRACEIcon",
@@ -4961,7 +4880,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:340",
+		Source:     "nvim/lua/plugins/colorscheme.lua:332",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyTRACETitle",
@@ -4970,7 +4889,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:345",
+		Source:     "nvim/lua/plugins/colorscheme.lua:337",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyWARNBody",
@@ -4979,7 +4898,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:347",
+		Source:     "nvim/lua/plugins/colorscheme.lua:339",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyWARNBorder",
@@ -4988,7 +4907,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:332",
+		Source:     "nvim/lua/plugins/colorscheme.lua:324",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyWARNIcon",
@@ -4997,7 +4916,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:337",
+		Source:     "nvim/lua/plugins/colorscheme.lua:329",
 	},
 	{
 		ConsumerID: "nvim.highlight.NotifyWARNTitle",
@@ -5006,7 +4925,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:342",
+		Source:     "nvim/lua/plugins/colorscheme.lua:334",
 	},
 	{
 		ConsumerID: "nvim.highlight.Number",
@@ -5132,7 +5051,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:371",
+		Source:     "nvim/lua/plugins/colorscheme.lua:349",
 	},
 	{
 		ConsumerID: "nvim.highlight.QuickFixLine.surface",
@@ -5141,7 +5060,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:375",
+		Source:     "nvim/lua/plugins/colorscheme.lua:353",
 	},
 	{
 		ConsumerID: "nvim.highlight.RenderMarkdownBullet",
@@ -5402,7 +5321,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:496",
+		Source:     "nvim/lua/plugins/colorscheme.lua:474",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarGitAdd",
@@ -5411,7 +5330,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:501",
+		Source:     "nvim/lua/plugins/colorscheme.lua:479",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarGitChange",
@@ -5420,7 +5339,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:502",
+		Source:     "nvim/lua/plugins/colorscheme.lua:480",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarGitDelete",
@@ -5429,7 +5348,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:503",
+		Source:     "nvim/lua/plugins/colorscheme.lua:481",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarHandle.surface",
@@ -5438,7 +5357,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:494",
+		Source:     "nvim/lua/plugins/colorscheme.lua:472",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarHint",
@@ -5447,7 +5366,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:499",
+		Source:     "nvim/lua/plugins/colorscheme.lua:477",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarInfo",
@@ -5456,7 +5375,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:498",
+		Source:     "nvim/lua/plugins/colorscheme.lua:476",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarMisc",
@@ -5465,7 +5384,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:500",
+		Source:     "nvim/lua/plugins/colorscheme.lua:478",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarSearch",
@@ -5474,7 +5393,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:495",
+		Source:     "nvim/lua/plugins/colorscheme.lua:473",
 	},
 	{
 		ConsumerID: "nvim.highlight.ScrollbarWarn",
@@ -5483,7 +5402,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:497",
+		Source:     "nvim/lua/plugins/colorscheme.lua:475",
 	},
 	{
 		ConsumerID: "nvim.highlight.Search",
@@ -5528,7 +5447,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:459",
+		Source:     "nvim/lua/plugins/colorscheme.lua:437",
 	},
 	{
 		ConsumerID: "nvim.highlight.SnacksPickerCursor.surface",
@@ -5537,7 +5456,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:459",
+		Source:     "nvim/lua/plugins/colorscheme.lua:437",
 	},
 	{
 		ConsumerID: "nvim.highlight.SnacksPickerCursorLine",
@@ -5546,7 +5465,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:460",
+		Source:     "nvim/lua/plugins/colorscheme.lua:438",
 	},
 	{
 		ConsumerID: "nvim.highlight.SnacksPickerCursorLine.surface",
@@ -5555,7 +5474,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:460",
+		Source:     "nvim/lua/plugins/colorscheme.lua:438",
 	},
 	{
 		ConsumerID: "nvim.highlight.SnacksPickerListCursorLine",
@@ -5564,7 +5483,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:457",
+		Source:     "nvim/lua/plugins/colorscheme.lua:435",
 	},
 	{
 		ConsumerID: "nvim.highlight.SnacksPickerListCursorLine.surface",
@@ -5573,7 +5492,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:457",
+		Source:     "nvim/lua/plugins/colorscheme.lua:435",
 	},
 	{
 		ConsumerID: "nvim.highlight.SnacksPickerMatch",
@@ -5591,7 +5510,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:458",
+		Source:     "nvim/lua/plugins/colorscheme.lua:436",
 	},
 	{
 		ConsumerID: "nvim.highlight.SnacksPickerSelection.surface",
@@ -5600,7 +5519,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:458",
+		Source:     "nvim/lua/plugins/colorscheme.lua:436",
 	},
 	{
 		ConsumerID: "nvim.highlight.Special",
@@ -5618,7 +5537,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:368",
+		Source:     "nvim/lua/plugins/colorscheme.lua:346",
 	},
 	{
 		ConsumerID: "nvim.highlight.Statement",
@@ -5663,7 +5582,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:437",
+		Source:     "nvim/lua/plugins/colorscheme.lua:415",
 	},
 	{
 		ConsumerID: "nvim.highlight.TabLineSel",
@@ -5672,7 +5591,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:438",
+		Source:     "nvim/lua/plugins/colorscheme.lua:416",
 	},
 	{
 		ConsumerID: "nvim.highlight.TermCursor.surface",
@@ -5748,105 +5667,6 @@ var generatedPairs = []PairSpec{
 		Source:     "nvim/lua/plugins/colorscheme.lua:235",
 	},
 	{
-		ConsumerID: "nvim.highlight.TroubleCode",
-		Foreground: "foregrounds.subdued",
-		Background: AmbientBackground(),
-		Class:      "report-only",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:356",
-	},
-	{
-		ConsumerID: "nvim.highlight.TroubleCount",
-		Foreground: "semantic.error",
-		Background: AmbientBackground(),
-		Class:      "report-only",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:360",
-	},
-	{
-		ConsumerID: "nvim.highlight.TroubleError",
-		Foreground: "semantic.error",
-		Background: AmbientBackground(),
-		Class:      "report-only",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:361",
-	},
-	{
-		ConsumerID: "nvim.highlight.TroubleFile",
-		Foreground: "teals.bright",
-		Background: AmbientBackground(),
-		Class:      "report-only",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:358",
-	},
-	{
-		ConsumerID: "nvim.highlight.TroubleFoldIcon",
-		Foreground: "teals.border",
-		Background: AmbientBackground(),
-		Class:      "report-only",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:359",
-	},
-	{
-		ConsumerID: "nvim.highlight.TroubleHint",
-		Foreground: "semantic.hint",
-		Background: AmbientBackground(),
-		Class:      "report-only",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:363",
-	},
-	{
-		ConsumerID: "nvim.highlight.TroubleInformation",
-		Foreground: "semantic.info",
-		Background: AmbientBackground(),
-		Class:      "report-only",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:364",
-	},
-	{
-		ConsumerID: "nvim.highlight.TroubleLocation",
-		Foreground: "foregrounds.subdued",
-		Background: AmbientBackground(),
-		Class:      "report-only",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:357",
-	},
-	{
-		ConsumerID: "nvim.highlight.TroubleSource",
-		Foreground: "foregrounds.subdued",
-		Background: AmbientBackground(),
-		Class:      "report-only",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:355",
-	},
-	{
-		ConsumerID: "nvim.highlight.TroubleText",
-		Foreground: "foregrounds.main",
-		Background: AmbientBackground(),
-		Class:      "report-only",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:354",
-	},
-	{
-		ConsumerID: "nvim.highlight.TroubleWarning",
-		Foreground: "semantic.warning",
-		Background: AmbientBackground(),
-		Class:      "report-only",
-		Profiles:   []RenderProfile{"truecolor"},
-		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:362",
-	},
-	{
 		ConsumerID: "nvim.highlight.Type",
 		Foreground: "semantic.type",
 		Background: AmbientBackground(),
@@ -5907,7 +5727,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:304",
+		Source:     "nvim/lua/plugins/colorscheme.lua:296",
 	},
 	{
 		ConsumerID: "nvim.highlight.WhichKeyBorder",
@@ -5916,7 +5736,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:309",
+		Source:     "nvim/lua/plugins/colorscheme.lua:301",
 	},
 	{
 		ConsumerID: "nvim.highlight.WhichKeyDesc",
@@ -5925,7 +5745,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:306",
+		Source:     "nvim/lua/plugins/colorscheme.lua:298",
 	},
 	{
 		ConsumerID: "nvim.highlight.WhichKeyGroup",
@@ -5934,7 +5754,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:305",
+		Source:     "nvim/lua/plugins/colorscheme.lua:297",
 	},
 	{
 		ConsumerID: "nvim.highlight.WhichKeySeparator",
@@ -5943,7 +5763,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:307",
+		Source:     "nvim/lua/plugins/colorscheme.lua:299",
 	},
 	{
 		ConsumerID: "nvim.highlight.WhichKeyValue",
@@ -5952,7 +5772,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:310",
+		Source:     "nvim/lua/plugins/colorscheme.lua:302",
 	},
 	{
 		ConsumerID: "nvim.highlight.Whitespace",
@@ -5961,7 +5781,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:369",
+		Source:     "nvim/lua/plugins/colorscheme.lua:347",
 	},
 	{
 		ConsumerID: "nvim.highlight.WildMenu",
@@ -5970,7 +5790,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:374",
+		Source:     "nvim/lua/plugins/colorscheme.lua:352",
 	},
 	{
 		ConsumerID: "nvim.highlight.WildMenu.surface",
@@ -5979,7 +5799,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "nvim/lua/plugins/colorscheme.lua:374",
+		Source:     "nvim/lua/plugins/colorscheme.lua:352",
 	},
 	{
 		ConsumerID: "nvim.highlight.WinBar",
@@ -5988,7 +5808,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:376",
+		Source:     "nvim/lua/plugins/colorscheme.lua:354",
 	},
 	{
 		ConsumerID: "nvim.highlight.WinBarNC",
@@ -5997,7 +5817,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:377",
+		Source:     "nvim/lua/plugins/colorscheme.lua:355",
 	},
 	{
 		ConsumerID: "nvim.highlight.lCursor",
@@ -6771,7 +6591,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:407",
+		Source:     "nvim/lua/plugins/colorscheme.lua:385",
 	},
 	{
 		ConsumerID: "nvim.terminal.color1",
@@ -6780,7 +6600,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:408",
+		Source:     "nvim/lua/plugins/colorscheme.lua:386",
 	},
 	{
 		ConsumerID: "nvim.terminal.color10",
@@ -6789,7 +6609,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:417",
+		Source:     "nvim/lua/plugins/colorscheme.lua:395",
 	},
 	{
 		ConsumerID: "nvim.terminal.color11",
@@ -6798,7 +6618,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:418",
+		Source:     "nvim/lua/plugins/colorscheme.lua:396",
 	},
 	{
 		ConsumerID: "nvim.terminal.color12",
@@ -6807,7 +6627,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:419",
+		Source:     "nvim/lua/plugins/colorscheme.lua:397",
 	},
 	{
 		ConsumerID: "nvim.terminal.color13",
@@ -6816,7 +6636,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:420",
+		Source:     "nvim/lua/plugins/colorscheme.lua:398",
 	},
 	{
 		ConsumerID: "nvim.terminal.color14",
@@ -6825,7 +6645,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:421",
+		Source:     "nvim/lua/plugins/colorscheme.lua:399",
 	},
 	{
 		ConsumerID: "nvim.terminal.color15",
@@ -6834,7 +6654,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:422",
+		Source:     "nvim/lua/plugins/colorscheme.lua:400",
 	},
 	{
 		ConsumerID: "nvim.terminal.color2",
@@ -6843,7 +6663,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:409",
+		Source:     "nvim/lua/plugins/colorscheme.lua:387",
 	},
 	{
 		ConsumerID: "nvim.terminal.color3",
@@ -6852,7 +6672,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:410",
+		Source:     "nvim/lua/plugins/colorscheme.lua:388",
 	},
 	{
 		ConsumerID: "nvim.terminal.color4",
@@ -6861,7 +6681,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:411",
+		Source:     "nvim/lua/plugins/colorscheme.lua:389",
 	},
 	{
 		ConsumerID: "nvim.terminal.color5",
@@ -6870,7 +6690,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:412",
+		Source:     "nvim/lua/plugins/colorscheme.lua:390",
 	},
 	{
 		ConsumerID: "nvim.terminal.color6",
@@ -6879,7 +6699,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:413",
+		Source:     "nvim/lua/plugins/colorscheme.lua:391",
 	},
 	{
 		ConsumerID: "nvim.terminal.color7",
@@ -6888,7 +6708,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:414",
+		Source:     "nvim/lua/plugins/colorscheme.lua:392",
 	},
 	{
 		ConsumerID: "nvim.terminal.color8",
@@ -6897,7 +6717,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:415",
+		Source:     "nvim/lua/plugins/colorscheme.lua:393",
 	},
 	{
 		ConsumerID: "nvim.terminal.color9",
@@ -6906,7 +6726,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/colorscheme.lua:416",
+		Source:     "nvim/lua/plugins/colorscheme.lua:394",
 	},
 	{
 		ConsumerID: "statusline.busy.background",

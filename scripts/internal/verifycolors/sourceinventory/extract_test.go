@@ -321,8 +321,6 @@ func TestErrorGroupsUseCanonicalToken(t *testing.T) {
 		"nvim.highlight.NotifyERRORBorder",
 		"nvim.highlight.NotifyERRORIcon",
 		"nvim.highlight.NotifyERRORTitle",
-		"nvim.highlight.TroubleCount",
-		"nvim.highlight.TroubleError",
 		"nvim.highlight.NeotestFailed",
 		"nvim.highlight.ScrollbarError",
 		"nvim.scrollbar.error",
@@ -330,8 +328,8 @@ func TestErrorGroupsUseCanonicalToken(t *testing.T) {
 		"nvim.bufferline.error_visible",
 		"nvim.bufferline.error_selected",
 	}
-	if len(expected) != 18 {
-		t.Fatalf("error consumer count = %d, want 18", len(expected))
+	if len(expected) != 16 {
+		t.Fatalf("error consumer count = %d, want 16", len(expected))
 	}
 	pairs := pairMap(result.Pairs)
 	for _, consumerID := range expected {
@@ -421,8 +419,6 @@ func TestDiagnosticFamiliesUseCanonicalTokens(t *testing.T) {
 			"nvim.highlight.NotifyERRORBorder",
 			"nvim.highlight.NotifyERRORIcon",
 			"nvim.highlight.NotifyERRORTitle",
-			"nvim.highlight.TroubleCount",
-			"nvim.highlight.TroubleError",
 			"nvim.bufferline.error",
 			"nvim.bufferline.error_visible",
 			"nvim.bufferline.error_selected",
@@ -432,7 +428,6 @@ func TestDiagnosticFamiliesUseCanonicalTokens(t *testing.T) {
 			"nvim.highlight.NotifyWARNBorder",
 			"nvim.highlight.NotifyWARNIcon",
 			"nvim.highlight.NotifyWARNTitle",
-			"nvim.highlight.TroubleWarning",
 			"nvim.bufferline.warning",
 			"nvim.bufferline.warning_visible",
 			"nvim.bufferline.warning_selected",
@@ -442,14 +437,12 @@ func TestDiagnosticFamiliesUseCanonicalTokens(t *testing.T) {
 			"nvim.highlight.NotifyINFOBorder",
 			"nvim.highlight.NotifyINFOIcon",
 			"nvim.highlight.NotifyINFOTitle",
-			"nvim.highlight.TroubleInformation",
 			"nvim.bufferline.info",
 			"nvim.bufferline.info_visible",
 			"nvim.bufferline.info_selected",
 		},
 		"semantic.hint": {
 			"nvim.highlight.RenderMarkdownHint",
-			"nvim.highlight.TroubleHint",
 			"nvim.bufferline.hint",
 			"nvim.bufferline.hint_visible",
 			"nvim.bufferline.hint_selected",
@@ -462,8 +455,8 @@ func TestDiagnosticFamiliesUseCanonicalTokens(t *testing.T) {
 			severityConsumerCount++
 		}
 	}
-	if severityConsumerCount != 30 {
-		t.Fatalf("severity consumer count = %d, want 30", severityConsumerCount)
+	if severityConsumerCount != 25 {
+		t.Fatalf("severity consumer count = %d, want 25", severityConsumerCount)
 	}
 }
 
@@ -580,17 +573,15 @@ func TestUIAccentRolesAreSeparated(t *testing.T) {
 	}
 	pairs := pairMap(result.Pairs)
 
-	for _, consumerID := range []string{"nvim.highlight.Substitute", "nvim.highlight.FlashLabel"} {
-		assertPair(
-			t,
-			pairs,
-			consumerID,
-			"core.background",
-			"ui.target_bg",
-			false,
-			verifycolors.ClassEnforced,
-		)
-	}
+	assertPair(
+		t,
+		pairs,
+		"nvim.highlight.Substitute",
+		"core.background",
+		"ui.target_bg",
+		false,
+		verifycolors.ClassEnforced,
+	)
 	for _, consumerID := range []string{
 		"nvim.highlight.RenderMarkdownTodo",
 		"nvim.bufferline.close_button_selected",
@@ -632,7 +623,7 @@ func TestGitAndUITargetContrastRatios(t *testing.T) {
 		{"DiffAdd", "git.added", "nvim.diff_add_bg", 6.109},
 		{"DiffChange", "git.changed", "nvim.diff_change_bg", 7.146},
 		{"DiffDelete", "git.deleted", "nvim.diff_delete_bg", 7.618},
-		{"Substitute/FlashLabel", "core.background", "ui.target_bg", 7.265},
+		{"Substitute", "core.background", "ui.target_bg", 7.265},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			ratio, err := colorutil.ContrastRatio(values[test.foreground], values[test.background])

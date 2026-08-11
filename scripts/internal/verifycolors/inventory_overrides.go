@@ -18,10 +18,6 @@ var pairOverrides = map[string]pairOverride{
 		Class:  ClassWaived,
 		Reason: "concealed text is intentionally dimmed",
 	},
-	"nvim.highlight.FlashBackdrop": {
-		Class:  ClassWaived,
-		Reason: "Flash backdrop is intentionally dimmed to emphasize the active match",
-	},
 	"nvim.highlight.LazyDimmed": {
 		Class:  ClassWaived,
 		Reason: "Lazy UI marks this content as intentionally dimmed",
