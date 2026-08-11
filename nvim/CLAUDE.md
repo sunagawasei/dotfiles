@@ -17,4 +17,6 @@ LazyVim extraは`lua/config/lazy.lua`の`{ import = "lazyvim.plugins.extras.*" }
 
 ## トラブルシューティング
 
-キーマップ競合確認は`:map`/`:nmap`/`:verbose map`。Neotestの「No tests found」等、テスト実行関連の詳細なトラブルシューティング手順は`../.claude/docs/nvim-troubleshooting.md`参照。
+キーマップ競合確認は`:map`/`:nmap`/`:verbose map`。
+
+同じキーを複数のプラグインspecが`keys`で宣言すると、lazy.nvimは最初に登録されたspecのrhsだけを取り込んだloaderを1個作り、残りは`active[id]`に束ねる。どちらが先かは`pairs()`順に依存して起動ごとに変わるため、**衝突を放置すると起動ごとに動作が変わる**。実マッピングのdescがspec側のdescと違っていたらこれを疑う。
