@@ -52,12 +52,14 @@ if [[ -n "$SESSION_ID" && "$SESSION_ID" =~ ^[0-9a-fA-F-]+$ ]]; then
 
       meta_team=""
       meta_type=""
+      meta_pid=""
       while IFS='=' read -r key value; do
         case "$key" in
           team) meta_team="$value" ;;
           # 新形式: identities=<team>/<name>（team= 行が無い meta への追従）
           identities) [ -z "$meta_team" ] && meta_team="${value%%/*}" ;;
           type) meta_type="$value" ;;
+          pid) meta_pid="$value" ;;
         esac
       done < "$metafile"
       [ "$meta_team" = "$AGMSG_TEAM" ] && [ "$meta_type" = "$bridge_type" ] || continue
@@ -66,11 +68,18 @@ if [[ -n "$SESSION_ID" && "$SESSION_ID" =~ ^[0-9a-fA-F-]+$ ]]; then
       bridge_name=${bridge_name%.meta}
       [ -n "$bridge_name" ] || continue
 
+      # pidfileだけ消えてmetaが残る経路があるためmetaのpid=へfallbackする
       pidfile=${metafile%.meta}.pid
       bridge_pid=""
       [ -r "$pidfile" ] && IFS= read -r bridge_pid < "$pidfile"
-      [[ "$bridge_pid" =~ ^[0-9]+$ ]] || continue
-      kill -0 "$bridge_pid" 2>/dev/null || continue
+      [[ "$bridge_pid" =~ ^[1-9][0-9]*$ ]] || bridge_pid="$meta_pid"
+      [[ "$bridge_pid" =~ ^[1-9][0-9]*$ ]] || continue
+      # sandbox下のEPERMは「生きているがsignal不可」。ESRCHだけをdeadとみなす
+      if ! kill_err=$(export LC_ALL=C; kill -0 "$bridge_pid" 2>&1); then
+        case "$kill_err" in
+          *[Nn]'o such process'*) continue ;;
+        esac
+      fi
 
       CODEX_BRIDGE_PIDS+=("$bridge_pid")
       CODEX_BRIDGE_NAMES+=("$bridge_name")
@@ -193,15 +202,19 @@ for index in "${!CODEX_BRIDGE_PIDS[@]}"; do
     fi
   done <<< "$PROCESS_SNAPSHOT"
 
-  padded_command=" $bridge_command "
-  # bridge実体はtypeで拡張子が違う（codex-bridge.js / claude-code-bridge.sh）
-  [[ "$bridge_command" == *"${bridge_type}-bridge."* ]] || continue
-  # 旧: --team/--name 引数、新: --identity-key base64(team\tname): のどちらかで照合
-  bridge_identity_key=$(printf '%s\t%s' "$AGMSG_TEAM" "$bridge_name" | base64 | tr -d '\r\n' | tr '+/' '-_')
-  if [[ "$padded_command" != *" --identity-key ${bridge_identity_key}: "* ]] &&
-     ! { [[ "$padded_command" == *" --team ${AGMSG_TEAM} "* ]] &&
-         [[ "$padded_command" == *" --name ${bridge_name} "* ]]; }; then
-    continue
+  # ps列挙が対象PIDに届かない環境（sandbox）ではargvを取れない。liveness側でESRCHは
+  # 除外済みなので、ここでdead扱いにすると生きているbridgeを見失う
+  if [ -n "$bridge_command" ]; then
+    padded_command=" $bridge_command "
+    # bridge実体はtypeで拡張子が違う（codex-bridge.js / claude-code-bridge.sh）
+    [[ "$bridge_command" == *"${bridge_type}-bridge."* ]] || continue
+    # 旧: --team/--name 引数、新: --identity-key base64(team\tname): のどちらかで照合
+    bridge_identity_key=$(printf '%s\t%s' "$AGMSG_TEAM" "$bridge_name" | base64 | tr -d '\r\n' | tr '+/' '-_')
+    if [[ "$padded_command" != *" --identity-key ${bridge_identity_key}: "* ]] &&
+       ! { [[ "$padded_command" == *" --team ${AGMSG_TEAM} "* ]] &&
+           [[ "$padded_command" == *" --name ${bridge_name} "* ]]; }; then
+      continue
+    fi
   fi
   [ -r "$logfile" ] || continue
 
