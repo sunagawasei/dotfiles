@@ -1395,6 +1395,10 @@ const markdownPreviewMarkdownTemplate = `/*
   box-sizing: border-box;
   padding: 0;
 }
+/* page.cssの #page-ctn { max-width: 900px } を打ち消す。このCSSはpage.cssより後に読まれる */
+#page-ctn {
+  max-width: none;
+}
 `
 
 const markdownPreviewHighlightTemplate = `/*
