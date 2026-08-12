@@ -1,4 +1,4 @@
-// herdr-title は UserPromptSubmit hook から worker を切り離し、直近の会話から
+// herdr-title は UserPromptSubmit hook から worker を切り離し、セッション全体から
 // herdr の tab と単一 tab workspace のタイトルを生成します。
 package main
 
@@ -20,11 +20,13 @@ import (
 
 const (
 	stateDirName         = "herdr-title"
-	tailReadLimit        = 1 << 20
 	fullReadLimit        = 32 << 20
-	maxHistoryEntries    = 4
+	firstHistoryEntries  = 3
+	baseRecentEntries    = 3
+	maxRecentEntries     = 10
 	maxInputRunes        = 300
 	maxTitleRunes        = 12
+	generationInterval   = 5 * time.Minute
 	lockTimeout          = time.Second
 	herdrCommandTimeout  = 5 * time.Second
 	cursorCommandTimeout = 60 * time.Second
@@ -45,6 +47,15 @@ type workerPayload struct {
 	TabID          string `json:"tab_id"`
 	WorkspaceID    string `json:"workspace_id"`
 	Generation     int64  `json:"generation"`
+	PreviousTitle  string `json:"previous_title"`
+	SkippedCount   int    `json:"skipped_count"`
+}
+
+type tabState struct {
+	Generation    int64  `json:"generation"`
+	Title         string `json:"title"`
+	LastStartedAt int64  `json:"last_started_at"`
+	SkippedCount  int    `json:"skipped_count"`
 }
 
 type cursorRequest struct {
@@ -107,6 +118,7 @@ type application struct {
 	executable    func() (string, error)
 	commands      commandRunner
 	startDetached workerStarter
+	payloadWriter func(workerPayload) (string, error)
 }
 
 func newApplication() *application {
@@ -199,7 +211,7 @@ func (a *application) acquireWorkspaceLock(workspaceID string, timeout time.Dura
 	}
 }
 
-func (a *application) readGenerations(workspaceID string) (map[string]int64, error) {
+func (a *application) readState(workspaceID string) (map[string]tabState, error) {
 	file, err := os.OpenFile(a.generationPath(workspaceID), os.O_CREATE|os.O_RDWR, 0o600)
 	if err != nil {
 		return nil, err
@@ -212,18 +224,42 @@ func (a *application) readGenerations(workspaceID string) (map[string]int64, err
 	if err != nil {
 		return nil, err
 	}
-	generations := make(map[string]int64)
+	state := make(map[string]tabState)
 	if len(bytes.TrimSpace(data)) == 0 {
-		return generations, nil
+		return state, nil
 	}
-	if err := json.Unmarshal(data, &generations); err != nil {
-		return nil, err
+	var rawEntries map[string]json.RawMessage
+	if json.Unmarshal(data, &rawEntries) != nil {
+		return state, nil
 	}
-	return generations, nil
+	now := a.now().UnixNano()
+	for tabID, raw := range rawEntries {
+		if entry, ok := parseStateEntry(raw, now); ok {
+			state[tabID] = entry
+		}
+	}
+	return state, nil
 }
 
-func (a *application) writeGenerations(workspaceID string, generations map[string]int64) error {
-	data, err := json.Marshal(generations)
+func parseStateEntry(raw json.RawMessage, now int64) (tabState, bool) {
+	var legacyGeneration int64
+	if json.Unmarshal(raw, &legacyGeneration) == nil {
+		if legacyGeneration < 1 {
+			return tabState{}, false
+		}
+		return tabState{Generation: legacyGeneration}, true
+	}
+
+	var entry tabState
+	if json.Unmarshal(raw, &entry) != nil || entry.Generation < 1 ||
+		entry.LastStartedAt < 0 || entry.LastStartedAt > now || entry.SkippedCount < 0 {
+		return tabState{}, false
+	}
+	return entry, true
+}
+
+func (a *application) writeState(workspaceID string, state map[string]tabState) error {
+	data, err := json.Marshal(state)
 	if err != nil {
 		return err
 	}
@@ -247,28 +283,6 @@ func (a *application) writeGenerations(workspaceID string, generations map[strin
 	return file.Sync()
 }
 
-func (a *application) reserveGeneration(workspaceID, tabID string) (int64, error) {
-	lock, err := a.acquireWorkspaceLock(workspaceID, lockTimeout)
-	if err != nil {
-		return 0, err
-	}
-	defer lock.release()
-
-	generations, err := a.readGenerations(workspaceID)
-	if err != nil {
-		return 0, err
-	}
-	next := generations[tabID] + 1
-	if now := a.now().UnixNano(); now > next {
-		next = now
-	}
-	generations[tabID] = next
-	if err := a.writeGenerations(workspaceID, generations); err != nil {
-		return 0, err
-	}
-	return next, nil
-}
-
 func (a *application) runHook(reader io.Reader, tabID, workspaceID string) error {
 	var input hookInput
 	if err := json.NewDecoder(reader).Decode(&input); err != nil {
@@ -278,15 +292,31 @@ func (a *application) runHook(reader io.Reader, tabID, workspaceID string) error
 		return nil
 	}
 
-	generation, err := a.reserveGeneration(workspaceID, tabID)
+	lock, err := a.acquireWorkspaceLock(workspaceID, lockTimeout)
 	if err != nil {
 		return err
 	}
+	defer lock.release()
+
+	state, err := a.readState(workspaceID)
+	if err != nil {
+		return err
+	}
+	entry := state[tabID]
+	now := a.now().UnixNano()
+	if withinGenerationInterval(entry.LastStartedAt, now) {
+		entry.SkippedCount++
+		state[tabID] = entry
+		return a.writeState(workspaceID, state)
+	}
+
+	generation := nextGeneration(entry, now)
 	payload := workerPayload{
 		Prompt: input.Prompt, TranscriptPath: input.TranscriptPath,
 		TabID: tabID, WorkspaceID: workspaceID, Generation: generation,
+		PreviousTitle: entry.Title, SkippedCount: entry.SkippedCount,
 	}
-	payloadPath, err := a.writePayload(payload)
+	payloadPath, err := a.createPayload(payload)
 	if err != nil {
 		return err
 	}
@@ -299,7 +329,39 @@ func (a *application) runHook(reader io.Reader, tabID, workspaceID string) error
 		os.Remove(payloadPath)
 		return err
 	}
+
+	entry.Generation = generation
+	entry.LastStartedAt = now
+	entry.SkippedCount = 0
+	state[tabID] = entry
+	if err := a.writeState(workspaceID, state); err != nil {
+		_ = os.Remove(payloadPath)
+		return err
+	}
 	return nil
+}
+
+func nextGeneration(entry tabState, now int64) int64 {
+	next := entry.Generation + 1
+	if now > next {
+		return now
+	}
+	return next
+}
+
+func withinGenerationInterval(lastStartedAt, now int64) bool {
+	if lastStartedAt == 0 {
+		return false
+	}
+	elapsed := now - lastStartedAt
+	return elapsed >= 0 && elapsed < generationInterval.Nanoseconds()
+}
+
+func (a *application) createPayload(payload workerPayload) (string, error) {
+	if a.payloadWriter != nil {
+		return a.payloadWriter(payload)
+	}
+	return a.writePayload(payload)
 }
 
 func (a *application) writePayload(payload workerPayload) (string, error) {
@@ -351,6 +413,9 @@ func (a *application) runWorker(payloadPath string) error {
 	a.cleanupStaleFiles()
 	title := a.generateTitle(payload)
 	if title == "" {
+		if payload.PreviousTitle != "" {
+			return nil
+		}
 		title = sanitizeTitle(extractConversationTitle(payload.TranscriptPath))
 	}
 	if title == "" {
@@ -378,7 +443,7 @@ func (a *application) cleanupStaleFiles() {
 }
 
 func (a *application) generateTitle(payload workerPayload) string {
-	inputs := buildTitleInputs(payload.TranscriptPath, payload.Prompt)
+	inputs := buildTitleInputs(payload.TranscriptPath, payload.Prompt, payload.SkippedCount)
 	if len(inputs) == 0 {
 		return ""
 	}
@@ -400,7 +465,7 @@ func (a *application) generateTitle(payload workerPayload) string {
 	ctx, cancel := context.WithTimeout(context.Background(), cursorCommandTimeout)
 	err = a.commands.GenerateTitle(ctx, cursorRequest{
 		Cwd: workspaceDir, Env: filteredEnvironment(a.environ()), Output: output,
-		Prompt: titlePrompt(inputs),
+		Prompt: titlePrompt(inputs, payload.PreviousTitle),
 	})
 	cancel()
 	closeErr := output.Close()
@@ -426,9 +491,14 @@ func filteredEnvironment(environment []string) []string {
 	return result
 }
 
-func titlePrompt(inputs []string) string {
-	return "以下の直近のユーザー発話から、会話内容を表すタイトルを1つ作成してください。" +
-		"日本語、12文字以内の名詞句とし、句読点、引用符、記号を含めず、ラベルだけを出力してください。\n\n" +
+func titlePrompt(inputs []string, previousTitle string) string {
+	prompt := "以下の発話は時系列順で、前半がセッション開始時、後半が直近です。" +
+		"これらから、このセッション全体で取り組んでいる作業を表すタイトルを1つ作成してください。"
+	if previousTitle != "" {
+		prompt += "\n現在のタイトルは「" + previousTitle + "」です。" +
+			"現在のタイトルが今もセッションの主題を表しているなら、そのまま出力してかまいません。"
+	}
+	return prompt + "\n日本語、12文字以内の名詞句とし、句読点、引用符、記号を含めず、ラベルだけを出力してください。\n\n" +
 		strings.Join(inputs, "\n")
 }
 
@@ -440,9 +510,10 @@ func truncateRunes(text string, limit int) string {
 	return text
 }
 
-func buildTitleInputs(transcriptPath, currentPrompt string) []string {
+func buildTitleInputs(transcriptPath, currentPrompt string, skippedCount int) []string {
 	entries := readTranscriptEntries(transcriptPath)
-	history := extractUserMessages(entries, currentPrompt, maxHistoryEntries)
+	history := extractUserMessages(entries, currentPrompt)
+	history = selectHistoryEdges(history, firstHistoryEntries, recentHistoryEntries(skippedCount))
 	inputs := make([]string, 0, len(history)+1)
 	for _, item := range history {
 		if item = truncateRunes(strings.TrimSpace(item), maxInputRunes); item != "" {
@@ -455,6 +526,36 @@ func buildTitleInputs(transcriptPath, currentPrompt string) []string {
 	return inputs
 }
 
+func recentHistoryEntries(skippedCount int) int {
+	recent := baseRecentEntries + skippedCount
+	if recent > maxRecentEntries {
+		return maxRecentEntries
+	}
+	return recent
+}
+
+func selectHistoryEdges(messages []string, firstCount, recentCount int) []string {
+	selected := make([]bool, len(messages))
+	for index := 0; index < len(messages) && index < firstCount; index++ {
+		selected[index] = true
+	}
+	start := len(messages) - recentCount
+	if start < 0 {
+		start = 0
+	}
+	for index := start; index < len(messages); index++ {
+		selected[index] = true
+	}
+
+	result := make([]string, 0, len(messages))
+	for index, message := range messages {
+		if selected[index] {
+			result = append(result, message)
+		}
+	}
+	return result
+}
+
 type transcriptEntry struct {
 	Type        string          `json:"type"`
 	Message     json.RawMessage `json:"message"`
@@ -464,16 +565,12 @@ type transcriptEntry struct {
 	IsSynthetic bool            `json:"isSynthetic"`
 	Meta        bool            `json:"meta"`
 	Synthetic   bool            `json:"synthetic"`
+	IsSidechain bool            `json:"isSidechain"`
 }
 
 func readTranscriptEntries(path string) []transcriptEntry {
-	data, partial := readTranscriptRange(path, tailReadLimit)
-	entries := parseTranscriptEntries(data, partial)
-	if len(entries) == 0 {
-		data, partial = readTranscriptRange(path, fullReadLimit)
-		entries = parseTranscriptEntries(data, partial)
-	}
-	return entries
+	data, partial := readTranscriptRange(path, fullReadLimit)
+	return parseTranscriptEntries(data, partial)
 }
 
 func readTranscriptRange(path string, limit int64) ([]byte, bool) {
@@ -487,9 +584,19 @@ func readTranscriptRange(path string, limit int64) ([]byte, bool) {
 		return nil, false
 	}
 	start := info.Size() - limit
-	partial := start > 0
 	if start < 0 {
 		start = 0
+	}
+	partial := false
+	if start > 0 {
+		if _, err := file.Seek(start-1, io.SeekStart); err != nil {
+			return nil, false
+		}
+		previous := []byte{0}
+		if _, err := io.ReadFull(file, previous); err != nil {
+			return nil, false
+		}
+		partial = previous[0] != '\n'
 	}
 	if _, err := file.Seek(start, io.SeekStart); err != nil {
 		return nil, false
@@ -517,22 +624,23 @@ func parseTranscriptEntries(data []byte, partialFirstLine bool) []transcriptEntr
 	return entries
 }
 
-func extractUserMessages(entries []transcriptEntry, currentPrompt string, limit int) []string {
-	result := make([]string, 0, limit)
-	for index := len(entries) - 1; index >= 0 && len(result) < limit; index-- {
-		entry := entries[index]
-		if entry.Type != "user" || entry.IsMeta || entry.IsSynthetic || entry.Meta || entry.Synthetic {
+func extractUserMessages(entries []transcriptEntry, currentPrompt string) []string {
+	result := make([]string, 0, len(entries))
+	for _, entry := range entries {
+		if entry.Type != "user" || entry.IsMeta || entry.IsSynthetic || entry.Meta || entry.Synthetic || entry.IsSidechain {
 			continue
 		}
 		message := userMessageText(entry.Message)
 		message = strings.TrimSpace(systemReminderPattern.ReplaceAllString(message, ""))
-		if message == "" || message == currentPrompt {
+		if message == "" {
 			continue
 		}
 		result = append(result, message)
 	}
-	for left, right := 0, len(result)-1; left < right; left, right = left+1, right-1 {
-		result[left], result[right] = result[right], result[left]
+	for index := len(result) - 1; index >= 0; index-- {
+		if result[index] == currentPrompt {
+			return append(result[:index], result[index+1:]...)
+		}
 	}
 	return result
 }
@@ -694,13 +802,19 @@ func (a *application) applyTitle(payload workerPayload, title string) error {
 	}
 	defer lock.release()
 
-	generations, err := a.readGenerations(payload.WorkspaceID)
-	if err != nil || generations[payload.TabID] != payload.Generation {
+	state, err := a.readState(payload.WorkspaceID)
+	entry := state[payload.TabID]
+	if err != nil || entry.Generation != payload.Generation {
 		return err
 	}
 	if payload.TabID != "" {
 		if _, err := a.runHerdr("tab", "rename", payload.TabID, title); err != nil {
 			return nil
+		}
+		entry.Title = title
+		state[payload.TabID] = entry
+		if err := a.writeState(payload.WorkspaceID, state); err != nil {
+			return err
 		}
 	}
 	if payload.WorkspaceID == "" {
@@ -723,8 +837,14 @@ func (a *application) applyTitle(payload workerPayload, title string) error {
 	if len(workspaceTabs) != 1 || (payload.TabID != "" && workspaceTabs[0].TabID != payload.TabID) {
 		return nil
 	}
-	if _, err := a.runHerdr("workspace", "rename", payload.WorkspaceID, title); err != nil {
-		_, _ = a.runHerdr("workspace", "rename", payload.WorkspaceID, title)
+	_, renameErr := a.runHerdr("workspace", "rename", payload.WorkspaceID, title)
+	if renameErr != nil {
+		_, renameErr = a.runHerdr("workspace", "rename", payload.WorkspaceID, title)
+	}
+	if renameErr == nil && payload.TabID == "" {
+		entry.Title = title
+		state[payload.TabID] = entry
+		return a.writeState(payload.WorkspaceID, state)
 	}
 	return nil
 }
