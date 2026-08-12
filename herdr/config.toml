@@ -33,12 +33,20 @@ delay_seconds = 5
 [ui]
 agent_panel_sort = "spaces"
 
-# spaces一覧: 1行目=状態dot+workspace名(hookがセッションタイトルをrename)、
+# spaces一覧: 1行目=状態dot+workspace名(herdr-title hookがcursor-agent生成タイトルをrename)、
 # 2行目=$dir(hookがreport-metadataで報告)+branch+ahead/behind
 [ui.sidebar.spaces]
 rows = [
   ["state_icon", "workspace"],
   ["$dir", "branch", "git_status"],
+]
+
+# 既定rowsは[state_icon, workspace, tab]だが、workspace名とtab名に同じタイトルが入るため
+# tabトークンを外す。複数tab運用へ移るとtabの識別情報が消えるので、その時は戻す
+[ui.sidebar.agents]
+rows = [
+  ["state_icon", "workspace"],
+  ["agent"],
 ]
 
 [keys]
