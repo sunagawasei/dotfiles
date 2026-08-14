@@ -1,8 +1,9 @@
 # Local override of remote claude manifest 2026.08.13.1
 # 追加: external_busy_marker (statuslineのbusyマーカーでworking表示)
-# 追加: permission系blockedルールの970/969/968複製 (external_busy_marker 960に負けないため)
+# 追加: permission系blockedルールの970/969複製 (external_busy_marker 960に負けないため)
+# legacy_no_prompt_blocker は複製しない (地の文で誤発火しlive_prompt_box 950の保護を外すため)
 id = "claude"
-version = "2026.08.14.1"
+version = "2026.08.14.2"
 min_engine_version = 2
 updated_at = "2026-08-14T00:00:00Z"
 aliases = ["claude-code"]
@@ -111,26 +112,6 @@ all = [
     { line_regex = ['(?i)^\s*2\.\s*no\b'] },
     { line_regex = ['(?i)^\s*3\.\s*no\b'] },
   ] },
-]
-
-[[rules]]
-id = "legacy_no_prompt_blocker_boost"
-state = "blocked"
-priority = 968
-region = "whole_recent"
-any = [
-  { contains = ["do you want to"], any = [{ contains = ["yes"] }, { contains = ["❯"] }] },
-  { contains = ["would you like to"], any = [{ contains = ["yes"] }, { contains = ["❯"] }] },
-  { contains = ["waiting for permission"] },
-  { contains = ["do you want to allow this connection?"] },
-  { contains = ["tab to amend"] },
-  { contains = ["ctrl+e to explain"] },
-  { contains = ["do you want to proceed?", "esc to cancel"] },
-  { contains = ["review your answers"] },
-  { contains = ["skip interview and plan immediately"] },
-]
-not = [
-  { regex = ['(?m)^\s*❯\s*$'] },
 ]
 
 [[rules]]
