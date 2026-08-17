@@ -106,6 +106,7 @@ return {
     -- ファイル・コンテキスト管理
     { "<leader>ab", "<cmd>ClaudeCodeAdd %<cr>", desc = "Add current buffer to Claude" },
     { "<leader>as", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send selection to Claude" },
+    { "<leader>as", "<cmd>.ClaudeCodeSend<cr>", mode = "n", desc = "Send current line to Claude" },
     {
       "<leader>at",
       "<cmd>ClaudeCodeTreeAdd<cr>",
