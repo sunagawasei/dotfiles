@@ -42,6 +42,8 @@ codex-research(コードベース内調査・データ収集)・codex-impl(実�
 - 怠ると依頼は未読のままDBに滞留し、返信が永遠に来ない(実例: 2026-07-05)
 - **`ensure-codex.sh`/`spawn.sh`は単独のsimple commandで呼ぶ**: セッションUUIDは`CLAUDE_CODE_SESSION_ID=<リテラルUUID>`と直書きする(`$SID`等のシェル変数にするとsandbox除外が効かず、codexが自分のseatbeltを張れずspawnが失敗する)。`spawn.sh`は`--team`を明示すればenv前置き自体が不要。for/`;`/`&&`/パイプ/コマンド置換の中に入れない(マッチが壊れる、または併記した別コマンドまでsandbox外へ出る)。機構は`references/troubleshooting.md`項10
 - **送信後は既読(read_at)を確認してから「依頼中」と報告する**: `sqlite3 ~/.agents/skills/agmsg/db/messages.db "SELECT id, read_at IS NOT NULL FROM messages WHERE team='<team>' AND from_agent='claude' ORDER BY id DESC LIMIT 1;"` をスポット実行。send 自体は bridge が死んでいても成功するため、既読確認なしの「依頼済み」報告は空振りに気づけない(実例: 2026-07-11、bridge死亡で未読滞留のままユーザーに指摘された)。数分待って未読なら despawn --force → ensure-codex で bridge を入れ替える(未読は自動再処理される)
+- **ただし既読フラグは生存判定にも沈黙判定にも使えない**(2026-08-14実証)。**codex系workerはturn実行中に新規メッセージを読まない**ため、作業中のworker宛は未読が溜まって当然で、未読の滞留は沈黙の証拠にならない。逆に既読でも送信先を間違えていれば返信は来ない(下記)。**workerが無言のときの一次診断は bridge ログ(`run/<type>-bridge.<team>.<name>.log`)の mtime と最終行**にする。10分以上更新が無ければ異常を疑う
+- **worker側の送信先typoは silent fail する**(2026-08-14実例): worker が `send.sh` に渡す team 名を1文字間違えても(`s-...-4ae4-...` → `s-...-4ae-...`)、存在しない team として DB に記録されるだけでエラーにならず、**worker本人は「送信成功」と認識したまま宛先に届かない**。**worker が無言のときは team を絞らず `from_agent` だけで横断検索する**: `sqlite3 ... "SELECT id, team, from_agent, to_agent, created_at FROM messages WHERE from_agent='<name>' ORDER BY id DESC LIMIT 10;"`。別teamに送っていれば typo が即座に見える。訂正は正しい team 名を明示して再送を指示する
 
 ```bash
 # codex-researchへの調査依頼(ブロックしない、prefixは [research])
@@ -51,7 +53,11 @@ codex-research(コードベース内調査・データ収集)・codex-impl(実�
 ~/.agents/skills/agmsg/scripts/send.sh $TEAM $AGENT codex "[review] <git diff or file:line> / 意図: ... / 前回指摘→対応: ..."
 ```
 
-diff同梱など長文・quoting事故が起きやすいパケットは、本文を4番目の引数で渡さず、ファイルに組み立ててから `send.sh <team> <from> <to> --stdin < packet.txt` で標準入力から渡す(実例: 2026-07-05のcodexレビュー依頼)。
+**本文は例外なくファイルに組み立てて `send.sh <team> <from> <to> --stdin < packet.txt` で渡す。4番目の引数に直接書かない。** 上記のコード例は書式を示すためのもので、実運用では使わない。
+
+理由: 本文にバッククォートが1つでもあるとコマンド置換が発火し、**その部分が欠落したまま送信が成功する**(送信側はエラーを受け取らない)。短文でも起きる。実例(2026-08-14、1セッション内で3回): (1) `` `npx vitest run` `` を含む1行が消えた (2) `` `['summary', 'progress-bar']` `` とNodeバージョン警告文が消えた (3) ヒアドキュメント内の `` `npx` `` が実際に実行されBashが2分でタイムアウトした。「短いから直接引数で」と判断した回にだけ起きている。
+
+欠落は受信側から見ると自然な文章に見えるため気づかれない。送信後に `sqlite3 ... "SELECT body FROM messages WHERE ... ORDER BY id DESC LIMIT 1;"` で自分の送信文面をgrepし、重要な文字列(コマンド名・設定値・file:line)が残っているか確認する習慣を持つとよい。
 
 `$TEAM`/`$AGENT`はこのセッションの既知の値(agmsgスキルのIdentityで確認済みのもの)を使う。
 
@@ -146,7 +152,7 @@ codex系ワーカーへ送るパケットの書式、Claude側の検品・収束
 
 - 宛先codex-impl・prefix `[implement]`。**自己完結**が絶対条件(codex-implはパケット本文とrepoしか見ない): プラン全文(ユーザー承認済み。背景1段落・要件・制約・完了条件)/ 検証手順(実行すべきテスト・ビルドコマンド)/ 報告書式([done]: 変更ファイルのfile:line一覧・プランとの対応・実行した検証と結果・逸脱と残課題)/ 質問プロトコル(迷ったら実装を止めて`send.sh <team> codex-impl claude "..."`で質問: 何を実装中か・選択肢・推奨案)
 - DO NOTを明記: git commit/push禁止・対象repo外の変更禁止・無断の設計変更禁止・未検証の完了報告禁止
-- 長文は`--stdin`で送る(quoting事故防止)
+- 長短を問わず`--stdin`で送る(quoting事故防止。上記「2. 非同期でパケットを送る」参照)
 - turn timeoutは3600秒(config済み)。「区切りの良いところまで進めて途中経過を報告してよい」と書くと長タスクの往復が安定する
 - networkはoff(implementer=codex-implは遮断。reviewer系(codex-research/codex-deep/codex)はnetwork全開だが、実装役は外部送信リスクを断つため遮断のまま、2026-07-14〜)。外部情報が要る作業は、必要な情報をパケットに同梱するか、事前にsonnet班またはcodex-research(network全開)で収集して渡す(web_searchはcodexサーバー側実行のためnetwork offでも使えるが、込み入った外部情報収集はsonnet/codex-researchに任せる)
 - **委譲先で叩けない外部CLI/APIは、実出力サンプルをパケットに同梱する**(2026-08-12、herdr-titleで確立): network off のworkerは実サーバー・実CLIに到達できないため、レスポンス形式を推測で実装しfakeでテストすると**テストは全passするのに実機で動かない**。実例: `herdr tab list`のtabsは`result.tabs`の下にあるが、workerはトップレベル`{"tabs":[...]}`と推測。有効なJSONなので`json.Unmarshal`はエラーなく成功し、空スライスが返って当該機能(workspace rename)が黙って無効化された。検収でメインが実物と突き合わせるまで気づけない。**起案者が実際にコマンドを叩き、生の出力をそのままパケットに貼る**。併せて「認識できない形式はエラーにする(errなし空を返さない)」ことをテスト要件に含める
