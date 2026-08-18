@@ -40,9 +40,42 @@ herdr pane send-keys "$PANE" Enter   # 長文はペースト扱いで pane run �
 
 `identity-key` は `printf '%s\t%s' "$team" "$name" | base64 | tr -d '\r\n' | tr '+/' '-_'` に終端 `:` を付けた値（`scripts/lib/identity-key.sh` の `agmsg_identity_key`）。修正は両ゲートを**新旧どちらでも通る形**にする（`identities` の `/` 前を team として読む / identity-key と旧引数を OR で照合）。
 
+### ゲート3のargv形式は第3世代になった（2026-08-18 追記）
+
+codex bridge の argv 形式がさらに変わり、ゲート3が現行 bridge を必ず取り落としていた。ゲート1（`identities=`）は変更なしで通る。
+
+| 世代 | argv | 出どころ |
+|---|---|---|
+| 旧1 | `--team <team> --name <name>` | — |
+| 旧2 | `--identity-key <base64(team\tname)>:` | — |
+| **現行 codex** | **`--pair <team><TAB><name>`** | `codex-bridge-launcher.sh:352` が組み 480 行で渡す |
+| 現行 claude-code | `--team`+`--name`（旧1のまま） | `claude-code/_spawn.sh:1039` |
+
+`--identity-key` は launcher から渡らなくなり、`codex-bridge.js:162` のコメントも「opaque dup-detection marker (spawn-side only)」に変わっている。3世代すべてを OR で照合する形に直した。
+
+- **macOS の `ps` は argv 中の TAB を literal `\011`（4文字）に変換して出す**。`--pair` は team と name を TAB で連結するため、生の TAB だけで照合すると形式に追従しても一致しない。両表記を見る。`od -c` で実測して確認する
+- **検証は偽argvプロセスで自己完結できる**: `bash -c 'exec -a "$1" sleep 120' _ "node /x/codex-bridge.js --pair <team><TAB><name>"` でダミーを立て、ダミーteamの meta/pid/log を run/ に置いて `statusline.sh` に JSON を流し込む。busy / idle / 旧形式 / 別teamの4ケースを回せる。稼働中のteamには触らずに済む
 - **廃止の痕跡は変更した側のコメントに残る**: `ensure-codex.sh` に「rather than the retired `--team/--name` signature」と明記されていた。消費側が壊れたら、生産側スクリプトの最近のコメントを grep するのが早い
 - **sandbox 内では `kill -0` と `ps` が `operation not permitted` で失敗するため、ゲート2・3を自分で検証できない**。statusline 本体は sandbox 外で走るので、ゲート1の修正を確認したら実際の表示で見てもらう
 - 反映は `statusLine.refreshInterval`（設定されていれば数秒）で自動的に起こる
+
+### statusline を疑う前に bridge の生死を確認する（2026-08-18）
+
+「roleチームが動いているのにアイコンが出ない」は、**bridge が実際に死んでいる**ケースがある。formatドリフトを追う前にこれを潰す。
+
+```bash
+RUN=~/.agents/skills/agmsg/run
+ls "$RUN"/*.meta 2>/dev/null | wc -l          # 0なら生きているbridgeは1本も無い
+pgrep -f codex-bridge                          # 空なら同上
+sqlite3 -readonly ~/.agents/skills/agmsg/db/messages.db "SELECT * FROM locks;"  # 空ならdispatcherも居ない
+tail -5 "$RUN"/team-config-audit.log           # reset.sh/join.sh の実行履歴（誰が何を落としたか）
+```
+
+`team-config-audit.log` が犯人特定の一次資料。実例では新セッションの join の3秒前に、**別teamの全roleへ `reset.sh` が連続実行**されていた。`session-start.sh` の orphan headless GC（`session-start.sh:294-350`）が `run/spawn.s-*__*` を全走査し、`agmsg_instance_alive <uuid>` が false の team を `despawn.sh --force` するため。
+
+- **`agmsg_instance_alive` の判定材料は `run/cc-instance.<pid>` のみ**。owner の claude プロセスが生きていてもこのファイルが無ければ「死んだ」と判定され、稼働中のteamが丸ごと畳まれる
+- role登録が消えると `codex-bridge-launcher.sh` の poll ループが「2 tick連続で identities が空」を検出して bridge pid を kill し `exit 0` する。**pid/meta ごと消えるので、事後には「最初から起動していなかった」のと区別できない**。判別材料は bridge ログの末尾が `armed` や `started turn` のまま途切れていること
+- `proj.<pid>.project` はあるのに `cc-instance.<pid>` が無い、という非対称は `session-start.sh:284-288` の lifecycle lock 取得失敗パス（`exit 0` して publication に到達しない）と符合する。ただし実例ではこの経路と SessionEnd の `cleanup_session_artifacts`（生存確認なしで内容一致だけで削除）のどちらが削ったかは未確定
 
 ## claude を一時 spawn して設定・権限挙動を実測検証する（実践知見 2026-07-22）
 

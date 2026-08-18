@@ -208,9 +208,15 @@ for index in "${!CODEX_BRIDGE_PIDS[@]}"; do
     padded_command=" $bridge_command "
     # bridge実体はtypeで拡張子が違う（codex-bridge.js / claude-code-bridge.sh）
     [[ "$bridge_command" == *"${bridge_type}-bridge."* ]] || continue
-    # 旧: --team/--name 引数、新: --identity-key base64(team\tname): のどちらかで照合
+    # agmsg側のargv形式は3世代あり、どれで起動されたbridgeも取り落とさない
+    # 現行codex: --pair team<TAB>name / claude-code: --team+--name / 旧: --identity-key
     bridge_identity_key=$(printf '%s\t%s' "$AGMSG_TEAM" "$bridge_name" | base64 | tr -d '\r\n' | tr '+/' '-_')
-    if [[ "$padded_command" != *" --identity-key ${bridge_identity_key}: "* ]] &&
+    # macOSのpsはargv中のTABを literal \011 に変換して出すため両表記を見る
+    bridge_pair_raw=" --pair ${AGMSG_TEAM}"$'\t'"${bridge_name} "
+    bridge_pair_esc=" --pair ${AGMSG_TEAM}\\011${bridge_name} "
+    if [[ "$padded_command" != *"$bridge_pair_raw"* ]] &&
+       [[ "$padded_command" != *"$bridge_pair_esc"* ]] &&
+       [[ "$padded_command" != *" --identity-key ${bridge_identity_key}: "* ]] &&
        ! { [[ "$padded_command" == *" --team ${AGMSG_TEAM} "* ]] &&
            [[ "$padded_command" == *" --name ${bridge_name} "* ]]; }; then
       continue
