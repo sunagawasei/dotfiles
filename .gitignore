@@ -179,6 +179,10 @@ claude/rules/*
 !claude/rules/golang.md
 !claude/rules/shell-security.md
 !claude/rules/claude-structure.md
+# agmsg の headless worker role file の正本。
+# ~/.agents/skills/agmsg/db/spawn-roles はここへの symlink（agmsg 側は db/ を gitignore するため）
+!claude/agmsg-roles/
+!claude/agmsg-roles/*.md
 !claude/hooks/
 claude/hooks/*
 !claude/hooks/go.mod
