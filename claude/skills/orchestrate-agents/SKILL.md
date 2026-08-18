@@ -141,7 +141,7 @@ codex系ワーカーへ送るパケットの書式、Claude側の検品・収束
 - codex-research は**調査専任**(reviewer layout: repoはread、書けるのはagmsg配下のみ=実質read-only。**networkは全開**=外部web・ghを自力取得可、2026-07-14〜)。返すのは file:line 一覧や構造化データだけ。**パッチは作らせない**＝実装は codex-impl が書く。role file は `db/spawn-roles/codex-research.codex.md`(gh はGET/検索系のみ可・issue/PR作成禁止・URL/番号の捏造禁止)
 - agmsg: 宛先 codex-research・prefix `[research]`。自己完結パケット = GOAL / CONSTRAINTS / SCOPE / SCHEMA(期待する出力の構造・項目を明示) / 検品観点(Claude が何を確認するか) / DO NOT write files・DO NOT パッチ生成
 - **codex-researchも外部Web/GitHub/gh取得が可能**(2026-07-14〜、networkが全開になったため): 従来の「コードベース内=codex-research/外部Web=sonnet」という棲み分けは前提でなくなり、codex-research単独でも外部調査を進められる
-- **sonnet班との併走は維持**(2026-07-12ユーザー指示): 中〜大の調査テーマは、コードベース内をcodex-research・外部Web/GitHub/ライブラリ仕様をsonnetサブエージェントに同時に投げて両面から掘り、Claudeが突き合わせて検品する(別課金プール併用による裏取り・速度両立が目的)
+- **sonnet併走は高リスク時のみ**(2026-08-18ユーザー判断。2026-07-12の常時併走指示を条件付きへ絞った): 既定はcodex-research単独。グローバル`CLAUDE.md`の5条件(秘密情報/外部仕様と実装の両依存/source矛盾・version不確定/security・課金・migrationの採否を決める/codex-researchが到達不能)のいずれかに該当するときだけ、同じ問いをsonnetサブエージェントへ独立に投げて突き合わせる。判定はdispatch前に行い、該当番号と根拠を`[task:<id>]`へ記録する。**先行するcodex-researchの結論をsonnetへblindに渡さない**(裏取りにならなくなる)。高リスクなのにsonnetが使えないときは黙って単独へ縮退せず、証拠不足をユーザーへ示して継続可否を確認する
 - Claude は返答を**検品**する。SCHEMA を満たさない・情報が不足している場合は「◯件中◯件で△△が不足」のように対象を具体的に指摘して**差し戻す**。検品を通った調査結果/データを起点にプラン・[implement]パケットを組む
 - **「バグ/異常を発見した」系の断定は、再現条件まで確認してから採用・ユーザーに伝達する**（2026-07-27実例）: 調査役が挙げた不具合は、どのビルド起点・どの実行環境で観測したものかを確認し、こちら側で**実運用と同じ条件で再現するか**を確かめる。実例: codex-research が `kustomize build <base>/api` 単体で「namePrefix が subjects[].name に追従しない既知バグ」と報告したが、親 overlay からビルドすると正しく解決され（namespace 一致が nameReference の条件）、実機も正常だった。単体ビルドのアーティファクトを2回ユーザーに「既知バグ」として伝えてしまった。SCHEMA 充足の検品（形式）とは別に、**断定の再現性の検品（内容）**が必要
 - **インクリメンタル調査**: 大きい調査は一括で丸投げにせず、**1トピック/1論理単位ずつ**調査させ、各単位を検品(SCHEMA充足・過不足の即チェック)してから次の単位へ進める。巨大な調査のやり直し(トークン浪費)を防ぎ、早期に軌道修正する
@@ -164,7 +164,7 @@ codex系ワーカーへ送るパケットの書式、Claude側の検品・収束
 codexへのレビューには3つの独立した位置づけがある。**「いつ・必須かどうか」の判断規約はグローバル`CLAUDE.md`を正本とし、このファイルはパケット書式・収束条件・実務ノウハウの正本**とする:
 
 1. **プラン査読(常時必須)**: 実装・検証計画をユーザーに提示する前に必ずcodex査読を通す(`claude/CLAUDE.md`「対話・確認の規約」の常時ゲート)。指摘の採否は「指摘→対応」対応表で示してから承認を求める
-2. **実装後のdiff査読(オンデマンド)**: 大規模diffの第二意見等、明示的に必要と判断した時だけ使う。対象は**実質的な実装のみ**(1行修正など些細な編集は対象外)。標準フローの検収はメインが単独で担うため、このレビューは必須ではない(`claude/CLAUDE.md`「エージェント役割分担」)
+2. **実装後のdiff査読(author-aware)**: 対象は**実質的な実装のみ**(1行修正など些細な編集は対象外)。**送り先はauthorのvendorで決まる** — Anthropic author(メイン/sonnetが書いたdiff)はcodexへ、**OpenAI author(codex-impl等)は別agentのClaude Sonnet 5へ**送る(2026-08-18〜)。同一vendorが自系列の成果を一次査読する配置を作らないための規則で、`codex-deep`は同じOpenAIなので能力深度の補助にはなるがvendor多様性の代替にはならない。Sonnet reviewerはfindingsとrequired testsを返すだけで、test実行・commit判断はしない。標準フローの検収はメインが単独で担うため、このレビュー自体は必須ではない(`claude/CLAUDE.md`「エージェント役割分担」)
 3. **検収(メイン単独・必須)**: codex-implの[done]報告はメインが`git status`/`git diff`/`git log`を読んで単独で検収する(上記「codex-impl自走実装ワークフロー」5.)。codex査読はこの検収の代替にならない
 
 以下はプラン査読・オンデマンドdiff査読どちらにも使う共通のパケット書式:
@@ -190,13 +190,15 @@ codex査読は、プラン査読(ユーザー提示前の常時ゲート)と大�
 
 ## 使用例
 
-### 例1: codex-researchにコードベース内調査を頼みつつ、別タスクを並行で進める
+### 例1: codex-researchに調査を頼みつつ、別タスクを並行で進める
 
 ```
-チームで協業して: codex-researchに既存コード内のXの使用箇所・依存関係の棚卸しを頼みながら、私は外部ライブラリYのAPI仕様をsonnetサブエージェントに調査させる
+チームで協業して: codex-researchに既存コード内のXの使用箇所・依存関係と、外部ライブラリYのAPI仕様の調査を頼みながら、私は別系統の作業を進める
 ```
 
-codex-researchへ`[research]`パケット(コードベース内スコープ)を非同期送信 → 待たずに自分は外部ライブラリ調査(sonnetサブエージェント+WebFetch/WebSearchまたはcontext7 MCP)を進める → codex-researchの返信がMonitor通知で届いたら検品(不足があれば差し戻し) → 検品を通ったらプランを固めてcodex-implへ`[implement]`を送り、[done]をメインが検収する。
+codex-researchへ`[research]`パケットを非同期送信(コード内・外部Webとも既定はここ1本) → 待たずに自分は別の独立作業を進める → 返信がMonitor通知で届いたら検品(不足があれば差し戻し) → 検品を通ったらプランを固めてcodex-implへ`[implement]`を送り、[done]をメインが検収する。
+
+外部調査で高リスク5条件のいずれかに該当する場合だけ、同じ問いをsonnetサブエージェント(WebFetch/WebSearchまたはcontext7 MCP)へ**独立に**投げて突き合わせる。該当番号と根拠を`[task:<id>]`へ記録する。
 
 ### 例2: codex-researchの調査完了後、codex-implへ実装を委譲しつつ次の独立タスクを走らせる
 

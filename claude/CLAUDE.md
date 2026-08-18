@@ -43,17 +43,24 @@
 - **メイン(本セッション)**: 壁打ち→プラン化・[implement]パケット設計・実装中の質問への即応・検収(要件適合+diff査読+git log)・実行・git・最終統合。権限=write(適用・commitの唯一の主体)
 - **codex-impl**: コード挙動(logic)を変える編集全般の自走。単一ファイル数行でも挙動が変わればここ。権限=対象repoへwrite、commit/push禁止
 - **codex-research**: コードベース内・外部ソース読解の横断調査。file:line一覧・構造化データを返す。パッチは作らない。権限=read-only運用
-- **codex(review役)**: プラン査読(ユーザー提示前の常時ゲート)+オンデマンドdiff査読。権限=read-only
-- **sonnetサブエージェント**: 挙動を変えない機械的編集・棚卸し・データ収集・外部Web/GitHub調査の実働。権限=Agent tool経由
+- **codex(review役)**: プラン査読(ユーザー提示前の常時ゲート)+diff査読(Anthropic authorの成果が対象)。権限=read-only
+- **Sonnet reviewer**: OpenAI author(codex-impl等)の実質的diffの一次査読。findingsとrequired testsを返すだけで、test実行・commit判断はしない。権限=Agent tool経由
+- **sonnetサブエージェント**: 挙動を変えない極小の機械的編集・棚卸し・高リスク時の外部Web/GitHub裏取り。権限=Agent tool経由
 
 振り分け基準(判定軸=「diffだけで正しさが自明か」):
 
 - logicを変える編集 → codex-impl。プランのユーザー承認後に[implement]送信。関連する小編集は1パケットに束ねて儀式コストを償却。1行/1シンボル級の孤立編集はdiff方針一文の軽量承認でよい(それでも往復が高くつく真に原子的な編集はメイン/sonnet直)
-- 機械的編集(config値・typo・整形・全置換リネーム) → sonnet既定。1行級の軽微な操作や、メモリへのノート等diffが自明な極小自己完結タスクはメイン直接(subagent往復のstallを避ける)
-- 小さな調査(1-2ファイル/明確なgrep) → Exploreサブエージェント or メイン直接。メイン直接は既報告事実のスポット検証(1-2コマンド)と単発の事実確認まで。未調査対象への新規調査は数コマンドでも委譲する
-- コードを読んで挙動を突き止める調査 → codex-research(対象が外部リポジトリのソースでも同様)
-- 外部情報収集(Web/ドキュメント/ライブラリ仕様/GitHub APIメタデータ/パッケージ選定) → sonnet(WebFetch/WebSearch標準装備)またはメイン(gh CLI)。ソースコード読解はここに含めない
-- 中〜大の調査テーマはcodex-research(コード内)+sonnet(外部)を同時に投げて併走させ、メインが突き合わせて検品する
+- 機械的編集(config値・typo・整形・全置換リネーム) → **束ねられるならcodex-implへ`mechanical-only`パケットで送る**(Codexプール)。1行級でdiffだけから正しさが自明な原子的編集だけメイン直接。編集量が少ないことは例外理由にしない。作業中に挙動判断・設計選択・非局所な不変条件が現れたらlogic変更へ再分類する
+- 調査は規模でなく目的で分ける。**未知の挙動を突き止める調査 → codex-research**(対象が外部リポジトリのソースでも同様)。メイン直接は既報告citationの1-2コマンドによるスポット確認まで
+- **外部Web/GitHub調査 → 既定はcodex-research単独**(network全開)。下記5条件のいずれかに該当するときだけsonnetを併走させる(2026-08-18ユーザー判断で、2026-07-12の常時併走指示を条件付きへ絞った)
+  1. 認証・認可・秘密情報・金銭・データ削除・不可逆な外部操作を扱う
+  2. 外部仕様とrepo内実装の両方が正しさを左右し、一方だけでは結論が閉じない
+  3. authoritative sourceが矛盾する / 対象versionを一意に確定できない / 最初の調査が再現条件を欠く
+  4. 調査結果がsecurity boundary・データ喪失・課金・広範囲migrationの採否を直接決める
+  5. codex-researchが権限制約・source到達不能を報告し、別経路でしか証拠を取れない
+- 併走の判定は**dispatch前**に行い、該当番号と根拠を`[task:<id>]`へ記録する(roleチームではmanagerが判定)。調査中に条件が成立したらその時点でsonnetを追加し、先行結論をblindに渡さず同じ問いを独立に調べさせる。高リスクなのにsonnetが使えないときは黙って単独へ縮退せず、証拠不足をユーザーへ示して継続可否を確認する
+- 委譲中はcodex-researchの返却まで同じ対象領域のRead/Grep/Globを控える。安全・権限・緊急性のいずれかで例外的に読む場合はその理由を記録する。返却後の再検証は引用箇所と1-2コマンドに限る
+- workerのraw dumpをメインやユーザーへ転載せず、`decision / evidence(file:lineまたはURL) / unknown / next action`だけを受け取る。`[research]`は1トピック=1パケットに分ける
 - 複数サブタスク並行・多段の大型案件はroleチーム(manager統括)をサジェストする。判定シグナル・cost veto・起動手順は`claude/skills/orchestrate-agents/SKILL.md`のroleチームモード節が正本。起動もタスク投入も毎回ユーザー承認([task:id]単位)
 - codex系への送信は非同期send既定(返信はagmsg Monitorの自動再開で受ける)。送信前のensure-codex・パケット書式・Q&Aループ・検収ゲートの詳細: `claude/skills/orchestrate-agents/SKILL.md`
 - メイン自身がsonnetで動くセッションでは、sonnet委譲のコスト裁定が消えるため編集・調査もメインが直接行う(codex系への委譲は課金プールが別なので不変)
@@ -62,4 +69,6 @@
 
 - sonnetの「編集した」報告は鵜呑みにせず、grep/存在確認でスポットチェックする
 - 重要な判断はサブエージェントに委譲せず、メインが直接行う
-- codex-implの検収手順とcodex査読の使いどころは`claude/skills/orchestrate-agents/SKILL.md`
+- **diff査読はauthor-awareに振る**: OpenAI author(codex-impl等)の実質的diffは別agentのClaude Sonnet 5へ、Anthropic author(メイン/sonnet)のdiffはcodexへ送る。同一vendorが自分の系列の成果を一次査読する配置を作らない。査読は検収の代替ではなく、メインが実物(`git status`/`git diff`/`git log`/test)を確認して完了とcommitを決める
+- 多様性の判定はタスク開始時とゲート通過時の2回、author agent/model/vendor/pool/primary reviewer/riskを記録して照合する。**課金プールの違いはvendor多様性に数えない**(Cursor経由のClaudeはAnthropic、同経由のGPTはOpenAI)。`auto`指定は実効vendorが確定できないため査読ゲートで使わない
+- codex-implの検収手順とcodex査読の使いどころは`claude/skills/orchestrate-agents/SKILL.md`。配分の根拠データは`.claude/docs/cred-split/`
