@@ -98,3 +98,7 @@ command = 'case "$HERDR_ACTIVE_PANE_CWD" in */containerregistry-deploy*|*/.confi
 description = "gh-boardをpopupで開く（GitHub Projects v2）"
 width = "90%"
 height = "90%"
+
+[experimental]
+# mdrollの大見出しはherdrペインではDECDHLでなく画像ラスタライズ経路になる。
+kitty_graphics = true
