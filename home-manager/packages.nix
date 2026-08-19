@@ -47,15 +47,30 @@ let
 
   # mdrollのラスタライズ見出し(herdrペインで使う経路)はfc-matchでしかCJKフォントを
   # 引かないため、fc-matchが無いと日本語が豆腐になる。macOSのフォント置き場を教える。
+  # familyはweztermのfont_with_fallbackに揃える。AssetsV2はOsakaの実体(on-demand asset)。
+  # 日本語ruleを先に置くのは、後続ruleの置換先family名に依存させないため。
   mdrollFontsConf = pkgs.writeText "mdroll-fonts.conf" ''
     <?xml version="1.0"?>
     <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
     <fontconfig>
       <dir>/System/Library/Fonts</dir>
       <dir>/System/Library/Fonts/Supplemental</dir>
+      <dir>/System/Library/AssetsV2/com_apple_MobileAsset_Font8</dir>
       <dir>/Library/Fonts</dir>
       <dir>~/Library/Fonts</dir>
       <cachedir>~/.cache/fontconfig</cachedir>
+      <match target="pattern">
+        <test name="family"><string>sans</string></test>
+        <test name="lang" compare="contains"><string>ja</string></test>
+        <edit name="family" mode="assign" binding="strong">
+          <string>Osaka</string>
+          <string>Hiragino Kaku Gothic ProN</string>
+        </edit>
+      </match>
+      <match target="pattern">
+        <test name="family"><string>sans</string></test>
+        <edit name="family" mode="assign" binding="strong"><string>GeistMono NF</string></edit>
+      </match>
     </fontconfig>
   '';
 
