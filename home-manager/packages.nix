@@ -45,6 +45,20 @@ let
     vendorHash = "sha256-WWtAt0+W/ewLNuNgrqrgho5emntw3rZL9JTTbNo4GsI=";
   };
 
+  # mdrollのラスタライズ見出し(herdrペインで使う経路)はfc-matchでしかCJKフォントを
+  # 引かないため、fc-matchが無いと日本語が豆腐になる。macOSのフォント置き場を教える。
+  mdrollFontsConf = pkgs.writeText "mdroll-fonts.conf" ''
+    <?xml version="1.0"?>
+    <!DOCTYPE fontconfig SYSTEM "fonts.dtd">
+    <fontconfig>
+      <dir>/System/Library/Fonts</dir>
+      <dir>/System/Library/Fonts/Supplemental</dir>
+      <dir>/Library/Fonts</dir>
+      <dir>~/Library/Fonts</dir>
+      <cachedir>~/.cache/fontconfig</cachedir>
+    </fontconfig>
+  '';
+
   # cargoHash経路のvendorスクリプト(python-requests)はcrates.ioのAPIポリシーで403に
   # なるため、nixのfetchurlで各crateを取るcargoLock経路を使う。
   # lockは上流からコピー（`"${src}/Cargo.lock"`はsystem evalごとにsrc取得を強制する）。
@@ -58,6 +72,13 @@ let
       hash = "sha256-f3rXbLi9WFRid/BG2PcNF0JPWOE3scWhz3Smmohzy5w=";
     };
     cargoLock.lockFile = ./mdroll-Cargo.lock;
+    nativeBuildInputs = [ pkgs.makeWrapper ];
+    # --setにするのは、将来グローバルなfontconfig設定が入っても同じ不具合を再発させないため。
+    postInstall = ''
+      wrapProgram $out/bin/mdroll \
+        --set FONTCONFIG_FILE ${mdrollFontsConf} \
+        --prefix PATH : ${pkgs.fontconfig.bin}/bin
+    '';
   };
 
   # gh-boardはnixpkgs未収録のためソースビルドする。crates.ioがpython-requestsのUAを403で
