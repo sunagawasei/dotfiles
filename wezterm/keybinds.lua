@@ -47,7 +47,7 @@ local helper_spawn = {
 		-- プロセス名や「herdrでない」判定では別TUIのpaneを誤爆しうるため識別は必ずこのマーカーで行う
 		'printf "\\033]1337;SetUserVar=herdr_helper=MQ==\\007"; cd "$HOME/.config/herdr-helper"'
 			.. " && exec /usr/bin/env -u HERDR_PANE_ID -u HERDR_WORKSPACE_ID -u HERDR_TAB_ID"
-			.. ' HERDR_ENV=1 "$HOME/.local/bin/cursor-agent" --model composer-2.5 --force'
+			.. ' HERDR_ENV=1 "/etc/profiles/per-user/$USER/bin/cursor-agent" --model composer-2.5 --force'
 			.. ' "herdr-english-reply skill を focused追従モードで開始して待機して"',
 	},
 }

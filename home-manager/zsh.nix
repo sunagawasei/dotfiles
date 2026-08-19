@@ -41,6 +41,7 @@ in
       ssh = ''TERM=xterm-256color \ssh'';
       # 適用はdarwin-apply(packages.nix)に一本化。hostnameもflake refもそちらが持つ
       nupdate = "nix flake update --flake ~/.config && darwin-apply";
+      nupdate-cursor = "nix flake update nixpkgs-cursor --flake ~/.config && darwin-apply";
     };
 
     # Zinit の zsh-completions が compinit より前にロードされるため

@@ -227,6 +227,22 @@
         "type": "github"
       }
     },
+    "nixpkgs-cursor": {
+      "locked": {
+        "lastModified": 1787111413,
+        "narHash": "sha256-sFosWtq21eHGJRnTc/hvf4M1obRgLEUMNm/IzllkHMA=",
+        "owner": "nixos",
+        "repo": "nixpkgs",
+        "rev": "afe3d8ac4395617bdcdac9f188ac8717a062e014",
+        "type": "github"
+      },
+      "original": {
+        "owner": "nixos",
+        "ref": "nixpkgs-unstable",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "nixpkgs-lib": {
       "locked": {
         "lastModified": 1769909678,
@@ -282,7 +298,8 @@
         "hunk": "hunk",
         "nix-darwin": "nix-darwin",
         "nix-homebrew": "nix-homebrew",
-        "nixpkgs": "nixpkgs_3"
+        "nixpkgs": "nixpkgs_3",
+        "nixpkgs-cursor": "nixpkgs-cursor"
       }
     },
     "rust-overlay": {

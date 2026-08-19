@@ -27,7 +27,6 @@
     pkg:
     builtins.elem (lib.getName pkg) [
       "terraform"
-      "cursor-cli"
     ];
 
   # ── NSGlobalDomain（外観・入力・単位） ─────────────────────────────
