@@ -45,6 +45,21 @@ let
     vendorHash = "sha256-WWtAt0+W/ewLNuNgrqrgho5emntw3rZL9JTTbNo4GsI=";
   };
 
+  # cargoHash経路のvendorスクリプト(python-requests)はcrates.ioのAPIポリシーで403に
+  # なるため、nixのfetchurlで各crateを取るcargoLock経路を使う。
+  # lockは上流からコピー（`"${src}/Cargo.lock"`はsystem evalごとにsrc取得を強制する）。
+  mdroll = pkgs.rustPlatform.buildRustPackage rec {
+    pname = "mdroll";
+    version = "0.4.2";
+    src = pkgs.fetchFromGitHub {
+      owner = "tokuhirom";
+      repo = "mdroll";
+      rev = "v${version}";
+      hash = "sha256-f3rXbLi9WFRid/BG2PcNF0JPWOE3scWhz3Smmohzy5w=";
+    };
+    cargoLock.lockFile = ./mdroll-Cargo.lock;
+  };
+
   # gh-boardはnixpkgs未収録のためソースビルドする。crates.ioがpython-requestsのUAを403で
   # 弾くためcargoHash(fetch-cargo-vendor)経路は使えず、fetchurlで取るimportCargoLockを使う。
   ghBoardSchemaCommit = "baf144f319c7705e822de9a26f05d12e1c7c9df4";
@@ -124,6 +139,9 @@ in
 
     # TUI スプレッドシート
     sheets
+
+    # ターミナル Markdown ビューア
+    mdroll
 
     # AIエージェント用ターミナルマルチプレクサ
     herdrPatched
