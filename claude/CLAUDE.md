@@ -46,12 +46,14 @@
 - **codex(review役)**: プラン査読(ユーザー提示前の常時ゲート)+diff査読(Anthropic authorの成果が対象)。権限=read-only
 - **Sonnet reviewer**: OpenAI author(codex-impl等)の実質的diffの一次査読。findingsとrequired testsを返すだけで、test実行・commit判断はしない。権限=Agent tool経由
 - **sonnetサブエージェント**: 挙動を変えない極小の機械的編集・棚卸し・高リスク時の外部Web/GitHub裏取り。権限=Agent tool経由
+- **sparring(Grok4.6壁打ち役)**: 設計の前提を疑わせる相手。実装もパッチも書かない。メインの壁打ちを置き換えるのではなく、**メイン自身の見立てが固まらない/固まりすぎているときの第三者**として使う。権限=read-only(headless cursor worker)。起動は`ensure-headless.sh cursor <project> sparring`(session teamに属すのでSessionEnd後は再実行が必要)。構成の詳細はメモリ`project_shinoyu_roleflow_adoption`
 
 振り分け基準(判定軸=「diffだけで正しさが自明か」):
 
 - logicを変える編集 → codex-impl。プランのユーザー承認後に[implement]送信。関連する小編集は1パケットに束ねて儀式コストを償却。1行/1シンボル級の孤立編集はdiff方針一文の軽量承認でよい(それでも往復が高くつく真に原子的な編集はメイン/sonnet直)
 - 機械的編集(config値・typo・整形・全置換リネーム) → **束ねられるならcodex-implへ`mechanical-only`パケットで送る**(Codexプール)。1行級でdiffだけから正しさが自明な原子的編集だけメイン直接。編集量が少ないことは例外理由にしない。作業中に挙動判断・設計選択・非局所な不変条件が現れたらlogic変更へ再分類する
 - 調査は規模でなく目的で分ける。**未知の挙動を突き止める調査 → codex-research**(対象が外部リポジトリのソースでも同様)。メイン直接は既報告citationの1-2コマンドによるスポット確認まで
+- **設計の前提が疑わしい / 自分の見立てが固まらない or 固まりすぎている → sparring**。プラン化の前段に置く。技術主張の裏どりと査読はcodexの担当で、sparringはその代替にならない(逆も同じ)
 - **外部Web/GitHub調査 → 既定はcodex-research単独**(network全開)。下記5条件のいずれかに該当するときだけsonnetを併走させる(2026-08-18ユーザー判断で、2026-07-12の常時併走指示を条件付きへ絞った)
   1. 認証・認可・秘密情報・金銭・データ削除・不可逆な外部操作を扱う
   2. 外部仕様とrepo内実装の両方が正しさを左右し、一方だけでは結論が閉じない
