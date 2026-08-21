@@ -45,8 +45,8 @@ CODEX_BRIDGE_TYPES=()
 if [[ -n "$SESSION_ID" && "$SESSION_ID" =~ ^[0-9a-fA-F-]+$ ]]; then
   AGMSG_TEAM="s-${SESSION_ID}"
   AGMSG_RUN_DIR=/Users/s23159/.agents/skills/agmsg/run
-  # headless bridgeはtype毎に <type>-bridge.<team>.<name>.* を作る（codex/claude-code）
-  for bridge_type in codex claude-code; do
+  # headless bridgeはtype毎に <type>-bridge.<team>.<name>.* を作る（codex/claude-code/cursor）
+  for bridge_type in codex claude-code cursor; do
     for metafile in "$AGMSG_RUN_DIR"/"$bridge_type"-bridge."$AGMSG_TEAM".*.meta; do
       [ -f "$metafile" ] || continue
 
@@ -92,6 +92,15 @@ fi
 # psは1回だけ走査し、bridgeの実体確認とClaude配下のバックグラウンドタスクに再利用
 BG_BUSY=0
 PROCESS_SNAPSHOT=$(ps -ww -ax -o pid=,ppid=,command= 2>/dev/null) || PROCESS_SNAPSHOT=""
+
+# cursorはlifecycleログを出さないため、turnはbridge配下のcursor-agent実行として観測する。
+# 候補行はbridgeループの外で1回だけ絞る（実測でturn中2行・idle中0行）
+CURSOR_TURN_CANDIDATES=""
+if [[ " ${CODEX_BRIDGE_TYPES[*]} " == *" cursor "* ]]; then
+  CURSOR_TURN_CANDIDATES=$(printf '%s\n' "$PROCESS_SNAPSHOT" |
+    grep -F -- '--output-format stream-json') || CURSOR_TURN_CANDIDATES=""
+fi
+
 PROCESS_STATE=$(printf '%s\n' "$PROCESS_SNAPSHOT" | awk \
   -v self_pid="$$" '
   {
@@ -222,6 +231,30 @@ for index in "${!CODEX_BRIDGE_PIDS[@]}"; do
       continue
     fi
   fi
+
+  # cursorはwakeup/armedを出さないので、turnプロセスの生存そのものをbusyの根拠にする。
+  # psが対象PIDに届かない環境ではcursorだけidleに倒れる（対応範囲外として固定）
+  if [ "$bridge_type" = cursor ]; then
+    cursor_turn_live=0
+    while read -r _ candidate_ppid _; do
+      ancestor=$candidate_ppid
+      for _hop in 1 2 3 4 5 6 7 8; do
+        [ "$ancestor" = "$bridge_pid" ] && { cursor_turn_live=1; break; }
+        [ "$ancestor" -gt 1 ] 2>/dev/null || break
+        next_ancestor=""
+        while read -r scan_pid scan_ppid _; do
+          [ "$scan_pid" = "$ancestor" ] && { next_ancestor=$scan_ppid; break; }
+        done <<< "$PROCESS_SNAPSHOT"
+        [ -n "$next_ancestor" ] || break
+        ancestor=$next_ancestor
+      done
+      [ "$cursor_turn_live" = 1 ] && break
+    done <<< "$CURSOR_TURN_CANDIDATES"
+    [ "$cursor_turn_live" = 1 ] || continue
+    CODEX_BUSY=1
+    break
+  fi
+
   [ -r "$logfile" ] || continue
 
   lifecycle_state=$(tail -n 400 "$logfile" 2>/dev/null | awk \
