@@ -2,12 +2,17 @@
 
 agmsg configのper-workerキー（`spawn.codex_model.<name>` / `spawn.codex_effort.<name>`、codex headless限定）により、ワーカー名がモデル+effortのプリセットになっている。タスク難易度の判定はコードで自動化せず、依頼側（Claude）が適切な名前のワーカーへ送ることで実現する。
 
-| タスク | 宛先ワーカー | モデル/effort |
+| 段 | 宛先ワーカー | モデル/effort |
 |---|---|---|
-| 実質的な機能実装の自走 | codex-impl | gpt-5.6-sol / xhigh（per-workerキー明示）・turn_timeout 3600s・implementer layout（cwd=対象repo・permission profileでrepo書き込み可） |
-| 実装後レビュー（オンデマンド） | codex | gpt-5.6-sol / xhigh（per-workerキー明示） |
-| 調査・軽微な確認・大量列挙 | codex-research | gpt-5.6-sol / xhigh（per-workerキー明示。遅いと感じたら `spawn.codex_effort.codex-research: high` へ下げる） |
-| 大規模・設計横断の節目レビュー | codex-deep（一時spawn→使い捨て） | gpt-5.6-sol / max（configキー設定済み） |
+| 段3・段9(メイン作diff)のプラン/コード査読 | codex | gpt-5.6-sol / xhigh |
+| 段5のサブタスク分割・発注・完了判定 | manager | gpt-5.6-sol / xhigh |
+| 段5の実装(通常) | codex-impl / worker-1 / worker-2 | codex-impl=gpt-5.6-sol / xhigh、worker-1,2=gpt-5.6-luna / high。turn_timeout 3600s・implementer layout(cwd=対象repo・repo書き込み可) |
+| 段5の実装(深掘り・難debug) | hard-worker-1 | gpt-5.6-sol / xhigh・implementer layout |
+| 段6の完了監視 | watcher | gpt-5.6-luna / max |
+| 調査・大量列挙 | codex-research | gpt-5.6-sol / xhigh(遅いと感じたら `spawn.codex_effort.codex-research: high` へ下げる) |
+| 大規模・設計横断の節目レビュー | codex-deep(一時spawn→使い捨て) | gpt-5.6-sol / max |
+
+codex以外のワーカーは別driverなのでこの表の対象外(`fable-review`=claude-code・`fable`/xhigh、`sparring`/`grok-research`=cursor。cursorはmodel pinとlabel完全一致監査が必須)。
 
 codex-deepは常駐させず、必要時にspawnし終わったらdespawnする:
 

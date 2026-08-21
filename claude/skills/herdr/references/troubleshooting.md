@@ -61,7 +61,7 @@ codex bridge の argv 形式がさらに変わり、ゲート3が現行 bridge �
 
 ### statusline を疑う前に bridge の生死を確認する（2026-08-18）
 
-「roleチームが動いているのにアイコンが出ない」は、**bridge が実際に死んでいる**ケースがある。formatドリフトを追う前にこれを潰す。
+「チームのworkerが動いているのにアイコンが出ない」は、**bridge が実際に死んでいる**ケースがある。formatドリフトを追う前にこれを潰す。
 
 ```bash
 RUN=~/.agents/skills/agmsg/run

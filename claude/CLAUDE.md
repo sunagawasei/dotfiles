@@ -36,41 +36,57 @@
 
 ## エージェント役割分担
 
-メイン=起案者(壁打ち・プラン化・検収・実行・安全判断・統括)。実働は下記の各役へ委譲し、メインは指揮・検証・判断に徹する。
+メイン=起案者(壁打ちの発注・プラン化・統合・検収・安全判断・統括)。実働は下記の各役へ委譲し、メインは指揮・検証・判断に徹する。委譲フローは1本だけで、第二の形態は持たない。
 
-モデル指定はalias自動追従を正とし、固定model IDは書かない。メインは`opus[1m]`か`fable`のどちらかで運用する(素の`opus`はこの環境ではOrg default=Opus 4.8に解決されるおそれがあり使わない)。tier序列: fable > opus > sonnet > haiku。alias解決先・優先仕様・採用経緯: `claude/skills/orchestrate-agents/references/delegation-policy.md`
+モデル指定はalias自動追従を正とし、固定model IDは書かない。tier序列: fable > opus > sonnet > haiku。alias解決先・優先仕様: `claude/skills/orchestrate-agents/references/delegation-policy.md`
 
-- **メイン(本セッション)**: 壁打ち→プラン化・[implement]パケット設計・実装中の質問への即応・検収(要件適合+diff査読+git log)・実行・git・最終統合。権限=write(適用・commitの唯一の主体)
-- **codex-impl**: コード挙動(logic)を変える編集全般の自走。単一ファイル数行でも挙動が変わればここ。権限=対象repoへwrite、commit/push禁止
+- **メイン(本セッション)**: 壁打ちの発注・プラン化・統合・検収(要件適合+diff査読+git log+test)・git。権限=**writeの承認・統合・commitの唯一の制御主体**
+- **sparring(Grok4.6・headless cursor)**: 壁打ち相手。前提を名指しで疑わせる。実装もパッチも書かない。権限=read-only
+- **fable-review(Fable5・headless claude-code)**: 設計レビュー(段2)と統合後のコード査読+脆弱性4観点(段9)。findings-onlyでrepo不変。権限=reviewer layout(repo read・repo write deny)
+- **manager(GPT Sol・headless codex)**: サブタスク分割・発注・`[watcher-done]`の集計と`[team-ready]`の発行・メインの`[findings-resolved]`を受けての`[team-done]`発行。実装も査読もせず、設計判断は必ずメインへ転送する。権限=read-only(repo write・commit・外部writeすべて禁止)
+- **実装worker(headless codex: codex-impl / worker-1 / worker-2 / hard-worker-1)**: 承認済みsubtaskの**ファイルセットの範囲だけ**repo write可。commit/push禁止。完了報告はwatcher宛
+- **watcher(GPT Luna Max・headless codex)**: 完了監視。**証拠・criteria・fingerprintの完全性のみ**を検査し、正しさ・安全性の承認はしない。権限=read-only(repo write・commit・外部writeすべて禁止)
+- **codex(review役)**: プラン査読(ユーザー提示前の常時ゲート)+Anthropic author(メイン)のdiff査読。権限=read-only
 - **codex-research**: コードベース内・外部ソース読解の横断調査。file:line一覧・構造化データを返す。パッチは作らない。権限=read-only運用
-- **codex(review役)**: プラン査読(ユーザー提示前の常時ゲート)+diff査読(Anthropic authorの成果が対象)。権限=read-only
-- **Sonnet reviewer**: OpenAI author(codex-impl等)の実質的diffの一次査読。findingsとrequired testsを返すだけで、test実行・commit判断はしない。権限=Agent tool経由
-- **sonnetサブエージェント**: 挙動を変えない極小の機械的編集・棚卸し・高リスク時の外部Web/GitHub裏取り。権限=Agent tool経由
-- **sparring(Grok4.6壁打ち役)**: 設計の前提を疑わせる相手。実装もパッチも書かない。メインの壁打ちを置き換えるのではなく、**メイン自身の見立てが固まらない/固まりすぎているときの第三者**として使う。権限=read-only(headless cursor worker)。起動は`ensure-headless.sh cursor <project> sparring`(session teamに属すのでSessionEnd後は再実行が必要)。構成の詳細はメモリ`project_shinoyu_roleflow_adoption`
+- **grok-research(Grok4.6・headless cursor)**: 公開情報とredacted packetに限った第二の調査経路。権限=read-only
 
-振り分け基準(判定軸=「diffだけで正しさが自明か」):
+### フロー(全タスク共通・これ1本)
 
-- logicを変える編集 → codex-impl。プランのユーザー承認後に[implement]送信。関連する小編集は1パケットに束ねて儀式コストを償却。1行/1シンボル級の孤立編集はdiff方針一文の軽量承認でよい(それでも往復が高くつく真に原子的な編集はメイン/sonnet直)
-- 機械的編集(config値・typo・整形・全置換リネーム) → **束ねられるならcodex-implへ`mechanical-only`パケットで送る**(Codexプール)。1行級でdiffだけから正しさが自明な原子的編集だけメイン直接。編集量が少ないことは例外理由にしない。作業中に挙動判断・設計選択・非局所な不変条件が現れたらlogic変更へ再分類する
-- 調査は規模でなく目的で分ける。**未知の挙動を突き止める調査 → codex-research**(対象が外部リポジトリのソースでも同様)。メイン直接は既報告citationの1-2コマンドによるスポット確認まで
-- **設計の前提が疑わしい / 自分の見立てが固まらない or 固まりすぎている → sparring**。プラン化の前段に置く。技術主張の裏どりと査読はcodexの担当で、sparringはその代替にならない(逆も同じ)
-- **外部Web/GitHub調査 → 既定はcodex-research単独**(network全開)。下記5条件のいずれかに該当するときだけsonnetを併走させる(2026-08-18ユーザー判断で、2026-07-12の常時併走指示を条件付きへ絞った)
-  1. 認証・認可・秘密情報・金銭・データ削除・不可逆な外部操作を扱う
-  2. 外部仕様とrepo内実装の両方が正しさを左右し、一方だけでは結論が閉じない
-  3. authoritative sourceが矛盾する / 対象versionを一意に確定できない / 最初の調査が再現条件を欠く
-  4. 調査結果がsecurity boundary・データ喪失・課金・広範囲migrationの採否を直接決める
-  5. codex-researchが権限制約・source到達不能を報告し、別経路でしか証拠を取れない
-- 併走の判定は**dispatch前**に行い、該当番号と根拠を`[task:<id>]`へ記録する(roleチームではmanagerが判定)。調査中に条件が成立したらその時点でsonnetを追加し、先行結論をblindに渡さず同じ問いを独立に調べさせる。高リスクなのにsonnetが使えないときは黙って単独へ縮退せず、証拠不足をユーザーへ示して継続可否を確認する
-- 委譲中はcodex-researchの返却まで同じ対象領域のRead/Grep/Globを控える。安全・権限・緊急性のいずれかで例外的に読む場合はその理由を記録する。返却後の再検証は引用箇所と1-2コマンドに限る
+1. メインが依頼を受け、**安全に最小化した壁打ちpacket**をsparringへ送る。**送信試行が必須、Grok応答成功はsoft dependency**
+2. fable-reviewが設計レビュー。**ユーザー承認の代替にしない**
+3. codex(review役)がプラン査読
+4. **ユーザー承認**。これより前にmanager/worker宛の実装パケットを1件も出さない。承認対象はサブタスク方針を含むプラン全体
+5. managerがサブタスクへ分割し、**発注前に`[scope-check]`で分割一覧(ファイルセット付き)をメインへ出す**。メインが承認済みプランの範囲内と確認して`[scope-ok]`を返したsubtaskだけが発注され、dispatchパケットの`scope-ok:<task-id>/<subtask-id>`トークン(subtask単位)がworkerのrepo write許可の根拠になる(自分のsubtask idと一致するトークンが無ければworkerは書かない)。範囲外はメインが差し戻し、必要ならユーザーへ再承認。watcherへは受入条件と同時にファイルセットと基準fingerprintが渡る
+6. worker → watcher(完全性の検査のみ)。1巡で解決しなければmanagerへescalate
+7. managerが`[team-ready]`を発行 — **非終端**
+8. メインが統合。統合前後のfingerprintを比較し、メインが実質変更したファイル/hunkをAnthropic authorへ再分類する
+9. **脆弱性4観点はfable-review**(authorに依らず、段5〜8を通ったdiffは必ず通す。段1〜11を通らない原子的編集の例外は、資格要件で認証・security boundary・課金・外部write・依存関係を変えないことが担保されるためこのpassの対象外)。**意図一致・正しさの一次査読はauthorで振る** — worker作hunkはfable-review、メイン作hunkはcodex(review役)。混在diffは双方へ送り、段8のauthor再分類マップを両方に渡して各自の担当hunクだけを見せる
+10. findingの戻し先は2経路 — **worker作**はmanagerへ`[team-reopened]`を渡して該当subtaskを再オープン、**メイン作hunk**(findingは`[author:main]`ラベル)はメインが直して段8のfingerprint再計算→段9へ再投入
+11. 段9のfindingが全て解消したら、**メインがmanagerへ`[findings-resolved]`を送る**。managerはこれを受けて初めて`[team-done]`を出す(自発的には出さない) → メインが検収 → ユーザー確認 → メインがcommit。検収失敗・ユーザー差し戻しは段10の該当経路へ戻る。**終端は3つ — メインのcommit / ユーザーの中止 / `[task-aborted]`**(変更不要・実行不能・段取り不備と確定した場合。メインが`[task-abort]`で理由を明記し、managerがsubtask破棄とworker/watcherへの停止通知を済ませて`[task-aborted]`を1通返す。dispatch前・dispatch後・`[team-ready]`後のいつでも出せて、開いているサイクルもこれで閉じる。managerを起動していない段階ならメインが理由を記録して終端する)
+
+完了サイクルは**dispatch(段5の発注、またはreopen時の再発注)で開き**、`[team-done]`・`[team-reopened]`・`[task-aborted]`のいずれか1つで閉じる。`[team-ready]`は境界ではなくサイクル内のマイルストーン。`[team-done]`は1サイクルに最大1回で、差し戻しを挟んだ2回目はそのreopenが開いたサイクルの1回目にあたる。メイン→managerは、初回の`[task:<id>]`パケット、`[scope-check]`への応答`[scope-ok]`、`[team-reopened]`、`[findings-resolved]`、`[task-abort]`、および転送された質問への回答の中継だけ。
+
+**このフローの対象**は設計または実装判断を伴う依頼。**例外**は、挙動・公開契約・認証・security boundary・課金・外部write・依存関係を変えず、変更対象と期待diffが一意で、diff単体の機械検証で正しさが確定する原子的編集のみ(行数は基準にしない)。1つでも満たさなければ段1から通す。subtaskが1本でもmanager+watcherを通す。**例外を通す編集はメインが自分で書き、Anthropic author扱いで段9のcodex(review役)ゲートだけを通す**(manager/watcherは経由しない)。
+
+### 振り分け・安全の基準
+
+- **壁打ちpacketの安全最小化**: secret・credential・個人情報・未公開コード断片を含めない。抽象化して意味のあるpacketが作れない依頼は`sparring-skipped:safety`を記録して外部送信しない
+- **sparringのattemptは最大2回**(初回+respawn 1回)で各attemptに個別の応答期限。どれか成功で`sparring-complete`、全失敗で`sparring-degraded`(最終attempt後に確定)。degraded時はメインが疑う前提・反対案・その帰結・未解決の問いを明示してから段2へ渡す(fable-reviewをsparring成功の代替に数えない)。期限後に届いた返信はstale記録のみで進行中のプランへ自動適用しない。別モデルへの透過fallbackは設定しない
+- **送信前のreadiness照合**: 各nameのregistrationが期待typeでちょうど1件であること。対象はmanager・watcher・使用する全worker・fable-review・codex(review役)・sparring、および実際にdispatchするcodex-research/grok-research。`ensure-headless.sh`はsession team不在でもexit 0のno-opになるため、exit codeだけを準備完了の証拠にしない
+- **調査は目的で分ける**。未知の挙動を突き止める調査 → codex-research(対象が外部リポジトリのソースでも同様)。メイン直接は既報告citationの1-2コマンドによるスポット確認まで
+- **grok-researchの併走**は、公開情報かredacted packetだけで閉じる問いに限る。**認証・認可・秘密情報・金銭・データ削除・不可逆な外部操作**を扱う調査と、**security boundary・データ喪失・課金・広範囲migrationの採否を直接決める**調査はgrokへ出さず、codex-research単独+メインの直接裏取りにする(cursorのread-onlyはcredential denylist型で、project配下の機微設定はdenyされない)
+- **併走の判定はdispatch前**に行い、根拠を`[task:<id>]`へ記録する。先行結論をblindに渡さず同じ問いを独立に調べさせる
+- 委譲中はcodex-researchの返却まで同じ対象領域のRead/Grep/Globを控える。安全・権限・緊急性で例外的に読む場合はその理由を記録する
 - workerのraw dumpをメインやユーザーへ転載せず、`decision / evidence(file:lineまたはURL) / unknown / next action`だけを受け取る。`[research]`は1トピック=1パケットに分ける
-- 複数サブタスク並行・多段の大型案件はroleチーム(manager統括)をサジェストする。判定シグナル・cost veto・起動手順は`claude/skills/orchestrate-agents/SKILL.md`のroleチームモード節が正本。起動もタスク投入も毎回ユーザー承認([task:id]単位)
 - codex系への送信は非同期send既定(返信はagmsg Monitorの自動再開で受ける)。送信前のensure-codex・パケット書式・Q&Aループ・検収ゲートの詳細: `claude/skills/orchestrate-agents/SKILL.md`
-- メイン自身がsonnetで動くセッションでは、sonnet委譲のコスト裁定が消えるため編集・調査もメインが直接行う(codex系への委譲は課金プールが別なので不変)
+- 同一model・同一課金プールへの委譲はコスト裁定が消えるため、往復の価値が無い作業はメインが直接行う(別プール=codex系・cursor系への委譲はこの制約を受けない)
 
-検収・レビュー運用:
+### 検収・レビュー運用
 
-- sonnetの「編集した」報告は鵜呑みにせず、grep/存在確認でスポットチェックする
-- 重要な判断はサブエージェントに委譲せず、メインが直接行う
-- **diff査読はauthor-awareに振る**: OpenAI author(codex-impl等)の実質的diffは別agentのClaude Sonnet 5へ、Anthropic author(メイン/sonnet)のdiffはcodexへ送る。同一vendorが自分の系列の成果を一次査読する配置を作らない。査読は検収の代替ではなく、メインが実物(`git status`/`git diff`/`git log`/test)を確認して完了とcommitを決める
+- **diff査読はauthor-awareに振る(allowlist)**: codex worker(OpenAI)作hunkの一次査読 → fable-review(claude-code・`fable`/xhigh)。メイン(Anthropic)作hunk → codex(review役)。脆弱性4観点はauthorに依らずfable-reviewが担当(原子的編集の例外だけは資格要件により対象外)。混在diffは双方へ再分類マップ付きで送る。同一vendorが自分の系列の成果を一次査読する配置を作らない
 - 多様性の判定はタスク開始時とゲート通過時の2回、author agent/model/vendor/pool/primary reviewer/riskを記録して照合する。**課金プールの違いはvendor多様性に数えない**(Cursor経由のClaudeはAnthropic、同経由のGPTはOpenAI)。`auto`指定は実効vendorが確定できないため査読ゲートで使わない
-- codex-implの検収手順とcodex査読の使いどころは`claude/skills/orchestrate-agents/SKILL.md`。配分の根拠データは`.claude/docs/cred-split/`
+- 査読は検収の代替ではない。メインが実物(`git status`/`git diff`/`git log`/test)を確認して完了とcommitを決める
+- watcherの`[watcher-done]`も査読承認ではない。`[team-done]`のトリガーはメインの`[findings-resolved]`で、managerが自発的に完了を宣言することはない。最終検収はメイン
+- **GitHub Issue・PR・commentの作成/変更は、ユーザーの明示指示があるときだけ**。メインの承認だけでは行わない。既定の台帳はagmsg DBと`[task:<id>]`
+- 重要な判断はサブエージェントに委譲せず、メインが直接行う
+- 検収手順とcodex査読の使いどころは`claude/skills/orchestrate-agents/SKILL.md`。配分の根拠データは`.claude/docs/cred-split/`

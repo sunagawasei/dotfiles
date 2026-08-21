@@ -1,305 +1,205 @@
 ---
 name: orchestrate-agents
-description: codex-research(調査)・codex-impl(自走実装)・codex(オンデマンド査読)への委譲をagmsgの非同期send+Monitor自動再開で回す、Claude+codex系で完結する協業ワークフロー。壁打ち→プラン→[implement]→Q&A→検収の実装委譲フローを含む
+description: 全タスク共通の単一委譲フロー(sparring壁打ち→fable-review設計ゲート→codexプラン査読→ユーザー承認→manager分割→worker実装→watcher完了監視→メイン統合→コード査読→commit)の運用手順。agmsgの非同期send+Monitor自動再開で回す
 ---
 
-# チーム協業ワークフロー
+# 単一委譲フロー
 
-codex-research(コードベース内調査・データ収集)・codex-impl(実質的な機能実装の自走)・codex(オンデマンド査読)への委譲を、`ask --wait`(ブロック待機)ではなく非同期`send`+agmsg Monitorの自動再開で回す。2026-07-12〜、実質的な実装はcodex-implへ委譲し、メインは起案者として質問対応と検収を担う。同日cursorはオーケストレーションから外れた(調査はcodex-researchへ。以後Claude+codex系で完結)。役割分担の全体はグローバルCLAUDE.mdの「エージェント役割分担」。
-
-## 概要
-
-非同期`send`+agmsg Monitor自動再開は、codex系ワーカー(codex-research/codex-impl/codex)への依頼の既定の送信方式(2026-07-05〜、単発でも同じ)。このスキルは、複数の独立したタスクを同時に投げて並行させたい場面のための分解・委譲テンプレートで、CLAUDE.mdの役割分担・パケット書式・検証ゲートは一切変えない。送ったらターンを終え、返信はこのセッションが最初から起動しているagmsg Monitor(SessionStartで自動起動する`watch.sh`、session_teamの`s-<UUID>`宛)が拾って通知し、ターンを自動再開する。
-
-調査役(codex-research)はパッチを作らない([agmsg-demo-fable5-x-constellation](https://github.com/fujibee/agmsg-demo-fable5-x-constellation)のデモのgrok役に相当)。実質的な実装はcodex-implが書き、Claudeはプラン・質問応答・検収を担う(下記「codex-impl自走実装ワークフロー」)。cursorは2026-07-12にオーケストレーションから外した(agmsgのcursor統合自体は機能として残存)。
-
-## 使うタイミング
-
-- ユーザーが「チームで協業して」「並行でやって」など、明示的にこのモードを求めたとき
-- 複数の独立したサブタスク(例: codex-researchへの調査依頼と、それとは別系統の実装・確認作業)を同時に進められるとき
-- 実質的な機能実装の委譲(codex-impl)は標準フロー(ユーザーの明示不要)。本skillの「codex-impl自走実装ワークフロー」に従う
-
-単発で1エージェントに1回聞くだけなら、このスキルの分解テンプレートは不要(送信方式は同じ非同期`send`+Monitor)。`ask --wait`(ブロック待機)は使わない(codexでask往復が機能しない実績があり、cursor離脱で実質廃止)。
+委譲の形態は1本だけ。第二のフロー(旧「直委譲」「roleチームモード」)は持たない。役割分担と権限の正本はグローバル`CLAUDE.md`の「エージェント役割分担」節で、このファイルは**各段の実務手順・パケット書式・診断**の正本。
 
 ## 前提
 
-- このセッションのagmsg Monitor(`watch.sh ... --team s-<このセッションのUUID>`)がSessionStartから常駐している(追加設定不要)。
-- codex系ワーカーは、既存のCLAUDE.md運用と同じくこのセッションのteamに参加済みであること。
-- 宛先workerのbridgeプロセスが稼働していること。遅延spawnは自動では発火しない(下記手順2で確認・起動する)。
-- CLAUDE.mdの役割分担(codex-research=コードベース内調査・データ収集・パッチ不可 / codex-impl=実質的実装の自走・対象repoにwrite・commit禁止 / codex=オンデマンド査読・read-only / Claude=起案者・検収者・適用/commitの唯一の主体)は変更しない。
+- このセッションのagmsg Monitor(`watch.sh ... --team s-<このセッションのUUID>`)がSessionStartから常駐している
+- 宛先workerのbridgeが稼働していること。遅延spawnは自動発火しない(下記「送信の実務」)
+- 送信は非同期`send`が既定。`ask --wait`は使わない(codexでask往復が機能しない実績)
 
-## ワークフロー
+## フロー
 
-### 1. タスクを独立した単位に分解する
+### 段1 sparring(壁打ち・送信試行が必須)
 
-並行させられる単位に分ける。依存関係がある場合(例: プラン・実装委譲はcodex-researchの調査結果が検品を通った後、検収はcodex-implの[done]受領後)は、その順序を崩さない — 依存先は該当タスクの完了通知を受けてから送る。
+`ensure-headless.sh cursor <project> sparring`で起動し、**安全に最小化したpacket**を送る。secret・credential・個人情報・未公開コード断片を入れない。抽象化して意味のあるpacketが作れない依頼は`sparring-skipped:safety`を記録して外部送信しない。
 
-### 2. 非同期でパケットを送る(ask ではなく send)
+- 送信前に**registrationがちょうど1件かつtype=cursor**であることを`team.sh <team>`で確認する。`ensure-headless.sh`はsession team不在でもexit 0のno-opになるため、exit codeは準備完了の証拠にならない
+- attemptは最大2回(初回+respawn 1回)。**各attemptに個別の応答期限**を置く
+- どれか成功 → `sparring-complete`。全attempt失敗(期限切れ・spawn失敗・dead-letter) → 最終attempt後に`sparring-degraded`を確定
+- degraded時はメインが「疑う前提 / 反対案 / その帰結 / 未解決の問い」を明示してから段2へ渡す。fable-reviewをsparring成功の代替として記録しない
+- 期限後に届いた返信は`stale`として記録だけ行い、進行中のプランへ自動適用しない
+- **別モデルへの透過fallbackは設定しない**(`spawn.cursor_fallback_model.sparring`を置かない)。pin時は`--no-fallback`が既定で、fallback時はlabel一致が強制されず別モデルの回答をGrok成功と誤記録できる
 
-パケットの中身は下記「依頼パケットの鉄則」と同じ自己完結フォーマットを使う。送信は`--wait`を付けない素の`send.sh`で行うが、**送る前に宛先のbridgeが起きているか確認する**:
+### 段2 fable-review(設計ゲート)
 
-- **codex系宛(codex/codex-research/codex-impl共通)**: 必ず先に `~/.agents/skills/agmsg/scripts/ensure-codex.sh <project> [worker名]` を実行して遅延spawnを発火させる(起動済みならno-op。worker名省略時は`codex`。role fileは規約名`db/spawn-roles/<worker名>.codex.md`が自動解決される。`CLAUDE_CODE_SESSION_ID`が環境に無ければセッションUUIDを明示して渡す)。`send.sh`自体は一方向送信やctrl系がdespawn済みworkerを蘇生させないよう、意図的にこの入口へ配線されていない
-- 怠ると依頼は未読のままDBに滞留し、返信が永遠に来ない(実例: 2026-07-05)
-- **`ensure-codex.sh`/`spawn.sh`は単独のsimple commandで呼ぶ**: セッションUUIDは`CLAUDE_CODE_SESSION_ID=<リテラルUUID>`と直書きする(`$SID`等のシェル変数にするとsandbox除外が効かず、codexが自分のseatbeltを張れずspawnが失敗する)。`spawn.sh`は`--team`を明示すればenv前置き自体が不要。for/`;`/`&&`/パイプ/コマンド置換の中に入れない(マッチが壊れる、または併記した別コマンドまでsandbox外へ出る)。機構は`references/troubleshooting.md`項10
-- **送信後は既読(read_at)を確認してから「依頼中」と報告する**: `sqlite3 ~/.agents/skills/agmsg/db/messages.db "SELECT id, read_at IS NOT NULL FROM messages WHERE team='<team>' AND from_agent='claude' ORDER BY id DESC LIMIT 1;"` をスポット実行。send 自体は bridge が死んでいても成功するため、既読確認なしの「依頼済み」報告は空振りに気づけない(実例: 2026-07-11、bridge死亡で未読滞留のままユーザーに指摘された)。数分待って未読なら despawn --force → ensure-codex で bridge を入れ替える(未読は自動再処理される)
-- **ただし既読フラグは生存判定にも沈黙判定にも使えない**(2026-08-14実証)。**codex系workerはturn実行中に新規メッセージを読まない**ため、作業中のworker宛は未読が溜まって当然で、未読の滞留は沈黙の証拠にならない。逆に既読でも送信先を間違えていれば返信は来ない(下記)。**workerが無言のときの一次診断は bridge ログ(`run/<type>-bridge.<team>.<name>.log`)の mtime と最終行**にする。10分以上更新が無ければ異常を疑う
-- **worker側の送信先typoは silent fail する**(2026-08-14実例): worker が `send.sh` に渡す team 名を1文字間違えても(`s-...-4ae4-...` → `s-...-4ae-...`)、存在しない team として DB に記録されるだけでエラーにならず、**worker本人は「送信成功」と認識したまま宛先に届かない**。**worker が無言のときは team を絞らず `from_agent` だけで横断検索する**: `sqlite3 ... "SELECT id, team, from_agent, to_agent, created_at FROM messages WHERE from_agent='<name>' ORDER BY id DESC LIMIT 10;"`。別teamに送っていれば typo が即座に見える。訂正は正しい team 名を明示して再送を指示する
-
-```bash
-# codex-researchへの調査依頼(ブロックしない、prefixは [research])
-~/.agents/skills/agmsg/scripts/send.sh $TEAM $AGENT codex-research "[research] GOAL: ... / CONSTRAINTS: ... / SCOPE: ... / SCHEMA: ... / 検品観点: ..."
-
-# codexへのオンデマンド査読依頼(ブロックしない、prefixは [review])
-~/.agents/skills/agmsg/scripts/send.sh $TEAM $AGENT codex "[review] <git diff or file:line> / 意図: ... / 前回指摘→対応: ..."
-```
-
-**本文は例外なくファイルに組み立てて `send.sh <team> <from> <to> --stdin < packet.txt` で渡す。4番目の引数に直接書かない。** 上記のコード例は書式を示すためのもので、実運用では使わない。
-
-理由: 本文にバッククォートが1つでもあるとコマンド置換が発火し、**その部分が欠落したまま送信が成功する**(送信側はエラーを受け取らない)。短文でも起きる。実例(2026-08-14、1セッション内で3回): (1) `` `npx vitest run` `` を含む1行が消えた (2) `` `['summary', 'progress-bar']` `` とNodeバージョン警告文が消えた (3) ヒアドキュメント内の `` `npx` `` が実際に実行されBashが2分でタイムアウトした。「短いから直接引数で」と判断した回にだけ起きている。
-
-欠落は受信側から見ると自然な文章に見えるため気づかれない。送信後に `sqlite3 ... "SELECT body FROM messages WHERE ... ORDER BY id DESC LIMIT 1;"` で自分の送信文面をgrepし、重要な文字列(コマンド名・設定値・file:line)が残っているか確認する習慣を持つとよい。
-
-`$TEAM`/`$AGENT`はこのセッションの既知の値(agmsgスキルのIdentityで確認済みのもの)を使う。
-
-### 3. ターンを終えるか、他の独立作業を続ける
-
-送信直後にやれる別の独立作業があれば進める。なければそのままターンを終えてユーザーに制御を返してよい — ブロックする必要はない。返信はMonitor通知で自動的に拾われる。
-
-### 4. 返信が来たら検品・実装・検証する
-
-Monitor通知でcodex系ワーカーからの返信を受け取ったら、下記「依頼パケットの鉄則」のゲートをそのまま適用する:
-
-Monitor通知は長い返信を途中で切り詰める。全文は `sqlite3 ~/.agents/skills/agmsg/db/messages.db "SELECT body FROM messages WHERE team='<team>' AND from_agent='<agent>' ORDER BY id DESC LIMIT 1;"` で読む(bridgeログより確実)。
-
-- **codex-researchの調査結果**: 「[research]パケットの鉄則」に従って検品する。不足があれば具体的に指摘して差し戻し、検品を通ったら、その調査結果を起点にプラン・[implement]パケットを組む
-- **codexのfindings**: 「レビュー収束条件」に従って採用/見送り/別タスク化を判断
-
-複数の返信が並行して届いた場合は、それぞれ独立に処理する(依存関係があるものだけ順序を守る)。
-
-### 5. 収束したらユーザーに要約報告
-
-codex系ワーカーの出力そのものは転載せず、採用した内容と最終的な変更のみを報告する(全経路共通の原則。[research]/[implement]/[review]いずれも同じ)。
-
-## codex-impl自走実装ワークフロー（2026-07-12〜）
-
-実質的な機能実装(新機能・refactor・複数ファイル変更)はcodex-implに自走させ、メインは起案者として質問対応と検収を担う。codex-implはimplementer layout(cwd=対象repo・permission profileでrepo書き込み可・network遮断)のheadless codexワーカー(gpt-5.6-sol)。些細な編集(1行config・typo等)はこのフローに乗せない(従来どおりsonnet/メイン直接)。
-
-### 1. 壁打ち→プラン確定
-
-ユーザーと要件を壁打ちし、プランを固める。プランは[implement]パケットにそのまま載る粒度で: 背景・要件・制約・完了条件・検証手順(実行すべきテスト/ビルド)。
-
-プランが固まったら**ユーザーの承認を必ず得る**: プラン本文（要件・制約・完了条件・検証手順）を提示し、承認が出るまで[implement]を送らない（2026-07-12ユーザー指示）。codex-research/sonnetの調査結果を踏まえて作ったプランも同様。
-
-### 2. codex-implの確認・起動
+プランを`fable-review`へ送る。返るのは findings。**ユーザー承認の代替にしない**。
 
 ```bash
-CLAUDE_CODE_SESSION_ID=<リテラルUUID> ~/.agents/skills/agmsg/scripts/ensure-codex.sh <対象repo> codex-impl
+AGMSG_CLAUDE_PROBE_TIMEOUT=180 ~/.agents/skills/agmsg/scripts/spawn.sh claude-code fable-review \
+  --team <team> --project <path> --headless --reviewer
 ```
 
-`ensure-codex.sh`が生存確認を兼ねるno-opなのでpgrepガードは不要。`||`で繋ぐとBashリクエスト全体がsandbox外へ出る。
+**probe timeoutの既定30秒では足りない**(2026-08-21実測): spawnはsandbox probeが相関ツールイベントを全部出すまで待ち、出なければ`rc=124`でfail-closedする。`~/.config`はSessionStart hookに13.5秒かかり、そこへ`fable`/xhighのturnが乗るため既定では落ちる。`AGMSG_CLAUDE_PROBE_TIMEOUT=180`を付ける。
 
-configの`spawn.codex_implementer.codex-impl: true`によりensure-codex.sh経由でもimplementer layoutが適用され、role fileは規約名`db/spawn-roles/codex-impl.codex.md`が自動解決される。明示spawnする場合:
+`--reviewer`は明示する(global `spawn.claude_reviewer`のdriftでlayoutが変わらないようにするため)。reviewer layoutはrepo readを許可し、repoのBash/Edit/Writeをdenyし、agmsg storage/teams/runへのwriteを許可する — 返信は成立する。
 
-```bash
-~/.agents/skills/agmsg/scripts/spawn.sh codex codex-impl --team <team> --project <対象repo> --headless --implementer
-```
+### 段3 codex(review役)のプラン査読
 
-cwd=対象repoなので**プロジェクト単位でspawnする**。別repoの実装を頼むときは`despawn.sh <team> claude codex-impl`してから対象repoで再spawn。
+ユーザー提示前の常時ゲート。書式は下記「[review]パケットの鉄則」。
 
-### 3. [implement]パケットを送る
+### 段4 ユーザー承認
 
-**ユーザー承認済みのプランのみ**、「[implement]パケットの鉄則」の書式で組み立て、`send.sh <team> claude codex-impl --stdin < packet.txt`(非同期)で送る。送ったらターンを終えてよい(返信はMonitorが拾う)。
+**このゲートを通る前に、manager/worker宛の実装パケットを1件も出さない。** 承認対象はサブタスク方針を含むプラン全体。
 
-### 4. Q&Aループ(実装中の質問対応)
+### 段5 manager(分割・発注)
 
-codex-implは判断に迷うと質問を返信してターンを終える(role fileで強制)。Monitor通知で受けたら:
+`ensure-codex.sh <project> manager`で起動し、`[task:<id>]`付きの自己完結パケット(ゴール/制約/完了条件/検収観点)を送る。managerは受入条件を**同文で**worker と watcher の両方へ配る。
 
-- 起案者の権限・知識で答えられる質問は**即答**して`send.sh`で返信(ターン往復で実装が継続する)
-- ユーザー判断が要る論点はユーザーに確認してから回答を返信
-- 返信するまでcodex-implは止まっている。放置しない
+分割後のsubtaskは、メインが**承認済みプランの範囲内**であることを確認して初めてrepo writeが有効になる。範囲外ならメインが差し戻し、必要ならユーザーへ再承認を取る。
 
-### 5. [done]受領→検収(メイン単独)
+**発注ゲート**: managerは発注前に`[scope-check]`(分割一覧+各subtaskのファイルセット)をメインへ出し、メインが承認済みプランの範囲内と確認した分だけ`[scope-ok]`を返す。managerのdispatchパケットには`scope-ok:<task-id>/<subtask-id>`トークン(subtask単位)が入り、これがworkerのrepo write許可の根拠になる(自分のsubtask idと一致するトークンが無ければworkerは書かずに差し戻す。task単位のトークンでは、保留したsubtaskや後から発明されたsubtaskを止められない)。watcher宛のコピーには受入条件に加えて**ファイルセットと基準fingerprint**を入れる。
 
-[done]報告を鵜呑みにせず実物を確認する:
+**fingerprintの算出法(ここが定義の1箇所)**: workerはcommitできないのでcommit hashは使えない。基準・提出とも次の2つを組で使う。
+- 変更有無: `git -C <repo> status --porcelain -- <そのsubtaskのファイルセット>`の出力そのもの(**必ずファイルセットに絞る**。絞らないと並行subtaskの作業中変更が混ざり、帰属不能な不一致でstallする)
+- 内容: ファイルセットの各パスについて、存在すれば`git -C <repo> hash-object <path>`、存在しなければリテラル`absent`。**存在しないパスに`hash-object`を実行しない**(fatalになる。新規作成予定のパスはdispatch時が`absent`、削除するパスは提出時が`absent`、renameは旧パス`absent`+新パスhashで表れる)
+`shasum`は使わない(worker sandboxでlibperl.dylibの読み込みを拒否され失敗する。2026-08-21実測)。ハッシュ関数が別途必要なら`openssl dgst -sha256`。
 
-- `git -C <repo> status` / `git diff`を読み、(1)要件適合・プラン逸脱 (2)正しさ・エッジ・回帰リスク を査読
-- `git log`で勝手commitがないことを確認
-- 報告された検証(テスト等)を1-2コマンドでスポット再現
+**fingerprintを取る間、メインは同じrepoを編集しない**(2026-08-21実測): メインが並行編集していると`status --porcelain`と`hash-object`の値が数分おきに変わり、workerの作業前後ペアが必ず不一致になる。watcherは契約どおり差し戻すので、原因はworkerでなく段取りにある。メイン側の編集が続く間はdispatchしない、または対象repoを分ける。
 
-差し戻しは「指摘→対応」対応表付きで修正指示を送る。**収束は目安最大2巡**(「レビュー収束条件」を検収に読み替え): substantive(正しさ・設計・回帰)な指摘が残る巡だけ差し戻し、Low/nitのみなら自分で微修正するか見送り理由を明記して閉じる。
+managerへworkerの起動を通知するときは**agmsg登録名をそのまま書く**。driver typeと混ぜると誤配される(2026-08-21実例: 「worker-1をteamにcodexとして登録済み」と書いたのをmanagerが登録名`codex`と読み、review専任の`codex`へ実装を発注した。`codex`が実装を拒否し、managerが直接報告を`[protocol-reject]`して差し戻したので事故は止まった)。
 
-### 6. 検収通過→diff提示→commit
+managerは設計判断をしない。workerの設計分岐の質問、`mechanical-only`の再分類要求、watcherのescalationはいずれもメインへ転送し、メインの回答を中継する。
 
-ユーザーに実際の差分を提示し、承認後にcommit(グローバルCLAUDE.mdのcommit規約)。codex-implの出力そのものは転載せず、採用結果だけ報告する。
+### 段6 worker → watcher(完全性の検査)
 
-## 依頼パケットの鉄則
+workerの完了報告は必ずwatcher宛。watcherが見るのは**証拠・criteria・fingerprintの完全性だけ**で、正しさの承認ではない。不足は`[criteria-query]`で1巡まで、解決しなければmanagerへescalate。
 
-codex系ワーカーへ送るパケットの書式、Claude側の検品・収束ルール。
+必須field: `[task:<id>]` / `[subtask:<id>]` / diff identity(ファイルセット+git hash) / author metadata(agent・model・vendor・pool) / 検証エビデンス(コマンドと結果)。
 
-### [research]パケットの鉄則（codex-research宛）
+**fingerprintの算出法は段5のrecipeが唯一の定義**。そこから外れた式(HEAD OIDの併記、`shasum`)は使わない — 併記すると並行subtask時にwatcherのscoped契約と一致しなくなる。
 
-- codex-research は**調査専任**(reviewer layout: repoはread、書けるのはagmsg配下のみ=実質read-only。**networkは全開**=外部web・ghを自力取得可、2026-07-14〜)。返すのは file:line 一覧や構造化データだけ。**パッチは作らせない**＝実装は codex-impl が書く。role file は `db/spawn-roles/codex-research.codex.md`(gh はGET/検索系のみ可・issue/PR作成禁止・URL/番号の捏造禁止)
-- agmsg: 宛先 codex-research・prefix `[research]`。自己完結パケット = GOAL / CONSTRAINTS / SCOPE / SCHEMA(期待する出力の構造・項目を明示) / 検品観点(Claude が何を確認するか) / DO NOT write files・DO NOT パッチ生成
-- **codex-researchも外部Web/GitHub/gh取得が可能**(2026-07-14〜、networkが全開になったため): 従来の「コードベース内=codex-research/外部Web=sonnet」という棲み分けは前提でなくなり、codex-research単独でも外部調査を進められる
-- **sonnet併走は高リスク時のみ**(2026-08-18ユーザー判断。2026-07-12の常時併走指示を条件付きへ絞った): 既定はcodex-research単独。グローバル`CLAUDE.md`の5条件(秘密情報/外部仕様と実装の両依存/source矛盾・version不確定/security・課金・migrationの採否を決める/codex-researchが到達不能)のいずれかに該当するときだけ、同じ問いをsonnetサブエージェントへ独立に投げて突き合わせる。判定はdispatch前に行い、該当番号と根拠を`[task:<id>]`へ記録する。**先行するcodex-researchの結論をsonnetへblindに渡さない**(裏取りにならなくなる)。高リスクなのにsonnetが使えないときは黙って単独へ縮退せず、証拠不足をユーザーへ示して継続可否を確認する
-- Claude は返答を**検品**する。SCHEMA を満たさない・情報が不足している場合は「◯件中◯件で△△が不足」のように対象を具体的に指摘して**差し戻す**。検品を通った調査結果/データを起点にプラン・[implement]パケットを組む
-- **「バグ/異常を発見した」系の断定は、再現条件まで確認してから採用・ユーザーに伝達する**（2026-07-27実例）: 調査役が挙げた不具合は、どのビルド起点・どの実行環境で観測したものかを確認し、こちら側で**実運用と同じ条件で再現するか**を確かめる。実例: codex-research が `kustomize build <base>/api` 単体で「namePrefix が subjects[].name に追従しない既知バグ」と報告したが、親 overlay からビルドすると正しく解決され（namespace 一致が nameReference の条件）、実機も正常だった。単体ビルドのアーティファクトを2回ユーザーに「既知バグ」として伝えてしまった。SCHEMA 充足の検品（形式）とは別に、**断定の再現性の検品（内容）**が必要
-- **インクリメンタル調査**: 大きい調査は一括で丸投げにせず、**1トピック/1論理単位ずつ**調査させ、各単位を検品(SCHEMA充足・過不足の即チェック)してから次の単位へ進める。巨大な調査のやり直し(トークン浪費)を防ぎ、早期に軌道修正する
-- **委譲中のトークン節約**: codex-researchの結果返却まで対象領域のRead/Grep/Globを控え、citeされたファイルを起点に開く(不足・安全確認に必要ならメインが追加で開いてよい。最終的な正しさ/安全判断はメインが持つ)
-- **workerはproject外の$HOME dotfilesを読めない場合がある**(2026-07-16実例: codex-researchが`~/.config/home-manager/packages.nix`をsandbox制約で読めず質問で返してきた): 調査に必要なproject外の設定値・rev・パス等は最初からパケットに同梱するか、質問が来たら起案者が読んで即答で渡す
+### 段7 `[team-ready]`(非終端)
 
-### [implement]パケットの鉄則（codex-impl宛）
+全subtaskが`[watcher-done]`になったらmanagerが`[team-ready]`を出す。ここは終端ではない。
 
-- 宛先codex-impl・prefix `[implement]`。**自己完結**が絶対条件(codex-implはパケット本文とrepoしか見ない): プラン全文(ユーザー承認済み。背景1段落・要件・制約・完了条件)/ 検証手順(実行すべきテスト・ビルドコマンド)/ 報告書式([done]: 変更ファイルのfile:line一覧・プランとの対応・実行した検証と結果・逸脱と残課題)/ 質問プロトコル(迷ったら実装を止めて`send.sh <team> codex-impl claude "..."`で質問: 何を実装中か・選択肢・推奨案)
-- DO NOTを明記: git commit/push禁止・対象repo外の変更禁止・無断の設計変更禁止・未検証の完了報告禁止
-- 長短を問わず`--stdin`で送る(quoting事故防止。上記「2. 非同期でパケットを送る」参照)
-- turn timeoutは3600秒(config済み)。「区切りの良いところまで進めて途中経過を報告してよい」と書くと長タスクの往復が安定する
-- networkはoff(implementer=codex-implは遮断。reviewer系(codex-research/codex-deep/codex)はnetwork全開だが、実装役は外部送信リスクを断つため遮断のまま、2026-07-14〜)。外部情報が要る作業は、必要な情報をパケットに同梱するか、事前にsonnet班またはcodex-research(network全開)で収集して渡す(web_searchはcodexサーバー側実行のためnetwork offでも使えるが、込み入った外部情報収集はsonnet/codex-researchに任せる)
-- **委譲先で叩けない外部CLI/APIは、実出力サンプルをパケットに同梱する**(2026-08-12、herdr-titleで確立): network off のworkerは実サーバー・実CLIに到達できないため、レスポンス形式を推測で実装しfakeでテストすると**テストは全passするのに実機で動かない**。実例: `herdr tab list`のtabsは`result.tabs`の下にあるが、workerはトップレベル`{"tabs":[...]}`と推測。有効なJSONなので`json.Unmarshal`はエラーなく成功し、空スライスが返って当該機能(workspace rename)が黙って無効化された。検収でメインが実物と突き合わせるまで気づけない。**起案者が実際にコマンドを叩き、生の出力をそのままパケットに貼る**。併せて「認識できない形式はエラーにする(errなし空を返さない)」ことをテスト要件に含める
-- **ビルド系タスク(Go等)の事前準備**(2026-07-13確立、2026-07-16更新): network off環境へビルドを伴う実装を委譲する前に、起案者側で (a)**Goは`spawn.codex_extra_fs_roots`で`~/go/pkg/mod=read`(+`~/Library/Caches/go-build=write`)を付与済みなら、depsがhostのmodule cacheに揃う限りvendor焼き込みは不要**(素の`go build ./...`が通る。実測・設定はメモリ reference_agmsg_codex_extra_fs_roots)。cacheに無い依存・キー未設定・他言語(Rust等)は従来どおりvendor等でrepo内に焼き込み、オフラインビルド(`GOPROXY=off`等)が通ることを事前検証する (b)build cache write(`~/Library/Caches/go-build=write`)が未付与なら、cwd外へ書くビルドキャッシュの退避先(`GOCACHE=${TMPDIR:-/tmp}/...`)をパケットの検証コマンドに明記する(付与済みなら不要) (c)移植・書き換えでは旧実装の出力(比較基準)を事前生成してtestdata等に同梱する(旧ランタイムは委譲先で動かせない前提で) (d)呼び出しコマンド・cwdなど実行形態まで指定する(マルチモジュール構成の要否はこの指定から決まる。例: cwd=親dirの`go run ./scripts`指定はgo.work構成を生む)
-- **Rust/cargoビルドの事前準備**(2026-07-16、herdr expanded-sidebar-space-numbersで確立): (a)`cargo vendor <出力dir> > .cargo/config.toml`で依存をrepo内に焼き込む。**出力先を既存の`vendor/`にしない** — repoがtracked path依存を`vendor/`に同梱している場合、cargo vendorが上書き破壊する(herdrのlibghostty-vt/portable-ptyで実例。`git clean -fd vendor/`+`git checkout -- vendor/`で復旧)。`vendor-deps`等の衝突しない別名に出す (b)toolchainがnix devShell由来なら`nix print-dev-env > dev-env.sh`で環境を焼き出し、workerには`source dev-env.sh`させる(sandbox内で`nix develop`を走らせない) (c)`CARGO_HOME=$PWD/.cargo-home`でcwd内に置き$HOME書込みを回避、`CARGO_NET_OFFLINE=true`で実行。この構成でオフラインbuild/testが通ることを委譲前に確認する (d)環境依存failを含むテストスイートは、委譲前にベースラインのfail一覧を採取してcwdに置き(`baseline-failures.txt`)、検収ゲートを「対象モジュール全green＋`comm -13 baseline after`で新規failゼロ」にする (e)workerのsandboxで原理的に通らない検証(unix socket bind・$HOME配下書込み・git config読取等)は環境偽装で戦わせず、検収側(メインの非sandbox環境)での再実行に切り替える
+### 段8 メインの統合とauthor再分類
 
-### codex依頼パケットの鉄則
+メインが統合し、**統合前後のfingerprintを比較**して自分が実質変更したファイル/hunkをAnthropic authorへ再分類する。
 
-codexへのレビューには3つの独立した位置づけがある。**「いつ・必須かどうか」の判断規約はグローバル`CLAUDE.md`を正本とし、このファイルはパケット書式・収束条件・実務ノウハウの正本**とする:
+### 段9 コード査読ゲート(author-aware)
 
-1. **プラン査読(常時必須)**: 実装・検証計画をユーザーに提示する前に必ずcodex査読を通す(`claude/CLAUDE.md`「対話・確認の規約」の常時ゲート)。指摘の採否は「指摘→対応」対応表で示してから承認を求める
-2. **実装後のdiff査読(author-aware)**: 対象は**実質的な実装のみ**(1行修正など些細な編集は対象外)。**送り先はauthorのvendorで決まる** — Anthropic author(メイン/sonnetが書いたdiff)はcodexへ、**OpenAI author(codex-impl等)は別agentのClaude Sonnet 5へ**送る(2026-08-18〜)。同一vendorが自系列の成果を一次査読する配置を作らないための規則で、`codex-deep`は同じOpenAIなので能力深度の補助にはなるがvendor多様性の代替にはならない。Sonnet reviewerはfindingsとrequired testsを返すだけで、test実行・commit判断はしない。標準フローの検収はメインが単独で担うため、このレビュー自体は必須ではない(`claude/CLAUDE.md`「エージェント役割分担」)
-3. **検収(メイン単独・必須)**: codex-implの[done]報告はメインが`git status`/`git diff`/`git log`を読んで単独で検収する(上記「codex-impl自走実装ワークフロー」5.)。codex査読はこの検収の代替にならない
+- **脆弱性4観点(認証/認可境界・secret出力・外部write・dependency advisory)は常に`fable-review`**。authorに依らずこのpassは必ず通す
+- **意図一致・正しさの一次査読はauthorで振る**: codex worker(OpenAI)作のhunk → `fable-review`、メイン(Anthropic)作のhunk → `codex`(review役)
+- 混在diffは双方へ送り、それぞれ自分の担当hunkだけを査読する。**両方に段8のauthor再分類マップを渡す**
+- findingのラベルは`[subtask:<id>]`(worker作)か`[author:main]`(メイン作)。codexもfable-reviewも、自分のfindingにこのラベルを付ける
+- dependency advisoryは到達性を疎通確認し、取得できない場合はpassではなく`not checked`と根拠を返させる
 
-以下はプラン査読・オンデマンドdiff査読どちらにも使う共通のパケット書式:
+### 段10 差し戻し(2経路)
 
-- codex は **read-only**。findings を返すだけで、**fix は Claude が適用**する。依頼は review/verify/findings/test-plan のみ。codex に計画を振らない
-- agmsg: 宛先 codex・prefix `[review]`。自己完結パケット = `git diff`か対象`file:line`(プラン査読の場合はプラン本文) ＋ 意図 ＋(ループ時)前回指摘→対応の対応表(codex はメッセージ本文しか見ない)
-- 出力形式: Findings / Required tests / Residual risk / Confidence。severity 順・推測は明記
+- **worker作のfinding** → managerへ`[team-reopened]`(findingと対象`[subtask:<id>]`を明記)。managerは該当subtaskだけ再オープンし、**基準fingerprintを取り直してworkerとwatcherの両方へ再配布**してから段6へ(watcherへ再送しないと、古い基準との照合で2回目の`[watcher-done]`に永久に到達しない)
+- **メイン作hunkのfinding** → メインが直し、段8のfingerprint再計算 → 段9へ再投入
 
-### 査読とadvisorの分離
+### 段11 `[team-done]`→検収→commit
 
-codex査読は、プラン査読(ユーザー提示前の常時ゲート)と大規模diffの第二意見等のオンデマンド依頼に限る。advisorはレビューの代用にしない — 着手前のアプローチ点検と行き詰まり相談の専用窓口として扱う。
+段9のfindingが全て解消したら**メインがmanagerへ`[findings-resolved]`を送り**、managerはそれを受けて`[team-done]`を**1完了サイクルに1回だけ**出す(自発的には出さない)。メインが実物を検収し、ユーザー確認後にcommitする。検収失敗・ユーザー差し戻しは段10の該当経路へ戻り、解消後に再び`[team-done]`。終端は3つだけ: **メインのcommit** / **ユーザーの中止** / **`[task-aborted]`**(調査や実装の結果「変更不要」と確定した場合、実行不能と確定した場合、段取りの誤りで測定できない場合。メインが理由を明記してmanagerへ送り、managerはsubtask破棄とworker/watcherへの通知を済ませて`[task-aborted]`を1通返す。`[team-ready]`も`[team-done]`も出さない)。
 
-### レビュー収束条件
+検収の中身: `git -C <repo> status` / `git diff`で(1)要件適合・プラン逸脱 (2)正しさ・エッジ・回帰リスク を読む。`git log`で勝手commitがないことを確認。報告された検証を1-2コマンドでスポット再現。
 
-プラン査読・オンデマンドdiff査読のいずれでも、指摘の反映(再修正)は「実装」なので反映後の差分を再依頼しうるが、**1回で止めるな・延々と回すな**。能動的に妥協点を見出して打ち切る(codexはask往復が機能しない実績があるため`ask`は使わない)。
+## タグの producer / consumer
 
-収束条件(いずれか満たせば完了とみなす):
-- 残る findings が **Low / nit / 「見送り(理由明記)」/ 「別タスク(スコープ外)」だけ** で、substantive(Med/High＝正しさ・設計・回帰に関わる)な findings が無い。
-- 全 finding を **採用 / 見送り(理由明記) / 別タスク(スコープ外)** に振り分けて反映・判断済み。採用が codex 自身の提案なら、その反映は些末扱いで再依頼不要。
-- **再依頼は substantive な finding が出た巡だけ**。Low だけの巡は 1 巡で閉じる。新規性のない同深刻度の繰り返しは収束。**目安は最大2巡**、超えるなら残課題を「別タスク」化して打ち切る。
+| タグ | 出す | 受ける | 意味 |
+|---|---|---|---|
+| `[scope-check]` | manager | メイン | 分割一覧の範囲確認依頼(発注前) |
+| `[scope-ok]` | メイン | manager | 承認済みプランの範囲内と確認した subtask の列挙 |
+| `[criteria-query]` | watcher | worker | 完全性の不足の指摘(1巡まで) |
+| `[watcher-done]` | watcher | manager | 完全性の検査を満たした(正しさの承認ではない) |
+| `[team-ready]` | manager | メイン | 全subtaskが`[watcher-done]`(非終端) |
+| `[team-reopened]` | メイン | manager | worker作findingの差し戻し(対象subtask明記) |
+| `[findings-resolved]` | メイン | manager | 段9の全finding解消。`[team-done]`の唯一のトリガー |
+| `[team-done]` | manager | メイン | 完了宣言。1完了サイクルに1回 |
+| `[task-abort]` | メイン | manager | 中止要求。dispatch前・dispatch後・`[team-ready]`後のいつでも出せる |
+| `[task-aborted]` | manager | メイン | 中止の終端(subtask破棄とworker/watcherへの停止通知を済ませたことの報告)。開いているサイクルもこれで閉じる |
+| `[author:main]` | fable-review / codex | メイン | findingの帰属ラベル。メインが直す(managerへは渡さない) |
 
-各巡では「前回指摘 → 対応」の対応表をパケットに含める。**ask が timeout / 無返信のときは無限に待たず**、bridge ログ(`run/<type>-bridge.<team>.<name>.log`)から findings を読んで内容ベースで収束判断する。
+完了サイクルは**dispatch(段5の発注、またはreopen時の再発注)で開き**、`[team-done]`・`[team-reopened]`・`[task-aborted]`のいずれか1つで閉じる。`[team-ready]`は開いているサイクル内のマイルストーンで境界ではない。したがって`[team-done]`は1サイクルに最大1回で、差し戻しを挟んだ2回目はそのreopenが開いたサイクルの1回目にあたる。メイン作hunkのfindingは`[author:main]`ラベルで扱い、workerのsubtaskを誤って再オープンしない。
 
-## 使用例
+## 共通の不変条件
 
-### 例1: codex-researchに調査を頼みつつ、別タスクを並行で進める
+- `[task:<id>]`はセッション内で一意。`[subtask:<id>]`はtask内で一意
+- 完了済み・破棄済みタスクのstale/duplicate messageは既読化して無視する
+- **readiness照合**は「名前がある」ではなく、各nameのregistrationが**期待typeでちょうど1件**であること。対象はmanager・watcher・使用する全worker・fable-review・codex(review役)・sparring、および実際にdispatchするcodex-research/grok-research(起動コマンドが一覧にあることは照合の代わりにならない)
+- 起動コマンド(モデル等のconfigはグローバル永続なのでコマンドのみ):
+  - codex系(manager, watcher, codex-impl, worker-1/2, hard-worker-1, codex, codex-research): `ensure-codex.sh <project> <name>`
+  - claude-code系(fable-review): `AGMSG_CLAUDE_PROBE_TIMEOUT=180 spawn.sh claude-code <name> --team <team> --project <path> --headless --reviewer`(probe timeoutは既定30秒では足りない。上記段2参照)
+  - cursor系(sparring, grok-research): `ensure-headless.sh cursor <project> <name>`
+  - role fileは`db/spawn-roles/<name>.<type>.md`の規約名で自動解決される
+- SessionEnd teardownでsession teamのheadless worker全員が回収される。次セッションでは必要roleをspawnし直す(config永続なので同モデルで立つ)
+- **despawn前にin-flight dispatchを棚卸しする**。同名workerを後から再spawnすると旧dispatchが再駆動される(2026-08-01実例: 解体済みチームのサブタスクが再spawn後のworkerで蘇生し、幽霊タスクにcycleを浪費した)
+- turn実行中のworkerをkill/teardownするとそのturnは丸ごと失われ、誰も再駆動しない(respawnはモデル側threadを引き継がない)
+- worker/コンサルの生存判定に既読フラグを使わない(下記「送信の実務」)
 
-```
-チームで協業して: codex-researchに既存コード内のXの使用箇所・依存関係と、外部ライブラリYのAPI仕様の調査を頼みながら、私は別系統の作業を進める
-```
+## 送信の実務
 
-codex-researchへ`[research]`パケットを非同期送信(コード内・外部Webとも既定はここ1本) → 待たずに自分は別の独立作業を進める → 返信がMonitor通知で届いたら検品(不足があれば差し戻し) → 検品を通ったらプランを固めてcodex-implへ`[implement]`を送り、[done]をメインが検収する。
+- **codex系宛は必ず先に** `~/.agents/skills/agmsg/scripts/ensure-codex.sh <project> [worker名]`(起動済みならno-op)。怠ると依頼は未読のままDBに滞留し返信が来ない(2026-07-05実例)
+- **`ensure-codex.sh`/`spawn.sh`は単独のsimple commandで呼ぶ**。セッションUUIDは`CLAUDE_CODE_SESSION_ID=<リテラルUUID>`と直書きする(シェル変数にするとsandbox除外が効かず、codexが自分のseatbeltを張れずspawnが失敗する)。for/`;`/`&&`/パイプ/コマンド置換の中に入れない
+- **本文は例外なくファイルに組み立てて `send.sh <team> <from> <to> --stdin < packet.txt`**。4番目の引数に直接書かない。本文にバッククォートが1つでもあるとコマンド置換が発火し、**その部分が欠落したまま送信が成功する**(2026-08-14に1セッションで3回。短文でも起きる)
+- 送信後は自分の送信文面をDBからgrepし、重要な文字列(コマンド名・設定値・file:line)が残っているか確認する
+- **既読フラグは生存判定にも沈黙判定にも使えない**(2026-08-14実証)。codex系workerはturn実行中に新規メッセージを読まないため、作業中のworker宛は未読が溜まって当然。逆に既読でも送信先を間違えていれば返信は来ない
+- **workerが無言のときの一次診断は bridge ログ(`run/<type>-bridge.<team>.<name>.log`)の mtime と最終行**。10分以上更新が無ければ異常を疑う。**ログのlifecycle行はbridge死亡時に凍るので、それだけでbusyと判断しない — `.meta`の`pid=`を`ps -p`で照合する**
+- **worker側の送信先typoは silent fail する**(2026-08-14実例)。無言のときはteamを絞らず`from_agent`だけで横断検索する
+- Monitor通知は長い返信を切り詰める。全文はDBから読む
+- workerの出力そのものは転載せず、採用した内容と最終的な変更のみを報告する
 
-外部調査で高リスク5条件のいずれかに該当する場合だけ、同じ問いをsonnetサブエージェント(WebFetch/WebSearchまたはcontext7 MCP)へ**独立に**投げて突き合わせる。該当番号と根拠を`[task:<id>]`へ記録する。
+## パケットの鉄則
 
-### 例2: codex-researchの調査完了後、codex-implへ実装を委譲しつつ次の独立タスクを走らせる
+### subtaskパケット(manager→worker)
 
-codex-researchの返信到着(Monitor通知)→検品→プラン確定→codex-implへ`[implement]`を非同期送信→待たずに別の独立タスクに着手→[done]到着で検収。
+自己完結が絶対条件(workerはパケット本文とrepoしか見ない): `[task:<id>]`+`[subtask:<id>]` / ゴール / 制約 / **スコープのファイルセット** / 受入条件(watcherへ配るものと同文) / 検証コマンド / 報告書式(必須fieldは段6) / 質問プロトコル(迷ったら止めてmanagerへ質問)。
 
-## ask --wait との使い分け
+DO NOTを明記: git commit/push禁止・ファイルセット外の変更禁止・無断の設計変更禁止・未検証の完了報告禁止・**外部write禁止(GitHub issue/PR/comment/reviewの作成・変更、gh POST/PATCH/DELETE、その他の対外mutation)**。implementer layoutのnetwork遮断に頼らず契約側でも塞ぐ。例外はユーザーの明示指示をパケットが引用している場合だけで、その場合も対象の操作を限定して書く。
 
-| 状況 | 方式 |
-|---|---|
-| 単発・並行を問わず通常の依頼 | 非同期`send` + Monitor再開(既定) |
-| `ask --wait`(ブロック待機) | **使わない**。codexはask往復が機能しない実績があり、cursor離脱(2026-07-12)で実質的な用途が消えた |
-| codexがread-onlyで返信不能な既知の環境(ネストsandbox等) | 非同期でも返信不能。bridgeログから読む既存フォールバックに従う |
+`mechanical-only`パケットの宛先は**codex-implだけ**(停止・再分類の契約をrole fileに持つのがcodex-implのみ)。他のworkerが受け取ったら再分類要求を返して着手しない。
 
-## 注意点
+`mechanical-only`と書けるのは、挙動・公開契約・認証・security boundary・課金・外部write・依存関係を変えない、correct-by-inspectionな編集だけ。workerは判断が要る場面に当たったら再分類を要求して止まる。
 
-- session_teamが無効、または宛先workerが別teamにいる場合はMonitorが拾えない。事前に同じteamへの参加を確認する。
-- 非同期化してもcommit・適用の最終主体はClaudeである原則は変わらない。codex-researchの調査もcodex-implの[done]も無検証で受け入れない(検品・検収ゲートを通す)。
-- 大量のタスクを一度に並行させすぎない。依存関係の見落としは収束を遅らせるだけ。
+### network offワーカーへ実装を委譲する前の準備
+
+実装worker(implementer layout)はnetworkが遮断されている。外部情報が要る作業は、必要な情報をパケットへ同梱するか、事前にcodex-research(network全開)で収集して渡す。
+
+- **委譲先で叩けない外部CLI/APIは、実出力サンプルをパケットに貼る**(2026-08-12 herdr-titleで確立)。推測で実装しfakeでテストすると**テストは全passするのに実機で動かない**。実例: `herdr tab list`のtabsは`result.tabs`配下だがworkerはトップレベルと推測し、`json.Unmarshal`が成功して空スライスを返し機能が黙って無効化された。併せて「認識できない形式はエラーにする(errなし空を返さない)」をテスト要件に含める
+- **Go**: `spawn.codex_extra_fs_roots`で`~/go/pkg/mod=read`(+`~/Library/Caches/go-build=write`)が付与済みなら、depsがhostのmodule cacheに揃う限りvendor焼き込みは不要。cacheに無い依存・キー未設定・他言語は従来どおりrepo内に焼き込み、オフラインビルドが通ることを事前検証する。build cache writeが未付与なら`GOCACHE=${TMPDIR:-/tmp}/...`を検証コマンドに明記する
+- **Rust/cargo**: `cargo vendor <出力dir> > .cargo/config.toml`で依存を焼き込む。**出力先を既存の`vendor/`にしない**(tracked path依存を上書き破壊する。herdrで実例)。toolchainがnix devShell由来なら`nix print-dev-env > dev-env.sh`を焼き出してworkerには`source dev-env.sh`させる。`CARGO_HOME=$PWD/.cargo-home`+`CARGO_NET_OFFLINE=true`
+- 環境依存failを含むテストスイートは、委譲前にベースラインのfail一覧を採取して`baseline-failures.txt`に置き、ゲートを「対象モジュール全green+`comm -13 baseline after`で新規failゼロ」にする
+- workerのsandboxで原理的に通らない検証(unix socket bind・$HOME配下書込み・git config読取等)は環境偽装で戦わせず、メインの非sandbox環境での再実行に切り替える
+- **workerはproject外の$HOME dotfilesを読めない場合がある**(2026-07-16実例)。必要な設定値・rev・パスは最初からパケットに同梱する
+
+### [research]パケット(codex-research / grok-research宛)
+
+- codex-researchは調査専任(reviewer layout: repoはread、書けるのはagmsg配下のみ。**networkは全開**)。返すのはfile:line一覧や構造化データだけで、**パッチは作らせない**
+- 自己完結パケット = GOAL / CONSTRAINTS / SCOPE / SCHEMA(期待する出力の構造) / 検品観点 / DO NOT write files・DO NOT パッチ生成
+- **grok-researchの併走は公開情報かredacted packetで閉じる問いに限る**。認証・秘密情報・金銭・不可逆操作を扱う調査、security boundary・データ喪失・課金・広範囲migrationの採否を決める調査は出さない(判定基準の正本はグローバル`CLAUDE.md`)。判定はdispatch前に行い根拠を`[task:<id>]`へ記録し、先行結論をblindに渡さない
+- 返答は**検品**する。SCHEMA未充足・情報不足は「◯件中◯件で△△が不足」と対象を具体に指摘して差し戻す
+- **「バグ/異常を発見した」系の断定は再現条件まで確認してから採用する**(2026-07-27実例: `kustomize build <base>/api`単体での「既知バグ」報告が、親overlayからのビルドでは正しく解決され実機も正常だった)。SCHEMA充足の検品(形式)とは別に、断定の再現性の検品(内容)が必要
+- **インクリメンタル調査**: 1トピック=1パケット。各単位を検品してから次へ
+
+### [review]パケット(codex / fable-review宛)
+
+- どちらもread-only。findingsを返すだけで、**fixはメインが適用**する
+- 自己完結パケット = `git diff`か対象`file:line`(プラン査読の場合はプラン本文) + 意図 + (ループ時)前回指摘→対応の対応表
+- 出力形式: Findings / Required tests / Residual risk / Confidence。severity順・推測は明記
+- 段9では**fable-reviewとcodexの両方**に、**subtask別のdiff identity・依存関係・workerの検証結果**と**段8のauthor再分類マップ(メインが書いた/直したファイルとhunkの一覧)**を渡す。両者はマップが自分に割り当てたhunkだけを査読する(マップが無いとラベルを推測で付け、無実のsubtaskが再オープンされる。codexは担当hunkを確定できず査読対象が空になる)
+
+## レビュー収束条件
+
+指摘の反映(再修正)後の差分は再依頼しうるが、**1回で止めるな・延々と回すな**。
+
+- 残るfindingsが Low / nit / 見送り(理由明記) / 別タスク(スコープ外)だけで、substantive(正しさ・設計・回帰)が無い
+- 全findingを 採用 / 見送り / 別タスク に振り分けて反映・判断済み
+- **再依頼はsubstantiveなfindingが出た巡だけ**。目安は最大2巡、超えるなら残課題を別タスク化して打ち切る
+- 各巡で「前回指摘→対応」の対応表をパケットに含める。無返信のときは無限に待たず、bridgeログからfindingsを読んで内容ベースで収束判断する
 
 ## 返信が来ない時の診断
 
-bridgeログ確認・stale pidfile・CLI更新後のdespawn→再spawn等、9項目の診断手順は `references/troubleshooting.md` を参照。
+bridgeログ確認・stale pidfile・CLI更新後のdespawn→再spawn等、9項目の診断手順は `references/troubleshooting.md`。モデル/effortのper-workerキーと既知エラー対処は `references/model-routing.md`。
 
-## codex-research（調査用codexワーカー）
+## 関連
 
-codexの既定role（`spawn-roles/codex.codex.md`）はreview専任で、どう頼んでも調査を拒否する（2026-07-06実証）。調査は**別名ワーカーcodex-research**に送る（review役`codex`・実装役`codex-impl`と共存）:
-
-```bash
-~/.agents/skills/agmsg/scripts/ensure-codex.sh <project> codex-research
-```
-
-role file は `db/spawn-roles/codex-research.codex.md`（規約名でensure-codex.shから自動解決）。依頼書式は上記「[research]パケットの鉄則」を使う。
-
-## codexワーカーのモデル/effort振り分け
-
-agmsg configのper-workerキー（`spawn.codex_model.<name>` / `spawn.codex_effort.<name>`）によるワーカー名別モデル+effortプリセット、codex-deepの使い捨て運用、既知のgpt-5.6-sol 400エラー対処は `references/model-routing.md` を参照。
-
-## roleチームモード（2026-08-01〜）
-
-旧来の直委譲(このファイルの標準フロー)と並ぶ第二の委譲形態。manager(claude-code headless、`opus[1m]`/high)がworker/reviewerへの分解・発注・差し戻し・完了判定を肩代わりし、メインは起動・エスカレーション応答・[team-done]検収だけを持つ。構成メンバー・モデル配分・実測挙動の正本はメモリ`project_agmsg_role_team.md`。
-
-### 使い分け判定（タスク受領時にメインが自動判定してサジェストする）
-
-roleチームをサジェストする条件: 以下のシグナルのうち**2つ以上**該当し、かつcost vetoに掛からないこと。
-
-- s1. 独立サブタスク3件以上に分解でき、並行実行の利得がある
-- s2. 調査→実装→レビューのフルサイクルを2周以上回す見込み(数え方: 並行2案件の各1周も、1案件の差し戻しreworkによる2周目もカウントする)
-- s3. メインセッションは稼働し続けエスカレーションに即応できる前提で、ユーザーが張り付かずに進めたい案件(メインが応答不能になればチームは止まる — ユーザー不在の代替にはなるが、メイン不在の代替にはならない)
-- s4. 異なる専門性(調査+実装+査読)の同時併用が必要
-
-**cost veto**: シグナル数に関わらず、想定並行利得がmanagerの固定費(`opus[1m]`のturnコスト)を上回らない小粒案件は旧来へ。逆に大規模でも直列な案件(s2のみ該当)は並行価値が無いため旧来が正解 — これは閾値の意図した挙動。
-
-既定は旧来フロー(シグナル1つ以下、またはveto該当)。**codex-implへの実装委譲が明示不要の標準フローである点は不変** — 承認ゲートが増えるのはroleチームの起動・投入だけ。
-
-サジェスト書式: 判定(該当シグナル)+根拠(分解数・プリセット(`lean`/`full`)・概算コスト)+両案の帰結1行ずつを提示し、ユーザー承認を待つ。**承認は[task:<id>]単位** — チームが既に常駐していても、新しいタスクの投入には毎回承認を得る。承認なしに起動・投入しない。
-
-### 起動プリセット
-
-編成は`lean`/`full`の2択。サジェスト時にどちらかを明示し、承認を得てから起動する。
-
-| プリセット | 常駐メンバー | 人数 | 選ぶ基準 |
-|---|---|---|---|
-| `lean` | manager, worker-1, reviewer-1 | 3 | 実装1本+固定査読で足りる。シグナル2つ該当の下限ケース |
-| `full` | manager, worker-1, worker-2, hard-worker-1, reviewer-1, reviewer-2, research-1 | 7 | 並行3本以上。固定ペア2組が両方埋まり調査役も常駐 |
-
-どちらでも`strategist`と`research-2..5`は非常駐 — managerからの起動依頼をメインが受けてその場でspawnする。`full`で足りない場合もこの経路で足し、プリセットは増やさない。
-
-`lean`で始めて足りなくなったら不足roleを追加spawnして`full`相当へ広げてよい(managerへ増員を通知する)。逆向きの縮小はdespawnなので混在ルールのin-flight棚卸しに従う。
-
-### 起動手順
-
-1. プリセットのroleをspawnする(モデル等のconfigはグローバル永続なのでコマンドのみ):
-   - codex系(worker-1/2, hard-worker-1, reviewer-1/2, research-1, strategist): `ensure-codex.sh <project> <name>`
-   - claude-code系(manager, research-2..5): `spawn.sh claude-code <name> --team <session team> --project <path> --headless`
-   - role fileは`db/spawn-roles/<name>.<type>.md`の規約名で自動解決される
-2. **発注前にreadiness確認**: `team.sh <team>`で必須role(manager+担当worker+担当reviewer)の登録を確認する。不足があるうちはパケットを送らない(managerが開始後に詰まる)
-3. managerへ`[task:<id>]`付き自己完結パケット(ゴール/制約/完了条件/検収観点)を送る。**完了報告に「どのreviewerがどのworkerの成果を承認したか」の明記を必須にする**(固定ペアはprompt強制のみで軟らかいため、検収時に照合する)
-
-### 運用中のメインの義務
-
-- managerからのエスカレーション(設計判断・非常駐roleの起動依頼)に即応する。返信までmanagerは止まっている
-- **roster消失の扱い**: watchdog respawn中は一時的にrosterから消えるが、即loss扱いも即正常扱いもしない。`team.sh <team>`+pgrepで確認し、数分待って再出現しなければensure/spawnで再起動、それでも戻らなければユーザーへ報告する(一律の正常扱いは本物のcrash・respawn失敗を見逃す)
-- turn実行中のworkerをkill/teardownするとそのturnは丸ごと失われ、誰も再駆動しない(respawnはモデル側threadを引き継がない)
-
-### 検収・終了
-
-- [team-done]はメインが検収する: 要件適合+実物(diff/artifact)確認+承認reviewerの照合。team内のreviewer承認はメイン検収の代替にならない。git commitはメインのみ
-- SessionEnd teardownでsession teamのheadless worker全員(旧来系・role系の区別なし)が自動回収される。これは仕様であり巻き込みではない。次セッションでは必要roleをspawnし直す(config永続なので同モデルで立つ)
-
-### 混在ルール（旧来と同一teamで併用する場合）
-
-- `[task:<id>]`は両系を通してセッション内で一意にする
-- roleチームmember(worker/reviewer/research系)へのdispatchはmanager経由のみ。メインから直接パケットを送らない(旧来member=codex-impl/codex-research/codexへの直送は従来どおり)
-- 完了済み・破棄済みタスクのstale messageが遅延して届いたら破棄する(既読化して無視)
-- **チーム解体(despawn)時は、そのチームのin-flight dispatch(worker宛の未消化サブタスク)を棚卸しし、破棄をmanager/worker宛に明示するか同名の再利用を避ける**。同名workerを後から再spawnすると旧dispatchが再駆動される(2026-08-01実例: 解体済み初代チームのサブタスクが再spawn後のworkerで蘇生し、幽霊タスクにcycleを浪費・現行タスクの遅延原因になった)
-
-## 関連スキル
-
-- `/agmsg` - inbox確認・送信・履歴
-- `/commit` - 変更の確定
-
-## 関連ドキュメント
-
-- グローバル`CLAUDE.md`の「エージェント役割分担」節 - 役割分担の方針・振り分け基準・トークン節約ガード(依頼パケットの書式・検品手順・収束条件はこのファイルの「依頼パケットの鉄則」節を参照)
+- `/agmsg` — inbox確認・送信・履歴
+- `/commit` — 変更の確定
+- グローバル`CLAUDE.md`「エージェント役割分担」— 役割・権限・フロー全体の正本
