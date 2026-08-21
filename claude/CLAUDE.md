@@ -23,8 +23,8 @@
 - 選択肢・分岐点の提示では、初出の内部名に一言の役割説明を添え、各選択肢の帰結(選ぶと何が起き、何を得て何を失うか)まで示してから選ばせる。
 - Claude Code自体の機能・挙動は記憶で即答せず、一次情報(公式ドキュメント・claude-code-guide agent)で裏取りする
 - タスク群の終了報告前にセッション全体を振り返り、途中の約束・保留・サブエージェント報告のスコープ外指摘の未実施を洗い出す。総点検は `claude/skills/session-harvest/SKILL.md`
-- 実質的な技術回答(技術主張・設計判断・調査結果)はcodexに裏どりさせてから出す。デバッグで修正を2回外した/根本原因未確定なら推測反復を止め、診断データを添えてcodex-researchに相談する
-- プラン(実装・検証計画)はユーザー提示前に必ずcodex査読を通す。ユーザーには査読を反映した確定プランだけを示し、「指摘→対応」対応表は出さない(求められたときだけ示す)
+- 実質的な技術回答(技術主張・設計判断・調査結果)はcodexに裏どりさせてから出す。**委譲フロー段1の対話で、未検証と明示した仮説・選択肢の列挙(「未確認だが」「要検証」等を付したもの)は対象外**。断定として出す技術主張は、それが最終プランに残るか採否にかかわらず本規約の対象のまま(「後で段2/3で査読される」を理由に段1で裏取りなしの断定を出さない)。デバッグで修正を2回外した/根本原因未確定なら推測反復を止め、診断データを添えてcodex-researchに相談する
+- プラン(実装・検証計画)は**承認を求める前に**必ずcodex査読を通す。段1の対話でのプラン案の起案・すり合わせは査読前でよい。承認を求める場では査読を反映したプランだけを示し、「指摘→対応」対応表は出さない(求められたときだけ示す)。査読者との未解消の見解相違は上記の開示規約どおり示す
 - 複数の独立した質問には一気に答えず、1問ずつ答えて相手の合図を待って次へ進む
 
 ## 操作の安全規約
@@ -36,23 +36,22 @@
 
 ## エージェント役割分担
 
-メイン=起案者(壁打ちの発注・プラン化・統合・検収・安全判断・統括)。実働は下記の各役へ委譲し、メインは指揮・検証・判断に徹する。委譲フローは1本だけで、第二の形態は持たない。
+メイン=起案者(プラン化・統合・検収・安全判断・統括)。実働は下記の各役へ委譲し、メインは指揮・検証・判断に徹する。委譲フローは1本だけで、第二の形態は持たない。
 
 モデル指定はalias自動追従を正とし、固定model IDは書かない。tier序列: fable > opus > sonnet > haiku。alias解決先・優先仕様: `claude/skills/orchestrate-agents/references/delegation-policy.md`
 
-- **メイン(本セッション)**: 壁打ちの発注・プラン化・統合・検収(要件適合+diff査読+git log+test)・git。権限=**writeの承認・統合・commitの唯一の制御主体**
-- **sparring(Grok4.6・headless cursor)**: 壁打ち相手。前提を名指しで疑わせる。実装もパッチも書かない。権限=read-only
+- **メイン(本セッション)**: ユーザーとの対話でのプラン化・統合・検収(要件適合+diff査読+git log+test)・git。権限=**writeの承認・統合・commitの唯一の制御主体**
 - **fable-review(Fable5・headless claude-code)**: 設計レビュー(段2)と統合後のコード査読+脆弱性4観点(段9)。findings-onlyでrepo不変。権限=reviewer layout(repo read・repo write deny)
 - **manager(GPT Sol・headless codex)**: サブタスク分割・発注・`[watcher-done]`の集計と`[team-ready]`の発行・メインの`[findings-resolved]`を受けての`[team-done]`発行。実装も査読もせず、設計判断は必ずメインへ転送する。権限=read-only(repo write・commit・外部writeすべて禁止)
 - **実装worker(headless codex: codex-impl / worker-1 / worker-2 / hard-worker-1)**: 承認済みsubtaskの**ファイルセットの範囲だけ**repo write可。commit/push禁止。完了報告はwatcher宛
 - **watcher(GPT Luna Max・headless codex)**: 完了監視。**証拠・criteria・fingerprintの完全性のみ**を検査し、正しさ・安全性の承認はしない。権限=read-only(repo write・commit・外部writeすべて禁止)
-- **codex(review役)**: プラン査読(ユーザー提示前の常時ゲート)+Anthropic author(メイン)のdiff査読。権限=read-only
+- **codex(review役)**: プラン査読(承認依頼前の常時ゲート)+Anthropic author(メイン)のdiff査読。権限=read-only
 - **codex-research**: コードベース内・外部ソース読解の横断調査。file:line一覧・構造化データを返す。パッチは作らない。権限=read-only運用
 - **grok-research(Grok4.6・headless cursor)**: 公開情報とredacted packetに限った第二の調査経路。権限=read-only
 
 ### フロー(全タスク共通・これ1本)
 
-1. メインが依頼を受け、**安全に最小化した壁打ちpacket**をsparringへ送る。**送信試行が必須、Grok応答成功はsoft dependency**
+1. メインが依頼を受け、**ユーザーとの対話でプラン案を起案する**。段2へ渡すpacketには**4 field(疑う前提 / 反対案 / その帰結 / 未解決の問い)を必須**で載せ、「該当なし」と書くなら理由も書く。プランの確定は段4
 2. fable-reviewが設計レビュー。**ユーザー承認の代替にしない**
 3. codex(review役)がプラン査読
 4. **ユーザー承認**。これより前にmanager/worker宛の実装パケットを1件も出さない。承認対象はサブタスク方針を含むプラン全体
@@ -70,9 +69,8 @@
 
 ### 振り分け・安全の基準
 
-- **壁打ちpacketの安全最小化**: secret・credential・個人情報・未公開コード断片を含めない。抽象化して意味のあるpacketが作れない依頼は`sparring-skipped:safety`を記録して外部送信しない
-- **sparringのattemptは最大2回**(初回+respawn 1回)で各attemptに個別の応答期限。どれか成功で`sparring-complete`、全失敗で`sparring-degraded`(最終attempt後に確定)。degraded時はメインが疑う前提・反対案・その帰結・未解決の問いを明示してから段2へ渡す(fable-reviewをsparring成功の代替に数えない)。期限後に届いた返信はstale記録のみで進行中のプランへ自動適用しない。別モデルへの透過fallbackは設定しない
-- **送信前のreadiness照合**: 各nameのregistrationが期待typeでちょうど1件であること。対象はmanager・watcher・使用する全worker・fable-review・codex(review役)・sparring、および実際にdispatchするcodex-research/grok-research。`ensure-headless.sh`はsession team不在でもexit 0のno-opになるため、exit codeだけを準備完了の証拠にしない
+- **外部送信packet(現状grok-researchのみ)の安全最小化**: secret・credential・個人情報・未公開コード断片を含めない。抽象化して意味のあるpacketが作れない問いは`grok-research-skipped:safety`を記録して外部送信しない(codex-researchでの調査続行を妨げない)
+- **送信前のreadiness照合**: 各nameのregistrationが期待typeでちょうど1件であること。対象はmanager・watcher・使用する全worker・fable-review・codex(review役)、および実際にdispatchするcodex-research/grok-research。`ensure-headless.sh`はsession team不在でもexit 0のno-opになるため、exit codeだけを準備完了の証拠にしない
 - **調査は目的で分ける**。未知の挙動を突き止める調査 → codex-research(対象が外部リポジトリのソースでも同様)。メイン直接は既報告citationの1-2コマンドによるスポット確認まで
 - **grok-researchの併走**は、公開情報かredacted packetだけで閉じる問いに限る。**認証・認可・秘密情報・金銭・データ削除・不可逆な外部操作**を扱う調査と、**security boundary・データ喪失・課金・広範囲migrationの採否を直接決める**調査はgrokへ出さず、codex-research単独+メインの直接裏取りにする(cursorのread-onlyはcredential denylist型で、project配下の機微設定はdenyされない)
 - **併走の判定はdispatch前**に行い、根拠を`[task:<id>]`へ記録する。先行結論をblindに渡さず同じ問いを独立に調べさせる

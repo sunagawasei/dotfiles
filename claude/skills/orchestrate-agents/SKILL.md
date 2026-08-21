@@ -1,6 +1,6 @@
 ---
 name: orchestrate-agents
-description: 全タスク共通の単一委譲フロー(sparring壁打ち→fable-review設計ゲート→codexプラン査読→ユーザー承認→manager分割→worker実装→watcher完了監視→メイン統合→コード査読→commit)の運用手順。agmsgの非同期send+Monitor自動再開で回す
+description: 全タスク共通の単一委譲フロー(対話でのプラン起案→fable-review設計ゲート→codexプラン査読→ユーザー承認→manager分割→worker実装→watcher完了監視→メイン統合→コード査読→commit)の運用手順。agmsgの非同期send+Monitor自動再開で回す
 ---
 
 # 単一委譲フロー
@@ -15,16 +15,13 @@ description: 全タスク共通の単一委譲フロー(sparring壁打ち→fabl
 
 ## フロー
 
-### 段1 sparring(壁打ち・送信試行が必須)
+### 段1 プランニング(メイン+ユーザーの対話)
 
-`ensure-headless.sh cursor <project> sparring`で起動し、**安全に最小化したpacket**を送る。secret・credential・個人情報・未公開コード断片を入れない。抽象化して意味のあるpacketが作れない依頼は`sparring-skipped:safety`を記録して外部送信しない。
+メインがユーザーとの対話でプラン案を起案する。**この段より前に第三者のチャレンジは無い**ので、疑いはメインが自分で言語化する。プランの確定は段4のユーザー承認で、段1は起案まで。
 
-- 送信前に**registrationがちょうど1件かつtype=cursor**であることを`team.sh <team>`で確認する。`ensure-headless.sh`はsession team不在でもexit 0のno-opになるため、exit codeは準備完了の証拠にならない
-- attemptは最大2回(初回+respawn 1回)。**各attemptに個別の応答期限**を置く
-- どれか成功 → `sparring-complete`。全attempt失敗(期限切れ・spawn失敗・dead-letter) → 最終attempt後に`sparring-degraded`を確定
-- degraded時はメインが「疑う前提 / 反対案 / その帰結 / 未解決の問い」を明示してから段2へ渡す。fable-reviewをsparring成功の代替として記録しない
-- 期限後に届いた返信は`stale`として記録だけ行い、進行中のプランへ自動適用しない
-- **別モデルへの透過fallbackは設定しない**(`spawn.cursor_fallback_model.sparring`を置かない)。pin時は`--no-fallback`が既定で、fallback時はlabel一致が強制されず別モデルの回答をGrok成功と誤記録できる
+- 段2へ渡すpacketには**4 field(疑う前提 / 反対案 / その帰結 / 未解決の問い)を必須**で載せる。「該当なし」と書くなら理由も書く
+- fable-reviewはこの4 fieldの**欠落・空・定型的で実質のない値**をfindingとして返す。自己申告の空洞化に対する検査主体はここだけなので、形だけ埋めて通さない
+- 対話は依頼者のフレームに錨を下ろしやすい。**問題設定自体を疑う**役はメインと段2の両方が負う
 
 ### 段2 fable-review(設計ゲート)
 
@@ -41,7 +38,7 @@ AGMSG_CLAUDE_PROBE_TIMEOUT=180 ~/.agents/skills/agmsg/scripts/spawn.sh claude-co
 
 ### 段3 codex(review役)のプラン査読
 
-ユーザー提示前の常時ゲート。書式は下記「[review]パケットの鉄則」。
+承認依頼前の常時ゲート。書式は下記「[review]パケットの鉄則」。
 
 ### 段4 ユーザー承認
 
@@ -123,11 +120,11 @@ workerの完了報告は必ずwatcher宛。watcherが見るのは**証拠・crit
 
 - `[task:<id>]`はセッション内で一意。`[subtask:<id>]`はtask内で一意
 - 完了済み・破棄済みタスクのstale/duplicate messageは既読化して無視する
-- **readiness照合**は「名前がある」ではなく、各nameのregistrationが**期待typeでちょうど1件**であること。対象はmanager・watcher・使用する全worker・fable-review・codex(review役)・sparring、および実際にdispatchするcodex-research/grok-research(起動コマンドが一覧にあることは照合の代わりにならない)
+- **readiness照合**は「名前がある」ではなく、各nameのregistrationが**期待typeでちょうど1件**であること。対象はmanager・watcher・使用する全worker・fable-review・codex(review役)、および実際にdispatchするcodex-research/grok-research(起動コマンドが一覧にあることは照合の代わりにならない)
 - 起動コマンド(モデル等のconfigはグローバル永続なのでコマンドのみ):
   - codex系(manager, watcher, codex-impl, worker-1/2, hard-worker-1, codex, codex-research): `ensure-codex.sh <project> <name>`
   - claude-code系(fable-review): `AGMSG_CLAUDE_PROBE_TIMEOUT=180 spawn.sh claude-code <name> --team <team> --project <path> --headless --reviewer`(probe timeoutは既定30秒では足りない。上記段2参照)
-  - cursor系(sparring, grok-research): `ensure-headless.sh cursor <project> <name>`
+  - cursor系(grok-research): `ensure-headless.sh cursor <project> <name>`
   - role fileは`db/spawn-roles/<name>.<type>.md`の規約名で自動解決される
 - SessionEnd teardownでsession teamのheadless worker全員が回収される。次セッションでは必要roleをspawnし直す(config永続なので同モデルで立つ)
 - **despawn前にin-flight dispatchを棚卸しする**。同名workerを後から再spawnすると旧dispatchが再駆動される(2026-08-01実例: 解体済みチームのサブタスクが再spawn後のworkerで蘇生し、幽霊タスクにcycleを浪費した)
@@ -182,6 +179,7 @@ DO NOTを明記: git commit/push禁止・ファイルセット外の変更禁止
 
 - どちらもread-only。findingsを返すだけで、**fixはメインが適用**する
 - 自己完結パケット = `git diff`か対象`file:line`(プラン査読の場合はプラン本文) + 意図 + (ループ時)前回指摘→対応の対応表
+- **段2のプラン査読packetは段1の4 field(疑う前提 / 反対案 / その帰結 / 未解決の問い)を必須fieldとして含む**。fable-reviewは欠落・空だけでなく**定型的で実質のない値**もfindingにする(「疑う前提: なし」「反対案: 現案維持」で通さない。該当なしには理由を要求する)
 - 出力形式: Findings / Required tests / Residual risk / Confidence。severity順・推測は明記
 - 段9では**fable-reviewとcodexの両方**に、**subtask別のdiff identity・依存関係・workerの検証結果**と**段8のauthor再分類マップ(メインが書いた/直したファイルとhunkの一覧)**を渡す。両者はマップが自分に割り当てたhunkだけを査読する(マップが無いとラベルを推測で付け、無実のsubtaskが再オープンされる。codexは担当hunkを確定できず査読対象が空になる)
 
