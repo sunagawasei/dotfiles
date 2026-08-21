@@ -31,9 +31,9 @@ description: 全タスク共通の単一委譲フロー(対話でのプラン起
 AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ~/.agents/skills/agmsg/scripts/ensure-headless.sh cursor <path> fable-review
 ```
 
-`--reviewer`はcursorでは拒否される。read-onlyは`spawn.cursor_readonly`(既定ON)がscratch `.cursor/cli.json`でWrite/Shellをdenyする。モデルは`spawn.cursor_model.fable-review` / `cursor_model_label.fable-review`でpinする(id=`claude-opus-5-thinking-max`、labelはinit.modelの実測値。カタログ表示と一致しない)。
+`--reviewer`はcursorでは拒否される。read-onlyは`spawn.cursor_readonly`(既定ON)がscratch `.cursor/cli.json`でWrite/Shellをdenyする。readはcredential denylistで、projectが`~/.config`だと`gh`/`gcloud`/`cursor`/`codex`はworkspace内としてdenyされない。認証・秘密を含む査読はcursorへ出さない。モデルは`spawn.cursor_model.fable-review` / `cursor_model_label.fable-review`でpinする(id=`claude-opus-5-thinking-max`、labelはinit.modelの実測値。カタログ表示と一致しない。Claude alias規則の例外)。
 
-**turn timeoutの既定180秒では足りない**: opus max thinkingの査読はそれより長い。spawn時に`AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800`を付ける(Claude Codeの`settings.json` envにも同値を置いてある)。
+**turn timeoutの既定180秒では足りない**: opus max thinkingの査読はそれより長い。spawn時に`AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800`を付ける(Claude Codeの`settings.json` envにも同値を置いてある。このenvはClaudeからspawnする全cursor workerに効く)。
 
 ### 段3 codex(review役)のプラン査読
 
@@ -84,7 +84,7 @@ workerの完了報告は必ずwatcher宛。watcherが見るのは**証拠・crit
 - **意図一致・正しさの一次査読はauthorで振る**: codex worker(OpenAI)作のhunk → `fable-review`、メイン(Anthropic)作のhunk → `codex`(review役)
 - 混在diffは双方へ送り、それぞれ自分の担当hunkだけを査読する。**両方に段8のauthor再分類マップを渡す**
 - findingのラベルは`[subtask:<id>]`(worker作)か`[author:main]`(メイン作)。codexもfable-reviewも、自分のfindingにこのラベルを付ける
-- dependency advisoryは到達性を疎通確認し、取得できない場合はpassではなく`not checked`と根拠を返させる
+- dependency advisoryは到達性を疎通確認し、取得できない場合はpassではなく`not checked`と根拠を返させる。cursorのfable-reviewはShell denyのためこの確認が構造的にできない。依存を変えるdiffはメインがスポット確認する
 
 ### 段10 差し戻し(2経路)
 

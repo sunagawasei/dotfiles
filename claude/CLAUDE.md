@@ -38,10 +38,10 @@
 
 メイン=起案者(プラン化・統合・検収・安全判断・統括)。実働は下記の各役へ委譲し、メインは指揮・検証・判断に徹する。委譲フローは1本だけで、第二の形態は持たない。
 
-モデル指定はalias自動追従を正とし、固定model IDは書かない。tier序列: fable > opus > sonnet > haiku。alias解決先・優先仕様: `claude/skills/orchestrate-agents/references/delegation-policy.md`
+モデル指定はalias自動追従を正とし、固定model IDは書かない。**例外はcursor worker**: label完全一致監査があるので `spawn.cursor_model.<name>` / `cursor_model_label.<name>` にカタログ表示ではなくinit.modelの実測をpinする。aliasに戻すとdead-letterする。tier序列: fable > opus > sonnet > haiku。alias解決先・優先仕様: `claude/skills/orchestrate-agents/references/delegation-policy.md`
 
 - **メイン(本セッション)**: ユーザーとの対話でのプラン化・統合・検収(要件適合+diff査読+git log+test)・git。権限=**writeの承認・統合・commitの唯一の制御主体**
-- **fable-review(Opus5 Max thinking・headless cursor)**: 設計レビュー(段2)と統合後のコード査読+脆弱性4観点(段9)。findings-onlyでrepo不変。権限=cursor_readonly(Write/Shell deny。readはcredential denylist)
+- **fable-review(Opus5 Max thinking・headless cursor)**: 設計レビュー(段2)と統合後のコード査読+脆弱性4観点(段9)。findings-onlyでrepo不変。権限=cursor_readonly(Write/Shell deny。readはcredential denylist。projectが`~/.config`だと`gh`/`gcloud`/`cursor`/`codex`はworkspace内でdenyされない)
 - **manager(GPT Sol・headless codex)**: サブタスク分割・発注・`[watcher-done]`の集計と`[team-ready]`の発行・メインの`[findings-resolved]`を受けての`[team-done]`発行。実装も査読もせず、設計判断は必ずメインへ転送する。権限=read-only(repo write・commit・外部writeすべて禁止)
 - **実装worker(headless codex: codex-impl / worker-1 / worker-2 / hard-worker-1)**: 承認済みsubtaskの**ファイルセットの範囲だけ**repo write可。commit/push禁止。完了報告はwatcher宛
 - **watcher(GPT Luna Max・headless codex)**: 完了監視。**証拠・criteria・fingerprintの完全性のみ**を検査し、正しさ・安全性の承認はしない。権限=read-only(repo write・commit・外部writeすべて禁止)
@@ -72,7 +72,7 @@
 - **外部送信packet(現状grok-researchのみ)の安全最小化**: secret・credential・個人情報・未公開コード断片を含めない。抽象化して意味のあるpacketが作れない問いは`grok-research-skipped:safety`を記録して外部送信しない(codex-researchでの調査続行を妨げない)
 - **送信前のreadiness照合**: 各nameのregistrationが期待typeでちょうど1件であること。対象はmanager・watcher・使用する全worker・fable-review・codex(review役)、および実際にdispatchするcodex-research/grok-research。`ensure-headless.sh`はsession team不在でもexit 0のno-opになるため、exit codeだけを準備完了の証拠にしない
 - **調査は目的で分ける**。未知の挙動を突き止める調査 → codex-research(対象が外部リポジトリのソースでも同様)。メイン直接は既報告citationの1-2コマンドによるスポット確認まで
-- **grok-researchの併走**は、公開情報かredacted packetだけで閉じる問いに限る。**認証・認可・秘密情報・金銭・データ削除・不可逆な外部操作**を扱う調査と、**security boundary・データ喪失・課金・広範囲migrationの採否を直接決める**調査はgrokへ出さず、codex-research単独+メインの直接裏取りにする(cursorのread-onlyはcredential denylist型で、project配下の機微設定はdenyされない)
+- **grok-researchの併走**は、公開情報かredacted packetだけで閉じる問いに限る。**認証・認可・秘密情報・金銭・データ削除・不可逆な外部操作**を扱う調査と、**security boundary・データ喪失・課金・広範囲migrationの採否を直接決める**調査はgrokへ出さず、codex-research単独+メインの直接裏取りにする。**cursor worker全般**(fable-review含む)のread-onlyはcredential denylist型で、project配下の機微設定はdenyされない。認証・秘密を含む査読もcursorへ出さない
 - **併走の判定はdispatch前**に行い、根拠を`[task:<id>]`へ記録する。先行結論をblindに渡さず同じ問いを独立に調べさせる
 - 委譲中はcodex-researchの返却まで同じ対象領域のRead/Grep/Globを控える。安全・権限・緊急性で例外的に読む場合はその理由を記録する
 - workerのraw dumpをメインやユーザーへ転載せず、`decision / evidence(file:lineまたはURL) / unknown / next action`だけを受け取る。`[research]`は1トピック=1パケットに分ける
@@ -81,7 +81,7 @@
 
 ### 検収・レビュー運用
 
-- **diff査読はauthor-awareに振る(allowlist)**: codex worker(OpenAI)作hunkの一次査読 → fable-review(cursor・`claude-opus-5-thinking-max`)。メイン(Anthropic)作hunk → codex(review役)。脆弱性4観点はauthorに依らずfable-reviewが担当(原子的編集の例外だけは資格要件により対象外)。混在diffは双方へ再分類マップ付きで送る。同一vendorが自分の系列の成果を一次査読する配置を作らない
+- **diff査読はauthor-awareに振る(allowlist)**: codex worker(OpenAI)作hunkの一次査読 → fable-review(cursor・`claude-opus-5-thinking-max`。この固定IDは上のcursor例外)。メイン(Anthropic)作hunk → codex(review役)。脆弱性4観点はauthorに依らずfable-reviewが担当(原子的編集の例外だけは資格要件により対象外)。混在diffは双方へ再分類マップ付きで送る。同一vendorが自分の系列の成果を一次査読する配置を作らない。cursorのfable-reviewはShell denyのためdependency advisoryが構造的に`not checked`になりうる。依存を変えるdiffはメインがスポット確認する
 - 多様性の判定はタスク開始時とゲート通過時の2回、author agent/model/vendor/pool/primary reviewer/riskを記録して照合する。**課金プールの違いはvendor多様性に数えない**(Cursor経由のClaudeはAnthropic、同経由のGPTはOpenAI)。`auto`指定は実効vendorが確定できないため査読ゲートで使わない
 - 査読は検収の代替ではない。メインが実物(`git status`/`git diff`/`git log`/test)を確認して完了とcommitを決める
 - watcherの`[watcher-done]`も査読承認ではない。`[team-done]`のトリガーはメインの`[findings-resolved]`で、managerが自発的に完了を宣言することはない。最終検収はメイン

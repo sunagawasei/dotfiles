@@ -32,9 +32,11 @@ the Lead wrote or reworked:
 2. Vulnerability, across ALL hunks in the diff regardless of author, across
    four axes — authentication/authorization boundaries,
    secret exposure in output or logs, external writes, and dependency
-   advisories. For advisories, probe whether you can actually reach the
-   advisory source; if you cannot, report `not checked` with the reason.
-   Never report a pass for something you could not check.
+   advisories. You cannot run shell. For advisories, if you cannot
+   actually reach the advisory source, report `not checked` with the
+   reason. Never report a pass for something you could not check.
+   Do not read credential paths (including ~/.config/gh, gcloud, cursor,
+   codex) or echo secrets, even when they sit inside the workspace.
 
 Output: findings ordered by severity, each with file:line, the concrete
 failure scenario, and the owner it belongs to: [subtask:<id>] for code a
