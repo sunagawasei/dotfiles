@@ -28,13 +28,12 @@ description: 全タスク共通の単一委譲フロー(対話でのプラン起
 プランを`fable-review`へ送る。返るのは findings。**ユーザー承認の代替にしない**。
 
 ```bash
-AGMSG_CLAUDE_PROBE_TIMEOUT=180 ~/.agents/skills/agmsg/scripts/spawn.sh claude-code fable-review \
-  --team <team> --project <path> --headless --reviewer
+AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ~/.agents/skills/agmsg/scripts/ensure-headless.sh cursor <path> fable-review
 ```
 
-**probe timeoutの既定30秒では足りない**(2026-08-21実測): spawnはsandbox probeが相関ツールイベントを全部出すまで待ち、出なければ`rc=124`でfail-closedする。`~/.config`はSessionStart hookに13.5秒かかり、そこへ`fable`/xhighのturnが乗るため既定では落ちる。`AGMSG_CLAUDE_PROBE_TIMEOUT=180`を付ける。
+`--reviewer`はcursorでは拒否される。read-onlyは`spawn.cursor_readonly`(既定ON)がscratch `.cursor/cli.json`でWrite/Shellをdenyする。モデルは`spawn.cursor_model.fable-review` / `cursor_model_label.fable-review`でpinする(id=`claude-opus-5-thinking-max`、labelはinit.modelの実測値。カタログ表示と一致しない)。
 
-`--reviewer`は明示する(global `spawn.claude_reviewer`のdriftでlayoutが変わらないようにするため)。reviewer layoutはrepo readを許可し、repoのBash/Edit/Writeをdenyし、agmsg storage/teams/runへのwriteを許可する — 返信は成立する。
+**turn timeoutの既定180秒では足りない**: opus max thinkingの査読はそれより長い。spawn時に`AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800`を付ける(Claude Codeの`settings.json` envにも同値を置いてある)。
 
 ### 段3 codex(review役)のプラン査読
 
@@ -123,7 +122,7 @@ workerの完了報告は必ずwatcher宛。watcherが見るのは**証拠・crit
 - **readiness照合**は「名前がある」ではなく、各nameのregistrationが**期待typeでちょうど1件**であること。対象はmanager・watcher・使用する全worker・fable-review・codex(review役)、および実際にdispatchするcodex-research/grok-research(起動コマンドが一覧にあることは照合の代わりにならない)
 - 起動コマンド(モデル等のconfigはグローバル永続なのでコマンドのみ):
   - codex系(manager, watcher, codex-impl, worker-1/2, hard-worker-1, codex, codex-research): `ensure-codex.sh <project> <name>`
-  - claude-code系(fable-review): `AGMSG_CLAUDE_PROBE_TIMEOUT=180 spawn.sh claude-code <name> --team <team> --project <path> --headless --reviewer`(probe timeoutは既定30秒では足りない。上記段2参照)
+  - cursor系(fable-review): `AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ensure-headless.sh cursor <project> fable-review`(既定180秒ではopus max thinkingの査読が切れる。上記段2参照)
   - cursor系(grok-research): `ensure-headless.sh cursor <project> <name>`
   - role fileは`db/spawn-roles/<name>.<type>.md`の規約名で自動解決される
 - SessionEnd teardownでsession teamのheadless worker全員が回収される。次セッションでは必要roleをspawnし直す(config永続なので同モデルで立つ)

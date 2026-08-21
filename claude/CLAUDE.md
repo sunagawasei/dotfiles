@@ -41,7 +41,7 @@
 モデル指定はalias自動追従を正とし、固定model IDは書かない。tier序列: fable > opus > sonnet > haiku。alias解決先・優先仕様: `claude/skills/orchestrate-agents/references/delegation-policy.md`
 
 - **メイン(本セッション)**: ユーザーとの対話でのプラン化・統合・検収(要件適合+diff査読+git log+test)・git。権限=**writeの承認・統合・commitの唯一の制御主体**
-- **fable-review(Fable5・headless claude-code)**: 設計レビュー(段2)と統合後のコード査読+脆弱性4観点(段9)。findings-onlyでrepo不変。権限=reviewer layout(repo read・repo write deny)
+- **fable-review(Opus5 Max thinking・headless cursor)**: 設計レビュー(段2)と統合後のコード査読+脆弱性4観点(段9)。findings-onlyでrepo不変。権限=cursor_readonly(Write/Shell deny。readはcredential denylist)
 - **manager(GPT Sol・headless codex)**: サブタスク分割・発注・`[watcher-done]`の集計と`[team-ready]`の発行・メインの`[findings-resolved]`を受けての`[team-done]`発行。実装も査読もせず、設計判断は必ずメインへ転送する。権限=read-only(repo write・commit・外部writeすべて禁止)
 - **実装worker(headless codex: codex-impl / worker-1 / worker-2 / hard-worker-1)**: 承認済みsubtaskの**ファイルセットの範囲だけ**repo write可。commit/push禁止。完了報告はwatcher宛
 - **watcher(GPT Luna Max・headless codex)**: 完了監視。**証拠・criteria・fingerprintの完全性のみ**を検査し、正しさ・安全性の承認はしない。権限=read-only(repo write・commit・外部writeすべて禁止)
@@ -81,7 +81,7 @@
 
 ### 検収・レビュー運用
 
-- **diff査読はauthor-awareに振る(allowlist)**: codex worker(OpenAI)作hunkの一次査読 → fable-review(claude-code・`fable`/xhigh)。メイン(Anthropic)作hunk → codex(review役)。脆弱性4観点はauthorに依らずfable-reviewが担当(原子的編集の例外だけは資格要件により対象外)。混在diffは双方へ再分類マップ付きで送る。同一vendorが自分の系列の成果を一次査読する配置を作らない
+- **diff査読はauthor-awareに振る(allowlist)**: codex worker(OpenAI)作hunkの一次査読 → fable-review(cursor・`claude-opus-5-thinking-max`)。メイン(Anthropic)作hunk → codex(review役)。脆弱性4観点はauthorに依らずfable-reviewが担当(原子的編集の例外だけは資格要件により対象外)。混在diffは双方へ再分類マップ付きで送る。同一vendorが自分の系列の成果を一次査読する配置を作らない
 - 多様性の判定はタスク開始時とゲート通過時の2回、author agent/model/vendor/pool/primary reviewer/riskを記録して照合する。**課金プールの違いはvendor多様性に数えない**(Cursor経由のClaudeはAnthropic、同経由のGPTはOpenAI)。`auto`指定は実効vendorが確定できないため査読ゲートで使わない
 - 査読は検収の代替ではない。メインが実物(`git status`/`git diff`/`git log`/test)を確認して完了とcommitを決める
 - watcherの`[watcher-done]`も査読承認ではない。`[team-done]`のトリガーはメインの`[findings-resolved]`で、managerが自発的に完了を宣言することはない。最終検収はメイン
