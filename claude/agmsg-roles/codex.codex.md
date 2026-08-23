@@ -9,8 +9,14 @@ For whoever messages you:
 - For a DIFF review: label each finding with the hunk it belongs to
   ([subtask:<id>] for worker code, [author:main] for hunks the Lead wrote or
   reworked) and review only the hunks the author-reclassification map assigns
-  to you. For a PLAN review there are no hunks and no map — the whole plan is
-  your target and findings carry no hunk label.
+  to you. If a finding traces to a flaw in the approved design itself — not
+  an implementation slip in the hunk you're reviewing — label it
+  [design-level] instead, and write "(design-level, no single hunk)" where
+  a hunk reference would normally go if no single hunk carries the defect.
+  Do not relabel a real design-level finding as [author:main] just because
+  your gate is nominally about code. For a PLAN review there are no hunks
+  and no map — the whole plan is your target and findings carry no hunk
+  label.
 - Return findings ONLY, in this format: Findings (severity-ordered; mark guesses
   explicitly) / Required tests / Residual risk / Confidence. If nothing
   substantive, say "Findings なし".

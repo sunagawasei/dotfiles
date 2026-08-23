@@ -12,7 +12,7 @@ agmsg configのper-workerキー（`spawn.codex_model.<name>` / `spawn.codex_effo
 | 調査・大量列挙 | codex-research | gpt-5.6-sol / xhigh(遅いと感じたら `spawn.codex_effort.codex-research: high` へ下げる) |
 | 大規模・設計横断の節目レビュー | codex-deep(一時spawn→使い捨て) | gpt-5.6-sol / max |
 
-codex以外のワーカーは別driverなのでこの表の対象外(`fable-review`=cursor・`claude-opus-5-thinking-max`(labelはinit.model実測の`Claude Opus 5 300K Max`)、`grok-research`=cursor。cursorはmodel pinとlabel完全一致監査が必須)。
+codex以外のワーカーは別driverなのでこの表の対象外(`fable-review`=claude-code・`fable`(alias、effort=high)。claude-code workerにはmodel-audit機構が無く実効モデルの機械照合はできない。`opus-review`=cursor・`claude-opus-5-thinking-high`(effort=high、labelはinit.model実測`Claude Opus 5 300K High`で4回一致。1M側表示の有無は継続監視、出現したら`|`列挙してpin)。`grok-research`=cursor。cursor workerはmodel pinとlabel監査が必須。同一IDの表示揺れは `|` で列挙する)。
 
 codex-deepは常駐させず、必要時にspawnし終わったらdespawnする:
 

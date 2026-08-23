@@ -25,15 +25,21 @@ description: 全タスク共通の単一委譲フロー(対話でのプラン起
 
 ### 段2 fable-review(設計ゲート)
 
-プランを`fable-review`へ送る。返るのは findings。**ユーザー承認の代替にしない**。
+プランを`fable-review`へ送る。返るのは findings。**ユーザー承認の代替にしない**。認証・秘密情報を含むプランは送付前に該当部分をredactする(redactすると議論不成立ならF3の規約どおり段2を省く)。
 
 ```bash
-AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ~/.agents/skills/agmsg/scripts/ensure-headless.sh cursor <path> fable-review
+~/.agents/skills/agmsg/scripts/ensure-headless.sh claude-code <path> fable-review
 ```
 
-`--reviewer`はcursorでは拒否される。read-onlyは`spawn.cursor_readonly`(既定ON)がscratch `.cursor/cli.json`でWrite/Shellをdenyする。readはcredential denylistで、projectが`~/.config`だと`gh`/`gcloud`/`cursor`/`codex`はworkspace内としてdenyされない。認証・秘密を含む査読はcursorへ出さない。モデルは`spawn.cursor_model.fable-review` / `cursor_model_label.fable-review`でpinする(id=`claude-opus-5-thinking-max`、labelはinit.modelの実測値。カタログ表示と一致しない。Claude alias規則の例外)。
+driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.claude_reviewer: true`で担保。per-nameキーは存在しないためグローバルキーで運用する)。**repo writeはsandbox+spawn probeで強制されるが、repo read(project配下=`~/.config`全体+継承add-dir)はBash経由で開く**。credential path read・外部状態変更(認証済みCLIの変更系操作・network write)の禁止はrole file規約でのみ抑止し、sandboxは強制しない(強制境界ではないことを認識のうえ運用する選択)。**sandboxのwrite denyはrepoに限られ、agmsg message store/team registration/run状態はBashから技術的に書け、`$SKILL_DIR`全体(全team・全project分)がread可能** — これも規約でのみ抑止する残余リスクとして扱う(F1/F2)。network egressは未検証(`not checked`、F6)。モデルは`spawn.claude_model.fable-review: fable`(alias、自動追従)。effortは`spawn.claude_effort.fable-review: high`。claude-code driverにはcursorのようなmodel-audit機構が無く、実効モデルの動的な機械照合はできない。記録は静的設定値に留め、モデル自身への自己申告は検証証跡として扱わない(残存リスクとして記録するだけに留める)。
 
-**turn timeoutの既定180秒では足りない**: opus max thinkingの査読はそれより長い。spawn時に`AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800`を付ける(Claude Codeの`settings.json` envにも同値を置いてある。このenvはClaudeからspawnする全cursor workerに効く)。
+**turn timeoutの既定300秒では足りない**: `spawn.claude_turn_timeout.fable-review: 1800`で個別設定する(per-nameキーが存在する)。add-dir継承は`spawn.claude_inherit_add_dirs.fable-review: true`で明示する(グローバル既定はoff)。
+
+**layout差はreadiness照合では検出できない**: spawn前後で`spawn.claude_implementer.fable-review`が未設定(または`false`)であること、生成済みsettings.jsonのdenyWriteにprojectパスが含まれることを確認する(F4)。
+
+**rollback範囲は3点セット**: `git checkout`で戻るのはrole fileのみ。agmsgのspawn状態(despawn→旧cursor版`fable-review.cursor.md`で再spawn)とconfig(`spawn.claude_model.fable-review`等のkeyをcursor向け設定へ手動で戻す)は別途の操作が要る。3点いずれか1つの復旧漏れは新driverと旧configの不整合(dead-letterや誤ったlayoutでのspawn)を招くため、rollback時は3点を1セットで実行し、実行後に段2のreadiness照合(spawn世代を跨いだ返信実績の無効化含む)をやり直す。
+
+**role fileの編集は稼働中workerに反映されない**: claude-code/cursor/codexいずれのdriverも`_spawn.sh`がspawn時にrole fileを`run/`配下へ`cp`し(`<type>-bridge.<team>.<name>.role`)、bridgeはそのスナップショットだけを毎ターン読む。`db/spawn-roles/<name>.<type>.md`(= `claude/agmsg-roles/`のsymlink先)を直接編集しても、稼働中のworkerはspawn時点の内容のまま動き続ける(意図的な設計: source側の編集/削除でlive workerを不意に変えないため)。role file変更を反映するには、その名前のworkerをdespawn→再spawnし、readiness照合(probe)をやり直す。
 
 ### 段3 codex(review役)のプラン査読
 
@@ -80,16 +86,18 @@ workerの完了報告は必ずwatcher宛。watcherが見るのは**証拠・crit
 
 ### 段9 コード査読ゲート(author-aware)
 
-- **脆弱性4観点(認証/認可境界・secret出力・外部write・dependency advisory)は常に`fable-review`**。authorに依らずこのpassは必ず通す
-- **意図一致・正しさの一次査読はauthorで振る**: codex worker(OpenAI)作のhunk → `fable-review`、メイン(Anthropic)作のhunk → `codex`(review役)
-- 混在diffは双方へ送り、それぞれ自分の担当hunkだけを査読する。**両方に段8のauthor再分類マップを渡す**
-- findingのラベルは`[subtask:<id>]`(worker作)か`[author:main]`(メイン作)。codexもfable-reviewも、自分のfindingにこのラベルを付ける
-- dependency advisoryは到達性を疎通確認し、取得できない場合はpassではなく`not checked`と根拠を返させる。cursorのfable-reviewはShell denyのためこの確認が構造的にできない。依存を変えるdiffはメインがスポット確認する
+- **脆弱性4観点(認証/認可境界・secret出力・外部write・dependency advisory)は常に`opus-review`が全hunkを対象に担当**。authorに依らずこのpassは必ず通す
+- **意図一致・正しさの一次査読はauthorで振る**: codex worker(OpenAI)作のhunk → `opus-review`、メイン(Anthropic)作のhunk → `codex`(review役)
+- 混在diffでは**opus-reviewに全hunkを渡す**。**両方に段8のauthor再分類マップを渡す**が、マップが制限するのは意図一致査読(worker作hunkに限定)だけで、脆弱性4観点は常に全hunk対象(全hunkが単一authorでも、単一要素のマップとして明示する)
+- findingのラベルは`[subtask:<id>]`(worker作)・`[author:main]`(メイン作)・`[design-level]`(承認済み設計自体の欠陥。**opus-review・codexどちらも自分が担当したhunkから見つけたら使う**。対応する単一hunkが無ければfile:line欄に`(design-level, no single hunk)`と明記)。codexもopus-reviewも、自分のfindingにこのラベルを付ける
+- dependency advisoryは到達性を疎通確認し、取得できない場合はpassではなく`not checked`と根拠を返させる。cursorのopus-reviewはShell denyのためこの確認が構造的にできない。**依存を変えるdiffのadvisory確認はメインの明示責務**とし、段9パケットの必須fieldに確認結果と根拠を含める(欠落時はcommit不可)
+- fable-reviewは段2の設計レビュー専任で段9には関与しない
 
-### 段10 差し戻し(2経路)
+### 段10 差し戻し(3経路)
 
 - **worker作のfinding** → managerへ`[team-reopened]`(findingと対象`[subtask:<id>]`を明記)。managerは該当subtaskだけ再オープンし、**基準fingerprintを取り直してworkerとwatcherの両方へ再配布**してから段6へ(watcherへ再送しないと、古い基準との照合で2回目の`[watcher-done]`に永久に到達しない)
 - **メイン作hunkのfinding** → メインが直し、段8のfingerprint再計算 → 段9へ再投入
+- **設計レベルのfinding**(`[design-level]`ラベル。承認済み設計自体の欠陥が段9で判明した場合) → メインが`[task-abort]`で理由を明記して該当taskを終端(`[task-aborted]`) → 新規`[task:<id>]`を発行して段1から再起動(旧taskとの関連は理由欄で相互参照)。既存taskの延命はしない
 
 ### 段11 `[team-done]`→検収→commit
 
@@ -111,7 +119,8 @@ workerの完了報告は必ずwatcher宛。watcherが見るのは**証拠・crit
 | `[team-done]` | manager | メイン | 完了宣言。1完了サイクルに1回 |
 | `[task-abort]` | メイン | manager | 中止要求。dispatch前・dispatch後・`[team-ready]`後のいつでも出せる |
 | `[task-aborted]` | manager | メイン | 中止の終端(subtask破棄とworker/watcherへの停止通知を済ませたことの報告)。開いているサイクルもこれで閉じる |
-| `[author:main]` | fable-review / codex | メイン | findingの帰属ラベル。メインが直す(managerへは渡さない) |
+| `[author:main]` | opus-review / codex | メイン | findingの帰属ラベル。メインが直す(managerへは渡さない) |
+| `[design-level]` | opus-review / codex | メイン | 承認済み設計自体の欠陥(担当hunkから発見時)。file:lineが無い場合は`(design-level, no single hunk)`と明記。段10の第3経路(task-abort→新task発行)へ |
 
 完了サイクルは**dispatch(段5の発注、またはreopen時の再発注)で開き**、`[team-done]`・`[team-reopened]`・`[task-aborted]`のいずれか1つで閉じる。`[team-ready]`は開いているサイクル内のマイルストーンで境界ではない。したがって`[team-done]`は1サイクルに最大1回で、差し戻しを挟んだ2回目はそのreopenが開いたサイクルの1回目にあたる。メイン作hunkのfindingは`[author:main]`ラベルで扱い、workerのsubtaskを誤って再オープンしない。
 
@@ -119,10 +128,11 @@ workerの完了報告は必ずwatcher宛。watcherが見るのは**証拠・crit
 
 - `[task:<id>]`はセッション内で一意。`[subtask:<id>]`はtask内で一意
 - 完了済み・破棄済みタスクのstale/duplicate messageは既読化して無視する
-- **readiness照合**は「名前がある」ではなく、各nameのregistrationが**期待typeでちょうど1件**であること。対象はmanager・watcher・使用する全worker・fable-review・codex(review役)、および実際にdispatchするcodex-research/grok-research(起動コマンドが一覧にあることは照合の代わりにならない)
+- **readiness照合**は「名前がある」ではなく、各nameのregistrationが**期待typeでちょうど1件、かつ当該セッションで返信実績があること**(dead-letterはregistration照合だけでは検出できない)。**新規spawn直後で返信実績がまだ無い場合はtrivialなprobeパケットを1通送り、その応答到達をもって返信実績とする**(probeは通常のtask dispatchとして数えない。循環依存を避けるための最小手順)。**respawn(despawn→再spawn)した場合、respawn前の返信実績は無効**として扱い、必ずrespawn後に新規probeを送り直す(旧instanceの応答をもって新instanceをreadyと誤判定しない)。対象はmanager・watcher・使用する全worker・fable-review・opus-review・codex(review役)、および実際にdispatchするcodex-research/grok-research(起動コマンドが一覧にあることは照合の代わりにならない)
 - 起動コマンド(モデル等のconfigはグローバル永続なのでコマンドのみ):
   - codex系(manager, watcher, codex-impl, worker-1/2, hard-worker-1, codex, codex-research): `ensure-codex.sh <project> <name>`
-  - cursor系(fable-review): `AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ensure-headless.sh cursor <project> fable-review`(既定180秒ではopus max thinkingの査読が切れる。上記段2参照)
+  - claude-code系(fable-review): `ensure-headless.sh claude-code <project> fable-review`(model/effort/turn timeoutはper-nameのconfigキーで固定。既定300秒では設計レビューに不足するため`spawn.claude_turn_timeout.fable-review: 1800`を設定済み。上記段2参照)
+  - cursor系(opus-review): `AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ensure-headless.sh cursor <project> opus-review`(既定180秒ではopus:highの査読が切れる)
   - cursor系(grok-research): `ensure-headless.sh cursor <project> <name>`
   - role fileは`db/spawn-roles/<name>.<type>.md`の規約名で自動解決される
 - SessionEnd teardownでsession teamのheadless worker全員が回収される。次セッションでは必要roleをspawnし直す(config永続なので同モデルで立つ)
@@ -174,13 +184,13 @@ DO NOTを明記: git commit/push禁止・ファイルセット外の変更禁止
 - **「バグ/異常を発見した」系の断定は再現条件まで確認してから採用する**(2026-07-27実例: `kustomize build <base>/api`単体での「既知バグ」報告が、親overlayからのビルドでは正しく解決され実機も正常だった)。SCHEMA充足の検品(形式)とは別に、断定の再現性の検品(内容)が必要
 - **インクリメンタル調査**: 1トピック=1パケット。各単位を検品してから次へ
 
-### [review]パケット(codex / fable-review宛)
+### [review]パケット(codex / fable-review / opus-review宛)
 
-- どちらもread-only。findingsを返すだけで、**fixはメインが適用**する
+- 3者ともread-only。findingsを返すだけで、**fixはメインが適用**する
 - 自己完結パケット = `git diff`か対象`file:line`(プラン査読の場合はプラン本文) + 意図 + (ループ時)前回指摘→対応の対応表
-- **段2のプラン査読packetは段1の4 field(疑う前提 / 反対案 / その帰結 / 未解決の問い)を必須fieldとして含む**。fable-reviewは欠落・空だけでなく**定型的で実質のない値**もfindingにする(「疑う前提: なし」「反対案: 現案維持」で通さない。該当なしには理由を要求する)
+- **段2のプラン査読packetは段1の4 field(疑う前提 / 反対案 / その帰結 / 未解決の問い)を必須fieldとして含む**。fable-reviewは欠落・空だけでなく**定型的で実質のない値**もfindingにする(「疑う前提: なし」「反対案: 現案維持」で通さない。該当なしには理由を要求する)。再送(反復査読)では「最初の未査読プラン」ではなく「前回findingsへの対応」として評価する
 - 出力形式: Findings / Required tests / Residual risk / Confidence。severity順・推測は明記
-- 段9では**fable-reviewとcodexの両方**に、**subtask別のdiff identity・依存関係・workerの検証結果**と**段8のauthor再分類マップ(メインが書いた/直したファイルとhunkの一覧)**を渡す。両者はマップが自分に割り当てたhunkだけを査読する(マップが無いとラベルを推測で付け、無実のsubtaskが再オープンされる。codexは担当hunkを確定できず査読対象が空になる)
+- 段9では**opus-reviewとcodexの両方**に、**subtask別のdiff identity・依存関係・workerの検証結果**・**承認済みプラン本文**・**dependency advisoryの確認結果と根拠(メイン記入。欠落時はcommit不可)**と**段8のauthor再分類マップ(メインが書いた/直したファイルとhunkの一覧。全hunkが単一authorでも単一要素のマップとして明示する)**を渡す。**codexの意図一致査読、およびopus-reviewの意図一致査読(スコープ1)はマップが割り当てたhunkだけが対象**(マップが無いとラベルを推測で付け、無実のsubtaskが再オープンされる。codexは担当hunkを確定できず査読対象が空になる)。**opus-reviewの脆弱性4観点(スコープ2)は常に全hunkが対象でマップに制限されない**
 
 ## レビュー収束条件
 
