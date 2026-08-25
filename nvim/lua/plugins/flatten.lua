@@ -7,49 +7,33 @@ return {
     -- should_nestが唯一の実効ガード。この設定はcmd付き起動(+qa等)を守らない。
     nest_if_no_args = true,
     window = {
-      open = "smart",
+      open = function(opts)
+        local focus = opts.files[1]
+        if not focus then return nil, nil end
+        local win = require("flatten.core").smart_open()
+        if win then
+          vim.api.nvim_win_set_buf(win, focus.bufnr)
+          vim.api.nvim_set_current_win(win)
+          _G.__flatten_had_candidate = true
+          return focus.bufnr, win
+        end
+        _G.__flatten_had_candidate = false
+        return focus.bufnr, nil
+      end,
     },
     -- 既知の制限：nvimをEDITORに指定してブロッキング待機するツール(crontab -e等)は、
     -- この環境ではEDITOR=vim(home-manager/shell.nix)のため現状は該当しない。将来nvimを
     -- EDITORに指定するツールを追加する場合はblock_for/should_block設定の追加検討が必要。
     hooks = {
-      -- vim.v.argvを見て、プレーンなファイルパス(+ "+<数字>")以外は
-      -- 全てローカルnestに倒す(委譲しない)。true=nest(ローカル), false=delegate。
+      -- vim.v.argvを見て、プレーンなファイルパス以外は全てローカルnestに倒す
+      -- (委譲しない)。true=nest(ローカル), false=delegate。
       -- 対象: フラグ全般(-R/-M/-o/-O/-p等)・裸の"-"(stdin)・"--"・
-      -- 数字以外の"+cmd"(例: "+qa")・引数なし。ただし、nixラッパーが常に注入する
-      -- "--cmd <lua>"ペアは無視する。ユーザー自身が--cmdを明示指定した場合も同様に
-      -- 無視され、そのcmdはローカル実行されず委譲後host側で実行される。稀な起動法であり
-      -- 許容する既知の制限。
-      -- 対話的TUIではNeovim 0.12がcore argvへ注入する"--embed"も無視する。
-      -- "--embed"スキップの既知の制限: 外部ツールがmsgpack-rpcサーバとして起動する
-      -- "nvim --embed <file>"(GUIクライアント等)が$NVIMを継承している場合も委譲対象に
-      -- 入る。Neovim 0.12のTUI→core子とは判別不能なため許容する。
+      -- 全"+"開始token(+<数字>を含む)・引数なし。"--cmd"はNixラッパーが
+      -- 注入する固定payloadとの厳密一致時だけ無視し、それ以外は即nestする。
+      -- 対話的TUIではNeovim 0.12がcore argvへ注入する"--embed"を無条件で無視する。
+      -- ユーザー指定の"nvim --embed <file>"も委譲される既知の制限を許容する。
       should_nest = function(_)
-        local argv = vim.v.argv
-        local has_file = false
-        local skip_next = false
-        for i = 2, #argv do
-          local a = argv[i]
-          if skip_next then
-            skip_next = false
-          elseif a == "--cmd" then
-            skip_next = true
-          elseif a == "--embed" then
-            -- skip: 対話的TUI起動時、Neovim 0.12はTUI(親)+embed core(子)の2プロセス
-            -- 構成になり、coreプロセスのargvには常に--embedが付く(ユーザー意図の
-            -- フラグではないため無視する)。--headlessは意図的にスキップ対象外のまま
-            -- (tool-spawnedなheadless子の委譲を防ぐため)。
-          elseif a == "--" then
-            return true
-          elseif a:sub(1, 1) == "-" then
-            return true
-          elseif a:sub(1, 1) == "+" and not a:match("^%+%d+$") then
-            return true
-          elseif a:sub(1, 1) ~= "+" then
-            has_file = true
-          end
-        end
-        return not has_file
+        return require("util.flatten_classify").classify(vim.v.argv)
       end,
       -- host側で、ファイルウィンドウ選択の前に呼ばれる(edit_files内)。
       -- 通常はこの時点のhostのカレントウィンドウが、ユーザーが入力したterminal
@@ -57,6 +41,9 @@ return {
       -- guest起動〜RPC到達までの間にhost側のフォーカスが変わっていれば一致しない
       -- (既知の残存リスク。無関係なterminalが閉じる可能性があるが<C-/>で回復可能)。
       pre_open = function(_)
+        -- 前サイクルで例外によりpost_openへ到達しなかった場合のstale値を、次サイクル
+        -- 開始時に必ずクリアする。
+        _G.__flatten_had_candidate = nil
         local win = vim.api.nvim_get_current_win()
         local buf = vim.api.nvim_win_get_buf(win)
         _G.__flatten_pending_term_win = (vim.bo[buf].buftype == "terminal") and win or nil
@@ -68,6 +55,12 @@ return {
       -- ファイルウィンドウ(ctx.winnr)へ明示的にフォーカスを戻す
       -- (toggletermのclose()がorigin_windowへフォーカスを戻してしまうのを打ち消す)。
       post_open = function(ctx)
+        local had_candidate = _G.__flatten_had_candidate
+        _G.__flatten_had_candidate = nil
+        if not had_candidate then
+          _G.__flatten_pending_term_win = nil
+          return
+        end
         local win = _G.__flatten_pending_term_win
         _G.__flatten_pending_term_win = nil
         if win and win ~= ctx.winnr and vim.api.nvim_win_is_valid(win) then
