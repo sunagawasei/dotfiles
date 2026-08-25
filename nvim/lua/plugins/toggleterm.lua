@@ -193,7 +193,7 @@ return {
       env = {
         NVIM = vim.v.servername,
         -- Hunkの`e`キー(open file in $EDITOR)を、lazygitのnvim-remoteプリセット同様
-        -- 既存Neovimインスタンスへの新規タブ表示にリダイレクトする
+        -- 既存Neovimインスタンスのバッファとして開くようリダイレクトする
         EDITOR = vim.fn.stdpath("config") .. "/bin/hunk-nvim-editor/nvim",
       },
       float_opts = {
@@ -216,6 +216,14 @@ return {
 
     _G.hunk_toggle = function()
       hunk:toggle()
+    end
+
+    _G.hunk_hide = function()
+      if hunk:is_open() and hunk:is_focused() then
+        hunk:close()
+        return 0
+      end
+      error("hunk is not the focused window")
     end
 
     _G.toggle_last_terminal = function()
