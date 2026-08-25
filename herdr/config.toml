@@ -41,11 +41,11 @@ rows = [
   ["$dir", "branch", "git_status"],
 ]
 
-# 既定rowsは[state_icon, workspace, tab]だが、workspace名とtab名に同じタイトルが入るため
-# tabトークンを外す。複数tab運用へ移るとtabの識別情報が消えるので、その時は戻す
+# workspace名(大枠タスク)とtab名(現在の作業)がherdr-titleフックにより別々に生成されるため、
+# 既定rows[state_icon, workspace, tab]のtabトークンを維持する
 [ui.sidebar.agents]
 rows = [
-  ["state_icon", "workspace"],
+  ["state_icon", "workspace", "tab"],
   ["agent"],
 ]
 
