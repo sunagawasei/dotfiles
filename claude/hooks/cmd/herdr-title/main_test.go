@@ -751,6 +751,77 @@ func TestTranscriptInputFiltersSubagentsAndDeduplicatesCurrent(t *testing.T) {
 	}
 }
 
+func TestTranscriptInputFiltersTaskNotifications(t *testing.T) {
+	payload1 := `<task-notification>
+<task-id>synthetic-task-001</task-id>
+<summary>Monitor event: "agmsg inbox stream"</summary>
+<event>2026-08-25T11:09:00Z | s-00000000-0000-4000-8000-000000000001 | fable-review → claude | ready</event>
+</task-notification>`
+	payload2 := `<task-notification>
+<task-id>synthetic-task-002</task-id>
+<tool-use-id>toolu_SYNTHETIC_0001</tool-use-id>
+<output-file>/private/tmp/synthetic-task-output/00000000-0000-4000-8000-000000000002/tasks/synthetic-task-002.output</output-file>
+<status>completed</status>
+<summary>Agent "kot CLI実装の全ファイル精査" finished</summary>
+<note>A task-notification fires each time this agent stops with no live background children of its own. The user can send it another message and resume it, so the same task-id may notify more than once.</note>
+<result>` + "`git check-ignore`" + `で正しく機能することを確認。forkの精査結果を待つ。</result>
+<usage><subagent_tokens>283981</subagent_tokens><tool_uses>3</tool_uses><duration_ms>113445</duration_ms></usage>
+</task-notification>`
+	makeEntry := func(content any) string {
+		entry, err := json.Marshal(map[string]any{
+			"type":    "user",
+			"message": map[string]any{"content": content},
+		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return string(entry)
+	}
+	tests := []struct {
+		name string
+		data string
+		want []string
+	}{
+		{
+			name: "notification-only payloads",
+			data: strings.Join([]string{makeEntry(payload1), makeEntry(payload2)}, "\n"),
+			want: []string{},
+		},
+		{
+			name: "notification mixed with user text",
+			data: makeEntry("actual-before" + payload1 + "actual-after"),
+			want: []string{"actual-beforeactual-after"},
+		},
+		{
+			name: "multiple concatenated notifications",
+			data: makeEntry(payload1 + payload2),
+			want: []string{},
+		},
+		{
+			name: "system reminder and notification",
+			data: makeEntry("actual-before" + payload1 + "actual-middle" + "<system-reminder>hidden</system-reminder>" + "actual-after"),
+			want: []string{"actual-beforeactual-middleactual-after"},
+		},
+		{
+			name: "text blocks",
+			data: makeEntry([]map[string]string{{"type": "text", "text": "block-before" + payload2 + "block-after"}}),
+			want: []string{"block-beforeblock-after"},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "transcript.jsonl")
+			if err := os.WriteFile(path, []byte(tt.data), 0o600); err != nil {
+				t.Fatal(err)
+			}
+			got := buildTitleInputs(filepath.Dir(path), path, "")
+			if !equalStrings(got, tt.want) {
+				t.Fatalf("inputs = %#v, want %#v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestPersisterMergesActorsAndHydratesCanonicalState(t *testing.T) {
 	cacheDir := t.TempDir()
 	ctx, cancel := context.WithCancel(context.Background())
@@ -1963,10 +2034,27 @@ func TestV10Required8SyntheticFixtureLeakInspection(t *testing.T) {
 		t.Fatal(err)
 	}
 	for _, forbidden := range []string{
-		"captured_payloads", "/Users/s23159", "REAL_PROMPT", "REAL_TOOL_RESPONSE", "secret",
+		"captured_" + "payloads", "/Users/" + "s23159", "REAL_" + "PROMPT", "REAL_" + "TOOL_" + "RESPONSE", "secret",
 	} {
 		if bytes.Contains(data, []byte(forbidden)) {
 			t.Fatalf("synthetic fixture contains forbidden marker %q", forbidden)
+		}
+	}
+	testSourcePaths, err := filepath.Glob("*_test.go")
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, sourcePath := range testSourcePaths {
+		source, err := os.ReadFile(sourcePath)
+		if err != nil {
+			t.Fatal(err)
+		}
+		for _, forbidden := range []string{
+			"captured_" + "payloads", "/Users/" + "s23159", "REAL_" + "PROMPT", "REAL_" + "TOOL_" + "RESPONSE",
+		} {
+			if bytes.Contains(source, []byte(forbidden)) {
+				t.Fatalf("test source %q contains forbidden marker %q", sourcePath, forbidden)
+			}
 		}
 	}
 	dummyPatterns := []struct {

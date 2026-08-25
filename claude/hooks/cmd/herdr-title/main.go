@@ -55,11 +55,12 @@ var (
 	errAlreadyRunning = errors.New("herdr-title daemon is already running")
 	errEmptyTitle     = errors.New("codex returned an empty title")
 
-	systemReminderPattern = regexp.MustCompile(`(?s)<system-reminder>.*?</system-reminder>`)
-	bearerPattern         = regexp.MustCompile(`(?i)\bBearer\s+[A-Za-z0-9._~+/=-]+`)
-	knownTokenPattern     = regexp.MustCompile(`(?i)\b(?:sk-[A-Za-z0-9_-]{8,}|gh[pousr]_[A-Za-z0-9_]{8,}|glpat-[A-Za-z0-9_-]{8,}|xox[baprs]-[A-Za-z0-9-]{8,}|AKIA[A-Z0-9]{12,})\b`)
-	longHexPattern        = regexp.MustCompile(`(?i)\b[0-9a-f]{32,}\b`)
-	longBase64Pattern     = regexp.MustCompile(`\b[A-Za-z0-9+/]{40,}={0,2}\b`)
+	systemReminderPattern   = regexp.MustCompile(`(?s)<system-reminder>.*?</system-reminder>`)
+	taskNotificationPattern = regexp.MustCompile(`(?s)<task-notification>.*?</task-notification>`)
+	bearerPattern           = regexp.MustCompile(`(?i)\bBearer\s+[A-Za-z0-9._~+/=-]+`)
+	knownTokenPattern       = regexp.MustCompile(`(?i)\b(?:sk-[A-Za-z0-9_-]{8,}|gh[pousr]_[A-Za-z0-9_]{8,}|glpat-[A-Za-z0-9_-]{8,}|xox[baprs]-[A-Za-z0-9-]{8,}|AKIA[A-Z0-9]{12,})\b`)
+	longHexPattern          = regexp.MustCompile(`(?i)\b[0-9a-f]{32,}\b`)
+	longBase64Pattern       = regexp.MustCompile(`\b[A-Za-z0-9+/]{40,}={0,2}\b`)
 )
 
 type actorKind string
@@ -2302,7 +2303,7 @@ func extractUserMessages(entries []transcriptEntry, current string) []string {
 		if entry.Type != "user" || entry.IsMeta || entry.IsSynthetic || entry.Meta || entry.Synthetic || entry.IsSidechain {
 			continue
 		}
-		message := strings.TrimSpace(systemReminderPattern.ReplaceAllString(userMessageText(entry.Message), ""))
+		message := strings.TrimSpace(taskNotificationPattern.ReplaceAllString(systemReminderPattern.ReplaceAllString(userMessageText(entry.Message), ""), ""))
 		if message != "" {
 			result = append(result, message)
 		}
