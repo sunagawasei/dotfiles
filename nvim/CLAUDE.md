@@ -18,6 +18,8 @@ LazyVim extraは`lua/config/lazy.lua`の`{ import = "lazyvim.plugins.extras.*" }
 - **`{ lhs, false }` による無効化はファイル名順に負ける**。lazy.nvimは`plugins/`をモジュール名順に読み、`false`は以降の再追加を禁止しない。無効化を集約するファイルは`zz-`始まりにして最後に評価させる（`lua/plugins/zz-disabled-keys.lua`）
 - **`{ lhs, false }` のmode省略はnモードだけを消す**。lazy側が`mode = {"n","x"}`等で宣言しているキーは、同じmodeを明示しないと片方が残る
 - LazyVimの`config/keymaps.lua`が直接張るキー（`[b`/`]b`等）はspecの`false`では消せない。`vim.keymap.del`が要る
+- **Nixの`wrapNeovim`は起動時に`--cmd "lua vim.g.loaded_..._provider=0;..."`を`$@`の前に固定注入する**。`vim.v.argv`をargv[2]から素朴に走査してフラグ判定するロジックは、この`--cmd`を常にユーザーのフラグと誤検知する。`--cmd`とその直後の引数1個はペアでスキップする実装が要る（`nvim/lua/plugins/flatten.lua`の`should_nest`参照）
+- **flatten.nvim(nvim-remote系プラグイン全般)のhookは種別ごとに実行プロセスが違う**。`should_nest`はguest(新規起動したnvim)側、`pre_open`/`post_open`はhost(親neovim)側でRPC経由で実行される。別プロセスのLua VMなので`_G`グローバル変数でこれらの間の状態共有はできない（常にnilになる）。ウィンドウ特定等の状態は、host側フック同士(`pre_open`↔`post_open`)でのみ`_G`共有する
 
 ## トラブルシューティング
 
