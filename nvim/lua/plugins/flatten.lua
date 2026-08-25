@@ -20,6 +20,10 @@ return {
       -- "--cmd <lua>"ペアは無視する。ユーザー自身が--cmdを明示指定した場合も同様に
       -- 無視され、そのcmdはローカル実行されず委譲後host側で実行される。稀な起動法であり
       -- 許容する既知の制限。
+      -- 対話的TUIではNeovim 0.12がcore argvへ注入する"--embed"も無視する。
+      -- "--embed"スキップの既知の制限: 外部ツールがmsgpack-rpcサーバとして起動する
+      -- "nvim --embed <file>"(GUIクライアント等)が$NVIMを継承している場合も委譲対象に
+      -- 入る。Neovim 0.12のTUI→core子とは判別不能なため許容する。
       should_nest = function(_)
         local argv = vim.v.argv
         local has_file = false
@@ -30,6 +34,11 @@ return {
             skip_next = false
           elseif a == "--cmd" then
             skip_next = true
+          elseif a == "--embed" then
+            -- skip: 対話的TUI起動時、Neovim 0.12はTUI(親)+embed core(子)の2プロセス
+            -- 構成になり、coreプロセスのargvには常に--embedが付く(ユーザー意図の
+            -- フラグではないため無視する)。--headlessは意図的にスキップ対象外のまま
+            -- (tool-spawnedなheadless子の委譲を防ぐため)。
           elseif a == "--" then
             return true
           elseif a:sub(1, 1) == "-" then
