@@ -41,7 +41,7 @@
 モデル指定はalias自動追従を正とし、固定model IDは書かない。**例外はcursor worker**: label監査があるので `spawn.cursor_model.<name>` / `cursor_model_label.<name>` にカタログ表示ではなくinit.modelの実測をpinする。同一IDが複数のinit.model表示を返す場合は `|` で列挙する(実例: `claude-opus-5-thinking-max` は `Claude Opus 5 1M Max Thinking` と `Claude Opus 5 300K Max`)。片方だけをpinするとdead-letterする。現行のcursor worker(opus-review)は`claude-opus-5-thinking-high`をpinしており、実測4回は`Claude Opus 5 300K High`のみで一致(1M側表示の有無は継続監視、出現したら追記して`|`列挙する)。tier序列: fable > opus > sonnet > haiku。alias解決先・優先仕様: `claude/skills/orchestrate-agents/references/delegation-policy.md`
 
 - **メイン(本セッション)**: ユーザーとの対話でのプラン化・統合・検収(要件適合+diff査読+git log+test)・git。権限=**writeの承認・統合・commitの唯一の制御主体**
-- **fable-review(Fable・headless claude-code)**: 設計レビュー(段2)専任。findings-onlyでrepo不変。権限=claude_reviewer(repo writeはsandbox+spawn probeで強制。repo readはproject(`~/.config`)配下と継承add-dir全体に開く。credential path read・外部状態変更の禁止は規約でのみ抑止しsandboxは強制しない)。**repo不変≠orchestration状態不変**: agmsg message store/team registration/run状態はsandboxのwrite denyの対象外で技術的に書け、`$SKILL_DIR`全体(全team・全projectの過去message含む)がread可能。busへの書き込み・他teamの履歴readはrole file規約でのみ抑止する残余リスク。network egressの実挙動は未検証(not checked)
+- **fable-review(Fable・headless claude-code)**: 設計レビュー(段2)と、codex査読(段3)指摘への対応可否収束を担当。findings-onlyでrepo不変。権限=claude_reviewer(repo writeはsandbox+spawn probeで強制。repo readはproject(`~/.config`)配下と継承add-dir全体に開く。credential path read・外部状態変更の禁止は規約でのみ抑止しsandboxは強制しない)。**repo不変≠orchestration状態不変**: agmsg message store/team registration/run状態はsandboxのwrite denyの対象外で技術的に書け、`$SKILL_DIR`全体(全team・全projectの過去message含む)がread可能。busへの書き込み・他teamの履歴readはrole file規約でのみ抑止する残余リスク。network egressの実挙動は未検証(not checked)
 - **opus-review(Opus5・headless cursor)**: 統合後のコード査読(段9) — worker作hunkの意図一致査読+脆弱性4観点。findings-onlyでrepo不変。権限=cursor_readonly(Write/Shell deny。readはcredential denylist。projectが`~/.config`だと`gh`/`gcloud`/`cursor`/`codex`はworkspace内でdenyされない)
 - **manager(GPT Sol・headless codex)**: サブタスク分割・発注・`[watcher-done]`の集計と`[team-ready]`の発行・メインの`[findings-resolved]`を受けての`[team-done]`発行。実装も査読もせず、設計判断は必ずメインへ転送する。権限=read-only(repo write・commit・外部writeすべて禁止)
 - **実装worker(headless codex: codex-impl / worker-1 / worker-2 / hard-worker-1)**: 承認済みsubtaskの**ファイルセットの範囲だけ**repo write可。commit/push禁止。完了報告はwatcher宛
@@ -54,13 +54,13 @@
 
 1. メインが依頼を受け、**ユーザーとの対話でプラン案を起案する**。段2へ渡すpacketには**4 field(疑う前提 / 反対案 / その帰結 / 未解決の問い)を必須**で載せ、「該当なし」と書くなら理由も書く。プランの確定は段4
 2. fable-reviewが設計レビュー。**ユーザー承認の代替にしない**
-3. codex(review役)がプラン査読
+3. codex(review役)がプラン査読。**その指摘への対応可否(採用/見送り/別タスク)はfable-reviewが振り分けて収束させる。この判断を最終とする**
 4. **ユーザー承認**。これより前にmanager/worker宛の実装パケットを1件も出さない。承認対象はサブタスク方針を含むプラン全体
 5. managerがサブタスクへ分割し、**発注前に`[scope-check]`で分割一覧(ファイルセット付き)をメインへ出す**。メインが承認済みプランの範囲内と確認して`[scope-ok]`を返したsubtaskだけが発注され、dispatchパケットの`scope-ok:<task-id>/<subtask-id>`トークン(subtask単位)がworkerのrepo write許可の根拠になる(自分のsubtask idと一致するトークンが無ければworkerは書かない)。範囲外はメインが差し戻し、必要ならユーザーへ再承認。watcherへは受入条件と同時にファイルセットと基準fingerprintが渡る
 6. worker → watcher(完全性の検査のみ)。1巡で解決しなければmanagerへescalate
 7. managerが`[team-ready]`を発行 — **非終端**
 8. メインが統合。統合前後のfingerprintを比較し、メインが実質変更したファイル/hunkをAnthropic authorへ再分類する
-9. **脆弱性4観点は常にopus-reviewが全hunkを対象に担当**(authorに依らず、段5〜8を通ったdiffは必ず通す。段1〜11を通らない原子的編集の例外は、資格要件で認証・security boundary・課金・外部write・依存関係を変えないことが担保されるためこのpassの対象外)。**意図一致・正しさの一次査読はauthorで振る** — worker作hunkはopus-review、メイン作hunkはcodex(review役)。混在diffでは**opus-reviewに全hunkを渡し**、双方に段8のauthor再分類マップを渡す。マップが担当hunkに限定するのは意図一致査読(スコープ1)だけで、脆弱性4観点(スコープ2)は常に全hunk対象。fable-reviewは段2の設計レビュー専任で段9には関与しない
+9. **脆弱性4観点は常にopus-reviewが全hunkを対象に担当**(authorに依らず、段5〜8を通ったdiffは必ず通す。段1〜11を通らない原子的編集の例外は、資格要件で認証・security boundary・課金・外部write・依存関係を変えないことが担保されるためこのpassの対象外)。**意図一致・正しさの一次査読はauthorで振る** — worker作hunkはopus-review、メイン作hunkはcodex(review役)。混在diffでは**opus-reviewに全hunkを渡し**、双方に段8のauthor再分類マップを渡す。マップが担当hunkに限定するのは意図一致査読(スコープ1)だけで、脆弱性4観点(スコープ2)は常に全hunk対象。fable-reviewは段2の設計レビューと段3の対応可否収束を担当し、段9には関与しない
 10. findingの戻し先は3経路 — **worker作**はmanagerへ`[team-reopened]`を渡して該当subtaskを再オープン、**メイン作hunk**(findingは`[author:main]`ラベル)はメインが直して段8のfingerprint再計算→段9へ再投入、**設計レベル**(`[design-level]`ラベル。**opus-review・codexどちらも、自分が担当したhunkから承認済み設計自体の欠陥を見つけたら使う**。対応する単一hunkが無ければfile:line欄に`(design-level, no single hunk)`と明記。コードレベルの`[author:main]`/`[subtask:<id>]`へ言い換えて縮小しない)はメインが`[task-abort]`で理由を明記して該当taskを終端(`[task-aborted]`)し、新規`[task:<id>]`を発行して段1から再起動する(旧taskとの関連は理由欄で相互参照。既存taskの延命はしない)
 11. 段9のfindingが全て解消したら、**メインがmanagerへ`[findings-resolved]`を送る**。managerはこれを受けて初めて`[team-done]`を出す(自発的には出さない) → メインが検収 → ユーザー確認 → メインがcommit。検収失敗・ユーザー差し戻しは段10の該当経路へ戻る。**終端は3つ — メインのcommit / ユーザーの中止 / `[task-aborted]`**(変更不要・実行不能・段取り不備と確定した場合。メインが`[task-abort]`で理由を明記し、managerがsubtask破棄とworker/watcherへの停止通知を済ませて`[task-aborted]`を1通返す。dispatch前・dispatch後・`[team-ready]`後のいつでも出せて、開いているサイクルもこれで閉じる。managerを起動していない段階ならメインが理由を記録して終端する)
 
@@ -83,7 +83,7 @@
 
 ### 検収・レビュー運用
 
-- **diff査読はauthor-awareに振る(allowlist)**: codex worker(OpenAI)作hunkの意図一致査読 → opus-review(cursor・`claude-opus-5-thinking-high`。cursor workerのモデル固定はlabel監査のための例外)。メイン(Anthropic)作hunkの意図一致査読 → codex(review役)。**脆弱性4観点はauthorに依らずopus-reviewが全hunkを対象に担当**(原子的編集の例外だけは資格要件により対象外)。**混在diffではopus-reviewに全hunkを渡す** — author再分類マップでworker作hunkに限定するのは意図一致査読(スコープ1)だけで、脆弱性4観点(スコープ2)は常に全hunk対象。同一vendorが自分の系列の成果を一次査読する配置を作らない。cursorのopus-reviewはShell denyのためdependency advisoryが構造的に`not checked`になる。**依存を変えるdiffのadvisory確認はメインの明示責務**とし、段9パケットの必須fieldに確認結果と根拠を含める(欠落時はcommit不可)。fable-reviewは段2の設計レビュー専任で段9には関与しない
+- **diff査読はauthor-awareに振る(allowlist)**: codex worker(OpenAI)作hunkの意図一致査読 → opus-review(cursor・`claude-opus-5-thinking-high`。cursor workerのモデル固定はlabel監査のための例外)。メイン(Anthropic)作hunkの意図一致査読 → codex(review役)。**脆弱性4観点はauthorに依らずopus-reviewが全hunkを対象に担当**(原子的編集の例外だけは資格要件により対象外)。**混在diffではopus-reviewに全hunkを渡す** — author再分類マップでworker作hunkに限定するのは意図一致査読(スコープ1)だけで、脆弱性4観点(スコープ2)は常に全hunk対象。同一vendorが自分の系列の成果を一次査読する配置を作らない。cursorのopus-reviewはShell denyのためdependency advisoryが構造的に`not checked`になる。**依存を変えるdiffのadvisory確認はメインの明示責務**とし、段9パケットの必須fieldに確認結果と根拠を含める(欠落時はcommit不可)。fable-reviewは段2の設計レビューと段3の対応可否収束を担当し、段9には関与しない
 - 多様性の判定はタスク開始時とゲート通過時の2回、author agent/model/vendor/pool/primary reviewer/riskを記録して照合する。**課金プールの違いはvendor多様性に数えない**(Cursor経由のClaudeはAnthropic、同経由のGPTはOpenAI)。`auto`指定は実効vendorが確定できないため査読ゲートで使わない。alias指定(fable-review=`fable`等)のロールは解決先が実行時に決まるため、**記録は静的設定値に留め、動的な実効modelの機械照合はできないことを残存リスクとして扱う**(claude-code driverにはcursorのようなmodel-audit機構が無い)
 - 査読は検収の代替ではない。メインが実物(`git status`/`git diff`/`git log`/test)を確認して完了とcommitを決める
 - watcherの`[watcher-done]`も査読承認ではない。`[team-done]`のトリガーはメインの`[findings-resolved]`で、managerが自発的に完了を宣言することはない。最終検収はメイン
