@@ -1,27 +1,35 @@
 package main
 
 import (
+	"bytes"
 	"context"
+	"crypto/sha256"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"io"
+	"net"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"regexp"
 	"strconv"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"syscall"
 	"testing"
 	"time"
 )
 
 type fakeCommandRunner struct {
-	generate func(context.Context, cursorRequest) error
+	generate func(context.Context, titleRequest) (string, error)
 	herdr    func(context.Context, ...string) ([]byte, error)
 }
 
-func (f *fakeCommandRunner) GenerateTitle(ctx context.Context, request cursorRequest) error {
+func (f *fakeCommandRunner) GenerateTitle(ctx context.Context, request titleRequest) (string, error) {
 	if f.generate == nil {
-		return errors.New("unexpected cursor-agent call")
+		return "", errors.New("unexpected codex call")
 	}
 	return f.generate(ctx, request)
 }
@@ -33,531 +41,2378 @@ func (f *fakeCommandRunner) RunHerdr(ctx context.Context, args ...string) ([]byt
 	return f.herdr(ctx, args...)
 }
 
-func testApplication(t *testing.T, commands commandRunner) *application {
+func testApplication(t *testing.T, runner commandRunner) *application {
 	t.Helper()
+	config := defaultRuntimeConfig()
+	config.tabThrottle = 120 * time.Millisecond
+	config.workspaceThrottle = 400 * time.Millisecond
+	config.retryDelay = 30 * time.Millisecond
+	config.guardRetry = 100 * time.Millisecond
+	config.actorEviction = 2 * time.Second
+	config.daemonIdle = 2 * time.Second
+	config.idlePoll = 10 * time.Millisecond
+	config.codexTimeout = time.Second
+	config.herdrTimeout = time.Second
+	config.ipcDeadline = time.Second
+	config.hookACKTimeout = 100 * time.Millisecond
+	config.hookLatencyLimit = 250 * time.Millisecond
+	config.handoverDelay = 30 * time.Millisecond
+	config.spawnSettle = 5 * time.Millisecond
 	return &application{
-		tmpDir:     t.TempDir(),
-		now:        func() time.Time { return time.Unix(1_700_000_000, 123) },
-		environ:    func() []string { return []string{"PATH=/bin", "KEEP=value"} },
-		executable: func() (string, error) { return "/test/herdr-title", nil },
-		commands:   commands,
-		startDetached: func(string, string) error {
-			return errors.New("unexpected worker start")
+		cacheDir:    t.TempDir(),
+		projectsDir: t.TempDir(),
+		buildHash:   "test-build",
+		executable:  "/test/herdr-title",
+		commands:    runner,
+		dial:        net.DialTimeout,
+		spawn:       func(string, string) error { return nil },
+		now:         time.Now,
+		sleep:       time.Sleep,
+		newTimer: func(duration time.Duration) clockTimer {
+			return realClockTimer{timer: time.NewTimer(duration)}
+		},
+		newTicker: func(duration time.Duration) clockTicker {
+			return realClockTicker{ticker: time.NewTicker(duration)}
+		},
+		stderr: io.Discard,
+		config: config,
+	}
+}
+
+func eventFor(app *application, kinds []actorKind, text, tabID, workspaceID string) daemonEvent {
+	return daemonEvent{
+		ProtocolVersion: protocolVersion,
+		BuildHash:       app.buildHash,
+		Kinds:           kinds,
+		Input: pendingInput{
+			Text: text, TabID: tabID, WorkspaceID: workspaceID,
+			HookEventName: "UserPromptSubmit",
 		},
 	}
 }
 
-func writeTranscript(t *testing.T, lines ...string) string {
+func waitFor(t *testing.T, timeout time.Duration, condition func() bool, description string) {
 	t.Helper()
-	path := filepath.Join(t.TempDir(), "transcript.jsonl")
-	data := strings.Join(lines, "\n")
-	if err := os.WriteFile(path, []byte(data), 0o600); err != nil {
-		t.Fatal(err)
-	}
-	return path
-}
-
-func writeRawState(t *testing.T, app *application, workspaceID, data string) {
-	t.Helper()
-	if err := os.MkdirAll(app.stateDir(), 0o700); err != nil {
-		t.Fatal(err)
-	}
-	if err := os.WriteFile(app.generationPath(workspaceID), []byte(data), 0o600); err != nil {
-		t.Fatal(err)
-	}
-}
-
-func readPayload(t *testing.T, path string) workerPayload {
-	t.Helper()
-	data, err := os.ReadFile(path)
-	if err != nil {
-		t.Fatal(err)
-	}
-	var payload workerPayload
-	if err := json.Unmarshal(data, &payload); err != nil {
-		t.Fatal(err)
-	}
-	return payload
-}
-
-func hookJSON(prompt, transcriptPath string) string {
-	data, _ := json.Marshal(hookInput{Prompt: prompt, TranscriptPath: transcriptPath})
-	return string(data)
-}
-
-func seedGenerationForTest(app *application, workspaceID, tabID string) (int64, error) {
-	lock, err := app.acquireWorkspaceLock(workspaceID, lockTimeout)
-	if err != nil {
-		return 0, err
-	}
-	defer lock.release()
-	state, err := app.readState(workspaceID)
-	if err != nil {
-		return 0, err
-	}
-	entry := state[tabID]
-	entry.Generation = nextGeneration(entry, app.now().UnixNano())
-	state[tabID] = entry
-	if err := app.writeState(workspaceID, state); err != nil {
-		return 0, err
-	}
-	return entry.Generation, nil
-}
-
-func TestSanitizeTitle(t *testing.T) {
-	t.Parallel()
-	cases := []struct {
-		name  string
-		input string
-		want  string
-	}{
-		{name: "CRLF tab and separators", input: "A\r\nB\tC\u2028D\u2029E", want: "A B C D E"},
-		{name: "C0 and C1 controls", input: "A\x00\x1f\x7f\u0085B", want: "AB"},
-		{name: "bidi and zero width", input: "A\u202eB\u200bC", want: "ABC"},
-		{name: "NFC latin", input: "Café", want: "Café"},
-		{name: "NFD latin", input: "Cafe\u0301", want: "Cafe\u0301"},
-		{name: "combining dakuten", input: "は\u3099", want: "は\u3099"},
-		{name: "consecutive marks", input: "e\u0301\u0327\u0304", want: "e\u0301\u0327\u0304"},
-		{name: "leading mark", input: "\u0301A", want: "A"},
-		{name: "symbol then variation selector", input: "☀️", want: ""},
-		{name: "extended variation selector", input: "A\U000E0100", want: "A"},
-		{name: "spacing mark", input: "A\u093e", want: "A"},
-		{name: "keycap", input: "1️⃣", want: "1"},
-		{name: "emoji sequence", input: "開発👨‍💻改善", want: "開発改善"},
-		{name: "quotes only", input: "「」\"'", want: ""},
-		{name: "spaces only", input: " \u3000\t\n", want: ""},
-		{name: "allowed symbols without letter", input: "-_·", want: ""},
-		{name: "allowed symbols", input: "Go-1_test·完了", want: "Go-1_test·完了"},
-		{name: "collapse whitespace", input: "A  \u3000 B", want: "A B"},
-		{name: "mark boundary drops entire base", input: "abcdefghijke\u0301\u0327", want: "abcdefghijk"},
-		{name: "mark boundary cannot leave symbols only", input: "-----------a\u0301", want: ""},
-	}
-	for _, test := range cases {
-		t.Run(test.name, func(t *testing.T) {
-			if got := sanitizeTitle(test.input); got != test.want {
-				t.Fatalf("sanitizeTitle(%q) = %q, want %q", test.input, got, test.want)
-			}
-		})
-	}
-}
-
-func TestWorkspaceIDEscapingIsReversibleAndCollisionFree(t *testing.T) {
-	t.Parallel()
-	cases := map[string]string{
-		"a:b/c%": "a%3Ab%2Fc%25",
-		"a/b":    "a%2Fb",
-		"a%2Fb":  "a%252Fb",
-		"a:b":    "a%3Ab",
-		"a%3Ab":  "a%253Ab",
-	}
-	seen := make(map[string]string)
-	for input, want := range cases {
-		got := escapeWorkspaceID(input)
-		if got != want {
-			t.Errorf("escapeWorkspaceID(%q) = %q, want %q", input, got, want)
+	deadline := time.Now().Add(timeout)
+	for time.Now().Before(deadline) {
+		if condition() {
+			return
 		}
-		if previous, exists := seen[got]; exists {
-			t.Errorf("%q and %q collide as %q", previous, input, got)
+		time.Sleep(5 * time.Millisecond)
+	}
+	t.Fatalf("timed out waiting for %s", description)
+}
+
+type manualClock struct {
+	mu      sync.Mutex
+	now     time.Time
+	timers  map[*manualTimer]struct{}
+	tickers map[*manualTicker]struct{}
+}
+
+type manualTimer struct {
+	clock    *manualClock
+	deadline time.Time
+	channel  chan time.Time
+	active   bool
+}
+
+func (t *manualTimer) Chan() <-chan time.Time { return t.channel }
+
+func (t *manualTimer) Stop() bool {
+	t.clock.mu.Lock()
+	defer t.clock.mu.Unlock()
+	wasActive := t.active
+	t.active = false
+	delete(t.clock.timers, t)
+	return wasActive
+}
+
+type manualTicker struct {
+	clock    *manualClock
+	interval time.Duration
+	next     time.Time
+	channel  chan time.Time
+	active   bool
+}
+
+func (t *manualTicker) Chan() <-chan time.Time { return t.channel }
+
+func (t *manualTicker) Stop() {
+	t.clock.mu.Lock()
+	defer t.clock.mu.Unlock()
+	t.active = false
+	delete(t.clock.tickers, t)
+}
+
+func newManualClock() *manualClock {
+	return &manualClock{
+		now:     time.Unix(1_800_000_000, 0),
+		timers:  make(map[*manualTimer]struct{}),
+		tickers: make(map[*manualTicker]struct{}),
+	}
+}
+
+func (c *manualClock) Now() time.Time {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	return c.now
+}
+
+func (c *manualClock) Sleep(duration time.Duration) { c.Advance(duration) }
+
+func (c *manualClock) NewTimer(duration time.Duration) clockTimer {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	timer := &manualTimer{
+		clock: c, deadline: c.now.Add(duration), channel: make(chan time.Time, 1), active: true,
+	}
+	c.timers[timer] = struct{}{}
+	return timer
+}
+
+func (c *manualClock) NewTicker(interval time.Duration) clockTicker {
+	c.mu.Lock()
+	defer c.mu.Unlock()
+	ticker := &manualTicker{
+		clock: c, interval: interval, next: c.now.Add(interval), channel: make(chan time.Time, 1), active: true,
+	}
+	c.tickers[ticker] = struct{}{}
+	return ticker
+}
+
+func (c *manualClock) Advance(duration time.Duration) {
+	c.mu.Lock()
+	c.now = c.now.Add(duration)
+	now := c.now
+	dueTimers := make([]*manualTimer, 0)
+	for timer := range c.timers {
+		if timer.active && !timer.deadline.After(now) {
+			timer.active = false
+			delete(c.timers, timer)
+			dueTimers = append(dueTimers, timer)
 		}
-		seen[got] = input
 	}
-}
-
-func TestGenerationStateKeysAndNoOp(t *testing.T) {
-	t.Parallel()
-	app := testApplication(t, &fakeCommandRunner{})
-
-	if _, err := seedGenerationForTest(app, "workspace", "tab"); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := seedGenerationForTest(app, "workspace", "other-tab"); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := seedGenerationForTest(app, "workspace-only", ""); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := seedGenerationForTest(app, "", "tab-only"); err != nil {
-		t.Fatal(err)
-	}
-
-	state, err := app.readState("workspace")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if state["tab"].Generation == 0 || state["other-tab"].Generation == 0 || len(state) != 2 {
-		t.Fatalf("unexpected tab-keyed state: %#v", state)
-	}
-	workspaceOnly, err := app.readState("workspace-only")
-	if err != nil || workspaceOnly[""].Generation == 0 {
-		t.Fatalf("workspace-only state = %#v, err = %v", workspaceOnly, err)
-	}
-	tabOnly, err := app.readState("")
-	if err != nil || tabOnly["tab-only"].Generation == 0 {
-		t.Fatalf("tab-only state = %#v, err = %v", tabOnly, err)
-	}
-
-	noOp := testApplication(t, &fakeCommandRunner{})
-	if err := noOp.runHook(strings.NewReader(`{"prompt":"secret"}`), "", ""); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := os.Stat(noOp.stateDir()); !errors.Is(err, os.ErrNotExist) {
-		t.Fatalf("state directory was created for no-op: %v", err)
-	}
-}
-
-func TestStateReadsNewFormatAndMigratesLegacyEntries(t *testing.T) {
-	t.Parallel()
-	app := testApplication(t, &fakeCommandRunner{})
-	now := app.now().UnixNano()
-	legacyGeneration := now + 100
-	writeRawState(t, app, "workspace", `{
-		"legacy": `+jsonNumber(legacyGeneration)+`,
-		"other_legacy": 42,
-		"current": {"generation": 84, "title": "安定タイトル", "last_started_at": 83, "skipped_count": 2}
-	}`)
-
-	state, err := app.readState("workspace")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if got := state["legacy"]; got != (tabState{Generation: legacyGeneration}) {
-		t.Fatalf("legacy state = %#v", got)
-	}
-	if got := state["other_legacy"]; got != (tabState{Generation: 42}) {
-		t.Fatalf("second legacy state = %#v", got)
-	}
-	wantCurrent := tabState{Generation: 84, Title: "安定タイトル", LastStartedAt: 83, SkippedCount: 2}
-	if got := state["current"]; got != wantCurrent {
-		t.Fatalf("current state = %#v, want %#v", got, wantCurrent)
-	}
-
-	var payload workerPayload
-	app.startDetached = func(_ string, path string) error {
-		payload = readPayload(t, path)
-		return os.Remove(path)
-	}
-	if err := app.runHook(strings.NewReader(hookJSON("current", "/transcript")), "legacy", "workspace"); err != nil {
-		t.Fatal(err)
-	}
-	if payload.Generation != legacyGeneration+1 {
-		t.Fatalf("migrated generation = %d, want %d", payload.Generation, legacyGeneration+1)
-	}
-	state, err = app.readState("workspace")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if state["other_legacy"].Generation != 42 || state["current"] != wantCurrent {
-		t.Fatalf("other entries were lost during migration: %#v", state)
-	}
-}
-
-func jsonNumber(value int64) string {
-	return strconv.FormatInt(value, 10)
-}
-
-func TestStateDropsOnlyInvalidEntries(t *testing.T) {
-	t.Parallel()
-	app := testApplication(t, &fakeCommandRunner{})
-	now := app.now().UnixNano()
-	writeRawState(t, app, "workspace", `{
-		"valid": {"generation": 10, "title": "keep", "last_started_at": 9, "skipped_count": 1},
-		"missing_generation": {"title": "bad"},
-		"zero_generation": {"generation": 0},
-		"negative_generation": {"generation": -1},
-		"typed_generation": {"generation": "10"},
-		"negative_started": {"generation": 10, "last_started_at": -1},
-		"future_started": {"generation": 10, "last_started_at": `+jsonNumber(now+1)+`},
-		"typed_started": {"generation": 10, "last_started_at": "9"},
-		"negative_skipped": {"generation": 10, "skipped_count": -1},
-		"typed_skipped": {"generation": 10, "skipped_count": "1"},
-		"invalid_legacy": 0
-	}`)
-
-	state, err := app.readState("workspace")
-	if err != nil {
-		t.Fatal(err)
-	}
-	want := tabState{Generation: 10, Title: "keep", LastStartedAt: 9, SkippedCount: 1}
-	if len(state) != 1 || state["valid"] != want {
-		t.Fatalf("filtered state = %#v, want only %#v", state, want)
-	}
-}
-
-func TestBrokenStateFileBecomesEmptyMap(t *testing.T) {
-	t.Parallel()
-	app := testApplication(t, &fakeCommandRunner{})
-	writeRawState(t, app, "workspace", `{not JSON`)
-	state, err := app.readState("workspace")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if len(state) != 0 {
-		t.Fatalf("broken state = %#v, want empty", state)
-	}
-}
-
-func TestNextGenerationUsesMaximumOfCurrentPlusOneAndUnixNano(t *testing.T) {
-	t.Parallel()
-	cases := []struct {
-		name  string
-		entry tabState
-		now   int64
-		want  int64
-	}{
-		{name: "clock wins", entry: tabState{Generation: 10}, now: 20, want: 20},
-		{name: "current plus one wins", entry: tabState{Generation: 20}, now: 10, want: 21},
-	}
-	for _, test := range cases {
-		t.Run(test.name, func(t *testing.T) {
-			if got := nextGeneration(test.entry, test.now); got != test.want {
-				t.Fatalf("nextGeneration(%#v, %d) = %d, want %d", test.entry, test.now, got, test.want)
+	dueTickers := make([]*manualTicker, 0)
+	for ticker := range c.tickers {
+		if ticker.active && !ticker.next.After(now) {
+			for !ticker.next.After(now) {
+				ticker.next = ticker.next.Add(ticker.interval)
 			}
-		})
+			dueTickers = append(dueTickers, ticker)
+		}
+	}
+	c.mu.Unlock()
+	for _, timer := range dueTimers {
+		timer.channel <- now
+	}
+	for _, ticker := range dueTickers {
+		select {
+		case ticker.channel <- now:
+		default:
+		}
 	}
 }
 
-func inodeOf(t *testing.T, path string) uint64 {
-	t.Helper()
-	info, err := os.Stat(path)
+func useManualClock(app *application, clock *manualClock) {
+	app.now = clock.Now
+	app.sleep = clock.Sleep
+	app.newTimer = clock.NewTimer
+	app.newTicker = clock.NewTicker
+}
+
+func TestProductionTimingConstants(t *testing.T) {
+	config := defaultRuntimeConfig()
+	if config.tabThrottle != 120*time.Second {
+		t.Fatalf("tab throttle = %s", config.tabThrottle)
+	}
+	if config.workspaceThrottle != 30*time.Minute {
+		t.Fatalf("workspace throttle = %s", config.workspaceThrottle)
+	}
+	if config.retryDelay != 30*time.Second || config.guardRetry != 30*time.Second {
+		t.Fatalf("retry durations = %s, %s", config.retryDelay, config.guardRetry)
+	}
+	if config.actorEviction != 10*time.Minute || config.daemonIdle != 60*time.Minute {
+		t.Fatalf("idle durations = %s, %s", config.actorEviction, config.daemonIdle)
+	}
+	if config.ipcDeadline != time.Second || config.handoverDelay != 300*time.Millisecond {
+		t.Fatalf("IPC durations = %s, %s", config.ipcDeadline, config.handoverDelay)
+	}
+}
+
+func TestBuildDaemonEventTriggerMatrixAndSubagentGate(t *testing.T) {
+	user := hookInput{HookEventName: "UserPromptSubmit", Prompt: "current", TranscriptPath: "/transcript"}
+	event, ok := buildDaemonEvent(user, "tab", "workspace", "hash")
+	if !ok || len(event.Kinds) != 2 || event.Kinds[0] != tabKind || event.Kinds[1] != workspaceKind {
+		t.Fatalf("user event = %#v, ok = %v", event, ok)
+	}
+
+	pre := hookInput{
+		HookEventName: "PreToolUse", ToolName: "Bash",
+		ToolInput: map[string]any{"description": "deploy with Bearer abc.def.ghi"},
+	}
+	event, ok = buildDaemonEvent(pre, "tab", "workspace", "hash")
+	if !ok || len(event.Kinds) != 1 || event.Kinds[0] != tabKind {
+		t.Fatalf("tool event = %#v, ok = %v", event, ok)
+	}
+	if strings.Contains(event.Input.Text, "abc.def.ghi") || !strings.Contains(event.Input.Text, "[REDACTED]") {
+		t.Fatalf("tool summary was not redacted: %q", event.Input.Text)
+	}
+
+	agentID := "agent-a123"
+	if _, ok := buildDaemonEvent(hookInput{HookEventName: "PostToolUse", AgentID: &agentID}, "tab", "workspace", "hash"); ok {
+		t.Fatal("subagent event passed the hook-side gate")
+	}
+	if _, ok := buildDaemonEvent(hookInput{HookEventName: "Stop"}, "tab", "workspace", "hash"); ok {
+		t.Fatal("unsupported hook event was accepted")
+	}
+}
+
+func TestBuildDaemonEventTruncatesPromptBeforeIPCFrame(t *testing.T) {
+	prompt := strings.Repeat("p", maxFrameSize+1024)
+	input := hookInput{HookEventName: "UserPromptSubmit", Prompt: prompt}
+	event, ok := buildDaemonEvent(input, "tab", "workspace", "hash")
+	if !ok || len([]rune(event.Input.Text)) != maxInputRunes {
+		t.Fatalf("event accepted=%v prompt runes=%d", ok, len([]rune(event.Input.Text)))
+	}
+	frame, err := json.Marshal(event)
 	if err != nil {
 		t.Fatal(err)
 	}
-	stat, ok := info.Sys().(*syscall.Stat_t)
+	if len(frame)+1 >= maxFrameSize {
+		t.Fatalf("truncated prompt frame=%d limit=%d", len(frame)+1, maxFrameSize)
+	}
+
+	// A control rune has JSON's largest per-rune expansion. Even that prompt
+	// cannot reach the IPC frame ceiling after the 600-rune truncation.
+	worstCase := hookInput{HookEventName: "UserPromptSubmit", Prompt: strings.Repeat("\x01", maxInputRunes+1)}
+	worstEvent, ok := buildDaemonEvent(worstCase, "tab", "workspace", "hash")
 	if !ok {
-		t.Fatalf("unsupported stat type %T", info.Sys())
+		t.Fatal("worst-case prompt was rejected")
 	}
-	return stat.Ino
+	worstFrame, err := json.Marshal(worstEvent)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(worstFrame)+1 >= maxFrameSize {
+		t.Fatalf("worst-case truncated prompt frame=%d limit=%d", len(worstFrame)+1, maxFrameSize)
+	}
+
+	boundedInput := hookInput{
+		HookEventName:  "PostToolUse",
+		TranscriptPath: strings.Repeat("\x01", maxTranscriptRunes+1),
+		ToolName:       strings.Repeat("\x01", maxToolNameRunes+1),
+	}
+	boundedEvent, ok := buildDaemonEvent(
+		boundedInput,
+		strings.Repeat("\x01", maxTabIDRunes),
+		strings.Repeat("\x01", maxWorkspaceIDRunes),
+		"hash",
+	)
+	if !ok {
+		t.Fatal("maximum-field event was rejected")
+	}
+	if len([]rune(boundedEvent.Input.Text)) != maxToolNameRunes+1 ||
+		len([]rune(boundedEvent.Input.TranscriptPath)) != maxTranscriptRunes ||
+		len([]rune(boundedEvent.Input.ToolName)) != maxToolNameRunes ||
+		len([]rune(boundedEvent.Input.TabID)) != maxTabIDRunes ||
+		len([]rune(boundedEvent.Input.WorkspaceID)) != maxWorkspaceIDRunes {
+		t.Fatalf("bounded event=%#v", boundedEvent.Input)
+	}
+	maximumFrameEvent := boundedEvent
+	maximumFrameEvent.Input.Text = strings.Repeat("\x01", maxInputRunes)
+	boundedFrame, err := json.Marshal(maximumFrameEvent)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(boundedFrame)+1 >= maxFrameSize {
+		t.Fatalf("all fields at maximum encoded size: frame=%d limit=%d", len(boundedFrame)+1, maxFrameSize)
+	}
+
+	app := testApplication(t, &fakeCommandRunner{})
+	delivered := make(chan daemonEvent, 1)
+	app.dial = func(string, string, time.Duration) (net.Conn, error) {
+		server, client := net.Pipe()
+		go func() {
+			defer server.Close()
+			received, readErr := bufioReadFrame(server)
+			if readErr == nil {
+				var decoded daemonEvent
+				readErr = json.Unmarshal(bytes.TrimSpace(received), &decoded)
+				if readErr == nil {
+					delivered <- decoded
+				}
+			}
+			if readErr != nil {
+				close(delivered)
+				return
+			}
+			_, _ = server.Write([]byte{ackByte})
+		}()
+		return client, nil
+	}
+	hookPayload, err := json.Marshal(input)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(hookPayload) <= maxFrameSize {
+		t.Fatalf("test hook payload=%d is not larger than IPC frame limit", len(hookPayload))
+	}
+	if err := app.runHook(bytes.NewReader(hookPayload), "tab", "workspace"); err != nil {
+		t.Fatal(err)
+	}
+	received, open := <-delivered
+	if !open || len([]rune(received.Input.Text)) != maxInputRunes {
+		t.Fatalf("ACK delivery open=%v prompt runes=%d", open, len([]rune(received.Input.Text)))
+	}
 }
 
-func TestStateUpdatesPreserveLockAndGenerationInodes(t *testing.T) {
-	t.Parallel()
+func TestBuildDaemonEventRejectsOversizedActorIdentifiers(t *testing.T) {
+	prefix := strings.Repeat("a", maxTabIDRunes)
+	input := hookInput{HookEventName: "UserPromptSubmit", Prompt: "dummy"}
+	for _, test := range []struct {
+		name        string
+		tabID       string
+		workspaceID string
+	}{
+		{name: "tab collision candidate x", tabID: prefix + "x", workspaceID: "workspace"},
+		{name: "tab collision candidate y", tabID: prefix + "y", workspaceID: "workspace"},
+		{name: "workspace collision candidate x", tabID: "tab", workspaceID: prefix + "x"},
+		{name: "workspace collision candidate y", tabID: "tab", workspaceID: prefix + "y"},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			if _, ok := buildDaemonEvent(input, test.tabID, test.workspaceID, "hash"); ok {
+				t.Fatal("oversized actor identifier was truncated and accepted")
+			}
+			app := testApplication(t, &fakeCommandRunner{})
+			var deliveries atomic.Int32
+			app.dial = func(string, string, time.Duration) (net.Conn, error) {
+				deliveries.Add(1)
+				return nil, errors.New("unexpected IPC delivery")
+			}
+			payload := `{"hook_event_name":"UserPromptSubmit","prompt":"dummy"}`
+			if err := app.runHook(strings.NewReader(payload), test.tabID, test.workspaceID); err != nil {
+				t.Fatal(err)
+			}
+			if deliveries.Load() != 0 {
+				t.Fatalf("oversized actor event deliveries=%d", deliveries.Load())
+			}
+		})
+	}
+	event, ok := buildDaemonEvent(input, prefix, prefix, "hash")
+	if !ok || event.Input.TabID != prefix || event.Input.WorkspaceID != prefix {
+		t.Fatalf("identifier at exact limit event=%#v accepted=%v", event.Input, ok)
+	}
+}
+
+func TestHookFrameOverflowWritesOneDiagnostic(t *testing.T) {
 	app := testApplication(t, &fakeCommandRunner{})
-	if _, err := seedGenerationForTest(app, "workspace", "tab"); err != nil {
+	app.buildHash = strings.Repeat("h", maxFrameSize)
+	var diagnostic bytes.Buffer
+	app.stderr = &diagnostic
+	var deliveries atomic.Int32
+	app.dial = func(string, string, time.Duration) (net.Conn, error) {
+		deliveries.Add(1)
+		return nil, errors.New("unexpected IPC delivery")
+	}
+	payload := `{"hook_event_name":"UserPromptSubmit","prompt":"dummy"}`
+	if err := app.runHook(strings.NewReader(payload), "tab", "workspace"); err == nil {
+		t.Fatal("oversized IPC frame unexpectedly succeeded")
+	}
+	if deliveries.Load() != 0 {
+		t.Fatalf("oversized frame deliveries=%d", deliveries.Load())
+	}
+	if !strings.Contains(diagnostic.String(), "IPC frame limit") || strings.Count(diagnostic.String(), "\n") != 1 {
+		t.Fatalf("frame diagnostic=%q", diagnostic.String())
+	}
+}
+
+func detachedMarkerExecutable(t *testing.T) (string, string) {
+	t.Helper()
+	directory := t.TempDir()
+	executable := filepath.Join(directory, "fake-herdr-title")
+	marker := filepath.Join(directory, "started")
+	if err := os.WriteFile(executable, []byte("#!/bin/sh\n: > \"${0%/*}/started\"\n"), 0o700); err != nil {
 		t.Fatal(err)
 	}
-	lockInode := inodeOf(t, app.lockPath("workspace"))
-	generationInode := inodeOf(t, app.generationPath("workspace"))
-	if _, err := seedGenerationForTest(app, "workspace", "tab"); err != nil {
+	return executable, marker
+}
+
+func TestDetachedDaemonStderrUsesPrivateRotatedLog(t *testing.T) {
+	cacheDir := filepath.Join(t.TempDir(), "cache")
+	if err := os.MkdirAll(cacheDir, 0o700); err != nil {
 		t.Fatal(err)
 	}
-	if got := inodeOf(t, app.lockPath("workspace")); got != lockInode {
-		t.Fatalf("lock inode changed from %d to %d", lockInode, got)
+	logPath := filepath.Join(cacheDir, daemonLogFileName)
+	if err := os.WriteFile(logPath, bytes.Repeat([]byte{'x'}, maxDaemonLogSize+1), 0o644); err != nil {
+		t.Fatal(err)
 	}
-	if got := inodeOf(t, app.generationPath("workspace")); got != generationInode {
-		t.Fatalf("generation inode changed from %d to %d", generationInode, got)
+	executable := filepath.Join(t.TempDir(), "fake-herdr-title")
+	if err := os.WriteFile(executable, []byte("#!/bin/sh\nprintf 'daemon-visible\\n' >&2\n"), 0o700); err != nil {
+		t.Fatal(err)
 	}
-	for _, path := range []string{app.lockPath("workspace"), app.generationPath("workspace")} {
-		info, err := os.Stat(path)
+	if err := startDetachedDaemon(executable, cacheDir); err != nil {
+		t.Fatal(err)
+	}
+	waitFor(t, time.Second, func() bool {
+		data, err := os.ReadFile(logPath)
+		return err == nil && bytes.Contains(data, []byte("daemon-visible"))
+	}, "detached daemon diagnostic")
+	info, err := os.Stat(logPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if info.Mode().Perm() != 0o600 {
+		t.Fatalf("daemon log mode=%#o", info.Mode().Perm())
+	}
+	if info.Size() > maxDaemonLogSize || info.Size() >= int64(maxDaemonLogSize+1) {
+		t.Fatalf("daemon log was not rotated: size=%d", info.Size())
+	}
+	data, err := os.ReadFile(logPath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if bytes.Contains(data, []byte(strings.Repeat("x", 64))) {
+		t.Fatal("daemon log retained old oversized content")
+	}
+}
+
+func TestOpenDaemonLogRejectsSymlinkWithoutMutatingTarget(t *testing.T) {
+	assertTargetUnchanged := func(t *testing.T, target string, wantContent []byte) {
+		t.Helper()
+		content, err := os.ReadFile(target)
 		if err != nil {
 			t.Fatal(err)
 		}
-		if info.Mode().Perm() != 0o600 {
-			t.Errorf("%s mode = %o, want 600", path, info.Mode().Perm())
+		info, err := os.Stat(target)
+		if err != nil {
+			t.Fatal(err)
 		}
+		if !bytes.Equal(content, wantContent) || info.Mode().Perm() != 0o640 {
+			t.Fatalf("target changed: size=%d mode=%#o", len(content), info.Mode().Perm())
+		}
+	}
+	t.Run("symlink", func(t *testing.T) {
+		cacheDir := filepath.Join(t.TempDir(), "cache")
+		if err := os.MkdirAll(cacheDir, 0o700); err != nil {
+			t.Fatal(err)
+		}
+		target := filepath.Join(t.TempDir(), "target.log")
+		wantContent := []byte("target-content")
+		if err := os.WriteFile(target, wantContent, 0o640); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.Chmod(target, 0o640); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.Symlink(target, filepath.Join(cacheDir, daemonLogFileName)); err != nil {
+			t.Fatal(err)
+		}
+		if log, err := openDaemonLog(cacheDir); err == nil {
+			_ = log.Close()
+			t.Fatal("daemon log symlink was accepted")
+		}
+		assertTargetUnchanged(t, target, wantContent)
+		executable, marker := detachedMarkerExecutable(t)
+		if err := startDetachedDaemon(executable, cacheDir); err != nil {
+			t.Fatalf("symlink fallback prevented spawn: %v", err)
+		}
+		waitFor(t, time.Second, func() bool {
+			_, err := os.Stat(marker)
+			return err == nil
+		}, "daemon spawn after log symlink rejection")
+		assertTargetUnchanged(t, target, wantContent)
+	})
+	t.Run("hardlink", func(t *testing.T) {
+		cacheDir := filepath.Join(t.TempDir(), "cache")
+		if err := os.MkdirAll(cacheDir, 0o700); err != nil {
+			t.Fatal(err)
+		}
+		target := filepath.Join(t.TempDir(), "target.log")
+		wantContent := bytes.Repeat([]byte{'h'}, maxDaemonLogSize+1)
+		if err := os.WriteFile(target, wantContent, 0o640); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.Chmod(target, 0o640); err != nil {
+			t.Fatal(err)
+		}
+		if err := os.Link(target, filepath.Join(cacheDir, daemonLogFileName)); err != nil {
+			t.Fatal(err)
+		}
+		if log, err := openDaemonLog(cacheDir); err == nil {
+			_ = log.Close()
+			t.Fatal("daemon log hardlink was accepted")
+		}
+		assertTargetUnchanged(t, target, wantContent)
+	})
+}
+
+func TestOpenDaemonLogRejectsSpecialFilesBeforeChmod(t *testing.T) {
+	for _, test := range []struct {
+		name  string
+		setup func(string) error
+	}{
+		{name: "fifo", setup: func(path string) error { return syscall.Mkfifo(path, 0o640) }},
+		{name: "directory", setup: func(path string) error { return os.Mkdir(path, 0o750) }},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			cacheDir := filepath.Join(t.TempDir(), "cache")
+			if err := os.MkdirAll(cacheDir, 0o700); err != nil {
+				t.Fatal(err)
+			}
+			logPath := filepath.Join(cacheDir, daemonLogFileName)
+			if err := test.setup(logPath); err != nil {
+				t.Fatal(err)
+			}
+			wantMode := os.FileMode(0o640)
+			if test.name == "directory" {
+				wantMode = 0o750
+			}
+			if err := os.Chmod(logPath, wantMode); err != nil {
+				t.Fatal(err)
+			}
+			if log, err := openDaemonLog(cacheDir); err == nil {
+				_ = log.Close()
+				t.Fatalf("daemon log %s was accepted", test.name)
+			}
+			info, err := os.Lstat(logPath)
+			if err != nil {
+				t.Fatal(err)
+			}
+			if info.Mode().Perm() != wantMode {
+				t.Fatalf("%s mode changed to %#o", test.name, info.Mode().Perm())
+			}
+		})
 	}
 }
 
-func TestCleanupOnlyRemovesStalePayloadAndOutput(t *testing.T) {
-	t.Parallel()
-	app := testApplication(t, &fakeCommandRunner{})
-	if err := os.MkdirAll(app.stateDir(), 0o700); err != nil {
+func TestDetachedDaemonSpawnsWhenLogIsDirectory(t *testing.T) {
+	cacheDir := filepath.Join(t.TempDir(), "cache")
+	if err := os.MkdirAll(filepath.Join(cacheDir, daemonLogFileName), 0o700); err != nil {
 		t.Fatal(err)
 	}
-	names := []string{"payload-old", "out-old", "ws_x.lock", "ws_x.gen", "unrelated"}
-	old := app.now().Add(-staleFileAge)
-	for _, name := range names {
-		path := filepath.Join(app.stateDir(), name)
-		if err := os.WriteFile(path, []byte("sensitive"), 0o600); err != nil {
-			t.Fatal(err)
-		}
-		if err := os.Chtimes(path, old, old); err != nil {
-			t.Fatal(err)
-		}
+	executable, marker := detachedMarkerExecutable(t)
+	if err := startDetachedDaemon(executable, cacheDir); err != nil {
+		t.Fatalf("directory log fallback prevented spawn: %v", err)
 	}
-	recent := filepath.Join(app.stateDir(), "payload-recent")
-	if err := os.WriteFile(recent, []byte("recent"), 0o600); err != nil {
-		t.Fatal(err)
-	}
+	waitFor(t, time.Second, func() bool {
+		_, err := os.Stat(marker)
+		return err == nil
+	}, "daemon spawn with directory log")
+}
 
-	app.cleanupStaleFiles()
-	for _, name := range []string{"payload-old", "out-old"} {
-		if _, err := os.Stat(filepath.Join(app.stateDir(), name)); !errors.Is(err, os.ErrNotExist) {
-			t.Errorf("%s was not removed: %v", name, err)
-		}
+func TestAgentIDPresenceIsDecodedForSubagentGate(t *testing.T) {
+	var input hookInput
+	if err := json.Unmarshal([]byte(`{"hook_event_name":"PreToolUse","agent_id":"","tool_name":"Read"}`), &input); err != nil {
+		t.Fatal(err)
 	}
-	for _, name := range []string{"ws_x.lock", "ws_x.gen", "unrelated", "payload-recent"} {
-		if _, err := os.Stat(filepath.Join(app.stateDir(), name)); err != nil {
-			t.Errorf("%s was removed: %v", name, err)
-		}
+	if input.AgentID == nil {
+		t.Fatal("present agent_id field was not distinguishable from an absent field")
+	}
+	if _, ok := buildDaemonEvent(input, "tab", "workspace", "hash"); ok {
+		t.Fatal("present empty agent_id passed the subagent gate")
 	}
 }
 
-func TestTranscriptExtractionFiltersAndDeduplicates(t *testing.T) {
-	t.Parallel()
-	path := writeTranscript(t,
+func TestToolSummaryAllowlistAndRedaction(t *testing.T) {
+	cases := []struct {
+		name  string
+		tool  string
+		input map[string]any
+		want  string
+	}{
+		{name: "bash description", tool: "Bash", input: map[string]any{"description": "run tests", "command": "secret"}, want: "Bash: run tests"},
+		{name: "read path", tool: "Read", input: map[string]any{"file_path": "/tmp/file", "other": "secret"}, want: "Read: /tmp/file"},
+		{name: "write path", tool: "Write", input: map[string]any{"file_path": "/tmp/file"}, want: "Write: /tmp/file"},
+		{name: "edit path", tool: "Edit", input: map[string]any{"file_path": "/tmp/file"}, want: "Edit: /tmp/file"},
+		{name: "grep path", tool: "Grep", input: map[string]any{"path": "/repo", "pattern": "secret"}, want: "Grep: /repo"},
+		{name: "glob path", tool: "Glob", input: map[string]any{"path": "/repo", "pattern": "secret"}, want: "Glob: /repo"},
+		{name: "unknown tool", tool: "WebFetch", input: map[string]any{"url": "secret"}, want: "WebFetch"},
+	}
+	for _, test := range cases {
+		t.Run(test.name, func(t *testing.T) {
+			if got := summarizeToolInput(test.tool, test.input); got != test.want {
+				t.Fatalf("summary = %q, want %q", got, test.want)
+			}
+		})
+	}
+	secret := "ghp_abcdefghijklmnopqrstuvwxyz0123456789"
+	longHex := strings.Repeat("a", 40)
+	longBase64 := strings.Repeat("Q", 48)
+	redacted := redactToolValue(secret + " " + longHex + " " + longBase64)
+	if strings.Contains(redacted, secret) || strings.Contains(redacted, longHex) || strings.Contains(redacted, longBase64) {
+		t.Fatalf("secret remained in %q", redacted)
+	}
+	if len([]rune(redactToolValue(strings.Repeat("長", maxToolInputRunes+20)))) != maxToolInputRunes {
+		t.Fatal("tool summary was not rune-truncated")
+	}
+}
+
+func TestCodexArgumentsUseSpecifiedModelSandboxAndOutput(t *testing.T) {
+	want := []string{
+		"exec", "--skip-git-repo-check", "-s", "read-only", "-m", "gpt-5.6-luna",
+		"-c", "model_reasoning_effort=low", "-o", "/output", "-",
+	}
+	got := codexArguments("/output")
+	if !equalStrings(got, want) {
+		t.Fatalf("codex arguments = %#v, want %#v", got, want)
+	}
+}
+
+func TestCodexRetryExhaustionDiagnosticOmitsPayload(t *testing.T) {
+	exitErr := exec.Command("sh", "-c", "exit 7").Run()
+	var typedExitErr *exec.ExitError
+	if !errors.As(exitErr, &typedExitErr) {
+		t.Fatalf("exit error=%T %v", exitErr, exitErr)
+	}
+	for _, test := range []struct {
+		name string
+		err  error
+		want string
+	}{
+		{name: "exit code", err: fmt.Errorf("SECRET_ERROR: %w", typedExitErr), want: "7"},
+		{name: "timeout", err: fmt.Errorf("SECRET_ERROR: %w", context.DeadlineExceeded), want: "timeout"},
+		{name: "empty", err: fmt.Errorf("SECRET_ERROR: %w", errEmptyTitle), want: "empty"},
+		{name: "unavailable", err: errors.New("SECRET_ERROR"), want: "unavailable"},
+	} {
+		t.Run(test.name, func(t *testing.T) {
+			if got := codexFailureExitStatus(test.err); got != test.want {
+				t.Fatalf("exit status=%q want=%q", got, test.want)
+			}
+		})
+	}
+
+	clock := newManualClock()
+	input := pendingInput{
+		Text: "SECRET_PROMPT", TranscriptPath: "/SECRET_TRANSCRIPT", TabID: "tab", WorkspaceID: "workspace",
+	}
+	var diagnostic bytes.Buffer
+	actor := &titleActor{
+		key:   actorKey{Kind: tabKind, WorkspaceID: "workspace", TabID: "tab"},
+		state: stateRunning, phase: phaseRunningCodex, active: &input,
+		statuses: make(chan actorStatus, 8), stderr: &diagnostic,
+		ctx: context.Background(), now: clock.Now, newTimer: clock.NewTimer, config: defaultRuntimeConfig(),
+	}
+	job := generationJob{actor: actor, input: input}
+	wrappedExitErr := fmt.Errorf("SECRET_ERROR: %w", typedExitErr)
+	actor.onJobResult(jobResult{job: job, phase: resultCodexFailure, err: wrappedExitErr})
+	if diagnostic.Len() != 0 {
+		t.Fatalf("first codex failure diagnostic=%q", diagnostic.String())
+	}
+	actor.onJobResult(jobResult{job: job, phase: resultCodexFailure, err: wrappedExitErr})
+	want := fmt.Sprintf(
+		"herdr-title: codex retries exhausted actor=%s exit_status=7\n",
+		actor.key.storageKey(),
+	)
+	if diagnostic.String() != want || strings.Contains(diagnostic.String(), "SECRET") {
+		t.Fatalf("exhaustion diagnostic=%q want=%q", diagnostic.String(), want)
+	}
+}
+
+func TestSanitizeTitleAllowsHashAndEnforcesRuneLimit(t *testing.T) {
+	if got := sanitizeTitle("Fix #123\nwith「quotes」"); got != "Fix #123 withquotes" {
+		t.Fatalf("sanitized title = %q", got)
+	}
+	input := strings.Repeat("題", maxTitleRunes+10)
+	if got := sanitizeTitle(input); len([]rune(got)) != maxTitleRunes {
+		t.Fatalf("title rune length = %d", len([]rune(got)))
+	}
+	if got := sanitizeTitle("👨‍💻"); got != "" {
+		t.Fatalf("emoji-only title = %q", got)
+	}
+}
+
+func TestTitlePromptsSeparateTabWorkAndWorkspaceTask(t *testing.T) {
+	tab := titlePrompt(titleRequest{Kind: tabKind, Input: pendingInput{Text: "fix tests"}})
+	workspace := titlePrompt(titleRequest{Kind: workspaceKind, Input: pendingInput{Text: "fix tests"}})
+	if !strings.Contains(tab, "動詞句") || strings.Contains(workspace, "動詞句") {
+		t.Fatalf("tab prompt = %q; workspace prompt = %q", tab, workspace)
+	}
+	if !strings.Contains(workspace, "名詞句") || !strings.Contains(tab, "60文字以内") || !strings.Contains(tab, "#") {
+		t.Fatal("title output constraints are missing")
+	}
+}
+
+func TestTranscriptInputFiltersSubagentsAndDeduplicatesCurrent(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "transcript.jsonl")
+	data := strings.Join([]string{
 		`{"type":"user","message":{"content":"first"}}`,
-		`{"type":"user","message":{"content":[{"type":"text","text":"mixed"},{"type":"tool_result","content":"ignored"}]}}`,
-		`{"type":"user","message":{"content":[{"type":"tool_result","content":"ignored"}]}}`,
+		`{"type":"user","isSidechain":true,"message":{"content":"subagent"}}`,
 		`{"type":"user","message":{"content":"<system-reminder>hidden</system-reminder> visible"}}`,
-		`{"type":"user","message":{"content":"<system-reminder>only hidden</system-reminder>"}}`,
-		`{"type":"user","isMeta":true,"message":{"content":"meta"}}`,
-		`{"type":"user","isSynthetic":true,"message":{"content":"synthetic"}}`,
-		`{"type":"user","isSidechain":true,"message":{"content":"subagent instruction"}}`,
 		`{"type":"user","message":{"content":"current"}}`,
-		`{"type":"user","message":{"content":"incomplete"}} trailing`,
-	)
-	want := []string{"first", "mixed", "visible", "current"}
-	if got := buildTitleInputs(path, "current", 0); !equalStrings(got, want) {
-		t.Fatalf("buildTitleInputs() = %#v, want %#v", got, want)
-	}
-
-	withoutCurrent := writeTranscript(t, `{"type":"user","message":{"content":"past"}}`)
-	if got := buildTitleInputs(withoutCurrent, "current", 0); !equalStrings(got, []string{"past", "current"}) {
-		t.Fatalf("current prompt missing from transcript: %#v", got)
-	}
-}
-
-func TestTranscriptExtractionKeepsAllOverlappingEdgeEntries(t *testing.T) {
-	t.Parallel()
-	path := writeTranscript(t,
-		`{"type":"user","message":{"content":"one"}}`,
-		`{"type":"user","message":{"content":"two"}}`,
-		`{"type":"user","message":{"content":"three"}}`,
-		`{"type":"user","message":{"content":"four"}}`,
-		`{"type":"user","message":{"content":"five"}}`,
-	)
-	want := []string{"one", "two", "three", "four", "five", "current"}
-	if got := buildTitleInputs(path, "current", 0); !equalStrings(got, want) {
-		t.Fatalf("buildTitleInputs() = %#v, want %#v", got, want)
-	}
-}
-
-func TestTitleInputsUseSessionEdgesInChronologicalOrder(t *testing.T) {
-	t.Parallel()
-	lines := make([]string, 0, 9)
-	for index := 1; index <= 8; index++ {
-		lines = append(lines, `{"type":"user","message":{"content":"message-`+strconv.Itoa(index)+`"}}`)
-	}
-	path := writeTranscript(t, lines...)
-	want := []string{"message-1", "message-2", "message-3", "message-6", "message-7", "message-8", "current"}
-	if got := buildTitleInputs(path, "current", 0); !equalStrings(got, want) {
-		t.Fatalf("edge inputs = %#v, want %#v", got, want)
-	}
-}
-
-func TestTitleInputsWithThreeOrFewerHistoryEntries(t *testing.T) {
-	t.Parallel()
-	path := writeTranscript(t,
-		`{"type":"user","message":{"content":"one"}}`,
-		`{"type":"user","message":{"content":"two"}}`,
-		`{"type":"user","message":{"content":"three"}}`,
-	)
-	want := []string{"one", "two", "three", "current"}
-	if got := buildTitleInputs(path, "current", 0); !equalStrings(got, want) {
-		t.Fatalf("short inputs = %#v, want %#v", got, want)
-	}
-}
-
-func TestCurrentPromptIsRemovedBeforeSelectingEdges(t *testing.T) {
-	t.Parallel()
-	path := writeTranscript(t,
-		`{"type":"user","message":{"content":"one"}}`,
-		`{"type":"user","message":{"content":"two"}}`,
-		`{"type":"user","message":{"content":"three"}}`,
-		`{"type":"user","message":{"content":"four"}}`,
-		`{"type":"user","message":{"content":"five"}}`,
-		`{"type":"user","message":{"content":"six"}}`,
-		`{"type":"user","message":{"content":"seven"}}`,
-		`{"type":"user","message":{"content":"current"}}`,
-	)
-	want := []string{"one", "two", "three", "five", "six", "seven", "current"}
-	if got := buildTitleInputs(path, "current", 0); !equalStrings(got, want) {
-		t.Fatalf("deduplicated edge inputs = %#v, want %#v", got, want)
-	}
-}
-
-func TestSkippedCountExpandsRecentInputsUpToTen(t *testing.T) {
-	t.Parallel()
-	lines := make([]string, 0, 15)
-	for index := 1; index <= 15; index++ {
-		lines = append(lines, `{"type":"user","message":{"content":"message-`+strconv.Itoa(index)+`"}}`)
-	}
-	path := writeTranscript(t, lines...)
-
-	wantFiveRecent := []string{"message-1", "message-2", "message-3", "message-11", "message-12", "message-13", "message-14", "message-15", "current"}
-	if got := buildTitleInputs(path, "current", 2); !equalStrings(got, wantFiveRecent) {
-		t.Fatalf("expanded inputs = %#v, want %#v", got, wantFiveRecent)
-	}
-	wantCapped := []string{"message-1", "message-2", "message-3"}
-	for index := 6; index <= 15; index++ {
-		wantCapped = append(wantCapped, "message-"+strconv.Itoa(index))
-	}
-	wantCapped = append(wantCapped, "current")
-	if got := buildTitleInputs(path, "current", 99); !equalStrings(got, wantCapped) {
-		t.Fatalf("capped inputs = %#v, want %#v", got, wantCapped)
-	}
-}
-
-func TestTranscriptReadsWholeFilePastHugeLastLine(t *testing.T) {
-	t.Parallel()
-	huge := strings.Repeat("x", (1<<20)+1024)
-	path := writeTranscript(t,
-		`{"type":"user","message":{"content":"first user"}}`,
-		`{"type":"ai-title","aiTitle":"以前のタイトル"}`,
-		`{"type":"user","message":{"content":"recent user"}}`,
-		`{"type":"user","message":{"content":[{"type":"tool_result","content":"`+huge+`"}]}}`,
-	)
-	if got := buildTitleInputs(path, "current", 0); !equalStrings(got, []string{"first user", "recent user", "current"}) {
-		t.Fatalf("fallback inputs = %#v", got)
-	}
-	if got := extractConversationTitle(path); got != "以前のタイトル" {
-		t.Fatalf("fallback title = %q", got)
-	}
-}
-
-func TestTranscriptOverLimitReadsTailAndDropsPartialFirstLine(t *testing.T) {
-	path := filepath.Join(t.TempDir(), "transcript.jsonl")
-	data := `{"type":"user","message":{"content":"too old"}}` + "\n" +
-		strings.Repeat("x", fullReadLimit+1024) + "\n" +
-		`{"type":"user","message":{"content":"recent"}}`
+	}, "\n")
 	if err := os.WriteFile(path, []byte(data), 0o600); err != nil {
 		t.Fatal(err)
 	}
-	if got := buildTitleInputs(path, "current", 0); !equalStrings(got, []string{"recent", "current"}) {
-		t.Fatalf("over-limit inputs = %#v", got)
+	got := buildTitleInputs(filepath.Dir(path), path, "current")
+	want := []string{"first", "visible", "current"}
+	if !equalStrings(got, want) {
+		t.Fatalf("inputs = %#v, want %#v", got, want)
 	}
 }
 
-func TestTranscriptOverLimitPreservesCompleteFirstTailLine(t *testing.T) {
-	boundaryLine := `{"type":"user","message":{"content":"boundary"}}`
-	recentLine := `{"type":"user","message":{"content":"recent"}}`
-	fillerLength := fullReadLimit - len(boundaryLine) - 1 - 1 - len(recentLine)
-	if fillerLength <= 0 {
-		t.Fatal("invalid fixture sizes")
-	}
-	tail := boundaryLine + "\n" + strings.Repeat("x", fillerLength) + "\n" + recentLine
-	if len(tail) != fullReadLimit {
-		t.Fatalf("tail size = %d, want %d", len(tail), fullReadLimit)
-	}
-	path := filepath.Join(t.TempDir(), "transcript.jsonl")
-	data := "outside tail\n" + tail
-	if err := os.WriteFile(path, []byte(data), 0o600); err != nil {
+func TestPersisterMergesActorsAndHydratesCanonicalState(t *testing.T) {
+	cacheDir := t.TempDir()
+	ctx, cancel := context.WithCancel(context.Background())
+	persister, err := startPersister(ctx, cacheDir)
+	if err != nil {
 		t.Fatal(err)
 	}
-	if got := buildTitleInputs(path, "current", 0); !equalStrings(got, []string{"boundary", "recent", "current"}) {
-		t.Fatalf("boundary-aligned inputs = %#v", got)
+	keyA := actorKey{Kind: tabKind, WorkspaceID: "workspace", TabID: "a"}
+	keyB := actorKey{Kind: tabKind, WorkspaceID: "workspace", TabID: "b"}
+	titleA, titleB := "A", "B"
+	startedA, startedB := int64(100), int64(200)
+	if err := persister.put(ctx, keyA, stateDelta{Title: &titleA, LastStarted: &startedA}); err != nil {
+		t.Fatal(err)
+	}
+	if err := persister.put(ctx, keyB, stateDelta{Title: &titleB, LastStarted: &startedB}); err != nil {
+		t.Fatal(err)
+	}
+	cancel()
+
+	info, err := os.Stat(filepath.Join(cacheDir, stateFileName))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if info.Mode().Perm() != 0o600 {
+		t.Fatalf("state mode = %o", info.Mode().Perm())
+	}
+	loaded, err := loadDiskState(filepath.Join(cacheDir, stateFileName))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if loaded.Actors[keyA.storageKey()] != (persistedActor{Title: titleA, LastStarted: startedA}) ||
+		loaded.Actors[keyB.storageKey()] != (persistedActor{Title: titleB, LastStarted: startedB}) {
+		t.Fatalf("canonical state = %#v", loaded.Actors)
 	}
 }
 
-func TestTranscriptUnderTailLimitPreservesFirstLineAndTruncatesInputs(t *testing.T) {
-	t.Parallel()
-	longHistory := strings.Repeat("履", maxInputRunes+20)
-	longCurrent := strings.Repeat("現", maxInputRunes+20)
-	path := writeTranscript(t, `{"type":"user","message":{"content":"`+longHistory+`"}}`)
-	got := buildTitleInputs(path, longCurrent, 0)
-	if len(got) != 2 || len([]rune(got[0])) != maxInputRunes || len([]rune(got[1])) != maxInputRunes {
-		t.Fatalf("truncated inputs lengths = %d, %d", len([]rune(got[0])), len([]rune(got[1])))
+func TestDaemonLockIsSingletonAndCacheIs0700(t *testing.T) {
+	cacheDir := filepath.Join(t.TempDir(), "herdr-title")
+	first, err := acquireDaemonLock(cacheDir)
+	if err != nil {
+		t.Fatal(err)
 	}
+	defer first.release()
+	if _, err := acquireDaemonLock(cacheDir); !errors.Is(err, errAlreadyRunning) {
+		t.Fatalf("second lock error = %v", err)
+	}
+	info, err := os.Stat(cacheDir)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if info.Mode().Perm() != 0o700 {
+		t.Fatalf("cache mode = %o", info.Mode().Perm())
+	}
+	lockInfo, err := os.Stat(filepath.Join(cacheDir, lockFileName))
+	if err != nil || lockInfo.Mode().Perm() != 0o600 {
+		t.Fatalf("lock info = %v, err = %v", lockInfo, err)
+	}
+}
+
+func TestPrepareSocketOnlyRemovesSockets(t *testing.T) {
+	dir := t.TempDir()
+	regular := filepath.Join(dir, "daemon.sock")
+	if err := os.WriteFile(regular, []byte("do not remove"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := prepareSocketPath(regular); err == nil {
+		t.Fatal("regular-file collision was removed")
+	}
+	if _, err := os.Stat(regular); err != nil {
+		t.Fatalf("regular file disappeared: %v", err)
+	}
+	if err := os.Remove(regular); err != nil {
+		t.Fatal(err)
+	}
+	removed := false
+	if err := prepareSocketPathWith(
+		regular,
+		func(string) (os.FileMode, error) { return os.ModeSocket, nil },
+		func(string) error { removed = true; return nil },
+	); err != nil {
+		t.Fatal(err)
+	}
+	if !removed {
+		t.Fatal("stale socket was not removed")
+	}
+}
+
+func TestSameWorkspaceMultipleTabsUseIndependentActors(t *testing.T) {
+	var mu sync.Mutex
+	var renames [][]string
+	runner := &fakeCommandRunner{
+		generate: func(_ context.Context, request titleRequest) (string, error) {
+			return request.Input.Text, nil
+		},
+		herdr: func(_ context.Context, args ...string) ([]byte, error) {
+			mu.Lock()
+			renames = append(renames, append([]string(nil), args...))
+			mu.Unlock()
+			return nil, nil
+		},
+	}
+	app := testApplication(t, runner)
+	runtime, err := startDaemonRuntime(app)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Stop()
+	for _, item := range []struct{ tab, title string }{{"a", "Title A"}, {"b", "Title B"}} {
+		if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, item.title, item.tab, "workspace")); err != nil {
+			t.Fatal(err)
+		}
+	}
+	waitFor(t, time.Second, func() bool {
+		mu.Lock()
+		defer mu.Unlock()
+		return containsCall(renames, "tab", "rename", "a", "Title A") &&
+			containsCall(renames, "tab", "rename", "b", "Title B")
+	}, "both tab renames")
+	snapshot := runtime.Snapshot()
+	if len(snapshot.States) != 2 {
+		t.Fatalf("actor registry = %#v", snapshot.States)
+	}
+}
+
+func TestGlobalCodexConcurrencyIsTwo(t *testing.T) {
+	var active atomic.Int32
+	var maximum atomic.Int32
+	started := make(chan struct{}, 3)
+	release := make(chan struct{})
+	runner := &fakeCommandRunner{
+		generate: func(_ context.Context, request titleRequest) (string, error) {
+			current := active.Add(1)
+			for {
+				old := maximum.Load()
+				if current <= old || maximum.CompareAndSwap(old, current) {
+					break
+				}
+			}
+			started <- struct{}{}
+			<-release
+			active.Add(-1)
+			return request.Input.Text, nil
+		},
+		herdr: func(context.Context, ...string) ([]byte, error) { return nil, nil },
+	}
+	app := testApplication(t, runner)
+	runtime, err := startDaemonRuntime(app)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Stop()
+	for _, tabID := range []string{"a", "b", "c"} {
+		if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "Title "+tabID, tabID, "workspace")); err != nil {
+			t.Fatal(err)
+		}
+	}
+	for range 2 {
+		select {
+		case <-started:
+		case <-time.After(time.Second):
+			t.Fatal("two codex jobs did not start")
+		}
+	}
+	select {
+	case <-started:
+		t.Fatal("third codex job bypassed the global semaphore")
+	case <-time.After(50 * time.Millisecond):
+	}
+	close(release)
+	select {
+	case <-started:
+	case <-time.After(time.Second):
+		t.Fatal("third codex job did not start after a slot opened")
+	}
+	if got := maximum.Load(); got != 2 {
+		t.Fatalf("maximum codex concurrency = %d", got)
+	}
+}
+
+func TestAdditionalEventDuringGenerationCannotBypassThrottle(t *testing.T) {
+	var mu sync.Mutex
+	var starts []time.Time
+	firstStarted := make(chan struct{})
+	releaseFirst := make(chan struct{})
+	runner := &fakeCommandRunner{
+		generate: func(_ context.Context, request titleRequest) (string, error) {
+			mu.Lock()
+			starts = append(starts, time.Now())
+			call := len(starts)
+			mu.Unlock()
+			if call == 1 {
+				close(firstStarted)
+				<-releaseFirst
+			}
+			return request.Input.Text, nil
+		},
+		herdr: func(context.Context, ...string) ([]byte, error) { return nil, nil },
+	}
+	app := testApplication(t, runner)
+	app.config.tabThrottle = 160 * time.Millisecond
+	runtime, err := startDaemonRuntime(app)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Stop()
+	if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "first", "tab", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	<-firstStarted
+	if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "second", "tab", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	close(releaseFirst)
+	waitFor(t, time.Second, func() bool {
+		mu.Lock()
+		defer mu.Unlock()
+		return len(starts) == 2
+	}, "second throttled generation")
+	mu.Lock()
+	delta := starts[1].Sub(starts[0])
+	mu.Unlock()
+	if delta < 140*time.Millisecond {
+		t.Fatalf("generation interval = %s, throttle was bypassed", delta)
+	}
+}
+
+func TestNonIdleStatesOnlyReplacePendingInput(t *testing.T) {
+	for _, state := range []actorState{stateScheduled, stateQueued, stateRunning, stateRetryPending} {
+		t.Run(string(state), func(t *testing.T) {
+			jobs := make(chan generationJob, 1)
+			actor := &titleActor{state: state, jobs: jobs}
+			input := pendingInput{Text: "latest", TabID: "tab", WorkspaceID: "workspace"}
+			actor.onEvent(input)
+			if actor.state != state {
+				t.Fatalf("state changed from %s to %s", state, actor.state)
+			}
+			if actor.pending == nil || *actor.pending != input {
+				t.Fatalf("pending = %#v", actor.pending)
+			}
+			if len(jobs) != 0 {
+				t.Fatal("non-idle event enqueued an additional job")
+			}
+		})
+	}
+}
+
+func TestWorkspaceGuardBlocksBeforeGenerationAndBecomesIdle(t *testing.T) {
+	var tabLists atomic.Int32
+	var generations atomic.Int32
+	runner := &fakeCommandRunner{
+		generate: func(context.Context, titleRequest) (string, error) {
+			generations.Add(1)
+			return "workspace title", nil
+		},
+		herdr: func(_ context.Context, args ...string) ([]byte, error) {
+			if equalStrings(args, []string{"tab", "list"}) {
+				tabLists.Add(1)
+				return []byte(`[{"tab_id":"a","workspace_id":"workspace"},{"tab_id":"b","workspace_id":"workspace"}]`), nil
+			}
+			return nil, nil
+		},
+	}
+	app := testApplication(t, runner)
+	app.config.guardRetry = 500 * time.Millisecond
+	runtime, err := startDaemonRuntime(app)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Stop()
+	if err := runtime.Dispatch(eventFor(app, []actorKind{workspaceKind}, "workspace task", "a", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	waitFor(t, time.Second, func() bool { return tabLists.Load() == 1 }, "pre-generation tab guard")
+	time.Sleep(50 * time.Millisecond)
+	if generations.Load() != 0 {
+		t.Fatal("workspace generation ran with multiple tabs")
+	}
+	key := actorKey{Kind: workspaceKind, WorkspaceID: "workspace"}
+	if got := runtime.Snapshot().States[key]; got != stateIdle {
+		t.Fatalf("guard-blocked actor state = %s", got)
+	}
+	time.Sleep(80 * time.Millisecond)
+	if tabLists.Load() != 1 {
+		t.Fatalf("normal multi-tab result retried %d times", tabLists.Load())
+	}
+}
+
+func TestWorkspaceGuardChecksAgainBeforeRename(t *testing.T) {
+	var mu sync.Mutex
+	tabListCalls := 0
+	workspaceRenames := 0
+	runner := &fakeCommandRunner{
+		generate: func(context.Context, titleRequest) (string, error) { return "workspace title", nil },
+		herdr: func(_ context.Context, args ...string) ([]byte, error) {
+			mu.Lock()
+			defer mu.Unlock()
+			if equalStrings(args, []string{"tab", "list"}) {
+				tabListCalls++
+				if tabListCalls == 1 {
+					return []byte(`[{"tab_id":"a","workspace_id":"workspace"}]`), nil
+				}
+				return []byte(`[{"tab_id":"a","workspace_id":"workspace"},{"tab_id":"b","workspace_id":"workspace"}]`), nil
+			}
+			if len(args) >= 2 && args[0] == "workspace" && args[1] == "rename" {
+				workspaceRenames++
+			}
+			return nil, nil
+		},
+	}
+	app := testApplication(t, runner)
+	runtime, err := startDaemonRuntime(app)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Stop()
+	if err := runtime.Dispatch(eventFor(app, []actorKind{workspaceKind}, "workspace task", "a", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	key := actorKey{Kind: workspaceKind, WorkspaceID: "workspace"}
+	waitFor(t, time.Second, func() bool {
+		mu.Lock()
+		calls := tabListCalls
+		renames := workspaceRenames
+		mu.Unlock()
+		return calls >= 2 && renames == 0 && runtime.Snapshot().States[key] == stateIdle
+	}, "post-generation workspace guard")
+}
+
+func TestCodexFailureRetryUsesThrottleFloorAndKeepsActiveSnapshot(t *testing.T) {
+	var mu sync.Mutex
+	var inputs []string
+	var starts []time.Time
+	firstStarted := make(chan struct{})
+	releaseFirst := make(chan struct{})
+	runner := &fakeCommandRunner{
+		generate: func(_ context.Context, request titleRequest) (string, error) {
+			mu.Lock()
+			inputs = append(inputs, request.Input.Text)
+			starts = append(starts, time.Now())
+			call := len(inputs)
+			mu.Unlock()
+			if call == 1 {
+				close(firstStarted)
+				<-releaseFirst
+				return "", errors.New("codex failed")
+			}
+			return "latest title", nil
+		},
+		herdr: func(context.Context, ...string) ([]byte, error) { return nil, nil },
+	}
+	app := testApplication(t, runner)
+	app.config.tabThrottle = 150 * time.Millisecond
+	app.config.retryDelay = 30 * time.Millisecond
+	runtime, err := startDaemonRuntime(app)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Stop()
+	if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "old", "tab", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	<-firstStarted
+	if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "latest", "tab", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	close(releaseFirst)
+	waitFor(t, time.Second, func() bool {
+		mu.Lock()
+		defer mu.Unlock()
+		return len(inputs) == 3
+	}, "codex retry")
+	mu.Lock()
+	defer mu.Unlock()
+	if !equalStrings(inputs, []string{"old", "old", "latest"}) {
+		t.Fatalf("retry inputs = %#v", inputs)
+	}
+	if delta := starts[1].Sub(starts[0]); delta < 130*time.Millisecond {
+		t.Fatalf("codex retry interval = %s, throttle floor was not applied", delta)
+	}
+}
+
+func TestRenameFailureRetriesRenameOnlyAfterFixedDelay(t *testing.T) {
+	var generations atomic.Int32
+	var mu sync.Mutex
+	var renameTimes []time.Time
+	runner := &fakeCommandRunner{
+		generate: func(context.Context, titleRequest) (string, error) {
+			generations.Add(1)
+			return "generated title", nil
+		},
+		herdr: func(_ context.Context, args ...string) ([]byte, error) {
+			if len(args) >= 2 && args[0] == "tab" && args[1] == "rename" {
+				mu.Lock()
+				renameTimes = append(renameTimes, time.Now())
+				call := len(renameTimes)
+				mu.Unlock()
+				if call == 1 {
+					return nil, errors.New("rename failed")
+				}
+			}
+			return nil, nil
+		},
+	}
+	app := testApplication(t, runner)
+	app.config.tabThrottle = 300 * time.Millisecond
+	app.config.retryDelay = 45 * time.Millisecond
+	runtime, err := startDaemonRuntime(app)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Stop()
+	if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "current", "tab", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	waitFor(t, time.Second, func() bool {
+		mu.Lock()
+		defer mu.Unlock()
+		return len(renameTimes) == 2
+	}, "rename-only retry")
+	mu.Lock()
+	delta := renameTimes[1].Sub(renameTimes[0])
+	mu.Unlock()
+	if generations.Load() != 1 {
+		t.Fatalf("codex generation count = %d", generations.Load())
+	}
+	if delta < 35*time.Millisecond || delta >= 200*time.Millisecond {
+		t.Fatalf("rename retry interval = %s", delta)
+	}
+}
+
+func TestRenameRetryDropsStaleTitleForNewPendingInput(t *testing.T) {
+	var mu sync.Mutex
+	var generatedInputs []string
+	var renamedTitles []string
+	firstRename := make(chan struct{})
+	runner := &fakeCommandRunner{
+		generate: func(_ context.Context, request titleRequest) (string, error) {
+			mu.Lock()
+			generatedInputs = append(generatedInputs, request.Input.Text)
+			mu.Unlock()
+			return request.Input.Text, nil
+		},
+		herdr: func(_ context.Context, args ...string) ([]byte, error) {
+			if len(args) >= 4 && args[0] == "tab" && args[1] == "rename" {
+				mu.Lock()
+				renameed := args[3]
+				renamedTitles = append(renamedTitles, renameed)
+				call := len(renamedTitles)
+				mu.Unlock()
+				if call == 1 {
+					close(firstRename)
+					return nil, errors.New("rename failed")
+				}
+			}
+			return nil, nil
+		},
+	}
+	app := testApplication(t, runner)
+	app.config.tabThrottle = 120 * time.Millisecond
+	app.config.retryDelay = 35 * time.Millisecond
+	runtime, err := startDaemonRuntime(app)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Stop()
+	if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "old title", "tab", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	<-firstRename
+	if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "new title", "tab", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	waitFor(t, time.Second, func() bool {
+		mu.Lock()
+		defer mu.Unlock()
+		return len(renamedTitles) >= 2
+	}, "new-input generation after stale rename retry")
+	mu.Lock()
+	defer mu.Unlock()
+	if !equalStrings(generatedInputs, []string{"old title", "new title"}) {
+		t.Fatalf("generated inputs = %#v", generatedInputs)
+	}
+	if !equalStrings(renamedTitles, []string{"old title", "new title"}) {
+		t.Fatalf("rename titles = %#v", renamedTitles)
+	}
+}
+
+func TestActorEvictionPersistsAndRecreationHydratesWithoutColdStart(t *testing.T) {
+	var generations atomic.Int32
+	runner := &fakeCommandRunner{
+		generate: func(context.Context, titleRequest) (string, error) {
+			generations.Add(1)
+			return "persisted title", nil
+		},
+		herdr: func(context.Context, ...string) ([]byte, error) { return nil, nil },
+	}
+	app := testApplication(t, runner)
+	app.config.tabThrottle = 500 * time.Millisecond
+	app.config.actorEviction = 50 * time.Millisecond
+	runtime, err := startDaemonRuntime(app)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Stop()
+	key := actorKey{Kind: tabKind, WorkspaceID: "workspace", TabID: "tab"}
+	if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "first", "tab", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	waitFor(t, time.Second, func() bool { return generations.Load() == 1 && len(runtime.Snapshot().States) == 0 }, "actor eviction")
+	if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "second", "tab", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	waitFor(t, time.Second, func() bool {
+		snapshot := runtime.Snapshot()
+		cold, exists := snapshot.ColdStarts[key]
+		return exists && !cold && snapshot.States[key] == stateScheduled
+	}, "hydrated actor recreation")
+	time.Sleep(80 * time.Millisecond)
+	if generations.Load() != 1 {
+		t.Fatalf("hydrated actor bypassed throttle; generations = %d", generations.Load())
+	}
+}
+
+func TestIdleSuicideRequiresEveryActorIdle(t *testing.T) {
+	t.Run("no actors", func(t *testing.T) {
+		app := testApplication(t, &fakeCommandRunner{})
+		app.config.daemonIdle = 35 * time.Millisecond
+		app.config.idlePoll = 5 * time.Millisecond
+		runtime, err := startDaemonRuntime(app)
+		if err != nil {
+			t.Fatal(err)
+		}
+		select {
+		case <-runtime.shutdown:
+		case <-time.After(time.Second):
+			t.Fatal("idle daemon did not shut down")
+		}
+		runtime.Stop()
+	})
+
+	t.Run("scheduled actor", func(t *testing.T) {
+		runner := &fakeCommandRunner{
+			generate: func(context.Context, titleRequest) (string, error) { return "title", nil },
+			herdr:    func(context.Context, ...string) ([]byte, error) { return nil, nil },
+		}
+		app := testApplication(t, runner)
+		app.config.tabThrottle = 500 * time.Millisecond
+		app.config.daemonIdle = 35 * time.Millisecond
+		app.config.idlePoll = 5 * time.Millisecond
+		key := actorKey{Kind: tabKind, WorkspaceID: "workspace", TabID: "tab"}
+		state := diskState{ProtocolVersion: protocolVersion, Actors: map[string]persistedActor{
+			key.storageKey(): {Title: "old", LastStarted: time.Now().UnixNano()},
+		}}
+		if err := writeDiskState(app.cacheDir, state); err != nil {
+			t.Fatal(err)
+		}
+		runtime, err := startDaemonRuntime(app)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer runtime.Stop()
+		if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "pending", "tab", "workspace")); err != nil {
+			t.Fatal(err)
+		}
+		waitFor(t, time.Second, func() bool { return runtime.Snapshot().States[key] == stateScheduled }, "scheduled state")
+		select {
+		case <-runtime.shutdown:
+			t.Fatal("daemon shut down while an actor was scheduled")
+		case <-time.After(100 * time.Millisecond):
+		}
+	})
+}
+
+func TestIPCACKNACKAndVersionHandover(t *testing.T) {
+	runner := &fakeCommandRunner{
+		generate: func(context.Context, titleRequest) (string, error) { return "title", nil },
+		herdr:    func(context.Context, ...string) ([]byte, error) { return nil, nil },
+	}
+
+	t.Run("ack after dispatch", func(t *testing.T) {
+		app := testApplication(t, runner)
+		runtime, err := startDaemonRuntime(app)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer runtime.Stop()
+		server, client := net.Pipe()
+		go app.handleConnection(server, runtime)
+		frame, _ := json.Marshal(eventFor(app, []actorKind{tabKind}, "title", "tab", "workspace"))
+		if _, err := client.Write(append(frame, '\n')); err != nil {
+			t.Fatal(err)
+		}
+		response := []byte{0}
+		if _, err := io.ReadFull(client, response); err != nil {
+			t.Fatal(err)
+		}
+		_ = client.Close()
+		if response[0] != ackByte {
+			t.Fatalf("response = %#x", response[0])
+		}
+		if len(runtime.Snapshot().States) != 1 {
+			t.Fatal("ACK arrived without dispatcher actor creation")
+		}
+	})
+
+	t.Run("version skew nack then shutdown", func(t *testing.T) {
+		app := testApplication(t, runner)
+		runtime, err := startDaemonRuntime(app)
+		if err != nil {
+			t.Fatal(err)
+		}
+		server, client := net.Pipe()
+		go app.handleConnection(server, runtime)
+		event := eventFor(app, []actorKind{tabKind}, "title", "tab", "workspace")
+		event.BuildHash = "new-build"
+		frame, _ := json.Marshal(event)
+		if _, err := client.Write(append(frame, '\n')); err != nil {
+			t.Fatal(err)
+		}
+		response := []byte{0}
+		if _, err := io.ReadFull(client, response); err != nil {
+			t.Fatal(err)
+		}
+		if response[0] != nackByte {
+			t.Fatalf("response = %#x", response[0])
+		}
+		select {
+		case <-runtime.shutdown:
+		case <-time.After(time.Second):
+			t.Fatal("version-skew daemon did not shut down")
+		}
+		_ = client.Close()
+		runtime.Stop()
+	})
+
+	t.Run("malformed and oversized frames nack without shutdown", func(t *testing.T) {
+		app := testApplication(t, runner)
+		runtime, err := startDaemonRuntime(app)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer runtime.Stop()
+		for _, frame := range [][]byte{[]byte("not-json\n"), append([]byte(strings.Repeat("x", maxFrameSize)), '\n')} {
+			server, client := net.Pipe()
+			go app.handleConnection(server, runtime)
+			writeDone := make(chan error, 1)
+			go func() {
+				_, writeErr := client.Write(frame)
+				writeDone <- writeErr
+			}()
+			response := []byte{0}
+			if _, err := io.ReadFull(client, response); err != nil {
+				t.Fatal(err)
+			}
+			_ = client.Close()
+			if err := <-writeDone; err != nil && !errors.Is(err, net.ErrClosed) && !strings.Contains(err.Error(), "closed pipe") {
+				t.Fatal(err)
+			}
+			if response[0] != nackByte {
+				t.Fatalf("response = %#x", response[0])
+			}
+		}
+		select {
+		case <-runtime.shutdown:
+			t.Fatal("bad frame shut down daemon")
+		default:
+		}
+	})
+}
+
+func TestHookNACKWaitsForHandoverAndSpawnsOnce(t *testing.T) {
+	app := testApplication(t, &fakeCommandRunner{})
+	var spawnCount atomic.Int32
+	app.spawn = func(string, string) error {
+		spawnCount.Add(1)
+		return nil
+	}
+	app.config.handoverDelay = 35 * time.Millisecond
+	var dialCount atomic.Int32
+	app.dial = func(string, string, time.Duration) (net.Conn, error) {
+		server, client := net.Pipe()
+		index := dialCount.Add(1)
+		go func() {
+			defer server.Close()
+			_, _ = bufioReadFrame(server)
+			response := nackByte
+			if index == 2 {
+				response = ackByte
+			}
+			_, _ = server.Write([]byte{response})
+		}()
+		return client, nil
+	}
+	begin := time.Now()
+	err := app.runHook(strings.NewReader(`{"hook_event_name":"PreToolUse","tool_name":"Read","tool_input":{"file_path":"/tmp/file"}}`), "tab", "workspace")
+	if err != nil {
+		t.Fatal(err)
+	}
+	if spawnCount.Load() != 1 {
+		t.Fatalf("spawn count = %d", spawnCount.Load())
+	}
+	if elapsed := time.Since(begin); elapsed < 30*time.Millisecond {
+		t.Fatalf("handover wait = %s", elapsed)
+	}
+}
+
+func bufioReadFrame(connection net.Conn) ([]byte, error) {
+	reader := make([]byte, maxFrameSize)
+	n := 0
+	for n < len(reader) {
+		read, err := connection.Read(reader[n : n+1])
+		if err != nil {
+			return reader[:n], err
+		}
+		n += read
+		if reader[n-1] == '\n' {
+			return reader[:n], nil
+		}
+	}
+	return reader[:n], errors.New("frame too large")
+}
+
+func TestParseTabListActualEnvelopeAndFailClosed(t *testing.T) {
+	data := []byte(`{"id":"cli:tab:list","result":{"tabs":[{"tab_id":"tab","workspace_id":"workspace"}],"type":"tab_list"}}`)
+	tabs, err := parseTabList(data)
+	if err != nil || len(tabs) != 1 || tabs[0].TabID != "tab" || tabs[0].WorkspaceID != "workspace" {
+		t.Fatalf("tabs = %#v, err = %v", tabs, err)
+	}
+	for _, input := range []string{"not json", `{"result":{"type":"tab_list"}}`} {
+		if _, err := parseTabList([]byte(input)); err == nil {
+			t.Fatalf("unusable tab list was accepted: %s", input)
+		}
+	}
+}
+
+func TestV10Required1MultiTabGuardIdleEvictionAndShutdown(t *testing.T) {
+	clock := newManualClock()
+	var tabLists atomic.Int32
+	runner := &fakeCommandRunner{
+		generate: func(context.Context, titleRequest) (string, error) {
+			return "", errors.New("codex must not run")
+		},
+		herdr: func(_ context.Context, args ...string) ([]byte, error) {
+			if equalStrings(args, []string{"tab", "list"}) {
+				tabLists.Add(1)
+				return []byte(`{"result":{"tabs":[{"tab_id":"a","workspace_id":"workspace"},{"tab_id":"b","workspace_id":"workspace"}]}}`), nil
+			}
+			return nil, errors.New("unexpected rename")
+		},
+	}
+	app := testApplication(t, runner)
+	useManualClock(app, clock)
+	app.config.actorEviction = 10 * time.Minute
+	app.config.daemonIdle = 60 * time.Minute
+	app.config.idlePoll = time.Minute
+	runtime, err := startDaemonRuntime(app)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Stop()
+	key := actorKey{Kind: workspaceKind, WorkspaceID: "workspace"}
+	if err := runtime.Dispatch(eventFor(app, []actorKind{workspaceKind}, "task", "a", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	waitFor(t, time.Second, func() bool {
+		return tabLists.Load() == 1 && runtime.Snapshot().States[key] == stateIdle
+	}, "#6 normal multi-tab idle")
+	clock.Advance(10 * time.Minute)
+	waitFor(t, time.Second, func() bool { return len(runtime.Snapshot().States) == 0 }, "#21 eviction")
+	clock.Advance(50 * time.Minute)
+	select {
+	case <-runtime.shutdown:
+	case <-time.After(time.Second):
+		t.Fatal("#22 idle daemon did not shut down")
+	}
+	if tabLists.Load() != 1 {
+		t.Fatalf("normal multi-tab result left a retry timer: calls=%d", tabLists.Load())
+	}
+}
+
+func TestV10Required2GuardFailureExhaustionThenShutdown(t *testing.T) {
+	clock := newManualClock()
+	var tabLists atomic.Int32
+	runner := &fakeCommandRunner{
+		generate: func(context.Context, titleRequest) (string, error) {
+			return "", errors.New("codex must not run")
+		},
+		herdr: func(ctx context.Context, args ...string) ([]byte, error) {
+			if equalStrings(args, []string{"tab", "list"}) {
+				tabLists.Add(1)
+				return nil, errors.New("tab list failed")
+			}
+			return nil, errors.New("unexpected command")
+		},
+	}
+	app := testApplication(t, runner)
+	useManualClock(app, clock)
+	app.config.guardRetry = 30 * time.Second
+	app.config.daemonIdle = 60 * time.Minute
+	app.config.actorEviction = 10 * time.Minute
+	app.config.idlePoll = time.Minute
+	runtime, err := startDaemonRuntime(app)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Stop()
+	key := actorKey{Kind: workspaceKind, WorkspaceID: "workspace"}
+	if err := runtime.Dispatch(eventFor(app, []actorKind{workspaceKind}, "task", "a", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	waitFor(t, time.Second, func() bool {
+		snapshot := runtime.Snapshot()
+		return tabLists.Load() == 1 && snapshot.States[key] == stateRetryPending && snapshot.GuardRetries[key] == 1
+	}, "first guard failure")
+	for want := int32(2); want <= 3; want++ {
+		clock.Advance(30 * time.Second)
+		waitFor(t, time.Second, func() bool {
+			snapshot := runtime.Snapshot()
+			if want == 3 {
+				return tabLists.Load() == want && snapshot.States[key] == stateIdle
+			}
+			return tabLists.Load() == want && snapshot.States[key] == stateRetryPending && snapshot.GuardRetries[key] == int(want)
+		}, "guard retry")
+	}
+	waitFor(t, time.Second, func() bool { return runtime.Snapshot().States[key] == stateIdle }, "#8 guard exhaustion")
+	clock.Advance(59 * time.Minute)
+	select {
+	case <-runtime.shutdown:
+	case <-time.After(time.Second):
+		t.Fatal("guard-exhausted daemon did not reach 60 minute shutdown")
+	}
+}
+
+func TestV10Required3WorkspaceGuardThrottledPerWindow(t *testing.T) {
+	clock := newManualClock()
+	var tabLists atomic.Int32
+	runner := &fakeCommandRunner{
+		generate: func(context.Context, titleRequest) (string, error) { return "unused", nil },
+		herdr: func(_ context.Context, args ...string) ([]byte, error) {
+			if equalStrings(args, []string{"tab", "list"}) {
+				tabLists.Add(1)
+				return []byte(`[{"tab_id":"a","workspace_id":"workspace"},{"tab_id":"b","workspace_id":"workspace"}]`), nil
+			}
+			return nil, nil
+		},
+	}
+	app := testApplication(t, runner)
+	useManualClock(app, clock)
+	app.config.workspaceThrottle = 30 * time.Minute
+	runtime, err := startDaemonRuntime(app)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Stop()
+	key := actorKey{Kind: workspaceKind, WorkspaceID: "workspace"}
+	if err := runtime.Dispatch(eventFor(app, []actorKind{workspaceKind}, "task", "a", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	waitFor(t, time.Second, func() bool {
+		return tabLists.Load() == 1 && runtime.Snapshot().States[key] == stateIdle
+	}, "first guard window")
+	for index := 0; index < 9; index++ {
+		if err := runtime.Dispatch(eventFor(app, []actorKind{workspaceKind}, "task", "a", "workspace")); err != nil {
+			t.Fatal(err)
+		}
+	}
+	waitFor(t, time.Second, func() bool { return runtime.Snapshot().States[key] == stateScheduled }, "throttled workspace actor")
+	clock.Advance(29 * time.Minute)
+	time.Sleep(10 * time.Millisecond)
+	if tabLists.Load() != 1 {
+		t.Fatalf("guard called inside throttle window: %d", tabLists.Load())
+	}
+	clock.Advance(time.Minute)
+	waitFor(t, time.Second, func() bool { return tabLists.Load() == 2 }, "next guard window")
+}
+
+func TestV10Required4RenameExhaustionRearmsOnNextEvent(t *testing.T) {
+	clock := newManualClock()
+	var generations atomic.Int32
+	var renames atomic.Int32
+	runner := &fakeCommandRunner{
+		generate: func(context.Context, titleRequest) (string, error) {
+			generations.Add(1)
+			return "generated", nil
+		},
+		herdr: func(_ context.Context, args ...string) ([]byte, error) {
+			if len(args) >= 2 && args[0] == "tab" && args[1] == "rename" {
+				call := renames.Add(1)
+				if call <= 2 {
+					return nil, errors.New("rename failed")
+				}
+			}
+			return nil, nil
+		},
+	}
+	app := testApplication(t, runner)
+	useManualClock(app, clock)
+	app.config.tabThrottle = 0
+	app.config.retryDelay = 30 * time.Second
+	runtime, err := startDaemonRuntime(app)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Stop()
+	key := actorKey{Kind: tabKind, WorkspaceID: "workspace", TabID: "tab"}
+	if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "first", "tab", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	waitFor(t, time.Second, func() bool {
+		return renames.Load() == 1 && runtime.Snapshot().States[key] == stateRetryPending
+	}, "first rename failure")
+	clock.Advance(30 * time.Second)
+	waitFor(t, time.Second, func() bool {
+		return renames.Load() == 2 && runtime.Snapshot().States[key] == stateIdle
+	}, "rename retry exhaustion")
+	if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "second", "tab", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	waitFor(t, time.Second, func() bool {
+		return generations.Load() == 2 && renames.Load() == 3 && runtime.Snapshot().States[key] == stateIdle
+	}, "next-event recovery")
+}
+
+func TestV10Required5RenameRetryStaleAndMatchingBranches(t *testing.T) {
+	t.Run("stale pending starts a new job", func(t *testing.T) {
+		clock := newManualClock()
+		var mu sync.Mutex
+		var generated, renamed []string
+		runner := &fakeCommandRunner{
+			generate: func(_ context.Context, request titleRequest) (string, error) {
+				mu.Lock()
+				generated = append(generated, request.Input.Text)
+				mu.Unlock()
+				return request.Input.Text, nil
+			},
+			herdr: func(_ context.Context, args ...string) ([]byte, error) {
+				if len(args) >= 4 && args[0] == "tab" && args[1] == "rename" {
+					mu.Lock()
+					renamed = append(renamed, args[3])
+					call := len(renamed)
+					mu.Unlock()
+					if call == 1 {
+						return nil, errors.New("rename failed")
+					}
+				}
+				return nil, nil
+			},
+		}
+		app := testApplication(t, runner)
+		useManualClock(app, clock)
+		app.config.tabThrottle = 0
+		app.config.retryDelay = 30 * time.Second
+		runtime, err := startDaemonRuntime(app)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer runtime.Stop()
+		key := actorKey{Kind: tabKind, WorkspaceID: "workspace", TabID: "tab"}
+		if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "old", "tab", "workspace")); err != nil {
+			t.Fatal(err)
+		}
+		waitFor(t, time.Second, func() bool {
+			mu.Lock()
+			defer mu.Unlock()
+			return len(renamed) == 1 && runtime.Snapshot().States[key] == stateRetryPending
+		}, "old rename failure")
+		if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "new", "tab", "workspace")); err != nil {
+			t.Fatal(err)
+		}
+		waitFor(t, time.Second, func() bool { return runtime.Snapshot().PendingText[key] == "new" }, "new pending snapshot")
+		clock.Advance(30 * time.Second)
+		waitFor(t, time.Second, func() bool {
+			mu.Lock()
+			defer mu.Unlock()
+			return len(generated) == 2 && len(renamed) == 2
+		}, "stale retry replacement")
+		mu.Lock()
+		defer mu.Unlock()
+		if !equalStrings(generated, []string{"old", "new"}) || !equalStrings(renamed, []string{"old", "new"}) {
+			t.Fatalf("generated=%#v renamed=%#v", generated, renamed)
+		}
+	})
+
+	t.Run("nil pending retries the same title", func(t *testing.T) {
+		clock := newManualClock()
+		var generations atomic.Int32
+		var mu sync.Mutex
+		var renamed []string
+		runner := &fakeCommandRunner{
+			generate: func(context.Context, titleRequest) (string, error) {
+				generations.Add(1)
+				return "same", nil
+			},
+			herdr: func(_ context.Context, args ...string) ([]byte, error) {
+				if len(args) >= 4 && args[0] == "tab" && args[1] == "rename" {
+					mu.Lock()
+					renamed = append(renamed, args[3])
+					call := len(renamed)
+					mu.Unlock()
+					if call == 1 {
+						return nil, errors.New("rename failed")
+					}
+				}
+				return nil, nil
+			},
+		}
+		app := testApplication(t, runner)
+		useManualClock(app, clock)
+		app.config.retryDelay = 30 * time.Second
+		runtime, err := startDaemonRuntime(app)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer runtime.Stop()
+		key := actorKey{Kind: tabKind, WorkspaceID: "workspace", TabID: "tab"}
+		if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "same", "tab", "workspace")); err != nil {
+			t.Fatal(err)
+		}
+		waitFor(t, time.Second, func() bool {
+			mu.Lock()
+			defer mu.Unlock()
+			return len(renamed) == 1 && runtime.Snapshot().States[key] == stateRetryPending
+		}, "first rename")
+		clock.Advance(30 * time.Second)
+		waitFor(t, time.Second, func() bool {
+			mu.Lock()
+			defer mu.Unlock()
+			return len(renamed) == 2
+		}, "same-title retry")
+		if generations.Load() != 1 {
+			t.Fatalf("rename-only retry regenerated title %d times", generations.Load())
+		}
+	})
+}
+
+func TestV10Required6GenerationAndRenameCountersAreIndependent(t *testing.T) {
+	clock := newManualClock()
+	var generationCalls atomic.Int32
+	var tabLists atomic.Int32
+	var renameCalls atomic.Int32
+	runner := &fakeCommandRunner{
+		generate: func(context.Context, titleRequest) (string, error) {
+			if generationCalls.Add(1) == 1 {
+				return "", errors.New("codex failed")
+			}
+			return "workspace title", nil
+		},
+		herdr: func(_ context.Context, args ...string) ([]byte, error) {
+			if equalStrings(args, []string{"tab", "list"}) {
+				tabLists.Add(1)
+				return []byte(`[{"tab_id":"a","workspace_id":"workspace"}]`), nil
+			}
+			if len(args) >= 2 && args[0] == "workspace" && args[1] == "rename" {
+				renameCalls.Add(1)
+				return nil, errors.New("rename failed")
+			}
+			return nil, nil
+		},
+	}
+	app := testApplication(t, runner)
+	useManualClock(app, clock)
+	app.config.workspaceThrottle = 0
+	app.config.retryDelay = 30 * time.Second
+	runtime, err := startDaemonRuntime(app)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Stop()
+	key := actorKey{Kind: workspaceKind, WorkspaceID: "workspace"}
+	if err := runtime.Dispatch(eventFor(app, []actorKind{workspaceKind}, "task", "a", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	waitFor(t, time.Second, func() bool {
+		snapshot := runtime.Snapshot()
+		return generationCalls.Load() == 1 && snapshot.GenerationRetried[key]
+	}, "#11 generation retry")
+	clock.Advance(30 * time.Second)
+	waitFor(t, time.Second, func() bool {
+		snapshot := runtime.Snapshot()
+		return generationCalls.Load() == 2 && renameCalls.Load() == 1 && snapshot.RenameRetryConsumed[key]
+	}, "#18 rename retry")
+	clock.Advance(30 * time.Second)
+	waitFor(t, time.Second, func() bool {
+		return renameCalls.Load() == 2 && runtime.Snapshot().States[key] == stateIdle
+	}, "#16 rename exhaustion")
+	if tabLists.Load() != 3 {
+		t.Fatalf("guard calls=%d, want fire+fresh rename+retry rename", tabLists.Load())
+	}
+}
+
+func TestV10Transition15RenameGuardFailureRetriesGeneratedTitle(t *testing.T) {
+	clock := newManualClock()
+	var generations atomic.Int32
+	var tabLists atomic.Int32
+	var renames atomic.Int32
+	runner := &fakeCommandRunner{
+		generate: func(context.Context, titleRequest) (string, error) {
+			generations.Add(1)
+			return "generated title", nil
+		},
+		herdr: func(_ context.Context, args ...string) ([]byte, error) {
+			if equalStrings(args, []string{"tab", "list"}) {
+				call := tabLists.Add(1)
+				if call == 2 {
+					return nil, errors.New("rename guard CLI failed")
+				}
+				return []byte(`[{"tab_id":"a","workspace_id":"workspace"}]`), nil
+			}
+			if len(args) >= 2 && args[0] == "workspace" && args[1] == "rename" {
+				renames.Add(1)
+			}
+			return nil, nil
+		},
+	}
+	app := testApplication(t, runner)
+	useManualClock(app, clock)
+	app.config.workspaceThrottle = 0
+	app.config.retryDelay = 30 * time.Second
+	runtime, err := startDaemonRuntime(app)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Stop()
+	key := actorKey{Kind: workspaceKind, WorkspaceID: "workspace"}
+	if err := runtime.Dispatch(eventFor(app, []actorKind{workspaceKind}, "task", "a", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	waitFor(t, time.Second, func() bool {
+		snapshot := runtime.Snapshot()
+		return tabLists.Load() == 2 && snapshot.States[key] == stateRetryPending && snapshot.RenameRetryConsumed[key]
+	}, "#15 rename guard retry")
+	clock.Advance(30 * time.Second)
+	waitFor(t, time.Second, func() bool {
+		return tabLists.Load() == 3 && renames.Load() == 1 && runtime.Snapshot().States[key] == stateIdle
+	}, "#19b rename guard recheck")
+	if generations.Load() != 1 {
+		t.Fatalf("rename guard retry regenerated title %d times", generations.Load())
+	}
+}
+
+func TestV10Required7SyntheticPayloadAndHookInputBoundaries(t *testing.T) {
+	data, err := os.ReadFile(filepath.Join("testdata", "hook_payloads_synthetic.jsonl"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	lines := bytes.Split(bytes.TrimSpace(data), []byte{'\n'})
+	if len(lines) != 3 {
+		t.Fatalf("fixture lines=%d", len(lines))
+	}
+	wantEventAccepted := []bool{true, true, false}
+	for index, line := range lines {
+		input, accepted, decodeErr := decodeHookInput(bytes.NewReader(line), io.Discard)
+		if decodeErr != nil || !accepted {
+			t.Fatalf("fixture %d accepted=%v err=%v", index, accepted, decodeErr)
+		}
+		if index == 0 && (input.Prompt != "DUMMY_PROMPT" || input.AgentID != nil) {
+			t.Fatalf("main prompt fixture input=%#v", input)
+		}
+		if index == 1 && input.AgentID != nil {
+			t.Fatal("main-agent tool fixture unexpectedly contains agent_id")
+		}
+		if index == 2 && (input.AgentID == nil || *input.AgentID != "dummy-agent-id") {
+			t.Fatalf("subagent fixture input=%#v", input)
+		}
+		event, eventAccepted := buildDaemonEvent(input, "tab", "workspace", "hash")
+		if eventAccepted != wantEventAccepted[index] {
+			t.Fatalf("fixture %d buildDaemonEvent accepted=%v want=%v", index, eventAccepted, wantEventAccepted[index])
+		}
+		if index == 1 {
+			if strings.Count(event.Input.Text, "[REDACTED]") != 4 {
+				t.Fatalf("main-agent tool sanitization=%q", event.Input.Text)
+			}
+		}
+	}
+	if len(lines[2]) <= 70<<10 {
+		t.Fatalf("synthetic tool_response line=%d bytes", len(lines[2]))
+	}
+
+	prefix := `{"hook_event_name":"UserPromptSubmit","prompt":"`
+	suffix := `"}`
+	below := prefix + strings.Repeat("x", maxHookInputSize-len(prefix)-len(suffix)) + suffix
+	input, accepted, err := decodeHookInput(strings.NewReader(below), io.Discard)
+	if err != nil || !accepted || len(input.Prompt) == 0 || len(below) != maxHookInputSize {
+		t.Fatalf("8MiB boundary accepted=%v size=%d err=%v", accepted, len(below), err)
+	}
+	var diagnostic bytes.Buffer
+	_, accepted, err = decodeHookInput(strings.NewReader(below+" "), &diagnostic)
+	if err != nil || accepted || !strings.Contains(diagnostic.String(), "too large") {
+		t.Fatalf("8MiB+1 accepted=%v diagnostic=%q err=%v", accepted, diagnostic.String(), err)
+	}
+	app := testApplication(t, &fakeCommandRunner{})
+	var hookDiagnostic bytes.Buffer
+	var deliveries atomic.Int32
+	app.stderr = &hookDiagnostic
+	app.dial = func(string, string, time.Duration) (net.Conn, error) {
+		deliveries.Add(1)
+		return nil, errors.New("unexpected IPC delivery")
+	}
+	if err := app.runHook(strings.NewReader(below+" "), "tab", "workspace"); err != nil {
+		t.Fatalf("oversized hook input was not fail-open: %v", err)
+	}
+	if deliveries.Load() != 0 || !strings.Contains(hookDiagnostic.String(), "too large") {
+		t.Fatalf("oversized event deliveries=%d diagnostic=%q", deliveries.Load(), hookDiagnostic.String())
+	}
+}
+
+func TestV10Required8SyntheticFixtureLeakInspection(t *testing.T) {
+	data, err := os.ReadFile(filepath.Join("testdata", "hook_payloads_synthetic.jsonl"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, forbidden := range []string{
+		"captured_payloads", "/Users/s23159", "REAL_PROMPT", "REAL_TOOL_RESPONSE", "secret",
+	} {
+		if bytes.Contains(data, []byte(forbidden)) {
+			t.Fatalf("synthetic fixture contains forbidden marker %q", forbidden)
+		}
+	}
+	dummyPatterns := []struct {
+		value   string
+		pattern *regexp.Regexp
+	}{
+		{value: "Bearer DUMMY.BEARER.TOKEN", pattern: bearerPattern},
+		{value: "ghp_DUMMYTOKEN123456", pattern: knownTokenPattern},
+		{value: "0123456789abcdef0123456789abcdef", pattern: longHexPattern},
+		{value: "QUJDREVGR0hJSktMTU5PUFFSU1RVVldYWVo0123456789", pattern: longBase64Pattern},
+	}
+	scrubbed := append([]byte(nil), data...)
+	for _, dummy := range dummyPatterns {
+		if !bytes.Contains(data, []byte(dummy.value)) || !dummy.pattern.MatchString(dummy.value) {
+			t.Fatalf("synthetic sanitization marker is inactive: %q", dummy.value)
+		}
+		scrubbed = bytes.ReplaceAll(scrubbed, []byte(dummy.value), []byte("DUMMY_PATTERN"))
+	}
+	if bearerPattern.Match(scrubbed) || knownTokenPattern.Match(scrubbed) ||
+		longHexPattern.Match(scrubbed) || longBase64Pattern.Match(scrubbed) {
+		t.Fatal("synthetic fixture contains an undeclared credential-like value")
+	}
+	lines := bytes.Split(bytes.TrimSpace(data), []byte{'\n'})
+	var mainPayload, subagentPayload map[string]any
+	if err := json.Unmarshal(lines[0], &mainPayload); err != nil {
+		t.Fatal(err)
+	}
+	if err := json.Unmarshal(lines[2], &subagentPayload); err != nil {
+		t.Fatal(err)
+	}
+	if _, exists := mainPayload["agent_id"]; exists {
+		t.Fatal("main-agent fixture unexpectedly contains agent_id")
+	}
+	if subagentPayload["agent_id"] != "dummy-agent-id" || subagentPayload["agent_type"] != "Explore" {
+		t.Fatalf("subagent keys=%#v", subagentPayload)
+	}
+	response, ok := subagentPayload["tool_response"].(map[string]any)
+	if !ok {
+		t.Fatal("synthetic tool_response missing")
+	}
+	content, _ := response["content"].(string)
+	if !strings.HasPrefix(content, "DUMMY_TOOL_RESPONSE_") || strings.Trim(content[len("DUMMY_TOOL_RESPONSE_"):], ".") != "" {
+		t.Fatal("tool_response is not the expected dummy-only content")
+	}
+}
+
+func TestV10Required9HerdrSemaphoreTimeoutsAreBounded(t *testing.T) {
+	var active atomic.Int32
+	var maximum atomic.Int32
+	var calls atomic.Int32
+	runner := &fakeCommandRunner{
+		generate: func(context.Context, titleRequest) (string, error) {
+			return "", errors.New("codex must not run")
+		},
+		herdr: func(ctx context.Context, args ...string) ([]byte, error) {
+			if !equalStrings(args, []string{"tab", "list"}) {
+				return nil, errors.New("unexpected command")
+			}
+			calls.Add(1)
+			current := active.Add(1)
+			for {
+				old := maximum.Load()
+				if current <= old || maximum.CompareAndSwap(old, current) {
+					break
+				}
+			}
+			<-ctx.Done()
+			active.Add(-1)
+			return nil, ctx.Err()
+		},
+	}
+	app := testApplication(t, runner)
+	app.config.herdrTimeout = 15 * time.Millisecond
+	app.config.guardRetry = time.Millisecond
+	app.config.actorEviction = 20 * time.Millisecond
+	runtime, err := startDaemonRuntime(app)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Stop()
+	for index := 0; index < 8; index++ {
+		workspace := string(rune('a' + index))
+		if err := runtime.Dispatch(eventFor(app, []actorKind{workspaceKind}, "task", "tab", workspace)); err != nil {
+			t.Fatal(err)
+		}
+	}
+	waitFor(t, 2*time.Second, func() bool { return calls.Load() == 24 && active.Load() == 0 }, "three bounded guard attempts per actor")
+	waitFor(t, time.Second, func() bool { return len(runtime.Snapshot().States) == 0 }, "timed-out actor eviction")
+	herdrInUse, herdrWaiters := runtime.herdrSem.Stats()
+	codexInUse, codexWaiters := runtime.codexSem.Stats()
+	if maximum.Load() > 4 || maximum.Load() < 2 {
+		t.Fatalf("herdr concurrency maximum=%d", maximum.Load())
+	}
+	if herdrInUse != 0 || herdrWaiters != 0 || codexInUse != 0 || codexWaiters != 0 {
+		t.Fatalf("semaphore residue herdr=(%d,%d) codex=(%d,%d)", herdrInUse, herdrWaiters, codexInUse, codexWaiters)
+	}
+}
+
+func TestV10Required9HerdrTimeoutKillsChildProcessGroup(t *testing.T) {
+	runner := execCommandRunner{herdrCommand: "/bin/sh"}
+	ctx, cancel := context.WithTimeout(context.Background(), 50*time.Millisecond)
+	defer cancel()
+	output, err := runner.RunHerdr(ctx, "-c", "sleep 30 & child=$!; echo $child; wait")
+	if !errors.Is(err, context.DeadlineExceeded) {
+		t.Fatalf("herdr timeout error=%v output=%q", err, output)
+	}
+	pid, err := strconv.Atoi(strings.TrimSpace(string(output)))
+	if err != nil || pid <= 0 {
+		t.Fatalf("child pid output=%q err=%v", output, err)
+	}
+	waitFor(t, time.Second, func() bool {
+		return errors.Is(syscall.Kill(pid, 0), syscall.ESRCH)
+	}, "timed-out herdr child process removal")
+}
+
+func TestV10Required10TranscriptPathValidation(t *testing.T) {
+	projects := t.TempDir()
+	valid := filepath.Join(projects, "session.jsonl")
+	if err := os.WriteFile(valid, []byte(`{"type":"user","message":{"content":"dummy"}}`), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	file, err := openValidatedTranscript(projects, valid)
+	if err != nil {
+		t.Fatalf("valid transcript rejected: %v", err)
+	}
+	_ = file.Close()
+
+	symlink := filepath.Join(projects, "link.jsonl")
+	if err := os.Symlink(valid, symlink); err != nil {
+		t.Fatal(err)
+	}
+	if file, err := openValidatedTranscript(projects, symlink); err == nil {
+		file.Close()
+		t.Fatal("symlink transcript accepted")
+	}
+	parentPath := projects + string(os.PathSeparator) + "sub" + string(os.PathSeparator) + ".." + string(os.PathSeparator) + "session.jsonl"
+	if file, err := openValidatedTranscript(projects, parentPath); err == nil {
+		file.Close()
+		t.Fatal("parent-component transcript accepted")
+	}
+	if file, err := openValidatedTranscript(projects, projects); err == nil {
+		file.Close()
+		t.Fatal("non-regular transcript accepted")
+	}
+	outside := filepath.Join(t.TempDir(), "outside.jsonl")
+	if err := os.WriteFile(outside, []byte("dummy"), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if file, err := openValidatedTranscript(projects, outside); err == nil {
+		file.Close()
+		t.Fatal("out-of-project transcript accepted")
+	}
+}
+
+func TestV10Required11LockHandoverUsesAbsoluteDeadline(t *testing.T) {
+	t.Run("lock becomes available before deadline", func(t *testing.T) {
+		clock := newManualClock()
+		deadline := clock.Now().Add(506 * time.Millisecond)
+		available := deadline.Add(-6 * time.Millisecond)
+		attempts := 0
+		lock, err := acquireDaemonLockUntil(
+			"/dummy", deadline, clock.Now, clock.Sleep, 10*time.Millisecond, io.Discard,
+			func(string) (*daemonLock, error) {
+				attempts++
+				if clock.Now().Before(available) {
+					return nil, errAlreadyRunning
+				}
+				return &daemonLock{}, nil
+			},
+		)
+		if err != nil || lock == nil || clock.Now().After(deadline) || attempts < 2 {
+			t.Fatalf("lock=%v attempts=%d now=%s deadline=%s err=%v", lock, attempts, clock.Now(), deadline, err)
+		}
+	})
+
+	t.Run("lock remains held past deadline", func(t *testing.T) {
+		clock := newManualClock()
+		deadline := clock.Now().Add(506 * time.Millisecond)
+		var diagnostic bytes.Buffer
+		lock, err := acquireDaemonLockUntil(
+			"/dummy", deadline, clock.Now, clock.Sleep, 10*time.Millisecond, &diagnostic,
+			func(string) (*daemonLock, error) { return nil, errAlreadyRunning },
+		)
+		if lock != nil || !errors.Is(err, context.DeadlineExceeded) || !clock.Now().Equal(deadline) {
+			t.Fatalf("lock=%v now=%s deadline=%s err=%v", lock, clock.Now(), deadline, err)
+		}
+		if !strings.Contains(diagnostic.String(), "deadline exceeded") {
+			t.Fatalf("diagnostic=%q", diagnostic.String())
+		}
+	})
+}
+
+func TestV10Required12TransitionRowsAndTimerBranches(t *testing.T) {
+	requiredRows := []string{
+		"#1", "#2", "#3", "#4", "#5", "#6", "#7", "#7b", "#8", "#9a", "#9b",
+		"#10", "#11", "#11b", "#12", "#14", "#15", "#17", "#18", "#19", "#19b",
+		"#16/#19c", "#21", "#22",
+	}
+	// This literal table checks only that every canonical row has a structural
+	// note. It does not prove that a named test exists or behaviorally covers
+	// each row; the table-driven assertions below cover the timer branches.
+	structuralNotes := map[string]string{
+		"#1": "trailing generation schedule", "#2": "immediate fresh queue", "#3": "pending-only update",
+		"#4": "generation timer", "#5": "semaphore pickup", "#6": "normal fire guard block",
+		"#7": "fire guard retry", "#7b": "fire guard retry timer", "#8": "fire guard exhaustion",
+		"#9a": "fire guard release", "#9b": "codex queue", "#10": "generation success",
+		"#11": "generation retry", "#11b": "generation retry timer", "#12": "generation exhaustion",
+		"#14": "normal rename guard skip", "#15": "rename guard retry", "#17": "rename success",
+		"#18": "rename retry", "#19": "stale rename retry", "#19b": "matching rename retry",
+		"#16/#19c": "rename exhaustion", "#21": "actor eviction", "#22": "daemon idle shutdown",
+	}
+	for _, row := range requiredRows {
+		if structuralNotes[row] == "" {
+			t.Fatalf("transition row %s has no structural note", row)
+		}
+	}
+
+	clock := newManualClock()
+	makeActor := func() (*titleActor, chan generationJob) {
+		jobs := make(chan generationJob, 1)
+		return &titleActor{
+			key:   actorKey{Kind: tabKind, WorkspaceID: "workspace", TabID: "tab"},
+			state: stateScheduled, phase: phaseNone, jobs: jobs,
+			statuses: make(chan actorStatus, 8), ctx: context.Background(), now: clock.Now,
+			newTimer: clock.NewTimer, config: defaultRuntimeConfig(),
+		}, jobs
+	}
+	input := pendingInput{Text: "active", TabID: "tab", WorkspaceID: "workspace"}
+	tests := []struct {
+		name  string
+		mode  timerMode
+		setup func(*titleActor)
+		want  jobMode
+	}{
+		{name: "#4 generation timer resets counters", mode: timerGeneration, setup: func(actor *titleActor) {
+			actor.pending = &input
+			actor.guardRetryCount = 2
+			actor.generationRetried = true
+			actor.renameRetryConsumed = true
+		}, want: jobFresh},
+		{name: "#7b guard timer preserves counter", mode: timerGuardRetry, setup: func(actor *titleActor) {
+			actor.active = &input
+			actor.guardRetryCount = 1
+		}, want: jobGuardRetry},
+		{name: "#11b codex timer preserves counter", mode: timerCodexRetry, setup: func(actor *titleActor) {
+			actor.active = &input
+			actor.generationRetried = true
+		}, want: jobCodexRetry},
+		{name: "#19b rename timer preserves counter", mode: timerRenameRetry, setup: func(actor *titleActor) {
+			actor.active = &input
+			actor.renameRetry = &renameRetry{input: input, title: "title"}
+			actor.renameRetryConsumed = true
+		}, want: jobRenameRetry},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			actor, jobs := makeActor()
+			test.setup(actor)
+			actor.onTimer(test.mode)
+			job := <-jobs
+			if job.mode != test.want || actor.state != stateQueued {
+				t.Fatalf("job mode=%d state=%s", job.mode, actor.state)
+			}
+			if test.want == jobFresh {
+				if actor.guardRetryCount != 0 || actor.generationRetried || actor.renameRetryConsumed {
+					t.Fatal("fresh #4 did not reset every counter")
+				}
+			} else if test.want == jobGuardRetry && actor.guardRetryCount != 1 {
+				t.Fatal("guard retry reset its counter")
+			} else if test.want == jobCodexRetry && !actor.generationRetried {
+				t.Fatal("codex retry reset its counter")
+			} else if test.want == jobRenameRetry && !actor.renameRetryConsumed {
+				t.Fatal("rename retry reset its counter")
+			}
+		})
+	}
+}
+
+func TestV10Required13FreshTitleIsRenamedBeforePendingRegeneration(t *testing.T) {
+	clock := newManualClock()
+	firstStarted := make(chan struct{})
+	releaseFirst := make(chan struct{})
+	var mu sync.Mutex
+	var generated, renamed []string
+	runner := &fakeCommandRunner{
+		generate: func(_ context.Context, request titleRequest) (string, error) {
+			mu.Lock()
+			generated = append(generated, request.Input.Text)
+			call := len(generated)
+			mu.Unlock()
+			if call == 1 {
+				close(firstStarted)
+				<-releaseFirst
+			}
+			return request.Input.Text, nil
+		},
+		herdr: func(_ context.Context, args ...string) ([]byte, error) {
+			if len(args) >= 4 && args[0] == "tab" && args[1] == "rename" {
+				mu.Lock()
+				renamed = append(renamed, args[3])
+				mu.Unlock()
+			}
+			return nil, nil
+		},
+	}
+	app := testApplication(t, runner)
+	useManualClock(app, clock)
+	app.config.tabThrottle = 0
+	runtime, err := startDaemonRuntime(app)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Stop()
+	if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "paid", "tab", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	<-firstStarted
+	if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "pending", "tab", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	close(releaseFirst)
+	waitFor(t, time.Second, func() bool {
+		mu.Lock()
+		defer mu.Unlock()
+		return len(generated) == 2 && len(renamed) == 2
+	}, "fresh rename followed by pending generation")
+	mu.Lock()
+	defer mu.Unlock()
+	if !equalStrings(generated, []string{"paid", "pending"}) || !equalStrings(renamed, []string{"paid", "pending"}) {
+		t.Fatalf("generated=%#v renamed=%#v", generated, renamed)
+	}
+}
+
+func TestV10Required14AbandoningTerminalsDiscardNewestPending(t *testing.T) {
+	clock := newManualClock()
+	input := pendingInput{Text: "active", TabID: "tab", WorkspaceID: "workspace"}
+	pending := pendingInput{Text: "newest", TabID: "tab", WorkspaceID: "workspace"}
+	tests := []struct {
+		name  string
+		phase resultPhase
+		setup func(*titleActor)
+	}{
+		{name: "#6 fire guard normal block", phase: resultGuardBlocked, setup: func(*titleActor) {}},
+		{name: "#8 guard exhaustion", phase: resultGuardFailure, setup: func(actor *titleActor) { actor.guardRetryCount = 2 }},
+		{name: "#12 codex exhaustion", phase: resultCodexFailure, setup: func(actor *titleActor) { actor.generationRetried = true }},
+		{name: "#14 rename guard normal skip", phase: resultRenameGuardSkipped, setup: func(*titleActor) {}},
+		{name: "#16 rename exhaustion", phase: resultRenameFailure, setup: func(actor *titleActor) { actor.renameRetryConsumed = true }},
+		{name: "#19c rename guard exhaustion", phase: resultRenameGuardFailure, setup: func(actor *titleActor) { actor.renameRetryConsumed = true }},
+	}
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			ctx, cancel := context.WithCancel(context.Background())
+			persister, err := startPersister(ctx, t.TempDir())
+			if err != nil {
+				cancel()
+				t.Fatal(err)
+			}
+			defer func() {
+				cancel()
+				<-persister.done
+			}()
+			actor := &titleActor{
+				key:   actorKey{Kind: workspaceKind, WorkspaceID: "workspace"},
+				state: stateRunning, phase: phaseRunningCodex,
+				active: &input, pending: &pending,
+				statuses: make(chan actorStatus, 8), ctx: ctx, persister: persister, now: clock.Now,
+				newTimer: clock.NewTimer, config: defaultRuntimeConfig(),
+			}
+			test.setup(actor)
+			actor.onJobResult(jobResult{
+				job: generationJob{actor: actor, input: input}, phase: test.phase, title: "title", err: errors.New("failed"),
+			})
+			if actor.state != stateIdle || actor.active != nil || actor.pending != nil || actor.renameRetry != nil {
+				t.Fatalf("state=%s active=%#v pending=%#v retry=%#v", actor.state, actor.active, actor.pending, actor.renameRetry)
+			}
+			if test.phase == resultGuardBlocked {
+				persisted, found, err := persister.get(ctx, actor.key)
+				if err != nil || !found || persisted.LastStarted == 0 {
+					t.Fatalf("#6 persisted=%#v found=%v err=%v", persisted, found, err)
+				}
+			}
+		})
+	}
+}
+
+func TestV10Required15RenamePersistencePrecedesIdleShutdown(t *testing.T) {
+	clock := newManualClock()
+	var renames atomic.Int32
+	runner := &fakeCommandRunner{
+		generate: func(context.Context, titleRequest) (string, error) { return "persisted title", nil },
+		herdr: func(context.Context, ...string) ([]byte, error) {
+			renames.Add(1)
+			return nil, nil
+		},
+	}
+	app := testApplication(t, runner)
+	useManualClock(app, clock)
+	app.config.tabThrottle = 0
+	app.config.daemonIdle = 60 * time.Minute
+	app.config.idlePoll = time.Minute
+	runtime, err := startDaemonRuntime(app)
+	if err != nil {
+		t.Fatal(err)
+	}
+	defer runtime.Stop()
+	key := actorKey{Kind: tabKind, WorkspaceID: "workspace", TabID: "tab"}
+	if err := runtime.Dispatch(eventFor(app, []actorKind{tabKind}, "task", "tab", "workspace")); err != nil {
+		t.Fatal(err)
+	}
+	waitFor(t, time.Second, func() bool {
+		return renames.Load() == 1 && runtime.Snapshot().States[key] == stateIdle
+	}, "rename success idle")
+	state, err := loadDiskState(filepath.Join(app.cacheDir, stateFileName))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if state.Actors[key.storageKey()].Title != "persisted title" {
+		t.Fatalf("state before shutdown=%#v", state.Actors[key.storageKey()])
+	}
+	clock.Advance(60 * time.Minute)
+	select {
+	case <-runtime.shutdown:
+	case <-time.After(time.Second):
+		t.Fatal("persisted idle daemon did not shut down")
+	}
+}
+
+func TestHashExecutableTestBinaryProxyCostAgainstHookBudget(t *testing.T) {
+	// os.Executable points at the go test binary here. This is a proxy for the
+	// production hook binary cost, not a measurement of the installed hook.
+	// The reopened-cycle-1 proxy measurement was 2.672334ms.
+	executable, err := os.Executable()
+	if err != nil {
+		t.Fatal(err)
+	}
+	started := time.Now()
+	hash, err := hashExecutable(executable)
+	elapsed := time.Since(started)
+	if err != nil || len(hash) != sha256.Size*2 {
+		t.Fatalf("hash length=%d elapsed=%s err=%v", len(hash), elapsed, err)
+	}
+	budget := 50 * time.Millisecond
+	if elapsed > budget {
+		t.Fatalf("hashExecutable test-binary proxy cost=%s exceeds budget=%s", elapsed, budget)
+	}
+	t.Logf("hashExecutable test-binary proxy cost=%s budget=%s within_budget=true", elapsed, budget)
 }
 
 func equalStrings(left, right []string) bool {
@@ -572,778 +2427,6 @@ func equalStrings(left, right []string) bool {
 	return true
 }
 
-func TestGenerateTitleUsesIsolatedRequestAndCleansOutput(t *testing.T) {
-	t.Parallel()
-	var captured cursorRequest
-	fake := &fakeCommandRunner{
-		generate: func(ctx context.Context, request cursorRequest) error {
-			captured = request
-			deadline, ok := ctx.Deadline()
-			if !ok || time.Until(deadline) <= 0 || time.Until(deadline) > cursorCommandTimeout {
-				return errors.New("cursor context does not have a 60-second deadline")
-			}
-			info, err := request.Output.Stat()
-			if err != nil {
-				return err
-			}
-			if info.Mode().Perm() != 0o600 {
-				return errors.New("output mode is not 0600")
-			}
-			_, err = request.Output.WriteString("生成タイトル\n")
-			return err
-		},
-	}
-	app := testApplication(t, fake)
-	app.environ = func() []string {
-		return []string{
-			"PATH=/bin", "HERDR_TAB_ID=tab", "HERDR_OTHER=x",
-			"CLAUDE_CODE_CHILD_SESSION=1", "CLAUDE_CODE_X=y", "KEEP=value",
-		}
-	}
-	path := writeTranscript(t, `{"type":"user","message":{"content":"past"}}`)
-	if got := app.generateTitle(workerPayload{Prompt: "current", TranscriptPath: path}); got != "生成タイトル" {
-		t.Fatalf("generated title = %q", got)
-	}
-	if captured.Cwd != filepath.Join(app.stateDir(), "ws") {
-		t.Errorf("cursor cwd = %q", captured.Cwd)
-	}
-	if !equalStrings(captured.Env, []string{"PATH=/bin", "KEEP=value"}) {
-		t.Errorf("cursor env = %#v", captured.Env)
-	}
-	if strings.Count(captured.Prompt, "current") != 1 || !strings.Contains(captured.Prompt, "past") {
-		t.Errorf("cursor prompt lacks deduplicated input: %q", captured.Prompt)
-	}
-	assertNoTemporaryFiles(t, app)
-}
-
-func TestCursorArguments(t *testing.T) {
-	t.Parallel()
-	want := []string{
-		"-p", "--trust", "--mode", "ask", "--model", "composer-2.5",
-		"--output-format", "text", "prompt",
-	}
-	if got := cursorArguments("prompt"); !equalStrings(got, want) {
-		t.Fatalf("cursorArguments() = %#v, want %#v", got, want)
-	}
-}
-
-func TestTitlePromptChangesWhenPreviousTitleExists(t *testing.T) {
-	t.Parallel()
-	withoutPrevious := titlePrompt([]string{"first", "recent"}, "")
-	if !strings.Contains(withoutPrevious, "前半がセッション開始時、後半が直近") ||
-		!strings.Contains(withoutPrevious, "セッション全体で取り組んでいる作業") ||
-		strings.Contains(withoutPrevious, "現在のタイトル") {
-		t.Fatalf("prompt without previous title = %q", withoutPrevious)
-	}
-
-	withPrevious := titlePrompt([]string{"first", "recent"}, "前回タイトル")
-	if !strings.Contains(withPrevious, "現在のタイトルは「前回タイトル」") ||
-		!strings.Contains(withPrevious, "今もセッションの主題を表しているなら") {
-		t.Fatalf("prompt with previous title = %q", withPrevious)
-	}
-	for _, rule := range []string{"日本語", "12文字以内", "名詞句", "句読点", "引用符", "記号", "ラベルだけ"} {
-		if !strings.Contains(withPrevious, rule) {
-			t.Errorf("output rule %q is missing from prompt", rule)
-		}
-	}
-}
-
-func TestGenerateTitleFailureAndTimeoutCleanOutput(t *testing.T) {
-	t.Parallel()
-	for _, test := range []struct {
-		name string
-		err  error
-	}{
-		{name: "failure", err: errors.New("cursor failed")},
-		{name: "timeout", err: context.DeadlineExceeded},
-	} {
-		t.Run(test.name, func(t *testing.T) {
-			fake := &fakeCommandRunner{generate: func(_ context.Context, request cursorRequest) error {
-				_, _ = request.Output.WriteString("untrusted result")
-				return test.err
-			}}
-			app := testApplication(t, fake)
-			if got := app.generateTitle(workerPayload{Prompt: "current"}); got != "" {
-				t.Fatalf("generateTitle() = %q", got)
-			}
-			assertNoTemporaryFiles(t, app)
-		})
-	}
-}
-
-func TestHookStartFailureRemoves0600Payload(t *testing.T) {
-	t.Parallel()
-	app := testApplication(t, &fakeCommandRunner{})
-	var payloadPath string
-	app.startDetached = func(_ string, path string) error {
-		payloadPath = path
-		info, err := os.Stat(path)
-		if err != nil {
-			return err
-		}
-		if info.Mode().Perm() != 0o600 {
-			return errors.New("payload mode is not 0600")
-		}
-		data, err := os.ReadFile(path)
-		if err != nil {
-			return err
-		}
-		if !strings.Contains(string(data), "sensitive prompt") {
-			return errors.New("payload does not contain prompt")
-		}
-		return errors.New("start failed")
-	}
-	err := app.runHook(strings.NewReader(`{"prompt":"sensitive prompt","transcript_path":"/tmp/x"}`), "tab", "workspace")
-	if err == nil {
-		t.Fatal("runHook() succeeded")
-	}
-	if _, err := os.Stat(payloadPath); !errors.Is(err, os.ErrNotExist) {
-		t.Fatalf("payload remains after Start failure: %v", err)
-	}
-}
-
-func TestHookStartSuccessLeavesPayloadForWorker(t *testing.T) {
-	t.Parallel()
-	app := testApplication(t, &fakeCommandRunner{})
-	var payloadPath string
-	app.startDetached = func(executable, path string) error {
-		if executable != "/test/herdr-title" {
-			return errors.New("unexpected executable")
-		}
-		payloadPath = path
-		return nil
-	}
-	if err := app.runHook(strings.NewReader(`{"prompt":"current"}`), "tab", "workspace"); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := os.Stat(payloadPath); err != nil {
-		t.Fatalf("payload was removed after successful Start: %v", err)
-	}
-	if err := os.Remove(payloadPath); err != nil {
-		t.Fatal(err)
-	}
-}
-
-func TestGenerationIntervalBoundaries(t *testing.T) {
-	t.Parallel()
-	now := time.Unix(1_700_000_000, 0).UnixNano()
-	interval := generationInterval.Nanoseconds()
-	cases := []struct {
-		name          string
-		lastStartedAt int64
-		wantWithin    bool
-	}{
-		{name: "unset", lastStartedAt: 0},
-		{name: "five minutes minus one nanosecond", lastStartedAt: now - interval + 1, wantWithin: true},
-		{name: "exactly five minutes", lastStartedAt: now - interval},
-		{name: "five minutes plus one nanosecond", lastStartedAt: now - interval - 1},
-		{name: "negative elapsed", lastStartedAt: now + 1},
-	}
-	for _, test := range cases {
-		t.Run(test.name, func(t *testing.T) {
-			if got := withinGenerationInterval(test.lastStartedAt, now); got != test.wantWithin {
-				t.Fatalf("withinGenerationInterval(%d, %d) = %v, want %v", test.lastStartedAt, now, got, test.wantWithin)
-			}
-		})
-	}
-}
-
-func TestHookWithinFiveMinutesOnlyIncrementsSkippedCount(t *testing.T) {
-	t.Parallel()
-	app := testApplication(t, &fakeCommandRunner{})
-	now := app.now().UnixNano()
-	wantBefore := tabState{
-		Generation: now - 100, Title: "前回タイトル",
-		LastStartedAt: now - time.Minute.Nanoseconds(), SkippedCount: 2,
-	}
-	if err := os.MkdirAll(app.stateDir(), 0o700); err != nil {
-		t.Fatal(err)
-	}
-	if err := app.writeState("workspace", map[string]tabState{"tab": wantBefore}); err != nil {
-		t.Fatal(err)
-	}
-	if err := app.runHook(strings.NewReader(hookJSON("current", "/transcript")), "tab", "workspace"); err != nil {
-		t.Fatal(err)
-	}
-	state, err := app.readState("workspace")
-	if err != nil {
-		t.Fatal(err)
-	}
-	wantAfter := wantBefore
-	wantAfter.SkippedCount++
-	if got := state["tab"]; got != wantAfter {
-		t.Fatalf("gated state = %#v, want %#v", got, wantAfter)
-	}
-	assertNoTemporaryFiles(t, app)
-}
-
-func TestEligibleHookStartsWorkerAndResetsSkippedCount(t *testing.T) {
-	t.Parallel()
-	app := testApplication(t, &fakeCommandRunner{})
-	now := app.now().UnixNano()
-	before := tabState{
-		Generation: now - 100, Title: "前回タイトル",
-		LastStartedAt: now - generationInterval.Nanoseconds(), SkippedCount: 4,
-	}
-	if err := os.MkdirAll(app.stateDir(), 0o700); err != nil {
-		t.Fatal(err)
-	}
-	if err := app.writeState("workspace", map[string]tabState{"tab": before}); err != nil {
-		t.Fatal(err)
-	}
-	var captured workerPayload
-	app.startDetached = func(_ string, path string) error {
-		captured = readPayload(t, path)
-		return os.Remove(path)
-	}
-	if err := app.runHook(strings.NewReader(hookJSON("current", "/transcript")), "tab", "workspace"); err != nil {
-		t.Fatal(err)
-	}
-	state, err := app.readState("workspace")
-	if err != nil {
-		t.Fatal(err)
-	}
-	got := state["tab"]
-	if got.Generation != now || got.Title != before.Title || got.LastStartedAt != now || got.SkippedCount != 0 {
-		t.Fatalf("started state = %#v", got)
-	}
-	if captured.Generation != now || captured.PreviousTitle != before.Title || captured.SkippedCount != 4 {
-		t.Fatalf("worker payload = %#v", captured)
-	}
-}
-
-func TestHookStartsForUnsetExpiredAndFutureStartTimes(t *testing.T) {
-	t.Parallel()
-	for _, test := range []struct {
-		name  string
-		setup func(*testing.T, *application, int64)
-	}{
-		{name: "unset"},
-		{
-			name: "more than five minutes old",
-			setup: func(t *testing.T, app *application, now int64) {
-				if err := os.MkdirAll(app.stateDir(), 0o700); err != nil {
-					t.Fatal(err)
-				}
-				entry := tabState{Generation: 10, LastStartedAt: now - generationInterval.Nanoseconds() - 1}
-				if err := app.writeState("workspace", map[string]tabState{"tab": entry}); err != nil {
-					t.Fatal(err)
-				}
-			},
-		},
-		{
-			name: "future value is discarded and gate opens",
-			setup: func(t *testing.T, app *application, now int64) {
-				writeRawState(t, app, "workspace", `{"tab":{"generation":10,"title":"corrupt","last_started_at":`+jsonNumber(now+1)+`}}`)
-			},
-		},
-		{
-			name: "legacy entry has no start time",
-			setup: func(t *testing.T, app *application, _ int64) {
-				writeRawState(t, app, "workspace", `{"tab":10}`)
-			},
-		},
-	} {
-		t.Run(test.name, func(t *testing.T) {
-			app := testApplication(t, &fakeCommandRunner{})
-			now := app.now().UnixNano()
-			if test.setup != nil {
-				test.setup(t, app, now)
-			}
-			starts := 0
-			app.startDetached = func(_ string, path string) error {
-				starts++
-				return os.Remove(path)
-			}
-			if err := app.runHook(strings.NewReader(hookJSON("current", "/transcript")), "tab", "workspace"); err != nil {
-				t.Fatal(err)
-			}
-			if starts != 1 {
-				t.Fatalf("worker starts = %d, want 1", starts)
-			}
-			state, err := app.readState("workspace")
-			if err != nil {
-				t.Fatal(err)
-			}
-			if state["tab"].LastStartedAt != now || state["tab"].SkippedCount != 0 {
-				t.Fatalf("eligible state = %#v", state["tab"])
-			}
-		})
-	}
-}
-
-func TestHookFailuresDoNotUpdateGenerationOrStartTime(t *testing.T) {
-	t.Parallel()
-	for _, test := range []struct {
-		name  string
-		setup func(*application)
-	}{
-		{
-			name: "payload creation failure",
-			setup: func(app *application) {
-				app.payloadWriter = func(workerPayload) (string, error) {
-					return "", errors.New("payload failed")
-				}
-			},
-		},
-		{
-			name: "worker start failure",
-			setup: func(app *application) {
-				app.startDetached = func(string, string) error { return errors.New("start failed") }
-			},
-		},
-	} {
-		t.Run(test.name, func(t *testing.T) {
-			app := testApplication(t, &fakeCommandRunner{})
-			now := app.now().UnixNano()
-			before := tabState{
-				Generation: now - 100, Title: "前回タイトル",
-				LastStartedAt: now - generationInterval.Nanoseconds(), SkippedCount: 3,
-			}
-			if err := os.MkdirAll(app.stateDir(), 0o700); err != nil {
-				t.Fatal(err)
-			}
-			if err := app.writeState("workspace", map[string]tabState{"tab": before}); err != nil {
-				t.Fatal(err)
-			}
-			test.setup(app)
-			if err := app.runHook(strings.NewReader(hookJSON("current", "/transcript")), "tab", "workspace"); err == nil {
-				t.Fatal("runHook() succeeded")
-			}
-			state, err := app.readState("workspace")
-			if err != nil {
-				t.Fatal(err)
-			}
-			if got := state["tab"]; got != before {
-				t.Fatalf("state changed after failure: %#v, want %#v", got, before)
-			}
-			assertNoTemporaryFiles(t, app)
-		})
-	}
-}
-
-func TestTwoConcurrentEligibleHooksStartOnlyOneWorker(t *testing.T) {
-	t.Parallel()
-	app := testApplication(t, &fakeCommandRunner{})
-	var mu sync.Mutex
-	starts := 0
-	app.startDetached = func(_ string, path string) error {
-		mu.Lock()
-		starts++
-		mu.Unlock()
-		return os.Remove(path)
-	}
-	start := make(chan struct{})
-	errorsCh := make(chan error, 2)
-	for range 2 {
-		go func() {
-			<-start
-			errorsCh <- app.runHook(strings.NewReader(hookJSON("current", "/transcript")), "tab", "workspace")
-		}()
-	}
-	close(start)
-	for range 2 {
-		if err := <-errorsCh; err != nil {
-			t.Fatal(err)
-		}
-	}
-	mu.Lock()
-	gotStarts := starts
-	mu.Unlock()
-	if gotStarts != 1 {
-		t.Fatalf("worker starts = %d, want 1", gotStarts)
-	}
-	state, err := app.readState("workspace")
-	if err != nil {
-		t.Fatal(err)
-	}
-	entry := state["tab"]
-	if entry.Generation != app.now().UnixNano() || entry.LastStartedAt != app.now().UnixNano() || entry.SkippedCount != 1 {
-		t.Fatalf("concurrent hook state = %#v", entry)
-	}
-}
-
-func TestPreviousTitleSurvivesMultipleEligibleGenerationsBeforeApply(t *testing.T) {
-	t.Parallel()
-	app := testApplication(t, &fakeCommandRunner{})
-	now := app.now()
-	currentNow := now
-	app.now = func() time.Time { return currentNow }
-	initial := tabState{
-		Generation: now.UnixNano() - 10, Title: "安定タイトル",
-		LastStartedAt: now.Add(-generationInterval).UnixNano(), SkippedCount: 2,
-	}
-	if err := os.MkdirAll(app.stateDir(), 0o700); err != nil {
-		t.Fatal(err)
-	}
-	if err := app.writeState("workspace", map[string]tabState{"tab": initial}); err != nil {
-		t.Fatal(err)
-	}
-	var payloads []workerPayload
-	app.startDetached = func(_ string, path string) error {
-		payloads = append(payloads, readPayload(t, path))
-		return os.Remove(path)
-	}
-	if err := app.runHook(strings.NewReader(hookJSON("first", "/transcript")), "tab", "workspace"); err != nil {
-		t.Fatal(err)
-	}
-	currentNow = currentNow.Add(generationInterval)
-	if err := app.runHook(strings.NewReader(hookJSON("second", "/transcript")), "tab", "workspace"); err != nil {
-		t.Fatal(err)
-	}
-	if len(payloads) != 2 || payloads[0].PreviousTitle != initial.Title || payloads[1].PreviousTitle != initial.Title {
-		t.Fatalf("previous titles in payloads = %#v", payloads)
-	}
-	state, err := app.readState("workspace")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if state["tab"].Title != initial.Title {
-		t.Fatalf("title was cleared before apply: %#v", state["tab"])
-	}
-}
-
-func TestSkippedHooksExpandInputsForNextWorker(t *testing.T) {
-	t.Parallel()
-	app := testApplication(t, &fakeCommandRunner{})
-	currentNow := app.now()
-	app.now = func() time.Time { return currentNow }
-	initial := tabState{Generation: 10, LastStartedAt: currentNow.UnixNano()}
-	if err := os.MkdirAll(app.stateDir(), 0o700); err != nil {
-		t.Fatal(err)
-	}
-	if err := app.writeState("workspace", map[string]tabState{"tab": initial}); err != nil {
-		t.Fatal(err)
-	}
-	for _, prompt := range []string{"skipped one", "skipped two"} {
-		if err := app.runHook(strings.NewReader(hookJSON(prompt, "/transcript")), "tab", "workspace"); err != nil {
-			t.Fatal(err)
-		}
-	}
-	currentNow = currentNow.Add(generationInterval)
-	var captured workerPayload
-	app.startDetached = func(_ string, path string) error {
-		captured = readPayload(t, path)
-		return os.Remove(path)
-	}
-	if err := app.runHook(strings.NewReader(hookJSON("eligible", "/transcript")), "tab", "workspace"); err != nil {
-		t.Fatal(err)
-	}
-	if captured.SkippedCount != 2 {
-		t.Fatalf("payload skipped count = %d, want 2", captured.SkippedCount)
-	}
-	if recent := recentHistoryEntries(captured.SkippedCount); recent != 5 {
-		t.Fatalf("recent input count = %d, want 5", recent)
-	}
-	state, err := app.readState("workspace")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if state["tab"].SkippedCount != 0 {
-		t.Fatalf("skipped count was not reset: %#v", state["tab"])
-	}
-}
-
-func TestWorkerFallbackRemovesPayloadBeforeCommands(t *testing.T) {
-	t.Parallel()
-	var app *application
-	var calls [][]string
-	fake := &fakeCommandRunner{
-		generate: func(_ context.Context, _ cursorRequest) error {
-			entries, err := os.ReadDir(app.stateDir())
-			if err != nil {
-				return err
-			}
-			for _, entry := range entries {
-				if strings.HasPrefix(entry.Name(), "payload-") {
-					return errors.New("payload still exists during cursor call")
-				}
-			}
-			return errors.New("cursor failed")
-		},
-		herdr: func(_ context.Context, args ...string) ([]byte, error) {
-			calls = append(calls, append([]string(nil), args...))
-			if equalStrings(args, []string{"tab", "list"}) {
-				return []byte(`[{"tab_id":"tab","workspace_id":"workspace"}]`), nil
-			}
-			return nil, nil
-		},
-	}
-	app = testApplication(t, fake)
-	transcript := writeTranscript(t,
-		`{"type":"user","message":{"content":"past"}}`,
-		`{"type":"ai-title","aiTitle":"Fallback「題」"}`,
-	)
-	generation, err := seedGenerationForTest(app, "workspace", "tab")
-	if err != nil {
-		t.Fatal(err)
-	}
-	payloadPath, err := app.writePayload(workerPayload{
-		Prompt: "current", TranscriptPath: transcript, TabID: "tab",
-		WorkspaceID: "workspace", Generation: generation,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := app.runWorker(payloadPath); err != nil {
-		t.Fatal(err)
-	}
-	if _, err := os.Stat(payloadPath); !errors.Is(err, os.ErrNotExist) {
-		t.Fatalf("payload remains after worker: %v", err)
-	}
-	if !containsCall(calls, "tab", "rename", "tab", "Fallback題") ||
-		!containsCall(calls, "workspace", "rename", "workspace", "Fallback題") {
-		t.Fatalf("fallback rename calls = %#v", calls)
-	}
-	state, err := app.readState("workspace")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if state["tab"].Title != "Fallback題" {
-		t.Fatalf("fallback title was not saved: %#v", state["tab"])
-	}
-	assertNoTemporaryFiles(t, app)
-}
-
-func TestWorkerUsesFallbackWhenThereAreNoInputs(t *testing.T) {
-	t.Parallel()
-	generated := false
-	var calls [][]string
-	fake := &fakeCommandRunner{
-		generate: func(context.Context, cursorRequest) error {
-			generated = true
-			return nil
-		},
-		herdr: func(_ context.Context, args ...string) ([]byte, error) {
-			calls = append(calls, append([]string(nil), args...))
-			if equalStrings(args, []string{"tab", "list"}) {
-				return []byte(`[{"tab_id":"tab","workspace_id":"workspace"}]`), nil
-			}
-			return nil, nil
-		},
-	}
-	app := testApplication(t, fake)
-	transcript := writeTranscript(t, `{"type":"custom-title","customTitle":"既存タイトル"}`)
-	generation, err := seedGenerationForTest(app, "workspace", "tab")
-	if err != nil {
-		t.Fatal(err)
-	}
-	payloadPath, err := app.writePayload(workerPayload{
-		TranscriptPath: transcript, TabID: "tab", WorkspaceID: "workspace", Generation: generation,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := app.runWorker(payloadPath); err != nil {
-		t.Fatal(err)
-	}
-	if generated {
-		t.Fatal("cursor-agent was called with zero inputs")
-	}
-	if !containsCall(calls, "tab", "rename", "tab", "既存タイトル") {
-		t.Fatalf("fallback was not applied: %#v", calls)
-	}
-}
-
-func TestWorkerUsesFallbackForEmptyCursorOutput(t *testing.T) {
-	t.Parallel()
-	var calls [][]string
-	fake := &fakeCommandRunner{
-		generate: func(context.Context, cursorRequest) error { return nil },
-		herdr: func(_ context.Context, args ...string) ([]byte, error) {
-			calls = append(calls, append([]string(nil), args...))
-			if equalStrings(args, []string{"tab", "list"}) {
-				return []byte(`[{"tab_id":"tab","workspace_id":"workspace"}]`), nil
-			}
-			return nil, nil
-		},
-	}
-	app := testApplication(t, fake)
-	transcript := writeTranscript(t, `{"type":"ai-title","aiTitle":"空出力fallback"}`)
-	generation, err := seedGenerationForTest(app, "workspace", "tab")
-	if err != nil {
-		t.Fatal(err)
-	}
-	payloadPath, err := app.writePayload(workerPayload{
-		Prompt: "current", TranscriptPath: transcript, TabID: "tab",
-		WorkspaceID: "workspace", Generation: generation,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := app.runWorker(payloadPath); err != nil {
-		t.Fatal(err)
-	}
-	if !containsCall(calls, "tab", "rename", "tab", "空出力fallback") {
-		t.Fatalf("empty-output fallback calls = %#v", calls)
-	}
-}
-
-func TestWorkerWithoutGeneratedOrFallbackTitleKeepsExistingLabels(t *testing.T) {
-	t.Parallel()
-	called := false
-	fake := &fakeCommandRunner{
-		generate: func(context.Context, cursorRequest) error { return errors.New("failed") },
-		herdr: func(context.Context, ...string) ([]byte, error) {
-			called = true
-			return nil, nil
-		},
-	}
-	app := testApplication(t, fake)
-	generation, err := seedGenerationForTest(app, "workspace", "tab")
-	if err != nil {
-		t.Fatal(err)
-	}
-	payloadPath, err := app.writePayload(workerPayload{
-		Prompt: "current", TabID: "tab", WorkspaceID: "workspace", Generation: generation,
-	})
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := app.runWorker(payloadPath); err != nil {
-		t.Fatal(err)
-	}
-	if called {
-		t.Fatal("herdr was called without generated or fallback title")
-	}
-}
-
-func TestPreviousTitleControlsCursorFailureFallback(t *testing.T) {
-	t.Parallel()
-	cases := []struct {
-		name       string
-		generate   func(context.Context, cursorRequest) error
-		wantTitle  string
-		wantRename bool
-	}{
-		{
-			name: "success replaces previous title",
-			generate: func(_ context.Context, request cursorRequest) error {
-				if !strings.Contains(request.Prompt, "現在のタイトルは「安定タイトル」") {
-					return errors.New("previous title is missing from prompt")
-				}
-				_, err := request.Output.WriteString("新しい主題")
-				return err
-			},
-			wantTitle: "新しい主題", wantRename: true,
-		},
-		{
-			name:      "timeout keeps previous title",
-			generate:  func(context.Context, cursorRequest) error { return context.DeadlineExceeded },
-			wantTitle: "安定タイトル",
-		},
-		{
-			name:      "authentication failure keeps previous title",
-			generate:  func(context.Context, cursorRequest) error { return errors.New("authentication failed") },
-			wantTitle: "安定タイトル",
-		},
-		{
-			name:      "empty output keeps previous title",
-			generate:  func(context.Context, cursorRequest) error { return nil },
-			wantTitle: "安定タイトル",
-		},
-	}
-	for _, test := range cases {
-		t.Run(test.name, func(t *testing.T) {
-			var calls [][]string
-			fake := &fakeCommandRunner{
-				generate: test.generate,
-				herdr: func(_ context.Context, args ...string) ([]byte, error) {
-					calls = append(calls, append([]string(nil), args...))
-					if equalStrings(args, []string{"tab", "list"}) {
-						return []byte(`{"id":"cli:tab:list","result":{"tabs":[{"tab_id":"tab","workspace_id":"workspace"}],"type":"tab_list"}}`), nil
-					}
-					return nil, nil
-				},
-			}
-			app := testApplication(t, fake)
-			entry := tabState{Generation: 42, Title: "安定タイトル", LastStartedAt: 41, SkippedCount: 3}
-			if err := os.MkdirAll(app.stateDir(), 0o700); err != nil {
-				t.Fatal(err)
-			}
-			if err := app.writeState("workspace", map[string]tabState{"tab": entry}); err != nil {
-				t.Fatal(err)
-			}
-			transcript := writeTranscript(t,
-				`{"type":"user","message":{"content":"session task"}}`,
-				`{"type":"ai-title","aiTitle":"fallback title"}`,
-			)
-			payloadPath, err := app.writePayload(workerPayload{
-				Prompt: "current", TranscriptPath: transcript, TabID: "tab", WorkspaceID: "workspace",
-				Generation: 42, PreviousTitle: "安定タイトル", SkippedCount: 3,
-			})
-			if err != nil {
-				t.Fatal(err)
-			}
-			if err := app.runWorker(payloadPath); err != nil {
-				t.Fatal(err)
-			}
-			state, err := app.readState("workspace")
-			if err != nil {
-				t.Fatal(err)
-			}
-			got := state["tab"]
-			if got.Title != test.wantTitle || got.Generation != entry.Generation ||
-				got.LastStartedAt != entry.LastStartedAt || got.SkippedCount != entry.SkippedCount {
-				t.Fatalf("state after cursor result = %#v", got)
-			}
-			gotRename := containsCall(calls, "tab", "rename", "tab", "新しい主題")
-			if gotRename != test.wantRename {
-				t.Fatalf("rename = %v, want %v; calls = %#v", gotRename, test.wantRename, calls)
-			}
-			if !test.wantRename && len(calls) != 0 {
-				t.Fatalf("cursor failure changed herdr labels: %#v", calls)
-			}
-		})
-	}
-}
-
-func TestCursorFailureAfterWorkerStartKeepsThrottleState(t *testing.T) {
-	t.Parallel()
-	fake := &fakeCommandRunner{
-		generate: func(context.Context, cursorRequest) error { return errors.New("cursor failed") },
-	}
-	app := testApplication(t, fake)
-	var payloadPath string
-	app.startDetached = func(_ string, path string) error {
-		payloadPath = path
-		return nil
-	}
-	if err := app.runHook(strings.NewReader(hookJSON("current", "")), "tab", "workspace"); err != nil {
-		t.Fatal(err)
-	}
-	before, err := app.readState("workspace")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := app.runWorker(payloadPath); err != nil {
-		t.Fatal(err)
-	}
-	after, err := app.readState("workspace")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if after["tab"] != before["tab"] || after["tab"].LastStartedAt == 0 {
-		t.Fatalf("cursor failure rolled back throttle state: before=%#v after=%#v", before["tab"], after["tab"])
-	}
-}
-
-func assertNoTemporaryFiles(t *testing.T, app *application) {
-	t.Helper()
-	entries, err := os.ReadDir(app.stateDir())
-	if err != nil {
-		if errors.Is(err, os.ErrNotExist) {
-			return
-		}
-		t.Fatal(err)
-	}
-	for _, entry := range entries {
-		if strings.HasPrefix(entry.Name(), "payload-") || strings.HasPrefix(entry.Name(), "out-") {
-			t.Errorf("temporary file remains: %s", entry.Name())
-		}
-	}
-}
-
 func containsCall(calls [][]string, want ...string) bool {
 	for _, call := range calls {
 		if equalStrings(call, want) {
@@ -1351,565 +2434,4 @@ func containsCall(calls [][]string, want ...string) bool {
 		}
 	}
 	return false
-}
-
-func TestApplyTitleSingleTabAndWorkspaceRetry(t *testing.T) {
-	t.Parallel()
-	var calls [][]string
-	workspaceAttempts := 0
-	fake := &fakeCommandRunner{herdr: func(_ context.Context, args ...string) ([]byte, error) {
-		calls = append(calls, append([]string(nil), args...))
-		if equalStrings(args, []string{"tab", "list"}) {
-			return []byte(`{"id":"cli:tab:list","result":{"tabs":[{"agent_status":"working","focused":false,"label":"1","number":1,"pane_count":1,"tab_id":"tab","workspace_id":"workspace"}],"type":"tab_list"}}`), nil
-		}
-		if len(args) >= 2 && args[0] == "workspace" && args[1] == "rename" {
-			workspaceAttempts++
-			if workspaceAttempts == 1 {
-				return nil, errors.New("temporary failure")
-			}
-		}
-		return nil, nil
-	}}
-	app := testApplication(t, fake)
-	generation, err := seedGenerationForTest(app, "workspace", "tab")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := app.applyTitle(workerPayload{TabID: "tab", WorkspaceID: "workspace", Generation: generation}, "Title"); err != nil {
-		t.Fatal(err)
-	}
-	if !containsCall(calls, "tab", "rename", "tab", "Title") || workspaceAttempts != 2 {
-		t.Fatalf("calls = %#v, workspace attempts = %d", calls, workspaceAttempts)
-	}
-}
-
-func TestApplyTitlePreservesThrottleFields(t *testing.T) {
-	t.Parallel()
-	fake := &fakeCommandRunner{herdr: func(_ context.Context, args ...string) ([]byte, error) {
-		if equalStrings(args, []string{"tab", "list"}) {
-			return []byte(`{"id":"cli:tab:list","result":{"tabs":[{"tab_id":"tab","workspace_id":"workspace"}],"type":"tab_list"}}`), nil
-		}
-		return nil, nil
-	}}
-	app := testApplication(t, fake)
-	before := tabState{Generation: 42, Title: "Old", LastStartedAt: 41, SkippedCount: 3}
-	if err := os.MkdirAll(app.stateDir(), 0o700); err != nil {
-		t.Fatal(err)
-	}
-	if err := app.writeState("workspace", map[string]tabState{"tab": before}); err != nil {
-		t.Fatal(err)
-	}
-	if err := app.applyTitle(workerPayload{TabID: "tab", WorkspaceID: "workspace", Generation: 42}, "New"); err != nil {
-		t.Fatal(err)
-	}
-	state, err := app.readState("workspace")
-	if err != nil {
-		t.Fatal(err)
-	}
-	want := before
-	want.Title = "New"
-	if got := state["tab"]; got != want {
-		t.Fatalf("applied state = %#v, want %#v", got, want)
-	}
-}
-
-func TestTabListFailureSkipsWorkspaceRename(t *testing.T) {
-	t.Parallel()
-	for _, test := range []struct {
-		name     string
-		response string
-	}{
-		{name: "invalid JSON", response: "not json"},
-		{name: "missing result tabs", response: `{"id":"cli:tab:list","result":{"type":"tab_list"}}`},
-	} {
-		t.Run(test.name, func(t *testing.T) {
-			var calls [][]string
-			fake := &fakeCommandRunner{herdr: func(_ context.Context, args ...string) ([]byte, error) {
-				calls = append(calls, append([]string(nil), args...))
-				if equalStrings(args, []string{"tab", "list"}) {
-					return []byte(test.response), nil
-				}
-				return nil, nil
-			}}
-			app := testApplication(t, fake)
-			generation, err := seedGenerationForTest(app, "workspace", "tab")
-			if err != nil {
-				t.Fatal(err)
-			}
-			if err := app.applyTitle(workerPayload{TabID: "tab", WorkspaceID: "workspace", Generation: generation}, "Title"); err != nil {
-				t.Fatal(err)
-			}
-			for _, call := range calls {
-				if len(call) >= 2 && call[0] == "workspace" && call[1] == "rename" {
-					t.Fatalf("workspace was renamed for unusable tab list: %#v", calls)
-				}
-			}
-		})
-	}
-}
-
-func TestApplyTitleWorkspaceOnlyStillChecksTabCount(t *testing.T) {
-	t.Parallel()
-	for _, test := range []struct {
-		name          string
-		tabs          string
-		wantWorkspace bool
-	}{
-		{name: "single tab", tabs: `[{"tab_id":"any","workspace_id":"workspace"}]`, wantWorkspace: true},
-		{name: "multiple tabs", tabs: `[{"tab_id":"a","workspace_id":"workspace"},{"tab_id":"b","workspace_id":"workspace"}]`},
-	} {
-		t.Run(test.name, func(t *testing.T) {
-			var calls [][]string
-			fake := &fakeCommandRunner{herdr: func(_ context.Context, args ...string) ([]byte, error) {
-				calls = append(calls, append([]string(nil), args...))
-				if equalStrings(args, []string{"tab", "list"}) {
-					return []byte(test.tabs), nil
-				}
-				return nil, nil
-			}}
-			app := testApplication(t, fake)
-			generation, err := seedGenerationForTest(app, "workspace", "")
-			if err != nil {
-				t.Fatal(err)
-			}
-			if err := app.applyTitle(workerPayload{WorkspaceID: "workspace", Generation: generation}, "Title"); err != nil {
-				t.Fatal(err)
-			}
-			if containsCall(calls, "tab", "rename", "", "Title") {
-				t.Fatal("tab rename was called without a tab ID")
-			}
-			gotWorkspace := containsCall(calls, "workspace", "rename", "workspace", "Title")
-			if gotWorkspace != test.wantWorkspace {
-				t.Fatalf("workspace rename = %v, want %v; calls = %#v", gotWorkspace, test.wantWorkspace, calls)
-			}
-		})
-	}
-}
-
-func TestApplyTitleTabOnlyDoesNotTryWorkspaceCommands(t *testing.T) {
-	t.Parallel()
-	var calls [][]string
-	fake := &fakeCommandRunner{herdr: func(_ context.Context, args ...string) ([]byte, error) {
-		calls = append(calls, append([]string(nil), args...))
-		return nil, nil
-	}}
-	app := testApplication(t, fake)
-	generation, err := seedGenerationForTest(app, "", "tab")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := app.applyTitle(workerPayload{TabID: "tab", Generation: generation}, "Title"); err != nil {
-		t.Fatal(err)
-	}
-	if len(calls) != 1 || !containsCall(calls, "tab", "rename", "tab", "Title") {
-		t.Fatalf("tab-only calls = %#v", calls)
-	}
-}
-
-func TestApplyTitleRejectsStaleGeneration(t *testing.T) {
-	t.Parallel()
-	called := false
-	app := testApplication(t, &fakeCommandRunner{herdr: func(context.Context, ...string) ([]byte, error) {
-		called = true
-		return nil, nil
-	}})
-	oldGeneration, err := seedGenerationForTest(app, "workspace", "tab")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if _, err := seedGenerationForTest(app, "workspace", "tab"); err != nil {
-		t.Fatal(err)
-	}
-	before, err := app.readState("workspace")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := app.applyTitle(workerPayload{TabID: "tab", WorkspaceID: "workspace", Generation: oldGeneration}, "Old"); err != nil {
-		t.Fatal(err)
-	}
-	if called {
-		t.Fatal("herdr was called for a stale generation")
-	}
-	after, err := app.readState("workspace")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if after["tab"] != before["tab"] {
-		t.Fatalf("stale apply changed state: before=%#v after=%#v", before["tab"], after["tab"])
-	}
-}
-
-func TestTabRenameFailureStopsBeforeWorkspaceRename(t *testing.T) {
-	t.Parallel()
-	var calls [][]string
-	fake := &fakeCommandRunner{herdr: func(_ context.Context, args ...string) ([]byte, error) {
-		calls = append(calls, append([]string(nil), args...))
-		return nil, errors.New("tab rename failed")
-	}}
-	app := testApplication(t, fake)
-	generation, err := seedGenerationForTest(app, "workspace", "tab")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := app.applyTitle(workerPayload{TabID: "tab", WorkspaceID: "workspace", Generation: generation}, "Title"); err != nil {
-		t.Fatal(err)
-	}
-	if len(calls) != 1 || !containsCall(calls, "tab", "rename", "tab", "Title") {
-		t.Fatalf("calls after tab rename failure = %#v", calls)
-	}
-}
-
-func TestApplyTitleSerializesMultipleTabsAndSkipsWorkspace(t *testing.T) {
-	t.Parallel()
-	var mu sync.Mutex
-	active := 0
-	maxActive := 0
-	var calls [][]string
-	fake := &fakeCommandRunner{herdr: func(_ context.Context, args ...string) ([]byte, error) {
-		mu.Lock()
-		active++
-		if active > maxActive {
-			maxActive = active
-		}
-		calls = append(calls, append([]string(nil), args...))
-		mu.Unlock()
-		time.Sleep(15 * time.Millisecond)
-		mu.Lock()
-		active--
-		mu.Unlock()
-		if equalStrings(args, []string{"tab", "list"}) {
-			return []byte(`[{"tab_id":"a","workspace_id":"workspace"},{"tab_id":"b","workspace_id":"workspace"}]`), nil
-		}
-		return nil, nil
-	}}
-	app := testApplication(t, fake)
-	genA, err := seedGenerationForTest(app, "workspace", "a")
-	if err != nil {
-		t.Fatal(err)
-	}
-	genB, err := seedGenerationForTest(app, "workspace", "b")
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	start := make(chan struct{})
-	errorsCh := make(chan error, 2)
-	for _, payload := range []workerPayload{
-		{TabID: "a", WorkspaceID: "workspace", Generation: genA},
-		{TabID: "b", WorkspaceID: "workspace", Generation: genB},
-	} {
-		payload := payload
-		go func() {
-			<-start
-			errorsCh <- app.applyTitle(payload, strings.ToUpper(payload.TabID))
-		}()
-	}
-	close(start)
-	for range 2 {
-		if err := <-errorsCh; err != nil {
-			t.Fatal(err)
-		}
-	}
-	mu.Lock()
-	defer mu.Unlock()
-	if maxActive != 1 {
-		t.Errorf("maximum concurrent herdr calls = %d, want 1", maxActive)
-	}
-	if !containsCall(calls, "tab", "rename", "a", "A") || !containsCall(calls, "tab", "rename", "b", "B") {
-		t.Errorf("tab rename calls = %#v", calls)
-	}
-	for _, call := range calls {
-		if len(call) >= 2 && call[0] == "workspace" && call[1] == "rename" {
-			t.Errorf("workspace was renamed in a multiple-tab workspace: %#v", call)
-		}
-	}
-}
-
-func TestClosedTabWorkerDoesNotRenameRemainingTabWorkspace(t *testing.T) {
-	t.Parallel()
-	var calls [][]string
-	fake := &fakeCommandRunner{herdr: func(_ context.Context, args ...string) ([]byte, error) {
-		calls = append(calls, append([]string(nil), args...))
-		if equalStrings(args, []string{"tab", "list"}) {
-			return []byte(`[{"tab_id":"b","workspace_id":"workspace"}]`), nil
-		}
-		return nil, nil
-	}}
-	app := testApplication(t, fake)
-	generation, err := seedGenerationForTest(app, "workspace", "a")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := app.applyTitle(workerPayload{TabID: "a", WorkspaceID: "workspace", Generation: generation}, "Old A"); err != nil {
-		t.Fatal(err)
-	}
-	for _, call := range calls {
-		if len(call) >= 2 && call[0] == "workspace" && call[1] == "rename" {
-			t.Fatalf("closed tab renamed workspace: %#v", calls)
-		}
-	}
-}
-
-func TestTOCTOUOldWorkerCannotOverwriteNewGeneration(t *testing.T) {
-	t.Parallel()
-	oldRenameStarted := make(chan struct{})
-	releaseOldRename := make(chan struct{})
-	var once sync.Once
-	var mu sync.Mutex
-	finalLabel := ""
-	fake := &fakeCommandRunner{herdr: func(_ context.Context, args ...string) ([]byte, error) {
-		if len(args) >= 4 && args[0] == "tab" && args[1] == "rename" {
-			if args[3] == "Old" {
-				once.Do(func() { close(oldRenameStarted) })
-				<-releaseOldRename
-			}
-			mu.Lock()
-			finalLabel = args[3]
-			mu.Unlock()
-			return nil, nil
-		}
-		if equalStrings(args, []string{"tab", "list"}) {
-			return []byte(`[{"tab_id":"tab","workspace_id":"workspace"}]`), nil
-		}
-		return nil, nil
-	}}
-	app := testApplication(t, fake)
-	currentNow := app.now()
-	app.now = func() time.Time { return currentNow }
-	var payloadsMu sync.Mutex
-	var payloads []workerPayload
-	app.startDetached = func(_ string, path string) error {
-		data, err := os.ReadFile(path)
-		if err != nil {
-			return err
-		}
-		var payload workerPayload
-		if err := json.Unmarshal(data, &payload); err != nil {
-			return err
-		}
-		if err := os.Remove(path); err != nil {
-			return err
-		}
-		payloadsMu.Lock()
-		payloads = append(payloads, payload)
-		payloadsMu.Unlock()
-		return nil
-	}
-	if err := app.runHook(strings.NewReader(hookJSON("old", "/transcript")), "tab", "workspace"); err != nil {
-		t.Fatal(err)
-	}
-	payloadsMu.Lock()
-	oldPayload := payloads[0]
-	payloadsMu.Unlock()
-	oldDone := make(chan error, 1)
-	go func() {
-		oldDone <- app.applyTitle(oldPayload, "Old")
-	}()
-	<-oldRenameStarted
-
-	currentNow = currentNow.Add(generationInterval)
-	newHookDone := make(chan error, 1)
-	go func() {
-		newHookDone <- app.runHook(strings.NewReader(hookJSON("new", "/transcript")), "tab", "workspace")
-	}()
-	select {
-	case err := <-newHookDone:
-		t.Fatalf("new hook completed while old worker held lock: %v", err)
-	case <-time.After(100 * time.Millisecond):
-	}
-	close(releaseOldRename)
-	if err := <-oldDone; err != nil {
-		t.Fatal(err)
-	}
-	if err := <-newHookDone; err != nil {
-		t.Fatal(err)
-	}
-	payloadsMu.Lock()
-	if len(payloads) != 2 {
-		payloadsMu.Unlock()
-		t.Fatalf("payload count = %d, want 2", len(payloads))
-	}
-	newPayload := payloads[1]
-	payloadsMu.Unlock()
-	if newPayload.Generation <= oldPayload.Generation {
-		t.Fatalf("new generation = %d, old = %d", newPayload.Generation, oldPayload.Generation)
-	}
-	if err := app.applyTitle(newPayload, "New"); err != nil {
-		t.Fatal(err)
-	}
-	mu.Lock()
-	defer mu.Unlock()
-	if finalLabel != "New" {
-		t.Fatalf("final tab label = %q, want New", finalLabel)
-	}
-}
-
-func TestEligibleHookLeavesStateUnchangedWhenAnotherTabHoldsLock(t *testing.T) {
-	started := make(chan struct{})
-	var once sync.Once
-	var callsMu sync.Mutex
-	var calls [][]string
-	fake := &fakeCommandRunner{herdr: func(ctx context.Context, args ...string) ([]byte, error) {
-		callsMu.Lock()
-		calls = append(calls, append([]string(nil), args...))
-		callsMu.Unlock()
-		if len(args) >= 2 && args[0] == "tab" && args[1] == "rename" {
-			once.Do(func() { close(started) })
-			<-ctx.Done()
-			return nil, ctx.Err()
-		}
-		if equalStrings(args, []string{"tab", "list"}) {
-			return []byte(`[{"tab_id":"tab","workspace_id":"workspace"}]`), nil
-		}
-		return nil, nil
-	}}
-	app := testApplication(t, fake)
-	generation, err := seedGenerationForTest(app, "workspace", "a")
-	if err != nil {
-		t.Fatal(err)
-	}
-	state, err := app.readState("workspace")
-	if err != nil {
-		t.Fatal(err)
-	}
-	wantB := tabState{Generation: 10, Title: "B title"}
-	state["b"] = wantB
-	if err := app.writeState("workspace", state); err != nil {
-		t.Fatal(err)
-	}
-	workerDone := make(chan error, 1)
-	go func() {
-		workerDone <- app.applyTitle(workerPayload{TabID: "a", WorkspaceID: "workspace", Generation: generation}, "Title")
-	}()
-	<-started
-
-	begin := time.Now()
-	if err := app.runHook(strings.NewReader(hookJSON("current", "/transcript")), "b", "workspace"); !errors.Is(err, context.DeadlineExceeded) {
-		t.Fatalf("runHook() error = %v, want deadline", err)
-	}
-	elapsed := time.Since(begin)
-	if elapsed < 900*time.Millisecond || elapsed > 2*time.Second {
-		t.Fatalf("lock timeout elapsed = %s, want about 1 second", elapsed)
-	}
-	select {
-	case err := <-workerDone:
-		if err != nil {
-			t.Fatal(err)
-		}
-	case <-time.After(6 * time.Second):
-		t.Fatal("herdr timeout did not release workspace lock")
-	}
-	state, err = app.readState("workspace")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if state["b"] != wantB {
-		t.Fatalf("eligible hook changed state while lock was held: %#v", state["b"])
-	}
-	if _, err := seedGenerationForTest(app, "workspace", "b"); err != nil {
-		t.Fatalf("lock did not recover: %v", err)
-	}
-	callsMu.Lock()
-	defer callsMu.Unlock()
-	if len(calls) != 1 || !containsCall(calls, "tab", "rename", "a", "Title") {
-		t.Fatalf("tab timeout continued to workspace operations: %#v", calls)
-	}
-}
-
-func TestEveryHerdrCallGetsDeadline(t *testing.T) {
-	t.Parallel()
-	var deadlines []time.Duration
-	fake := &fakeCommandRunner{herdr: func(ctx context.Context, args ...string) ([]byte, error) {
-		deadline, ok := ctx.Deadline()
-		if !ok {
-			return nil, errors.New("missing deadline")
-		}
-		deadlines = append(deadlines, time.Until(deadline))
-		if equalStrings(args, []string{"tab", "list"}) {
-			return []byte(`[{"tab_id":"tab","workspace_id":"workspace"}]`), nil
-		}
-		return nil, nil
-	}}
-	app := testApplication(t, fake)
-	generation, err := seedGenerationForTest(app, "workspace", "tab")
-	if err != nil {
-		t.Fatal(err)
-	}
-	if err := app.applyTitle(workerPayload{TabID: "tab", WorkspaceID: "workspace", Generation: generation}, "Title"); err != nil {
-		t.Fatal(err)
-	}
-	if len(deadlines) != 3 {
-		t.Fatalf("deadline count = %d, want 3", len(deadlines))
-	}
-	for _, remaining := range deadlines {
-		if remaining <= 0 || remaining > herdrCommandTimeout {
-			t.Errorf("invalid herdr timeout: %s", remaining)
-		}
-	}
-}
-
-func TestPayloadAndOutputFromCrashedWorkerAreCleanedAfterOneHour(t *testing.T) {
-	t.Parallel()
-	app := testApplication(t, &fakeCommandRunner{})
-	if err := os.MkdirAll(app.stateDir(), 0o700); err != nil {
-		t.Fatal(err)
-	}
-	old := app.now().Add(-staleFileAge - time.Second)
-	for _, name := range []string{"payload-crashed", "out-crashed"} {
-		path := filepath.Join(app.stateDir(), name)
-		if err := os.WriteFile(path, []byte("sensitive"), 0o600); err != nil {
-			t.Fatal(err)
-		}
-		if err := os.Chtimes(path, old, old); err != nil {
-			t.Fatal(err)
-		}
-	}
-	app.cleanupStaleFiles()
-	assertNoTemporaryFiles(t, app)
-}
-
-func TestParseTabListFormats(t *testing.T) {
-	t.Parallel()
-	for _, test := range []struct {
-		name string
-		data string
-	}{
-		{name: "actual CLI envelope", data: `{"id":"cli:tab:list","result":{"tabs":[{"tab_id":"tab","workspace_id":"workspace"}],"type":"tab_list"}}`},
-		{name: "top-level tabs", data: `{"tabs":[{"tab_id":"tab","workspace_id":"workspace"}]}`},
-		{name: "bare array", data: `[{"tab_id":"tab","workspace_id":"workspace"}]`},
-	} {
-		t.Run(test.name, func(t *testing.T) {
-			tabs, err := parseTabList([]byte(test.data))
-			if err != nil {
-				t.Fatal(err)
-			}
-			if len(tabs) != 1 || tabs[0].TabID != "tab" || tabs[0].WorkspaceID != "workspace" {
-				t.Fatalf("tabs = %#v", tabs)
-			}
-		})
-	}
-	for _, data := range []string{"not json", `{"id":"cli:tab:list","result":{"type":"tab_list"}}`} {
-		if _, err := parseTabList([]byte(data)); err == nil {
-			t.Errorf("parseTabList() accepted unusable output %q", data)
-		}
-	}
-}
-
-func TestPayloadJSONRoundTrip(t *testing.T) {
-	t.Parallel()
-	payload := workerPayload{
-		Prompt: "prompt", TranscriptPath: "/path", TabID: "tab", WorkspaceID: "workspace",
-		Generation: 42, PreviousTitle: "previous", SkippedCount: 3,
-	}
-	data, err := json.Marshal(payload)
-	if err != nil {
-		t.Fatal(err)
-	}
-	var decoded workerPayload
-	if err := json.Unmarshal(data, &decoded); err != nil {
-		t.Fatal(err)
-	}
-	if decoded != payload {
-		t.Fatalf("decoded payload = %#v, want %#v", decoded, payload)
-	}
 }
