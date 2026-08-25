@@ -1,6 +1,18 @@
 local classifier = require("util.flatten_classify")
 local payload = classifier.NIX_CMD_PAYLOAD
 local one_char_diff = payload:sub(1, -2) .. "1"
+
+-- 2026-08-25実機採取(toggleterm内`nvim`引数なし起動)を固定したsnapshot。
+-- 検出できるのはNIX_CMD_PAYLOADをこのsnapshotの更新なしに変更した場合のみ。
+-- 実際のNixラッパー更新によるprovider列挙のdriftは、実wrapped nvimからargvを
+-- 採取する統合検査でしか検知できない(この行は対象外)。
+local measured_payload =
+  "lua vim.g.loaded_node_provider=0;vim.g.loaded_perl_provider=0;"
+  .. "vim.g.loaded_ruby_provider=0;vim.g.loaded_python3_provider=0"
+assert(
+  measured_payload == classifier.NIX_CMD_PAYLOAD,
+  "measured payload no longer matches NIX_CMD_PAYLOAD constant"
+)
 local provider_order_diff =
   "lua vim.g.loaded_perl_provider=0;vim.g.loaded_node_provider=0;"
   .. "vim.g.loaded_ruby_provider=0;vim.g.loaded_python3_provider=0"
