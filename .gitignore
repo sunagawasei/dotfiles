@@ -9,6 +9,7 @@ notion/
 
 # アプリケーション設定ストア
 configstore/
+raycast/
 
 # Homebrew（trust.json等の自動生成状態ファイル）
 homebrew/
