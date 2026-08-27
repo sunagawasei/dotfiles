@@ -43,6 +43,10 @@ driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.c
 
 ### 段3 codex(review役)のプラン査読
 
+段2(fable-review)を実施した場合、その査読を完了した最終返信(Findings/Required tests/Residual risk/Confidence形式のもの。findingsゼロの場合もこの形式で明示)を受け取ってから送る(ACK・受領通知・途中報告・blocked通知はこの形式を持たないため対象外)。**workerのturnは完走したがagmsg配送だけ失敗した場合に限り、bridgeログからの代替を認める**。代替として有効なのは、(a)**現行taskと同一teamの**bridgeログでfable-review自身が送信したエントリ(team一致・送信者一致)、(b)現行の段2査読依頼のdispatch時刻(agmsg message storeのtimestamp)より後、(c)fable-reviewの直近respawnより後(runログのspawn時刻。respawnが一度も無い場合はfable-review初回spawn時刻より後)、(d)完了形式を備え内容が現行プランの査読であること、の4条件をすべて満たすentryだけ。**この4条件は規約レベルの信頼に依る照合であって、bridgeが強制する境界ではない**(agmsg message store等はfable-review自身がBashから書ける。既知の残余リスク)。**条件を満たすentryがログに無ければ代替の出番はなく、troubleshooting.mdの診断→解消できなければユーザーへ報告して指示を仰ぐ経路一本になる**(段3の先行送信で回避しない)。段2の返信前に段3へ査読依頼を送らない。段2省略(**redactすると議論が成立しない場合**)は、段2への査読依頼を送信する前に決定した場合に限る。依頼送信後のtimeout・無返信・失敗は省略に再分類できない(respawnした場合は返信実績が無効化されるため再probeをやり直す)。
+
+渡すプランには段2の指摘への対応を反映する。段3packetの必須fieldとして、段2の全findingについてfinding ID・振り分け(採用/見送り/別タスク)・見送りと別タスクは理由を一対一で列挙する(段2省略時は「段2省略(redactすると議論不成立、依頼送信前に決定)」と明記)。**認証・秘密情報を含むfindingは理由を`redacted(理由: 認証/秘密)`で代替でき、これはpacket不備に当たらない。redactedを使ったfindingは、内容(理由の具体)を平文開示せずfinding ID・重大度・振り分け(採用/見送り/別タスク)・解決状態(対応済み/未対応)を段4のユーザー承認時と段11の検収報告の両方に明記する(ユーザーは元のfable-review返信にagmsg履歴から直接アクセスできる)**。一覧から落ちたfindingがあればpacket不備として扱う。この対応は初回送信に適用し、段3findingsを受けた再送(収束ループ)は下記「レビュー収束条件」に従う。
+
 承認依頼前の常時ゲート。書式は下記「[review]パケットの鉄則」。
 
 ### 段4 ユーザー承認
@@ -189,7 +193,8 @@ DO NOTを明記: git commit/push禁止・ファイルセット外の変更禁止
 - 3者ともread-only。findingsを返すだけで、**fixはメインが適用**する
 - 自己完結パケット = `git diff`か対象`file:line`(プラン査読の場合はプラン本文) + 意図 + (ループ時)前回指摘→対応の対応表
 - **段2のプラン査読packetは段1の4 field(疑う前提 / 反対案 / その帰結 / 未解決の問い)を必須fieldとして含む**。fable-reviewは欠落・空だけでなく**定型的で実質のない値**もfindingにする(「疑う前提: なし」「反対案: 現案維持」で通さない。該当なしには理由を要求する)。再送(反復査読)では「最初の未査読プラン」ではなく「前回findingsへの対応」として評価する
-- 出力形式: Findings / Required tests / Residual risk / Confidence。severity順・推測は明記
+- **段3(codex)のプラン査読packetは、段2を実施した場合、段2findingsのfinding ID・振り分け(採用/見送り/別タスク)・見送りと別タスクは理由を一対一で列挙する**(段2省略時は「段2省略(redactすると議論不成立、依頼送信前に決定)」と明記。認証・秘密情報を含むfindingは理由を`redacted(理由: 認証/秘密)`で代替可、packet不備に当たらない。redactedを使ったfindingは、内容(理由の具体)を平文開示せずfinding ID・重大度・振り分け(採用/見送り/別タスク)・解決状態(対応済み/未対応)を段4のユーザー承認時と段11の検収報告の両方に明記する)。欠落は順序違反の可視化点として扱う
+- 出力形式: Findings / Required tests / Residual risk / Confidence。severity順・推測は明記・各findingにIDを付す
 - 段9では**opus-reviewとcodexの両方**に、**subtask別のdiff identity・依存関係・workerの検証結果**・**承認済みプラン本文**・**dependency advisoryの確認結果と根拠(メイン記入。欠落時はcommit不可)**と**段8のauthor再分類マップ(メインが書いた/直したファイルとhunkの一覧。全hunkが単一authorでも単一要素のマップとして明示する)**を渡す。**codexの意図一致査読、およびopus-reviewの意図一致査読(スコープ1)はマップが割り当てたhunkだけが対象**(マップが無いとラベルを推測で付け、無実のsubtaskが再オープンされる。codexは担当hunkを確定できず査読対象が空になる)。**opus-reviewの脆弱性4観点(スコープ2)は常に全hunkが対象でマップに制限されない**
 
 ## レビュー収束条件
