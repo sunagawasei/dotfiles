@@ -20,7 +20,7 @@
 
 ## 対話・確認の規約
 
-- 選択肢・分岐点の提示では、初出の内部名に一言の役割説明を添え、各選択肢の帰結(選ぶと何が起き、何を得て何を失うか)まで示してから選ばせる。
+- 選択肢・分岐点の提示では、初出の内部名に一言の役割説明と具体例を添え、各選択肢の帰結(選ぶと何が起き、何を得て何を失うか)まで示してから選ばせる。役割説明だけでは判断できないことがある(実例: 「mechanical-only再分類要求」「watcherのescalation」を役割説明だけで提示したところ伝わらず、具体例を添えてようやく判断できた)。
 - Claude Code自体の機能・挙動は記憶で即答せず、一次情報(公式ドキュメント・claude-code-guide agent)で裏取りする
 - タスク群の終了報告前にセッション全体を振り返り、途中の約束・保留・サブエージェント報告のスコープ外指摘の未実施を洗い出す。総点検は `claude/skills/session-harvest/SKILL.md`
 - 実質的な技術回答(技術主張・設計判断・調査結果)はcodexに裏どりさせてから出す。**委譲フロー段1の対話で、未検証と明示した仮説・選択肢の列挙(「未確認だが」「要検証」等を付したもの)は対象外**。断定として出す技術主張は、それが最終プランに残るか採否にかかわらず本規約の対象のまま(「後で段2/3で査読される」を理由に段1で裏取りなしの断定を出さない)。デバッグで修正を2回外した/根本原因未確定なら推測反復を止め、診断データを添えてcodex-researchに相談する
@@ -41,9 +41,9 @@
 モデル指定はalias自動追従を正とし、固定model IDは書かない。**例外はcursor worker**: label監査があるので `spawn.cursor_model.<name>` / `cursor_model_label.<name>` にカタログ表示ではなくinit.modelの実測をpinする。同一IDが複数のinit.model表示を返す場合は `|` で列挙する(実例: `claude-opus-5-thinking-max` は `Claude Opus 5 1M Max Thinking` と `Claude Opus 5 300K Max`)。片方だけをpinするとdead-letterする。現行のcursor worker(opus-review)は`claude-opus-5-thinking-high`をpinしており、実測4回は`Claude Opus 5 300K High`のみで一致(1M側表示の有無は継続監視、出現したら追記して`|`列挙する)。tier序列: fable > opus > sonnet > haiku。alias解決先・優先仕様: `claude/skills/orchestrate-agents/references/delegation-policy.md`
 
 - **メイン(本セッション)**: ユーザーとの対話でのプラン化・統合・検収(要件適合+diff査読+git log+test)・git。権限=**writeの承認・統合・commitの唯一の制御主体**
-- **fable-review(Fable・headless claude-code)**: 設計レビュー(段2)と、codex査読(段3)指摘への対応可否収束を担当。findings-onlyでrepo不変。権限=claude_reviewer(repo writeはsandbox+spawn probeで強制。repo readはproject(`~/.config`)配下と継承add-dir全体に開く。credential path read・外部状態変更の禁止は規約でのみ抑止しsandboxは強制しない)。**repo不変≠orchestration状態不変**: agmsg message store/team registration/run状態はsandboxのwrite denyの対象外で技術的に書け、`$SKILL_DIR`全体(全team・全projectの過去message含む)がread可能。busへの書き込み・他teamの履歴readはrole file規約でのみ抑止する残余リスク。network egressの実挙動は未検証(not checked)
+- **fable-review(Fable・headless claude-code)**: 設計レビュー(段2)、codex査読(段3)指摘への対応可否収束、および**worker実装中の設計分岐の質問への回答(段5)**を担当。段5の回答は最終決定としてそのままworkerへ中継され、メインの承認は挟まない(下記「重要な判断はサブエージェントに委譲せず、メインが直接行う」の明示的な例外)。findings-onlyでrepo不変。権限=claude_reviewer(repo writeはsandbox+spawn probeで強制。repo readはproject(`~/.config`)配下と継承add-dir全体に開く。credential path read・外部状態変更の禁止は規約でのみ抑止しsandboxは強制しない)。**repo不変≠orchestration状態不変**: agmsg message store/team registration/run状態はsandboxのwrite denyの対象外で技術的に書け、`$SKILL_DIR`全体(全team・全projectの過去message含む)がread可能。busへの書き込み・他teamの履歴readはrole file規約でのみ抑止する残余リスク。network egressの実挙動は未検証(not checked)
 - **opus-review(Opus5・headless cursor)**: 統合後のコード査読(段9) — worker作hunkの意図一致査読+脆弱性4観点。findings-onlyでrepo不変。権限=cursor_readonly(Write/Shell deny。readはcredential denylist。projectが`~/.config`だと`gh`/`gcloud`/`cursor`/`codex`はworkspace内でdenyされない)
-- **manager(GPT Sol・headless codex)**: サブタスク分割・発注・`[watcher-done]`の集計と`[team-ready]`の発行・メインの`[findings-resolved]`を受けての`[team-done]`発行。実装も査読もせず、設計判断は必ずメインへ転送する。権限=read-only(repo write・commit・外部writeすべて禁止)
+- **manager(GPT Sol・headless codex)**: サブタスク分割・発注・`[watcher-done]`の集計と`[team-ready]`の発行・メインの`[findings-resolved]`を受けての`[team-done]`発行。実装も査読もせず、設計判断は転送する — **workerの設計分岐の質問はfable-reviewへ**、`mechanical-only`の再分類要求とwatcherのescalationはメインへ。権限=read-only(repo write・commit・外部writeすべて禁止)
 - **実装worker(headless codex: codex-impl / worker-1 / worker-2 / hard-worker-1)**: 承認済みsubtaskの**ファイルセットの範囲だけ**repo write可。commit/push禁止。完了報告はwatcher宛
 - **watcher(GPT Luna Max・headless codex)**: 完了監視。**証拠・criteria・fingerprintの完全性のみ**を検査し、正しさ・安全性の承認はしない。権限=read-only(repo write・commit・外部writeすべて禁止)
 - **codex(review役)**: プラン査読(承認依頼前の常時ゲート)+Anthropic author(メイン)のdiff査読。権限=read-only
@@ -56,7 +56,7 @@
 2. fable-reviewが設計レビュー。**ユーザー承認の代替にしない**
 3. codex(review役)がプラン査読。**その指摘への対応可否(採用/見送り/別タスク)はfable-reviewが振り分けて収束させる。この判断を最終とする**
 4. **ユーザー承認**。これより前にmanager/worker宛の実装パケットを1件も出さない。承認対象はサブタスク方針を含むプラン全体
-5. managerがサブタスクへ分割し、**発注前に`[scope-check]`で分割一覧(ファイルセット付き)をメインへ出す**。メインが承認済みプランの範囲内と確認して`[scope-ok]`を返したsubtaskだけが発注され、dispatchパケットの`scope-ok:<task-id>/<subtask-id>`トークン(subtask単位)がworkerのrepo write許可の根拠になる(自分のsubtask idと一致するトークンが無ければworkerは書かない)。範囲外はメインが差し戻し、必要ならユーザーへ再承認。watcherへは受入条件と同時にファイルセットと基準fingerprintが渡る
+5. managerがサブタスクへ分割し、**発注前に`[scope-check]`で分割一覧(ファイルセット付き)をメインへ出す**。メインが承認済みプランの範囲内と確認して`[scope-ok]`を返したsubtaskだけが発注され、dispatchパケットの`scope-ok:<task-id>/<subtask-id>`トークン(subtask単位)がworkerのrepo write許可の根拠になる(自分のsubtask idと一致するトークンが無ければworkerは書かない)。範囲外はメインが差し戻し、必要ならユーザーへ再承認。watcherへは受入条件と同時にファイルセットと基準fingerprintが渡る。**worker実装中の設計分岐の質問はmanager経由でfable-reviewへ転送され、その回答が最終決定としてworkerへ中継される**(メインの承認は挟まない)。`mechanical-only`の再分類要求・watcherのescalationは従来どおりmanager経由でメインへ転送する
 6. worker → watcher(完全性の検査のみ)。1巡で解決しなければmanagerへescalate
 7. managerが`[team-ready]`を発行 — **非終端**
 8. メインが統合。統合前後のfingerprintを比較し、メインが実質変更したファイル/hunkをAnthropic authorへ再分類する
@@ -88,5 +88,5 @@
 - 査読は検収の代替ではない。メインが実物(`git status`/`git diff`/`git log`/test)を確認して完了とcommitを決める
 - watcherの`[watcher-done]`も査読承認ではない。`[team-done]`のトリガーはメインの`[findings-resolved]`で、managerが自発的に完了を宣言することはない。最終検収はメイン
 - **GitHub Issue・PR・commentの作成/変更は、ユーザーの明示指示があるときだけ**。メインの承認だけでは行わない。既定の台帳はagmsg DBと`[task:<id>]`
-- 重要な判断はサブエージェントに委譲せず、メインが直接行う
+- 重要な判断はサブエージェントに委譲せず、メインが直接行う。**例外**: worker実装中の設計分岐の質問はfable-reviewが最終決定として回答する(段5)
 - 検収手順とcodex査読の使いどころは`claude/skills/orchestrate-agents/SKILL.md`。配分の根拠データは`.claude/docs/cred-split/`

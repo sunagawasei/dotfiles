@@ -66,7 +66,7 @@ driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.c
 
 managerへworkerの起動を通知するときは**agmsg登録名をそのまま書く**。driver typeと混ぜると誤配される(2026-08-21実例: 「worker-1をteamにcodexとして登録済み」と書いたのをmanagerが登録名`codex`と読み、review専任の`codex`へ実装を発注した。`codex`が実装を拒否し、managerが直接報告を`[protocol-reject]`して差し戻したので事故は止まった)。
 
-managerは設計判断をしない。workerの設計分岐の質問、`mechanical-only`の再分類要求、watcherのescalationはいずれもメインへ転送し、メインの回答を中継する。
+managerは設計判断をしない。**workerの設計分岐の質問はfable-reviewへ転送し、その回答を最終決定としてworkerへ中継する**(メインの承認は挟まない)。`mechanical-only`の再分類要求とwatcherのescalationは、従来どおりメインへ転送し、メインの回答を中継する。
 
 ### 段6 worker → watcher(完全性の検査)
 
