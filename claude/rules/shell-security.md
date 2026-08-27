@@ -43,6 +43,22 @@ aws ssm get-parameter --name "/path/API_KEY" --with-decryption
 echo "Using API key: $API_KEY"
 ```
 
+### 部分文字列によるマスクは無効
+
+**「値の一部だけなら安全」という判断は誤り**。base64エンコード値やAPIキーの先頭数文字だけでも、それ自体が秘密情報のエントロピーの一部であり、露出させてはいけない。
+
+```bash
+# ❌ 悪い例: 先頭20文字だけでも秘密の一部が漏れる
+kubectl get secret my-secret -o jsonpath='{.data.ACCESS_KEY_ID}' | head -c 20
+
+# ✅ 良い例: 値を一切表示せず、変数経由でそのまま次のコマンドに渡す
+export ACCESS_KEY_ID="$(kubectl get secret my-secret -o jsonpath='{.data.ACCESS_KEY_ID}' | base64 -d)"
+```
+
+存在確認・疎通確認が目的なら、値そのものではなく「取得コマンドの終了コード」や「後続コマンドの成功可否」で判定する。
+
+実例: 2026-08-26、`cluster-backup` Secretの`ACCESS_KEY_ID`をマスクする意図で`head -c 20`を使い、base64値の先頭20文字を標準出力に出してしまった。
+
 ## ベストプラクティス
 
 1. 環境変数は使用直前に取得
