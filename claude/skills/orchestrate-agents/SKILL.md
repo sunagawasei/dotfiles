@@ -90,12 +90,32 @@ workerの完了報告は必ずwatcher宛。watcherが見るのは**証拠・crit
 
 ### 段9 コード査読ゲート(author-aware)
 
-- **脆弱性4観点(認証/認可境界・secret出力・外部write・dependency advisory)は常に`opus-review`が全hunkを対象に担当**。authorに依らずこのpassは必ず通す
-- **意図一致・正しさの一次査読はauthorで振る**: codex worker(OpenAI)作のhunk → `opus-review`、メイン(Anthropic)作のhunk → `codex`(review役)
-- 混在diffでは**opus-reviewに全hunkを渡す**。**両方に段8のauthor再分類マップを渡す**が、マップが制限するのは意図一致査読(worker作hunkに限定)だけで、脆弱性4観点は常に全hunk対象(全hunkが単一authorでも、単一要素のマップとして明示する)
-- findingのラベルは`[subtask:<id>]`(worker作)・`[author:main]`(メイン作)・`[design-level]`(承認済み設計自体の欠陥。**opus-review・codexどちらも自分が担当したhunkから見つけたら使う**。対応する単一hunkが無ければfile:line欄に`(design-level, no single hunk)`と明記)。codexもopus-reviewも、自分のfindingにこのラベルを付ける
-- dependency advisoryは到達性を疎通確認し、取得できない場合はpassではなく`not checked`と根拠を返させる。cursorのopus-reviewはShell denyのためこの確認が構造的にできない。**依存を変えるdiffのadvisory確認はメインの明示責務**とし、段9パケットの必須fieldに確認結果と根拠を含める(欠落時はcommit不可)
+- **脆弱性4観点(認証/認可境界・secret出力・外部write・dependency advisory)は常に`opus-review`が全hunkを対象に担当**。authorに依らずこのpassは必ず通す。**opus-reviewが応答不能な場合はgrok-reviewへフォールバックする**(下記「段9査読者フォールバックチェーン」参照)
+- **意図一致・正しさの一次査読はauthorで振る**: codex worker(OpenAI)作のhunk → `opus-review`(フォールバック中は`grok-review`)、メイン(Anthropic)作のhunk → `codex`(review役)
+- 混在diffでは**opus-review(またはフォールバック中はgrok-review)に全hunkを渡す**。**両方に段8のauthor再分類マップを渡す**が、マップが制限するのは意図一致査読(worker作hunkに限定)だけで、脆弱性4観点は常に全hunk対象(全hunkが単一authorでも、単一要素のマップとして明示する)
+- findingのラベルは`[subtask:<id>]`(worker作)・`[author:main]`(メイン作)・`[design-level]`(承認済み設計自体の欠陥。**opus-review/grok-review・codexどちらも自分が担当したhunkから見つけたら使う**。対応する単一hunkが無ければfile:line欄に`(design-level, no single hunk)`と明記)。codexもopus-review/grok-reviewも、自分のfindingにこのラベルを付ける
+- dependency advisoryは到達性を疎通確認し、取得できない場合はpassではなく`not checked`と根拠を返させる。cursorのopus-review/grok-reviewはShell denyのためこの確認が構造的にできない。**依存を変えるdiffのadvisory確認はメインの明示責務**とし、段9パケットの必須fieldに確認結果と根拠を含める(欠落時はcommit不可)
 - fable-reviewは段2の設計レビュー専任で段9には関与しない
+
+### 段9査読者フォールバックチェーン(opus-review応答不能時)
+
+2026-08-27、opus-reviewがCursor teamのusage limitに到達し使用不能になった実例を機に導入(復旧予定日はエラー文言に依る)。
+
+1. **主**: opus-review(cursor・`claude-opus-5-thinking-high`)
+2. **フォールバック**: grok-review(cursor・config key `spawn.cursor_model.grok-review: cursor-grok-4.6-xhigh`、暫定運用)。opus-review同等の役割(意図一致査読+脆弱性4観点)を代行する
+   - **grok-review(査読役)に関するreadiness照合は常に厳格基準を適用する**: 初回spawn時のreadiness照合、およびフォールバック中のopus-review復帰判定の両方で、期待token受信・エラー応答でない・pinしたmodel identityが一致、の3点を満たすことを求める。初回spawn時に不成功ならgrok-reviewは使用不能と判定し項5(段9ブロック)へ。復帰判定時に不成功なら主は未復旧と判定しフォールバックを継続する。**manager・watcher等の他workerの通常readiness照合は既存規約どおり応答到達で足りる**(厳格化はopus-review/grok-reviewの査読役に限る)
+   - role file(`grok-review.cursor.md`)にreadiness probeへの明示的な応答例外を記載済み(「standing roleは査読リクエストに対するもので、trivialなprobeには短い応答で答えてよい」)。この例外を明記しない限りmodelがstanding roleを厳密に守った回に不成功判定になりうるため、role file変更で対応した(SKILL.mdの記述だけでは担保できない)
+   - **レビュー本体の成功基準**: 「[review]パケットの鉄則」の出力形式(Findings/Required tests/Residual risk/Confidence。clean reviewはFindingsなしを含む)を主が返すこと。これを返さない場合はspawn/probe時エラー・査読中のusage-limit応答・timeout・無応答・部分応答・形式不正・異常終了のいずれであってもすべて不成功とみなし、フォールバックへ切替。**切替時は部分査読を継ぎ足さず段9を最初からやり直す**(遅着した主の応答とフォールバック応答を二重採用しない)
+   - **停止条件**: grok-reviewの誤陰性・査読形式不良を1件でも観測した時点でフォールバックを停止する。停止状態はセッションをまたいで有効とし(このファイルまたはCLAUDE.mdへの追記で記録)、定義した再有効化手順(ユーザー承認を得て本節を書き換える)以外では再開しない
+3. **フォールバック不能クラス**: 最終outbound payload全体(diff本文+補足説明+ログ+添付コンテキスト)に秘密の実値(credential・token等)が含まれると判断される場合。機械的secret scannerは実装せず、既存opus-review運用と同水準のメイン目視確認に依る(誤判定は残存リスクとして受容)。該当する場合、主・フォールバックいずれもcursor系のため対象外
+4. **段9ブロック(waiver可)**: **3のフォールバック不能クラスに該当する場合に限る**(cursor系全体が対象外で主・フォールバックどちらも使えないケース)。**ユーザーの明示的waiverがある場合のみ例外**とし、waiverは次の3条件を満たす: (a)対象diffをrepository identity・base tree・commit対象の完全なstaged treeを含むfingerprintに固定し、commit直前に再照合する (b)「段9成功」ではなく「段9未実施・ユーザーwaiver」として検収記録に残す(段9パスとして扱わない) (c)waiver後に対象diffが変更されたら旧waiverは無効・再承認必須
+5. **段9ブロック(waiver不可)**: 3に該当せず(秘密の実値を含まない)、かつ主・フォールバック双方が使用不能な場合。段9を無言スキップせずタスクをブロックしてユーザーに報告。waiverの対象ではない(通常の二重障害はブロック一択)
+
+外部送信の安全境界: cursor harness経由の査読役(opus-review・grok-review)へは、ユーザーが受容したデータ境界としてprivate diff送付を許容する(2026-08-27ユーザー確認済み)。調査役(grok-research等)への最小化義務(未公開コード断片を含めない)とは別軸。対象はCLAUDE.mdが適用される全project、個別repositoryのローカル外部送信禁止規約があればそれを優先、ユーザーが受容を撤回した時点で即時無効。
+
+**grok-reviewとgrok-researchは名前が1語しか違わないが権限が異なる別worker**: grok-review(査読役、private diff送付許容)とgrok-research(調査役、最小化義務でsecret・未公開コード断片禁止)を混同しない。`[review]`パケットの宛先は必ず`grok-review`。フォールバック発生直後はgrok-researchが既にready(返信実績あり)でもgrok-reviewが未spawn/未probeの窓が生じうるため、この窓でprivate diffをgrok-researchへ誤送しない — dispatch前に宛先名を確認する。role fileの新規追加(`claude/agmsg-roles/grok-review.cursor.md`)はCLAUDE.md/SKILL.mdの変更と同一commitに含める(role file無しでのspawnはcredential非読取・probe例外等の規約が乗らない)。
+
+未解決のまま残す前提: usage limitの機序(モデル別クォータかteam契約構造か)は未検証。Cursor外のAnthropicフォールバック(headless claude-code経由の別ロール)は将来課題として保留。Grok4.6の4観点較正はコマンドインジェクション検出1サンプルのみ(恒久品質保証ではない)。
 
 ### 段10 差し戻し(3経路)
 
@@ -132,11 +152,12 @@ workerの完了報告は必ずwatcher宛。watcherが見るのは**証拠・crit
 
 - `[task:<id>]`はセッション内で一意。`[subtask:<id>]`はtask内で一意
 - 完了済み・破棄済みタスクのstale/duplicate messageは既読化して無視する
-- **readiness照合**は「名前がある」ではなく、各nameのregistrationが**期待typeでちょうど1件、かつ当該セッションで返信実績があること**(dead-letterはregistration照合だけでは検出できない)。**新規spawn直後で返信実績がまだ無い場合はtrivialなprobeパケットを1通送り、その応答到達をもって返信実績とする**(probeは通常のtask dispatchとして数えない。循環依存を避けるための最小手順)。**respawn(despawn→再spawn)した場合、respawn前の返信実績は無効**として扱い、必ずrespawn後に新規probeを送り直す(旧instanceの応答をもって新instanceをreadyと誤判定しない)。対象はmanager・watcher・使用する全worker・fable-review・opus-review・codex(review役)、および実際にdispatchするcodex-research/grok-research(起動コマンドが一覧にあることは照合の代わりにならない)
+- **readiness照合**は「名前がある」ではなく、各nameのregistrationが**期待typeでちょうど1件、かつ当該セッションで返信実績があること**(dead-letterはregistration照合だけでは検出できない)。**新規spawn直後で返信実績がまだ無い場合はtrivialなprobeパケットを1通送り、その応答到達をもって返信実績とする**(probeは通常のtask dispatchとして数えない。循環依存を避けるための最小手順)。**respawn(despawn→再spawn)した場合、respawn前の返信実績は無効**として扱い、必ずrespawn後に新規probeを送り直す(旧instanceの応答をもって新instanceをreadyと誤判定しない)。対象はmanager・watcher・使用する全worker・fable-review・opus-review・codex(review役)、および実際にdispatchするcodex-research/grok-research(起動コマンドが一覧にあることは照合の代わりにならない)。**grok-reviewはopus-reviewフォールバック時のみdispatchするため、フォールバックが発生した回に限りreadiness照合の対象に加える**
 - 起動コマンド(モデル等のconfigはグローバル永続なのでコマンドのみ):
   - codex系(manager, watcher, codex-impl, worker-1/2, hard-worker-1, codex, codex-research): `ensure-codex.sh <project> <name>`
   - claude-code系(fable-review): `ensure-headless.sh claude-code <project> fable-review`(model/effort/turn timeoutはper-nameのconfigキーで固定。既定300秒では設計レビューに不足するため`spawn.claude_turn_timeout.fable-review: 1800`を設定済み。上記段2参照)
   - cursor系(opus-review): `AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ensure-headless.sh cursor <project> opus-review`(既定180秒ではopus:highの査読が切れる)
+  - cursor系(grok-review、opus-reviewフォールバック時のみ): `AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ensure-headless.sh cursor <project> grok-review`
   - cursor系(grok-research): `ensure-headless.sh cursor <project> <name>`
   - role fileは`db/spawn-roles/<name>.<type>.md`の規約名で自動解決される
 - SessionEnd teardownでsession teamのheadless worker全員が回収される。次セッションでは必要roleをspawnし直す(config永続なので同モデルで立つ)
@@ -188,14 +209,14 @@ DO NOTを明記: git commit/push禁止・ファイルセット外の変更禁止
 - **「バグ/異常を発見した」系の断定は再現条件まで確認してから採用する**(2026-07-27実例: `kustomize build <base>/api`単体での「既知バグ」報告が、親overlayからのビルドでは正しく解決され実機も正常だった)。SCHEMA充足の検品(形式)とは別に、断定の再現性の検品(内容)が必要
 - **インクリメンタル調査**: 1トピック=1パケット。各単位を検品してから次へ
 
-### [review]パケット(codex / fable-review / opus-review宛)
+### [review]パケット(codex / fable-review / opus-review宛。フォールバック時はopus-reviewをgrok-reviewに読み替える)
 
 - 3者ともread-only。findingsを返すだけで、**fixはメインが適用**する
 - 自己完結パケット = `git diff`か対象`file:line`(プラン査読の場合はプラン本文) + 意図 + (ループ時)前回指摘→対応の対応表
 - **段2のプラン査読packetは段1の4 field(疑う前提 / 反対案 / その帰結 / 未解決の問い)を必須fieldとして含む**。fable-reviewは欠落・空だけでなく**定型的で実質のない値**もfindingにする(「疑う前提: なし」「反対案: 現案維持」で通さない。該当なしには理由を要求する)。再送(反復査読)では「最初の未査読プラン」ではなく「前回findingsへの対応」として評価する
 - **段3(codex)のプラン査読packetは、段2を実施した場合、段2findingsのfinding ID・振り分け(採用/見送り/別タスク)・見送りと別タスクは理由を一対一で列挙する**(段2省略時は「段2省略(redactすると議論不成立、依頼送信前に決定)」と明記。認証・秘密情報を含むfindingは理由を`redacted(理由: 認証/秘密)`で代替可、packet不備に当たらない。redactedを使ったfindingは、内容(理由の具体)を平文開示せずfinding ID・重大度・振り分け(採用/見送り/別タスク)・解決状態(対応済み/未対応)を段4のユーザー承認時と段11の検収報告の両方に明記する)。欠落は順序違反の可視化点として扱う
 - 出力形式: Findings / Required tests / Residual risk / Confidence。severity順・推測は明記・各findingにIDを付す
-- 段9では**opus-reviewとcodexの両方**に、**subtask別のdiff identity・依存関係・workerの検証結果**・**承認済みプラン本文**・**dependency advisoryの確認結果と根拠(メイン記入。欠落時はcommit不可)**と**段8のauthor再分類マップ(メインが書いた/直したファイルとhunkの一覧。全hunkが単一authorでも単一要素のマップとして明示する)**を渡す。**codexの意図一致査読、およびopus-reviewの意図一致査読(スコープ1)はマップが割り当てたhunkだけが対象**(マップが無いとラベルを推測で付け、無実のsubtaskが再オープンされる。codexは担当hunkを確定できず査読対象が空になる)。**opus-reviewの脆弱性4観点(スコープ2)は常に全hunkが対象でマップに制限されない**
+- 段9では**opus-review(フォールバック中はgrok-review)とcodexの両方**に、**subtask別のdiff identity・依存関係・workerの検証結果**・**承認済みプラン本文**・**dependency advisoryの確認結果と根拠(メイン記入。欠落時はcommit不可)**と**段8のauthor再分類マップ(メインが書いた/直したファイルとhunkの一覧。全hunkが単一authorでも単一要素のマップとして明示する)**を渡す。**codexの意図一致査読、およびopus-review/grok-reviewの意図一致査読(スコープ1)はマップが割り当てたhunkだけが対象**(マップが無いとラベルを推測で付け、無実のsubtaskが再オープンされる。codexは担当hunkを確定できず査読対象が空になる)。**opus-review/grok-reviewの脆弱性4観点(スコープ2)は常に全hunkが対象でマップに制限されない**
 
 ## レビュー収束条件
 
