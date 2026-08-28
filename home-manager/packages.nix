@@ -154,7 +154,7 @@ in
     fd tree unar eza
 
     # テキスト処理
-    bat jq wget pv gron nkf
+    bat jq yq-go wget pv gron nkf
 
     # セキュリティ
     gnupg pinentry_mac git-crypt bitwarden-cli
