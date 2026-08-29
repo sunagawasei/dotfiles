@@ -159,6 +159,9 @@ gemini/
 .playwright-cli/
 playwright-intro-page.png
 
+# SwiftPM（~/Library配下へのsymlinkをツールチェーンが自動生成する）
+swiftpm/
+
 # Raycast (OAuth token / account credentials)
 raycast/config.json
 
