@@ -70,6 +70,8 @@ driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.c
 
 **fingerprintを取る間、メインは同じrepoを編集しない**(2026-08-21実測): メインが並行編集していると`status --porcelain`と`hash-object`の値が数分おきに変わり、workerの作業前後ペアが必ず不一致になる。watcherは契約どおり差し戻すので、原因はworkerでなく段取りにある。メイン側の編集が続く間はdispatchしない、または対象repoを分ける。
 
+**段9のfindings対応でメインが編集した直後にworkerのcycleが閉じると、fingerprintは必ず不一致になる**(2026-08-30実測)。上の「メインは編集しない」は段5〜7の話で、段10でメイン作hunkのfindingを直す間はメインの編集が不可避なため回避できない。このときwatcherはbaselineと提出の差異を**観測として提示し、正否判断をせずメインへescalateする**。メインがディスク上の内容を読んで帰属を確定し、自分の変更であればworkerの逸脱として扱わない。workerに説明責任を負わせない。
+
 managerへworkerの起動を通知するときは**agmsg登録名をそのまま書く**。driver typeと混ぜると誤配される(2026-08-21実例: 「worker-1をteamにcodexとして登録済み」と書いたのをmanagerが登録名`codex`と読み、review専任の`codex`へ実装を発注した。`codex`が実装を拒否し、managerが直接報告を`[protocol-reject]`して差し戻したので事故は止まった)。
 
 managerは設計判断をしない。**workerの設計分岐の質問はfable-reviewへ転送し、その回答を最終決定としてworkerへ中継する**(メインの承認は挟まない)。`mechanical-only`の再分類要求とwatcherのescalationは、従来どおりメインへ転送し、メインの回答を中継する。
@@ -97,6 +99,7 @@ workerの完了報告は必ずwatcher宛。watcherが見るのは**証拠・crit
 - 混在diffでは**opus-review(またはフォールバック中はgrok-review)に全hunkを渡す**。**両方に段8のauthor再分類マップを渡す**が、マップが制限するのは意図一致査読(worker作hunkに限定)だけで、脆弱性4観点は常に全hunk対象(全hunkが単一authorでも、単一要素のマップとして明示する)
 - findingのラベルは`[subtask:<id>]`(worker作)・`[author:main]`(メイン作)・`[design-level]`(承認済み設計自体の欠陥。**opus-review/grok-review・codexどちらも自分が担当したhunkから見つけたら使う**。対応する単一hunkが無ければfile:line欄に`(design-level, no single hunk)`と明記)。codexもopus-review/grok-reviewも、自分のfindingにこのラベルを付ける
 - dependency advisoryは到達性を疎通確認し、取得できない場合はpassではなく`not checked`と根拠を返させる。cursorのopus-review/grok-reviewはShell denyのためこの確認が構造的にできない。**依存を変えるdiffのadvisory確認はメインの明示責務**とし、段9パケットの必須fieldに確認結果と根拠を含める(欠落時はcommit不可)
+- **workerがツールチェーンを持たない構成では、契約を変えない自明なコンパイルエラーはメインが直して`[author:main]`に再分類する**。enum caseの綴り違い、`return`漏れ、import漏れ、非Sendable値の隔離境界越えなど、修正が一意で挙動と公開契約を変えないもの。差し戻しの往復コストが査読価値を上回るため。直した内容は段9でcodex(review役)へ回し、workerとwatcherには「メインが直したファイルは今後workerに変更させない」と明示する
 - fable-reviewは段2の設計レビュー専任で段9には関与しない
 
 ### 段9査読者フォールバックチェーン(opus-review応答不能時)
