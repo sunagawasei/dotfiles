@@ -28,8 +28,10 @@ description: 全タスク共通の単一委譲フロー(対話でのプラン起
 プランを`fable-review`へ送る。返るのは findings。**ユーザー承認の代替にしない**。認証・秘密情報を含むプランは送付前に該当部分をredactする(redactすると議論不成立ならF3の規約どおり段2を省く)。
 
 ```bash
-~/.agents/skills/agmsg/scripts/ensure-headless.sh claude-code <path> fable-review
+AGMSG_CLAUDE_PROBE_TIMEOUT=150 ~/.agents/skills/agmsg/scripts/ensure-headless.sh claude-code <path> fable-review
 ```
+
+**probe timeoutは既定30秒では足りない**(`_spawn.sh`の`AGMSG_CLAUDE_PROBE_TIMEOUT:-30`)。fableは30秒でprobeの全tool eventを出し切れず`rc=124`でfail-closedする(2026-08-29実測)。turn timeoutと違い**per-nameのconfigキーは存在せず、env varでのみ指定する**ため、起動は常に上記の環境変数込みの1行で行う。値は`$VAR`にせずリテラルで書く(troubleshooting.md項10)。失敗時の診断はtroubleshooting.md項14。
 
 driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.claude_reviewer: true`で担保。per-nameキーは存在しないためグローバルキーで運用する)。**repo writeはsandbox+spawn probeで強制されるが、repo read(project配下=`~/.config`全体+継承add-dir)はBash経由で開く**。credential path read・外部状態変更(認証済みCLIの変更系操作・network write)の禁止はrole file規約でのみ抑止し、sandboxは強制しない(強制境界ではないことを認識のうえ運用する選択)。**sandboxのwrite denyはrepoに限られ、agmsg message store/team registration/run状態はBashから技術的に書け、`$SKILL_DIR`全体(全team・全project分)がread可能** — これも規約でのみ抑止する残余リスクとして扱う(F1/F2)。network egressは未検証(`not checked`、F6)。モデルは`spawn.claude_model.fable-review: fable`(alias、自動追従)。effortは`spawn.claude_effort.fable-review: high`。claude-code driverにはcursorのようなmodel-audit機構が無く、実効モデルの動的な機械照合はできない。記録は静的設定値に留め、モデル自身への自己申告は検証証跡として扱わない(残存リスクとして記録するだけに留める)。
 
@@ -155,7 +157,7 @@ workerの完了報告は必ずwatcher宛。watcherが見るのは**証拠・crit
 - **readiness照合**は「名前がある」ではなく、各nameのregistrationが**期待typeでちょうど1件、かつ当該セッションで返信実績があること**(dead-letterはregistration照合だけでは検出できない)。**新規spawn直後で返信実績がまだ無い場合はtrivialなprobeパケットを1通送り、その応答到達をもって返信実績とする**(probeは通常のtask dispatchとして数えない。循環依存を避けるための最小手順)。**respawn(despawn→再spawn)した場合、respawn前の返信実績は無効**として扱い、必ずrespawn後に新規probeを送り直す(旧instanceの応答をもって新instanceをreadyと誤判定しない)。対象はmanager・watcher・使用する全worker・fable-review・opus-review・codex(review役)、および実際にdispatchするcodex-research/grok-research(起動コマンドが一覧にあることは照合の代わりにならない)。**grok-reviewはopus-reviewフォールバック時のみdispatchするため、フォールバックが発生した回に限りreadiness照合の対象に加える**
 - 起動コマンド(モデル等のconfigはグローバル永続なのでコマンドのみ):
   - codex系(manager, watcher, codex-impl, worker-1/2, hard-worker-1, codex, codex-research): `ensure-codex.sh <project> <name>`
-  - claude-code系(fable-review): `ensure-headless.sh claude-code <project> fable-review`(model/effort/turn timeoutはper-nameのconfigキーで固定。既定300秒では設計レビューに不足するため`spawn.claude_turn_timeout.fable-review: 1800`を設定済み。上記段2参照)
+  - claude-code系(fable-review): `AGMSG_CLAUDE_PROBE_TIMEOUT=150 ensure-headless.sh claude-code <project> fable-review`(既定30秒ではfableがprobeを出し切れずrc=124でfail-closedする。probe timeoutはper-nameのconfigキーが無くenv varのみ。model/effort/turn timeoutはper-nameのconfigキーで固定。既定300秒では設計レビューに不足するため`spawn.claude_turn_timeout.fable-review: 1800`を設定済み。上記段2参照)
   - cursor系(opus-review): `AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ensure-headless.sh cursor <project> opus-review`(既定180秒ではopus:highの査読が切れる)
   - cursor系(grok-review、opus-reviewフォールバック時のみ): `AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ensure-headless.sh cursor <project> grok-review`
   - cursor系(grok-research): `ensure-headless.sh cursor <project> <name>`
