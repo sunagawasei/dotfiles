@@ -3,6 +3,9 @@ return {
   version = "*",
   event = "VeryLazy",
   config = function()
+    -- 番号付きターミナルの上限(lazygit=99 / hunk=98 とは別枠)
+    local MAX_NUMBERED_TERMINALS = 9
+
     require("toggleterm").setup({
       size = function(term)
         if term.direction == "horizontal" then
@@ -83,8 +86,8 @@ return {
       -- 開いているターミナルのIDを記録（番号付きターミナルのみ）
       local open_terminals = {}
       for _, term in pairs(all_terminals) do
-        -- LazyGitを除外：番号付きターミナル（1/2/3）のみ対象
-        if term.id >= 1 and term.id <= 3 and term:is_open() then
+        -- LazyGit/Hunkを除外：番号付きターミナルのみ対象
+        if term.id >= 1 and term.id <= MAX_NUMBERED_TERMINALS and term:is_open() then
           table.insert(open_terminals, term.id)
           term:close()
         end
@@ -159,7 +162,7 @@ return {
       on_open = function(term)
         vim.cmd("startinsert!")
         vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", { noremap = true, silent = true })
-        -- Ctrl+GをLazyGitにパススルー（グローバルのcycle_terminalマッピングを上書き）
+        -- Ctrl+GをLazyGitにパススルー（グローバルのtモードマッピングを上書き）
         vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<C-g>", "<C-g>", { noremap = true, silent = true })
       end,
       on_close = function(term)
@@ -246,13 +249,83 @@ return {
       vim.api.nvim_win_set_height(current_win, size)
     end
 
-    -- ターミナルサイクル切り替え
-    _G.cycle_terminal = function()
-      local current_buf = vim.api.nvim_get_current_buf()
-      local current_id = vim.b[current_buf].toggle_number
-      if not current_id then return end
-      local next_id = (current_id % 3) + 1
-      _G.toggle_smart_terminal(next_id)
+    -- 番号付きターミナルのうち存在するものだけを昇順で返す
+    -- (lazygit=99 / hunk=98 はサイクル対象外)
+    local function numbered_terminal_ids()
+      local ids = {}
+      for _, term in ipairs(require("toggleterm.terminal").get_all(true)) do
+        if term.id >= 1 and term.id <= MAX_NUMBERED_TERMINALS then table.insert(ids, term.id) end
+      end
+      return ids
+    end
+
+    -- 指定ターミナルへ切り替える(トグルせず必ず表示・フォーカスする)
+    _G.focus_terminal = function(id)
+      local terms = require("toggleterm.terminal")
+      if _G.terminal_mode == "single" then
+        for _, term in ipairs(terms.get_all(true)) do
+          if term.id ~= id and term.id >= 1 and term.id <= MAX_NUMBERED_TERMINALS and term:is_open() then
+            term:close()
+          end
+        end
+      end
+      local term = terms.get(id, true)
+      if term and term:is_open() then
+        term:focus()
+      else
+        vim.cmd(id .. "ToggleTerm direction=" .. _G.terminal_direction)
+      end
+    end
+
+    -- ターミナルサイクル切り替え(step=1で次、-1で前)
+    _G.cycle_terminal = function(step)
+      local ids = numbered_terminal_ids()
+      if #ids == 0 then
+        _G.focus_terminal(1)
+        return
+      end
+
+      -- 起点はカレントバッファ、無ければ最後にフォーカスしたターミナル
+      local terms = require("toggleterm.terminal")
+      local current = vim.b.toggle_number
+      if not current then
+        local last = terms.get_last_focused()
+        current = last and last.id or nil
+      end
+
+      local index = nil
+      for i, id in ipairs(ids) do
+        if id == current then index = i end
+      end
+      -- 起点が特定できないときは開いているターミナルへ戻すだけにする
+      if not index then
+        for _, id in ipairs(ids) do
+          local term = terms.get(id, true)
+          if term and term:is_open() then
+            _G.focus_terminal(id)
+            return
+          end
+        end
+        _G.focus_terminal(ids[1])
+        return
+      end
+
+      _G.focus_terminal(ids[(index - 1 + (step or 1)) % #ids + 1])
+    end
+
+    -- 未使用の最小番号でターミナルを新規作成する
+    _G.new_terminal = function()
+      local used = {}
+      for _, term in ipairs(require("toggleterm.terminal").get_all(true)) do
+        used[term.id] = true
+      end
+      for id = 1, MAX_NUMBERED_TERMINALS do
+        if not used[id] then
+          _G.toggle_smart_terminal(id)
+          return
+        end
+      end
+      vim.notify("ターミナルは最大" .. MAX_NUMBERED_TERMINALS .. "個までです", vim.log.levels.WARN)
     end
 
     -- ターミナルを最大化
@@ -265,6 +338,18 @@ return {
   keys = {
     -- 番号付きターミナル
     {
+      "<leader>t1",
+      function() _G.toggle_smart_terminal(1) end,
+      mode = "n",
+      desc = "Terminal 1",
+    },
+    {
+      "<leader>t1",
+      [[<C-\><C-n><cmd>lua _G.toggle_smart_terminal(1)<CR>]],
+      mode = "t",
+      desc = "Terminal 1",
+    },
+    {
       "<leader>t2",
       function() _G.toggle_smart_terminal(2) end,
       mode = "n",
@@ -275,6 +360,44 @@ return {
       [[<C-\><C-n><cmd>lua _G.toggle_smart_terminal(2)<CR>]],
       mode = "t",
       desc = "Terminal 2",
+    },
+    {
+      "<leader>t3",
+      function() _G.toggle_smart_terminal(3) end,
+      mode = "n",
+      desc = "Terminal 3",
+    },
+    {
+      "<leader>t3",
+      [[<C-\><C-n><cmd>lua _G.toggle_smart_terminal(3)<CR>]],
+      mode = "t",
+      desc = "Terminal 3",
+    },
+    -- ターミナル間の切り替え(ノーマルのみ。tモードでは ] [ をシェルへ渡す)
+    {
+      "]t",
+      function() _G.cycle_terminal(1) end,
+      mode = "n",
+      desc = "Next Terminal",
+    },
+    {
+      "[t",
+      function() _G.cycle_terminal(-1) end,
+      mode = "n",
+      desc = "Previous Terminal",
+    },
+    -- 新規ターミナル
+    {
+      "<leader>tn",
+      function() _G.new_terminal() end,
+      mode = "n",
+      desc = "New Terminal",
+    },
+    {
+      "<leader>tn",
+      [[<C-\><C-n><cmd>lua _G.new_terminal()<CR>]],
+      mode = "t",
+      desc = "New Terminal",
     },
     -- 最後のターミナルトグル
     -- tモードは<C-\><C-n>でterminal normalに出てからクローズ。
