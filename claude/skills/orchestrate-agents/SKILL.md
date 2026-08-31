@@ -74,6 +74,8 @@ driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.c
 
 managerへworkerの起動を通知するときは**agmsg登録名をそのまま書く**。driver typeと混ぜると誤配される(2026-08-21実例: 「worker-1をteamにcodexとして登録済み」と書いたのをmanagerが登録名`codex`と読み、review専任の`codex`へ実装を発注した。`codex`が実装を拒否し、managerが直接報告を`[protocol-reject]`して差し戻したので事故は止まった)。
 
+メインは`[task:<id>]`パケットまたは`[scope-ok]`の応答で**dispatch可能なworker名を明示的に列挙する**。managerは起動状況を知らないため、列挙が無いと未起動のworker名へ発注する。agmsgの送信は宛先未登録でもsilent failし、managerが`--force`で再送しても配送されない。滞留したdispatchはDBに残り、後で同名workerをspawnすると再駆動される(「共通の不変条件」の「despawn前にin-flight dispatchを棚卸しする」と同じ機序)。実例: 2026-08-31、メインがmanager/watcher/worker-1の3体だけを起動・probeしたところ、managerがcodex-impl/hard-worker-1/worker-2へも発注し`--force`で再送した。task-abort後もそれらへの停止通知は送られず、滞留dispatchが残った。
+
 managerは設計判断をしない。**workerの設計分岐の質問はfable-reviewへ転送し、その回答を最終決定としてworkerへ中継する**(メインの承認は挟まない)。`mechanical-only`の再分類要求とwatcherのescalationは、従来どおりメインへ転送し、メインの回答を中継する。
 
 ### 段6 worker → watcher(完全性の検査)
