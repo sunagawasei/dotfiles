@@ -58,6 +58,7 @@ in
       "homerow"
       # アプリケーション
       "chatgpt"
+      "claude"
       "claude-code@latest"
       "codex"
       "copilot-cli"
