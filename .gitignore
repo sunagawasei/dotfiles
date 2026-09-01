@@ -101,9 +101,13 @@ yarn-error.log*
 .claude/skills/*
 !.claude/skills/claude-audit/
 !.claude/skills/nvim-usage-audit/
+!.claude/skills/color-validation/
+!.claude/skills/config-change/
 !.claude/rules/
 .claude/rules/*
 !.claude/rules/color-system.md
+!.claude/rules/keymaps.md
+!.claude/rules/neovim.md
 
 # MCP Serena設定・キャッシュ（ローカル環境固有）
 .serena/
@@ -208,7 +212,6 @@ claude/skills/*
 !claude/skills/herdr-english-reply/
 !claude/skills/split-commits/
 !claude/skills/workspace-delegate/
-!claude/docs/
 !claude/agents/
 claude/agents/*
 !claude/agents/commit.md
