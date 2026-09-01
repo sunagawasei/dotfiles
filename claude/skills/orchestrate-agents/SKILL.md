@@ -9,7 +9,8 @@ description: 全タスク共通の単一委譲フロー(対話でのプラン起
 
 ## 前提
 
-- このセッションのagmsg Monitor(`watch.sh ... --team s-<このセッションのUUID>`)がSessionStartから常駐している
+- このセッションのagmsg Monitor(`watch.sh ... --team s-<このセッションのUUID>`)がSessionStartから常駐している。**SessionStart時点でそのプロジェクトのteamが無いと常駐しない**(session-start.shは既存registrationから解決するため)。teamを作ったら`ps aux | grep 'watch.sh <このセッションのUUID>'`で確認し、無ければMonitorツールから`watch.sh <session_id> <project_path> <agent_type> <active_name> --team <team>`を自分で張る(pidfileは`run/watch.<session_id>.<n>.pid`)
+- **自前のpollingループでMonitorを代用しない**。history.sh/inbox.shを叩くループは(a)inbox.shが既読化して返信を消費する (b)宛先フィルタの正規表現が取りこぼす、の2つで壊れる。2026-09-01の実例: `(codex|fable-review|...) → main`のパターンが`codex-research → main`にマッチせず、返信到着に9時間気づかなかった。**このときMonitorプロセス自体は生きており、「Monitorが死んだ」という一次診断も誤りだった** — 無反応時はプロセス生死とフィルタの両方を疑う
 - 宛先workerのbridgeが稼働していること。遅延spawnは自動発火しない(下記「送信の実務」)
 - 送信は非同期`send`が既定。`ask --wait`は使わない(codexでask往復が機能しない実績)
 
@@ -233,6 +234,7 @@ DO NOTを明記: git commit/push禁止・ファイルセット外の変更禁止
 - 全findingを 採用 / 見送り / 別タスク に振り分けて反映・判断済み
 - **再依頼はsubstantiveなfindingが出た巡だけ**。目安は最大2巡、超えるなら残課題を別タスク化して打ち切る
 - 各巡で「前回指摘→対応」の対応表をパケットに含める。無返信のときは無限に待たず、bridgeログからfindingsを読んで内容ベースで収束判断する
+- **同じ箇所で3巡以上続くときは、修正が「一般化した」つもりの決め打ちになっていないか疑う**。2026-09-01の実例: DST時刻の扱いで「spring-forwardの1時間を拒否」→「fall-backの1時間を両方受理」→「移行幅を仮定せずoffsetから導出」と3巡し、すべて『1時間の移行しか無い』という同じ暗黙の定数が原因だった。修正のたびに「この定数・刻み幅・件数の仮定はどこから来たか」を1行で言語化し、言語化できなければまだ一般化できていない
 
 ## 返信が来ない時の診断
 
