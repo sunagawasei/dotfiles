@@ -1,6 +1,7 @@
 {
   self,
   lib,
+  config,
   ...
 }:
 {
@@ -336,6 +337,27 @@
 
   system.activationScripts.activateHotkeys.text = ''
     /System/Library/PrivateFrameworks/SystemAdministration.framework/Resources/activateSettings -u
+  '';
+
+  # ── GUIアプリ向け fd / rg のシンボリックリンク ──────────────────────
+  # Prompt Line等のGUIアプリはPATHにnix profileを持たず、fd/rgを
+  # /opt/homebrew, /usr/local, /usr/bin の3箇所しか探さない。
+  # /usr/local/bin はJamf管理領域なので、リンク先が完全一致するもの以外は触らない。
+  # nix-darwin自体を撤去した場合はこのsymlinkが残る（手動削除）。
+  system.activationScripts.postActivation.text = lib.mkAfter ''
+    # gui-cli-shim: expose nix-installed fd/rg to GUI apps
+    mkdir -p /usr/local/bin
+    for cmd in fd rg; do
+      src="/etc/profiles/per-user/${config.system.primaryUser}/bin/$cmd"
+      dst="/usr/local/bin/$cmd"
+      if [ -L "$dst" ] && [ "$(readlink "$dst")" = "$src" ]; then
+        [ -e "$src" ] || rm -f "$dst"
+      elif [ -e "$dst" ] || [ -L "$dst" ]; then
+        echo "gui-cli-shim: $dst exists and is not managed here; skipping" >&2
+      elif [ -e "$src" ]; then
+        ln -s "$src" "$dst"
+      fi
+    done
   '';
 
   imports = [
