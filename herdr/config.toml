@@ -7,22 +7,22 @@ auto_switch = false
 # 以下のブロックは scripts/cmd/generate-colors が生成するため、手で編集しない。
 # herdr の settings UI から設定を変更すると失われる可能性があるため、配色は colors/ghost-visor.toml 側で変更する。
 # BEGIN GENERATED COLORS
-accent = "#6393D7"
+accent = "#D0D4F0"
 panel_bg = "reset"
 surface0 = "reset"
-surface1 = "#314463"
-surface_dim = "#5E5A63"
-overlay0 = "#ADBAC9"
+surface1 = "#2A3159"
+surface_dim = "#565273"
+overlay0 = "#ABA4C4"
 overlay1 = "#F8FCFD"
 text = "#CDE9F5"
-subtext0 = "#ADBAC9"
-mauve = "#88CBEA"
+subtext0 = "#ABA4C4"
+mauve = "#B79AD0"
 green = "#2FA5A0"
-yellow = "#C2B08D"
-red = "#D38AA6"
-blue = "#6393D7"
+yellow = "#CAB083"
+red = "#E2839A"
+blue = "#7089D6"
 teal = "#58CAF8"
-peach = "#B8BCD8" # herdr 0.7.4では未使用
+peach = "#BEB8D8" # herdr 0.8.0では未使用
 # END GENERATED COLORS
 [ui.toast]
 delivery = "terminal"

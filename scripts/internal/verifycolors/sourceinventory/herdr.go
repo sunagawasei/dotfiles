@@ -18,7 +18,7 @@ type herdrThemeSpec struct {
 }
 
 var herdrThemeSpecs = map[string]herdrThemeSpec{
-	"accent":      {token: "ansi.blue", visible: true, role: verifycolors.RoleBorder},
+	"accent":      {token: "purples.lavender", visible: true, role: verifycolors.RoleBorder},
 	"panel_bg":    {fixed: "reset"},
 	"surface0":    {fixed: "reset"},
 	"surface1":    {token: "core.active_line", visible: true, role: verifycolors.RoleSurface},
@@ -118,7 +118,7 @@ func extractHerdrTheme(root string, result *Result) error {
 		if !spec.visible {
 			result.addCoverageNote(verifycolors.CoverageNote{
 				ID:     "herdr.theme.peach.unused",
-				Reason: "herdr 0.7.4 has no consumer for peach because AgentState has no Interrupted variant and no rendering branch uses it; the key is still generated to keep all 16 custom theme keys managed, but it has no visible color pair",
+				Reason: "herdr 0.8.0 has no consumer for peach because AgentState has no Interrupted variant and no rendering branch uses it; the key is still generated to keep all 16 custom theme keys managed, but it has no visible color pair",
 				Source: source,
 			})
 			continue
@@ -169,7 +169,7 @@ func addHerdrResetCoverageNote(result *Result, key, source string) {
 	result.addCoverageNote(verifycolors.CoverageNote{
 		ID: "herdr.theme." + key + ".reset",
 		Reason: fmt.Sprintf(
-			"%s is strictly checked as the fixed string \"reset\"; it restores the terminal default background after Clear, so the effective color depends on WezTerm #202A42 at 0.90 opacity composited with the wallpaper and cannot be represented as a static color pair",
+			"%s is strictly checked as the fixed string \"reset\"; it restores the terminal default background after Clear, so the effective color depends on WezTerm core.background at 0.90 opacity composited with the wallpaper and cannot be represented as a static color pair",
 			key,
 		),
 		Source: source,

@@ -9,6 +9,18 @@ type pairOverride struct {
 	Reason     string
 }
 
+var manualPairs = []PairSpec{
+	{
+		ConsumerID: "herdr.theme.accent.tabLabel",
+		Foreground: "ansi.bright_black",
+		Background: TokenBackground("purples.lavender"),
+		Class:      ClassEnforced,
+		Profiles:   []RenderProfile{ProfileTruecolor},
+		Role:       RoleText,
+		Source:     "manual override: scripts/internal/verifycolors/inventory_overrides.go; herdr v0.8.0 rev 346411fa21afd297f5ed3b3fa56f9e3fbf7654b7 src/ui/tabs.rs:325 + src/ui/widgets.rs:32-36; .bg(accent) 全18箇所が panel_contrast_fg を使用; herdrTemplate の panel_bg==\"reset\" かつ surface_dim=={{ansi.bright_black}} である間だけこの対が成立する(generate-colors の assert で強制); flake.lock で herdr を bump したら再検証すること",
+	},
+}
+
 var pairOverrides = map[string]pairOverride{
 	"nvim.highlight.@markup.strikethrough": {
 		Class:  ClassWaived,
@@ -50,6 +62,7 @@ var pairOverrides = map[string]pairOverride{
 
 func ContractPairs() ([]PairSpec, error) {
 	pairs := GeneratedPairs()
+	pairs = append(pairs, manualPairs...)
 	byID := make(map[string]int, len(pairs))
 	for index, pair := range pairs {
 		if _, exists := byID[pair.ConsumerID]; exists {

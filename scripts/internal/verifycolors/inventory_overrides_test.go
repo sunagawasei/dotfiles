@@ -23,4 +23,12 @@ func TestContractPairsAppliesMeaningOverrides(t *testing.T) {
 		lineNumber.Background.Token != "core.background" {
 		t.Fatalf("lineNumberFg override = %#v, want enforced on core.background", lineNumber)
 	}
+
+	tabLabel := byID["herdr.theme.accent.tabLabel"]
+	if tabLabel.Class != ClassEnforced ||
+		tabLabel.Background.Ambient ||
+		tabLabel.Background.Token != "purples.lavender" ||
+		tabLabel.Foreground != "ansi.bright_black" {
+		t.Fatalf("herdr accent tab label = %#v, want enforced ansi.bright_black on purples.lavender", tabLabel)
+	}
 }

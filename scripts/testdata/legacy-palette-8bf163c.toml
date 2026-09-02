@@ -1,0 +1,145 @@
+# Ghost Visor Color Palette
+# ============================================
+# Derived from wallpaper measurement (Ghost in the Shell ep.01 frame)
+# Anchors: bg #080A17/#0E1127, hair #0F3353/#295573/#2E6589/#5099C2,
+#   visor glow #58CAF8/#9FDBF7/#5B9BEC/#9048CB/#F8FCFD, bokeh gray #4A4953/#5E5A63
+
+[metadata]
+name = "Ghost Visor"
+version = "1.1.0"
+created = "2026-07-17"
+description = "Dark indigo theme with visor-glow cyan and magenta accents, measured from wallpaper"
+
+[core]
+background = "#202A42"
+darkest_bg = "#141B2D"
+sunken_bg = "#1A2235"
+panel_bg = "#324664"
+ui_shadow = "#242F48"
+active_line = "#314463"
+selection_bg = "#5199C2"
+selection_fg = "#141B2D"
+
+[foregrounds]
+main = "#CDE9F5"
+bright = "#9FDBF7"
+dim = "#ADBAC9"
+subdued = "#949DB0"
+heading = "#88CBEA"
+
+[teals]
+bright = "#58CAF8"
+mid_bright = "#92BFD9"
+standard = "#9ABED3"
+muted = "#3E6E8E"      # 予備（役割未割当）
+deep = "#2E6589"       # 予備（役割未割当）
+border = "#45799D"
+dark_accent = "#1C3A5E"
+sea_green = "#2F7D72"  # 予備（役割未割当）
+
+[blues_slates]
+slate_mid = "#4A4953" # Background fills and intentional dimming only
+punctuation_gray = "#B3B9C7"
+comment_gray = "#B1B9CA"
+git_blame_gray = "#B1B9CD"
+slate_dark = "#1F3265"
+ocean_blue = "#375F98"
+sky_slate = "#AFB8D9"
+cloud_slate = "#B8BCD8"
+deep_ocean = "#42547A" # 予備（役割未割当）
+
+[purples]
+lavender = "#D0D4F0"
+muted_purple = "#B4B6DA"
+bright_purple = "#CDACEC"
+dark_purple = "#4A3070"  # 予備（役割未割当）
+deep_glitch = "#6455C8"  # 予備（役割未割当）
+soft_magenta = "#C9B0D7" # 予備（役割未割当）
+dark_rose = "#3A2A3E"
+
+[semantic]
+success = "#62C9C2"
+warning = "#B8BCD8"
+error = "#CEADE1"
+info = "#88CBEA"
+hint = "#58CAF8"
+comment = "#B1B9CA"
+git_blame = "#B1B9CD"
+string = "#9ABED3"
+keyword = "#BFADFF"
+punctuation = "#B3B9C7"
+function = "#58CAF8"
+type = "#AFB8D9"
+variable = "#CDE9F5"
+builtin_variable = "#88CBEA"
+number = "#9FDBF7"
+operator = "#92BFD9"
+constant = "#D0D4F0"
+
+[git]
+added = "#62C9C2"
+changed = "#CEADE1"
+deleted = "#ADBAC9"
+
+[ui]
+target_bg = "#CEADE1"
+accent_fg = "#CEADE1"
+
+[ansi]
+black = "#141B2D"
+red = "#C67F9E"
+green = "#2FA5A0"
+yellow = "#C2B08D"
+blue = "#6393D7"
+magenta = "#D96DC0"
+cyan = "#58CAF8"
+white = "#CDE9F5"
+bright_black = "#5E5A63"
+bright_red = "#D38AA6"
+bright_green = "#52C4BC"
+bright_yellow = "#DFBE90"
+bright_blue = "#A8B2D6"
+bright_magenta = "#EBC1F8"
+bright_cyan = "#9FDBF7"
+bright_white = "#F8FCFD"
+
+[wezterm]
+background = "#202A42"
+tab_bar = "#141B2D"
+active_tab = "#3B5898"
+inactive_tab = "#324664"
+active_tab_fg = "#9FDBF7"
+inactive_tab_fg = "#B1B9CD"
+selection_bg = "#5199C2"
+split = "#45799D"
+
+[nvim]
+bg = "#202A42"
+dark_shadow = "#242F48"
+selection = "#5199C2"
+border = "#45799D"
+comment = "#B1B9CA"
+git_blame = "#B1B9CD"
+punctuation = "#B3B9C7"
+string = "#9ABED3"
+keyword = "#BFADFF"
+function = "#58CAF8"
+variable = "#CDE9F5"
+number = "#9FDBF7"
+type = "#AFB8D9"
+operator = "#92BFD9"
+header = "#88CBEA"
+diff_add_bg = "#1E3A44"
+diff_change_bg = "#2B2650"
+diff_delete_bg = "#302230"
+diff_add_inline_bg = "#2E5D6B"
+diff_change_inline_bg = "#4C3C78"
+diff_delete_inline_bg = "#5E3245"
+
+[zsh]
+default = "#CDE9F5"
+command = "#58CAF8"
+path = "#88CBEA"
+string = "#9ABED3"
+option = "#AFB8D9"
+comment = "#B1B9CA"

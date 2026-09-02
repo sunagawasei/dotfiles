@@ -15,7 +15,7 @@ gui:
       - '#58CAF8' # Vibrant Teal
       - bold
     inactiveBorderColor:
-      - '#45799D' # UI Border (Visibility improved)
+      - '#4C4C74' # UI Border (Visibility improved)
     # テキスト色
     optionsTextColor:
       - '#CDE9F5'
@@ -23,19 +23,19 @@ gui:
       - '#CDE9F5'
     # 選択行の背景 (Ocean Blue - 視認性と可読性のバランス)
     selectedLineBgColor:
-      - '#375F98'
+      - '#3C5684'
     selectedRangeBgColor:
-      - '#375F98'
+      - '#3C5684'
     # Git関連の色
     unstagedChangesColor:
-      - '#CEADE1' # Git changed
+      - '#CE7BD2' # Git changed
     cherryPickedCommitFgColor:
       - '#58CAF8'
     cherryPickedCommitBgColor:
-      - '#324664' # Dark Teal Panel
+      - '#332E56' # Dark Teal Panel
   # 著者色設定
   authorColors:
-    '*': '#B1B9CD' # Git Blame Gray (improved visibility)
+    '*': '#A8A5C2' # Git Blame Gray (improved visibility)
     # END GENERATED COLORS
 os:
   editPreset: "nvim-remote" # editAtLineAndWait/openDirInEditorのフォールバック用に維持

@@ -41,6 +41,7 @@ cd scripts && go run ./cmd/generate-color-inventory
 ```bash
 cd scripts && go run ./cmd/generate-colors --check
 cd scripts && go run ./cmd/generate-color-inventory --check
+cd scripts && go run ./cmd/verify-cvd-pairs
 cd scripts && go run ./cmd/verify-colors
 ```
 
@@ -71,6 +72,31 @@ cd scripts && go run ./cmd/verify-colors
 - 不透明な実使用背景を持つenforced pairは4.5:1をexit-code gateにする
 - 環境依存pairとcterm fallbackはreport-onlyとして数値を表示する
 - ANSI 16色全ペアのCVD ΔEは独自スクリーニング基準としてreport-onlyで表示する
+
+## 段8: report-only集合の差分確認
+
+report-onlyは非強制集合であり、below-AAの増減を記録するための観測値です。
+fixtureを凍結してreport-onlyの集合を強制してはいけません。
+比較のbeforeは、そのtaskで編集を始める前の作業ツリーから採ります。
+HEADで代用すると、未commitの先行task成果と当該taskの差分が混ざるためです。
+
+実行順序は次のとおりです。
+
+1. 編集開始前に作業ツリー全体を基準ツリーへコピーし、基準ツリーで`verify-colors`を実行する。
+   `git show HEAD`から基準を作ってはならない。
+   例：`before_root=$(mktemp -d); before_report="$before_root/verify.txt"; rsync -a --exclude .git ./ "$before_root/"; (cd "$before_root/scripts" && go run ./cmd/verify-colors > "$before_report")`
+2. 編集後の作業ツリーでも`after_report=$(mktemp); (cd scripts && go run ./cmd/verify-colors > "$after_report")`を実行する。
+3. 各出力の`[REPORT-ONLY BELOW-AA]`行を、`ConsumerID profile role`の3列へ正規化し、`sort -u`する。
+   例：`sed -n 's/^\[REPORT-ONLY BELOW-AA\] \([^ ]*\) profile=\([^ ]*\) role=\([^ ]*\).*$/\1 \2 \3/p' "$before_report" | sort -u > before.sorted; sed -n 's/^\[REPORT-ONLY BELOW-AA\] \([^ ]*\) profile=\([^ ]*\) role=\([^ ]*\).*$/\1 \2 \3/p' "$after_report" | sort -u > after.sorted`
+4. `comm -13 before.sorted after.sorted`で新規、`comm -23 before.sorted after.sorted`で解消を出す。
+   beforeとafterの両方を同じ`ConsumerID profile role`形式にしてから比較する。
+
+## 手書きoverrideの出所と再検証
+
+inventoryのoverrideを追加するときは、Source欄へ消費側の`file:line`を必ず書きます。
+同じSource欄へ消費側toolの版とrev（例：`herdr v0.8.0 rev 346411fa21afd297f5ed3b3fa56f9e3fbf7654b7`）を必ず記録します。
+pairが静的に決まる前提条件（例：`panel_bg`が`reset`、`surface_dim`が特定tokenへ配線されること）もSource欄へ書きます。
+`flake.lock`で消費側toolを`bump`したら、該当overrideのSource、実装、pairを再検証してください。
 
 ## 不整合の修正手順
 
@@ -106,21 +132,21 @@ cd scripts && go run ./cmd/verify-colors
 ```toml
 [metadata]
 name = "Ghost Visor"
-version = "1.1.0"
+version = "2.0.0"
 
 [core]
-background = "#202A42"        # メイン背景
-darkest_bg = "#141B2D"        # 最暗背景
-panel_bg = "#324664"          # パネル背景
-selection_bg = "#5199C2"      # 選択強調
+background = "#1A2340"        # メイン背景
+darkest_bg = "#0C1226"        # 最暗背景
+panel_bg = "#332E56"          # パネル背景
+selection_bg = "#9385C8"      # 選択強調
 
 [foregrounds]
 main = "#CDE9F5"              # メインテキスト
-bright = "#9FDBF7"            # ブライトテキスト
+bright = "#96D7F5"            # ブライトテキスト
 
 [teals]
 bright = "#58CAF8"            # Visor Glow Cyan
-mid_bright = "#92BFD9"        # Selection Blue
+mid_bright = "#92BFD9"        # Operator Blue
 standard = "#9ABED3"          # String Blue
 ```
 

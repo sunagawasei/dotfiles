@@ -344,15 +344,15 @@ format_remaining() {
 # BEGIN GENERATED COLORS: ANSI
 # セクション本体テキスト用前景色
 C_MODEL="\e[38;2;205;233;245m"   # #CDE9F5 foregrounds.main
-C_DIR="\e[38;2;136;203;234m"     # #88CBEA foregrounds.heading
+C_DIR="\e[38;2;183;154;208m"     # #B79AD0 foregrounds.heading
 C_GIT="\e[38;2;88;202;248m"     # #58CAF8 teals.bright
-C_BUSY="\e[38;2;205;172;236m"    # #cdacec purples.bright_purple
+C_BUSY="\e[38;2;205;115;201m"    # #cd73c9 purples.bright_purple
 
 # 使用率の色（閾値で変化）
 pct=${USED_PCT%.*}
 pct=${pct:-0}
 if [ "$pct" -gt 75 ]; then
-  C_PCT="\e[38;2;205;172;236m"   # #cdacec
+  C_PCT="\e[38;2;205;115;201m"   # #cd73c9
 elif [ "$pct" -gt 50 ]; then
   C_PCT="\e[38;2;208;212;240m"   # #D0D4F0
 else
@@ -366,13 +366,13 @@ if [[ "$RATE_USED" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
   [ "$rate_used_int" -gt 100 ] && rate_used_int=100
 
   if [ "$rate_used_int" -gt 75 ]; then
-    C_RATE="\e[38;2;205;172;236m"   # #cdacec critical
+    C_RATE="\e[38;2;205;115;201m"   # #cd73c9 critical
   elif [ "$rate_used_int" -gt 50 ]; then
     C_RATE="\e[38;2;208;212;240m"   # #D0D4F0 warning
   else
     C_RATE="\e[38;2;146;191;217m"    # #92BFD9 safe
   fi
-  C_RATETRACK="\e[38;2;50;70;100m"   # #324664 track
+  C_RATETRACK="\e[38;2;51;46;86m"   # #332E56 track
 
   build_meter "$rate_used_int" 8
   rate_bar_filled=$METER_FILLED
@@ -389,13 +389,13 @@ if [[ "$WEEK_USED" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
   [ "$week_used_int" -gt 100 ] && week_used_int=100
 
   if [ "$week_used_int" -gt 75 ]; then
-    C_WEEK="\e[38;2;205;172;236m"   # #cdacec critical
+    C_WEEK="\e[38;2;205;115;201m"   # #cd73c9 critical
   elif [ "$week_used_int" -gt 50 ]; then
     C_WEEK="\e[38;2;208;212;240m"   # #D0D4F0 warning
   else
     C_WEEK="\e[38;2;146;191;217m"    # #92BFD9 safe
   fi
-  C_WEEKTRACK="\e[38;2;50;70;100m"   # #324664 track
+  C_WEEKTRACK="\e[38;2;51;46;86m"   # #332E56 track
 
   build_meter "$week_used_int" 8
   week_bar_filled=$METER_FILLED
@@ -438,21 +438,21 @@ build_bar() {
 # BEGIN GENERATED COLORS: SEGMENTS
 # --- 1段目: モデル / コンテキスト使用率 / ディレクトリ / Gitブランチ ---
 row1=()
-row1+=("#141B2D|${C_MODEL}${MODEL}")
-row1+=("#1A2235|${C_PCT}󰍛 ${pct}%")
-row1+=("#202A42|${C_DIR}${DIR_NAME}")
-[ -n "$GIT_BRANCH" ] && row1+=("#141B2D|${C_GIT}${GIT_BRANCH}")
+row1+=("#0C1226|${C_MODEL}${MODEL}")
+row1+=("#141B34|${C_PCT}󰍛 ${pct}%")
+row1+=("#1A2340|${C_DIR}${DIR_NAME}")
+[ -n "$GIT_BRANCH" ] && row1+=("#0C1226|${C_GIT}${GIT_BRANCH}")
 
 # --- 2段目: busyマーカー / 5時間リミット / 週次リミット ---
 row2=()
 # herdrが画面下の非空3行だけを走査するため、busyマーカーを下段先頭に置く
-[ "$CODEX_BUSY" = "1" ] && row2+=("#141B2D|${C_BUSY}󰚩")
-[ "$BG_BUSY" = "1" ] && row2+=("#1A2235|${C_BUSY}󰜎")
+[ "$CODEX_BUSY" = "1" ] && row2+=("#0C1226|${C_BUSY}󰚩")
+[ "$BG_BUSY" = "1" ] && row2+=("#141B34|${C_BUSY}󰜎")
 if [ -n "$rate_used_int" ]; then
-  row2+=("#202A42|${C_RATE}5h ${rate_bar_filled}${C_RATETRACK}${rate_bar_track}${C_RATE} ${rate_used_int}%${rate_remaining:+ ${rate_remaining}}")
+  row2+=("#1A2340|${C_RATE}5h ${rate_bar_filled}${C_RATETRACK}${rate_bar_track}${C_RATE} ${rate_used_int}%${rate_remaining:+ ${rate_remaining}}")
 fi
 if [ -n "$week_used_int" ]; then
-  row2+=("#141B2D|${C_WEEK}Week ${week_bar_filled}${C_WEEKTRACK}${week_bar_track}${C_WEEK} ${week_used_int}%${week_remaining:+ ${week_remaining}}")
+  row2+=("#0C1226|${C_WEEK}Week ${week_bar_filled}${C_WEEKTRACK}${week_bar_track}${C_WEEK} ${week_used_int}%${week_remaining:+ ${week_remaining}}")
 fi
 
 # END GENERATED COLORS: SEGMENTS

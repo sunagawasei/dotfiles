@@ -14,6 +14,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/pelletier/go-toml/v2"
 	"github.com/sunagawasei/dotfiles/scripts/internal/colorutil"
 	"github.com/sunagawasei/dotfiles/scripts/internal/palette"
 	"github.com/sunagawasei/dotfiles/scripts/internal/xterm"
@@ -359,6 +360,9 @@ func generateOutputs(root, sourceName string, palette *colorPalette) ([]outputFi
 	if err := validateMarkdownPreviewVendorCommit(root); err != nil {
 		return nil, nil, err
 	}
+	if err := validateHerdrTemplate(herdrTemplate); err != nil {
+		return nil, nil, err
+	}
 
 	ezaSpecs, err := parseEzaStyleSpecs(ezaStyleSpecTemplate)
 	if err != nil {
@@ -440,6 +444,21 @@ func generateOutputs(root, sourceName string, palette *colorPalette) ([]outputFi
 		markers = append(markers, markerOutput{path: item.path, begin: item.begin, end: item.end, block: block})
 	}
 	return files, markers, nil
+}
+
+func validateHerdrTemplate(template string) error {
+	// TOML treats bare and quoted keys as the same key, so the decoder catches
+	// duplicate or malformed assignments that a comment could otherwise hide.
+	var document map[string]any
+	if err := toml.Unmarshal([]byte(template), &document); err != nil {
+		return fmt.Errorf("parse herdr template: %w", err)
+	}
+	for key, want := range map[string]string{"panel_bg": "reset", "surface_dim": "{{ansi.bright_black}}", "accent": "{{purples.lavender}}"} {
+		if got, ok := document[key].(string); !ok || got != want {
+			return fmt.Errorf("herdr template %s = %q, want %q", key, got, want)
+		}
+	}
+	return nil
 }
 
 func validateMarkdownPreviewVendorCommit(root string) error {
@@ -1560,7 +1579,7 @@ yellow = "{{ansi.yellow}}"
 `
 
 const herdrTemplate = `# BEGIN GENERATED COLORS
-accent = "{{ansi.blue}}"
+accent = "{{purples.lavender}}"
 panel_bg = "reset"
 surface0 = "reset"
 surface1 = "{{core.active_line}}"
@@ -1575,7 +1594,7 @@ yellow = "{{ansi.yellow}}"
 red = "{{ansi.bright_red}}"
 blue = "{{ansi.blue}}"
 teal = "{{ansi.cyan}}"
-peach = "{{semantic.warning}}" # herdr 0.7.4では未使用
+peach = "{{semantic.warning}}" # herdr 0.8.0では未使用
 # END GENERATED COLORS
 `
 

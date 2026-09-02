@@ -132,18 +132,18 @@ func TestMatchParenProfileRatios(t *testing.T) {
 				if result.ForegroundIndex == nil || *result.ForegroundIndex != 15 {
 					t.Errorf("cterm MatchParen foreground index = %v, want 15", result.ForegroundIndex)
 				}
-				if result.BackgroundIndex == nil || *result.BackgroundIndex != 67 {
-					t.Errorf("cterm MatchParen background index = %v, want 67", result.BackgroundIndex)
+				if result.BackgroundIndex == nil || *result.BackgroundIndex != 240 {
+					t.Errorf("cterm MatchParen background index = %v, want 240", result.BackgroundIndex)
 				}
-				if result.ForegroundColor != "#F8FCFD" || result.BackgroundColor != "#5F87AF" {
+				if result.ForegroundColor != "#F8FCFD" || result.BackgroundColor != "#585858" {
 					t.Errorf(
-						"cterm MatchParen colors = %s/%s, want #F8FCFD/#5F87AF",
+						"cterm MatchParen colors = %s/%s, want #F8FCFD/#585858",
 						result.ForegroundColor,
 						result.BackgroundColor,
 					)
 				}
-				if math.Abs(result.Ratio-3.6498) > 0.0001 {
-					t.Errorf("cterm MatchParen ratio = %.4f, want 3.6498", result.Ratio)
+				if math.Abs(result.Ratio-6.8887) > 0.0001 {
+					t.Errorf("cterm MatchParen ratio = %.4f, want 6.8887", result.Ratio)
 				}
 			}
 			found++

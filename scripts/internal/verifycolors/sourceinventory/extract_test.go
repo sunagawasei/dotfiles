@@ -557,8 +557,8 @@ func TestNvimSyntaxSemanticContrastOnBrightAmbient(t *testing.T) {
 			minimumRatio = ratio
 		}
 	}
-	if minimumToken != "semantic.type" || math.Abs(minimumRatio-4.864) > 0.001 {
-		t.Errorf("minimum contrast = %s %.4f, want semantic.type 4.864", minimumToken, minimumRatio)
+	if minimumToken != "semantic.type" || math.Abs(minimumRatio-6.4114) > 0.001 {
+		t.Errorf("minimum contrast = %s %.4f, want semantic.type 6.4114", minimumToken, minimumRatio)
 	}
 }
 
@@ -620,10 +620,10 @@ func TestGitAndUITargetContrastRatios(t *testing.T) {
 		background verifycolors.TokenRef
 		want       float64
 	}{
-		{"DiffAdd", "git.added", "nvim.diff_add_bg", 6.109},
-		{"DiffChange", "git.changed", "nvim.diff_change_bg", 7.146},
-		{"DiffDelete", "git.deleted", "nvim.diff_delete_bg", 7.618},
-		{"Substitute", "core.background", "ui.target_bg", 7.265},
+		{"DiffAdd", "git.added", "nvim.diff_add_bg", 6.7513},
+		{"DiffChange", "git.changed", "nvim.diff_change_bg", 4.5227},
+		{"DiffDelete", "git.deleted", "nvim.diff_delete_bg", 5.9977},
+		{"Substitute", "core.background", "ui.target_bg", 10.5698},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			ratio, err := colorutil.ContrastRatio(values[test.foreground], values[test.background])
@@ -648,16 +648,17 @@ func TestCanonicalDiagnosticContrastProfiles(t *testing.T) {
 		t.Fatal(err)
 	}
 	values := colorPalette.TokenValues()
-	if values["semantic.error"] != values["git.changed"] {
-		t.Fatalf("semantic.error = %s, git.changed = %s; want equal rendered colors", values["semantic.error"], values["git.changed"])
+	// Keep diagnostic errors red and Git changes magenta for CVD distinction.
+	if values["semantic.error"] == values["git.changed"] {
+		t.Fatalf("semantic.error = %s, git.changed = %s; want distinct rendered colors", values["semantic.error"], values["git.changed"])
 	}
 
 	batRatio, err := colorutil.ContrastRatio(values["semantic.error"], values["core.background"])
 	if err != nil {
 		t.Fatal(err)
 	}
-	if math.Abs(batRatio-7.265) > 0.001 {
-		t.Errorf("bat invalid.illegal truecolor ratio = %.4f, want 7.265", batRatio)
+	if math.Abs(batRatio-5.8503) > 0.001 {
+		t.Errorf("bat invalid.illegal truecolor ratio = %.4f, want 5.8503", batRatio)
 	}
 	t.Logf("bat invalid.illegal truecolor: %s on %s = %.4f", values["semantic.error"], values["core.background"], batRatio)
 
@@ -665,8 +666,8 @@ func TestCanonicalDiagnosticContrastProfiles(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if math.Abs(vimRatio-7.146) > 0.001 {
-		t.Errorf("Vim DiffChange truecolor ratio = %.4f, want 7.146", vimRatio)
+	if math.Abs(vimRatio-4.5227) > 0.001 {
+		t.Errorf("Vim DiffChange truecolor ratio = %.4f, want 4.5227", vimRatio)
 	}
 	t.Logf("Vim DiffChange truecolor: %s on %s = %.4f", values["git.changed"], values["nvim.diff_change_bg"], vimRatio)
 
@@ -678,8 +679,8 @@ func TestCanonicalDiagnosticContrastProfiles(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if foregroundIndex != 182 || backgroundIndex != 237 {
-		t.Errorf("Vim DiffChange cterm indices = %d/%d, want 182/237", foregroundIndex, backgroundIndex)
+	if foregroundIndex != 176 || backgroundIndex != 237 {
+		t.Errorf("Vim DiffChange cterm indices = %d/%d, want 176/237", foregroundIndex, backgroundIndex)
 	}
 	ansi, err := colorPalette.WezTermANSI()
 	if err != nil {
@@ -697,8 +698,8 @@ func TestCanonicalDiagnosticContrastProfiles(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if math.Abs(ctermRatio-5.960) > 0.001 {
-		t.Errorf("Vim DiffChange cterm ratio = %.4f, want 5.960", ctermRatio)
+	if math.Abs(ctermRatio-4.5153) > 0.001 {
+		t.Errorf("Vim DiffChange cterm ratio = %.4f, want 4.5153", ctermRatio)
 	}
 	t.Logf("Vim DiffChange cterm: index %d %s on index %d %s = %.4f", foregroundIndex, foreground.Hex(), backgroundIndex, background.Hex(), ctermRatio)
 }
@@ -1358,7 +1359,7 @@ func TestHerdrThemeUsesExpectedTokensAndFixedValues(t *testing.T) {
 	pairs := pairMap(result.Pairs)
 
 	expected := map[string]verifycolors.TokenRef{
-		"accent":      "ansi.blue",
+		"accent":      "purples.lavender",
 		"surface1":    "core.active_line",
 		"surface_dim": "ansi.bright_black",
 		"overlay0":    "foregrounds.dim",
@@ -1409,7 +1410,7 @@ func TestHerdrThemeUsesExpectedTokensAndFixedValues(t *testing.T) {
 	for _, assignment := range []string{
 		`panel_bg = "reset"`,
 		`surface0 = "reset"`,
-		`peach = "{{semantic.warning}}" # herdr 0.7.4では未使用`,
+		`peach = "{{semantic.warning}}" # herdr 0.8.0では未使用`,
 	} {
 		if !strings.Contains(contents, assignment) {
 			t.Errorf("herdrTemplate does not contain %q", assignment)
@@ -1558,11 +1559,11 @@ func TestWezTermKeyTableIndicatorContrastRatios(t *testing.T) {
 		background verifycolors.TokenRef
 		want       float64
 	}{
-		{"copy_mode", "ansi.bright_white", "blues_slates.slate_mid", 8.583},
-		{"resize_pane", "core.darkest_bg", "semantic.string", 8.723},
-		{"pane_navigation", "core.darkest_bg", "foregrounds.dim", 8.693},
-		{"search_mode", "core.darkest_bg", "semantic.operator", 8.720},
-		{"other", "core.darkest_bg", "purples.muted_purple", 8.693},
+		{"copy_mode", "ansi.bright_white", "blues_slates.slate_mid", 9.8487},
+		{"resize_pane", "core.darkest_bg", "semantic.string", 9.4501},
+		{"pane_navigation", "core.darkest_bg", "foregrounds.dim", 7.8210},
+		{"search_mode", "core.darkest_bg", "semantic.operator", 9.4470},
+		{"other", "core.darkest_bg", "purples.muted_purple", 7.5623},
 	} {
 		t.Run(test.name, func(t *testing.T) {
 			ratio, err := colorutil.ContrastRatio(values[test.foreground], values[test.background])

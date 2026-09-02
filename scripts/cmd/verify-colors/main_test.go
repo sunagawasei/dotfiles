@@ -40,7 +40,7 @@ func TestFixtureExitContracts(t *testing.T) {
 	}{
 		{
 			name:     "low contrast enforced failure",
-			palette:  writePaletteFixture(t, paletteData, `main = "#CDE9F5"`, `main = "#202A42"`),
+			palette:  writePaletteFixture(t, paletteData, `main = "#CDE9F5"`, `main = "#1A2340"`),
 			scanRoot: cleanRoot,
 			wantExit: exitPolicyNG,
 			wantContains: []string{
@@ -49,8 +49,8 @@ func TestFixtureExitContracts(t *testing.T) {
 			},
 		},
 		{
-			name:     "subdued 8A93A6 regression",
-			palette:  writePaletteFixture(t, paletteData, `subdued = "#949DB0"`, `subdued = "#8A93A6"`),
+			name:     "subdued 576F92 regression",
+			palette:  writePaletteFixture(t, paletteData, `subdued = "#9E97B8"`, `subdued = "#576F92"`),
 			scanRoot: cleanRoot,
 			wantExit: exitPolicyNG,
 			wantContains: []string{

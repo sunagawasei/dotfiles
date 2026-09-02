@@ -8,17 +8,17 @@
 
 ## 1. カラーパレット定義
 
-壁紙（Ghost in the Shell ep.01 frame）の実測色を基に、暗いインディゴ背景と visor-glow のシアン／マゼンタを組み合わせています。
+壁紙（Ghost in the Shell、夜景スカイライン）の地平線帯の実測色を基に、紫紺の背景に地平の紫とマゼンタを重ねています。シアンは関数・コマンドの識別のため補助のアクセントに置いています。
 
 ### コア・背景系
 
 | 名称 | HEX | 用途 |
 |-----|-----|-----|
-| メイン背景 | `#202A42` | エディタ、ターミナル作業領域 |
-| 最暗背景 | `#141B2D` | タブバー、外枠 |
-| パネル背景 | `#324664` | サイドバー、フロート |
-| UIシャドウ | `#242F48` | 非アクティブ領域、ポップアップ |
-| 選択強調 | `#5199C2` | 選択範囲、アクティブ状態 |
+| メイン背景 | `#1A2340` | エディタ、ターミナル作業領域 |
+| 最暗背景 | `#0C1226` | タブバー、外枠 |
+| パネル背景 | `#332E56` | サイドバー、フロート |
+| UIシャドウ | `#1F2745` | 非アクティブ領域、ポップアップ |
+| 選択強調 | `#9385C8` | 選択範囲、アクティブ状態 |
 
 ### テキスト・強調系
 
@@ -26,40 +26,40 @@
 |-----|-----|-----|
 | メインテキスト | `#CDE9F5` | 通常文字 |
 | 最高強調 | `#F8FCFD` | カーソルテキスト、重要 |
-| ブライトテキスト | `#9FDBF7` | 数値、定数、アクティブタブ |
-| ヘディング/パス | `#88CBEA` | ディレクトリ名、見出し |
-| ディムテキスト | `#ADBAC9` | 補助テキスト |
-| Subdued | `#949DB0` | 非アクティブ前景、低強調テキスト |
+| ブライトテキスト | `#96D7F5` | 数値、アクティブタブ |
+| ヘディング/パス | `#B79AD0` | ディレクトリ名、見出し |
+| ディムテキスト | `#ABA4C4` | 補助テキスト |
+| Subdued | `#9E97B8` | 非アクティブ前景、低強調テキスト |
 
 ### スペクトラム・アクセント
 
 | グループ | 色 | HEX | 用途 |
 |---------|-----|-----|-----|
-| **Cyan** | Success | `#62C9C2` | 成功インジケーター |
+| **Cyan** | Success | `#76D6C4` | 成功インジケーター |
 | | Visor Glow | `#58CAF8` | 関数、コマンド |
-| | Selection Blue | `#92BFD9` | 演算子、ステータス |
+| | Operator Blue | `#92BFD9` | 演算子、ステータス |
 | | String Blue | `#9ABED3` | 文字列、情報 |
-| | UI Border | `#45799D` | 境界線、分割線 |
-| **Slate** | Git Blame Gray | `#B1B9CD` | Git blame、補助情報 |
-| | Comment Gray | `#B1B9CA` | コメント |
-| | Punctuation Gray | `#B3B9C7` | 句読点 |
-| | Slate Mid | `#4A4953` | 意図的減光専用（Conceal、Flash backdrop、打ち消し線、背景塗り） |
+| | UI Border | `#4C4C74` | 境界線、分割線 |
+| **Slate** | Git Blame Gray | `#A8A5C2` | Git blame、補助情報 |
+| | Comment Gray | `#A5A2BC` | コメント |
+| | Punctuation Gray | `#AEACC4` | 句読点 |
+| | Slate Mid | `#453C5F` | 意図的減光専用（Conceal、Flash backdrop、打ち消し線、背景塗り） |
 | | Sky Slate | `#AFB8D9` | 型、オプション |
-| **Purple** | Error Purple | `#CEADE1` | エラー、重要警告 |
+| **Purple** | Error Rose | `#E2839A` | エラー、重要警告 |
 | | Lavender | `#D0D4F0` | 警告、定数、ラベル |
-| | Muted Purple | `#B4B6DA` | キーワード、予約語 |
+| | Muted Purple | `#B79AD0` | キーワード、予約語 |
 
 ### ANSI 16色（拡張マッピング）
 
 <!-- BEGIN GENERATED COLORS -->
 ```
- 0: #141B2D (Black)           8: #5E5A63 (Bright Black)
- 1: #C67F9E (Red)             9: #D38AA6 (Bright Red)
- 2: #2FA5A0 (Green)          10: #52C4BC (Bright Green)
- 3: #C2B08D (Yellow)         11: #DFBE90 (Bright Yellow)
- 4: #6393D7 (Blue)           12: #A8B2D6 (Bright Blue)
- 5: #D96DC0 (Magenta)        13: #EBC1F8 (Bright Magenta)
- 6: #58CAF8 (Cyan)           14: #9FDBF7 (Bright Cyan)
+ 0: #0C1226 (Black)           8: #565273 (Bright Black)
+ 1: #C97F9E (Red)             9: #E2839A (Bright Red)
+ 2: #2FA5A0 (Green)          10: #76D6C4 (Bright Green)
+ 3: #CAB083 (Yellow)         11: #DFBE90 (Bright Yellow)
+ 4: #7089D6 (Blue)           12: #AFB8D9 (Bright Blue)
+ 5: #C86FBE (Magenta)        13: #E6BCF4 (Bright Magenta)
+ 6: #58CAF8 (Cyan)           14: #96D7F5 (Bright Cyan)
  7: #CDE9F5 (White)          15: #F8FCFD (Bright White)
 ```
 <!-- END GENERATED COLORS -->
@@ -70,23 +70,23 @@
 
 ### 背景の階層構造
 
-1. **`#141B2D` (Deepest)**: 外枠、タブバー背景
-2. **`#202A42` (Main)**: エディタ、ターミナル作業領域
-3. **`#324664` (Panel)**: サイドバー、フロート
-4. **`#242F48` (UI Layer)**: ポップアップ、非アクティブ領域
-5. **`#5199C2` (Selection)**: アクティブ選択、ハイライト
+1. **`#0C1226` (Deepest)**: 外枠、タブバー背景
+2. **`#1A2340` (Main)**: エディタ、ターミナル作業領域
+3. **`#332E56` (Panel)**: サイドバー、フロート
+4. **`#1F2745` (UI Layer)**: ポップアップ、非アクティブ領域
+5. **`#9385C8` (Selection)**: アクティブ選択、ハイライト
 
 ### テキストの優先順位
 
 1. **`#F8FCFD` (Critical)**: アクティブな強調
-2. **`#9FDBF7` (High)**: 定数、アクティブ要素
+2. **`#96D7F5` (High)**: 数値、アクティブ要素
 3. **`#CDE9F5` (Standard)**: メインテキスト
-4. **`#ADBAC9` (Low)**: 補助情報
-5. **`#B1B9CD` (Auxiliary)**: Git blame、補助的な情報
-6. **`#B1B9CA` (Comment)**: コメント
-7. **`#B3B9C7` (Punctuation)**: 句読点
-8. **`#949DB0` (Subdued)**: 非アクティブ前景、低強調テキスト
-9. **`#4A4953` (Intentional Dim)**: Conceal、Flash backdrop、打ち消し線、背景塗り
+4. **`#ABA4C4` (Low)**: 補助情報
+5. **`#A8A5C2` (Auxiliary)**: Git blame、補助的な情報
+6. **`#A5A2BC` (Comment)**: コメント
+7. **`#AEACC4` (Punctuation)**: 句読点
+8. **`#9E97B8` (Subdued)**: 非アクティブ前景、低強調テキスト
+9. **`#453C5F` (Intentional Dim)**: Conceal、Flash backdrop、打ち消し線、背景塗り
 
 ---
 
