@@ -25,7 +25,6 @@ let
     patches = (old.patches or [ ]) ++ [
       ./patches/herdr-active-pane-border-white.patch
       ./patches/herdr-confirm-close-running-process.patch
-      ./patches/herdr-panel-contrast-fg-bright.patch
       ./patches/herdr-sidebar-token-separator.patch
       ./patches/herdr-copy-mode-yank-stay.patch
       ./patches/herdr-expanded-sidebar-space-numbers.patch
