@@ -206,6 +206,7 @@ DO NOTを明記: git commit/push禁止・ファイルセット外の変更禁止
 - **Rust/cargo**: `cargo vendor <出力dir> > .cargo/config.toml`で依存を焼き込む。**出力先を既存の`vendor/`にしない**(tracked path依存を上書き破壊する。herdrで実例)。toolchainがnix devShell由来なら`nix print-dev-env > dev-env.sh`を焼き出してworkerには`source dev-env.sh`させる。`CARGO_HOME=$PWD/.cargo-home`+`CARGO_NET_OFFLINE=true`
 - 環境依存failを含むテストスイートは、委譲前にベースラインのfail一覧を採取して`baseline-failures.txt`に置き、ゲートを「対象モジュール全green+`comm -13 baseline after`で新規failゼロ」にする
 - workerのsandboxで原理的に通らない検証(unix socket bind・$HOME配下書込み・git config読取等)は環境偽装で戦わせず、メインの非sandbox環境での再実行に切り替える
+- **workerのsandboxはprojectディレクトリ外をreadできない**(add-dirで渡した別repoも含む)。別repoのファイルとの突き合わせ(byte一致検証等)を受入条件に含めるとworkerが`Operation not permitted`で停止する。該当ファイルはメインが対象repo内へ配置し、workerへはsha256等の期待値だけを渡して検証をハッシュ一致に置き換える(2026-09-01実測。配置したファイルのauthorはメインになる)
 - **workerはproject外の$HOME dotfilesを読めない場合がある**(2026-07-16実例)。必要な設定値・rev・パスは最初からパケットに同梱する
 
 ### [research]パケット(codex-research / grok-research宛)
