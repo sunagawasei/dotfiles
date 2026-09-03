@@ -30,16 +30,17 @@ return {
         local tmpfile = "/tmp/claude-review-" .. cwd_hash .. ".md"
         vim.fn.writefile(vim.split(content, "\n", { plain = true }), tmpfile)
 
-        local ok_cc, cc = pcall(require, "claudecode")
+        local ok_cc = pcall(require, "claudecode")
         if not ok_cc then
           vim.notify("claudecode.nvim is not loaded", vim.log.levels.ERROR)
           return
         end
 
-        local success, err = cc.send_at_mention(tmpfile)
-        if success then
-          vim.notify("Review sent to Claude Code (" .. #comments .. " comments)")
-        else
+        local success, err = require("utils.claudecode_send").send(tmpfile, {
+          context = "code-review",
+          label = string.format("レビューコメント %d件", #comments),
+        })
+        if not success then
           vim.notify("Failed: " .. (err or "unknown"), vim.log.levels.ERROR)
         end
       end,

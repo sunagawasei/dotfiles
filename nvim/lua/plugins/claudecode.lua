@@ -81,6 +81,15 @@ return {
       end
     end
 
+    -- 成功時と未接続時に popup が出ない。成功のログは nvim_echo でメッセージ行止まり、
+    -- 未接続は期限付き保留を debug ログだけで通す。失敗時に足さないのは既存 popup と重なるため。
+    local send_ok, send_mod = pcall(require, "utils.claudecode_send")
+    if send_ok then
+      send_mod.install()
+    else
+      vim.notify("claudecode.nvim send notifier could not be loaded", vim.log.levels.WARN)
+    end
+
     -- setup()を呼び出す（この時点で上記の差し替え済みハンドラが登録される）
     require("claudecode").setup(opts)
 
