@@ -103,6 +103,7 @@ yarn-error.log*
 !.claude/skills/nvim-usage-audit/
 !.claude/skills/color-validation/
 !.claude/skills/config-change/
+!.claude/skills/book-availability/
 !.claude/rules/
 .claude/rules/*
 !.claude/rules/color-system.md
