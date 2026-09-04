@@ -1,4 +1,4 @@
-{ config, lib, pkgs, gws, herdr, ... }:
+{ config, lib, pkgs, gws, herdr, gh-cli, ... }:
 let
   # アクティブpane枠=白 / 非アクティブ=青（デフォルトは逆）にするための上流パッチ。
   # pane削除(prefix+x)時、フォーカスpane内でshell以外のプロセス（neovim等）が
@@ -123,7 +123,7 @@ let
     '';
     # 認証をgh auth tokenへshell outするためPATHにghを埋める。
     postInstall = ''
-      wrapProgram $out/bin/gh-board --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.gh ]}
+      wrapProgram $out/bin/gh-board --prefix PATH : ${pkgs.lib.makeBinPath [ gh-cli ]}
     '';
     doCheck = false;
   };
@@ -159,7 +159,8 @@ in
     gnupg pinentry_mac git-crypt bitwarden-cli
 
     # 開発ツール
-    gh lazygit neovim deno bun luarocks lua-language-server hadolint markdownlint-cli
+    gh-cli
+    lazygit neovim deno bun luarocks lua-language-server hadolint markdownlint-cli
     grpcurl buf gitui imagemagick gifski pwgen tmux ansifilter
     ripgrep oxlint unzip yamlfmt
 

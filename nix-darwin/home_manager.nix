@@ -1,10 +1,12 @@
-{ nixpkgs-cursor, gws-cli, herdr, hunk, ... }:
+{ nixpkgs-cursor, nixpkgs-gh, gws-cli, herdr, hunk, ... }:
 let
   # cursor-cli だけ nixpkgs-unstable 追従。root の nixpkgs pin は動かさない
   cursorPkgs = import nixpkgs-cursor {
     system = "aarch64-darwin";
     config.allowUnfreePredicate = pkg: (pkg.pname or "") == "cursor-cli";
   };
+  # gh だけ nixpkgs-unstable 追従。root の nixpkgs pin は動かさない
+  ghPkgs = import nixpkgs-gh { system = "aarch64-darwin"; };
   # Esc/Ctrl+G で実行中ターンが止まらないようにする。CLI に設定が無いためバンドルを書き換える
   cursorCli = cursorPkgs.cursor-cli.overrideAttrs (old: {
     nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ cursorPkgs.perl ];
@@ -20,6 +22,7 @@ in
     gws = gws-cli.packages.aarch64-darwin.gws;
     herdr = herdr.packages.aarch64-darwin.default;
     cursor-cli = cursorCli;
+    gh-cli = ghPkgs.gh;
   };
   home-manager.users."s23159" = {
     imports = [

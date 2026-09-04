@@ -4,6 +4,7 @@
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     nixpkgs-cursor.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    nixpkgs-gh.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     home-manager = {
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -26,6 +27,7 @@
       self,
       nixpkgs,
       nixpkgs-cursor,
+      nixpkgs-gh,
       home-manager,
       nix-darwin,
       nix-homebrew,
@@ -38,7 +40,7 @@
       # attr名はhostname。darwin-rebuildは--flakeでattrを省略すると
       # scutil --get LocalHostName で解決するため、PC交換時はここを改名する。
       darwinConfigurations."CA-20038442" = nix-darwin.lib.darwinSystem {
-        specialArgs = { inherit self nix-homebrew gws-cli herdr hunk nixpkgs-cursor; };
+        specialArgs = { inherit self nix-homebrew gws-cli herdr hunk nixpkgs-cursor nixpkgs-gh; };
         modules = [
           ./nix-darwin/configuration.nix
           home-manager.darwinModules.home-manager
