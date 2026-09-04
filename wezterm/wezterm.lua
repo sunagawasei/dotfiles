@@ -141,10 +141,10 @@ config.font_rules = {
 -- ウィンドウの外観
 -- macOSネイティブボタンを非表示にし、リサイズ機能だけを残す
 config.window_decorations = "RESIZE"
--- ウィンドウ背景の不透明度（90%。配色の一致に加え、背後の壁紙をわずかに透かして馴染ませる）
-config.window_background_opacity = 0.90
+-- ウィンドウ背景の不透明度（70%。壁紙を透かしてデスクトップに馴染ませる）
+config.window_background_opacity = 0.70
 -- macOSのぼかし効果の強度
-config.macos_window_background_blur = 30
+config.macos_window_background_blur = 25
 -- ウィンドウフレームの設定
 config.window_frame = {
 	-- 非アクティブ時のタイトルバー背景（透明）
