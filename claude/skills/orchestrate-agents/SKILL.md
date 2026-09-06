@@ -67,6 +67,8 @@ driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.c
 
 **subagentは実行中にメインへ問い合わせられない**。判断が要る場面に当たったら変更を加えず`question`として返る契約になっている。メインが回答し、`SendMessage`で同じsubagentを継続させる。
 
+**権限確認の要るコマンドではstallしない**(2026-09-06実測): 背景で動くsubagentがask対象のコマンド(`Bash(rm -rf *)`等)に当たると、プロンプトは**メインセッション側に`from the <agent> agent`として出る**。ユーザーが承認すればsubagentはそのまま続行し、subagent側からは普通に成功したようにしか見えない。2026-07-25のnote-writing無限待ちのような沈黙は起きない。拒否した場合の挙動は未確認。
+
 ### 段6 メインの受け入れ検査
 
 完了報告を受けたら、メインが次を確認する。
@@ -113,7 +115,7 @@ driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.c
 
 ### 段10 差し戻し(3経路)
 
-- **subagent作のfinding**(`[subtask:<id>]`ラベル) → `SendMessage`で当該subagentへ差し戻す。**セッションを跨いで文脈が失われている場合は新規spawnし、findingに加えて元のsubtaskパケット(ゴール・制約・ファイルセット)を同梱する**(findingだけ渡すと、設計意図を知らないagentがその行だけ直す)
+- **subagent作のfinding**(`[subtask:<id>]`ラベル) → `SendMessage`で当該subagentへ差し戻す。**完了済みのsubagentも名前かagentIdで再開でき、前ターンの文脈を保持している**(2026-09-06実測。パケットに書いた識別子と、前ターンにしか出ていないコマンド出力の両方を答えられた)。**セッションを跨いで文脈が失われている場合は新規spawnし、findingに加えて元のsubtaskパケット(ゴール・制約・ファイルセット)を同梱する**(findingだけ渡すと、設計意図を知らないagentがその行だけ直す)
 - **メイン作hunkのfinding**(`[author:main]`ラベル) → メインが直して段9へ再投入
 - **設計レベルのfinding**(`[design-level]`ラベル) → メインが理由を明記して該当taskを終端し、新規`[task:<id>]`を発行して段1から再起動する(旧taskとの関連は理由欄で相互参照)。既存taskの延命はしない
 
