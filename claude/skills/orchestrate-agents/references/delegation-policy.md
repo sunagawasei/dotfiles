@@ -35,3 +35,20 @@
 - モデル指定はalias自動追従を正とする(固定model IDは書かない)。2026-07-29時点の解決先: `sonnet`=Sonnet 5(claude-sonnet-5)、`fable`=Fable 5(claude-fable-5)。aliasの解決先は公式仕様として「プロバイダ推奨版へ自動追従」であり、固定したい場合のみフルIDまたは`ANTHROPIC_DEFAULT_*_MODEL`を使う
 - `CLAUDE_CODE_SUBAGENT_MODEL`はaliasを受け付けて自動追従し、呼び出し時の`model`パラメータ・agent定義frontmatterより優先される(公式仕様で確認済み)。v2.1.196以降、`inherit`を設定した場合は「未設定」と同じ扱いになり通常のモデル解決(呼び出し時パラメータ→frontmatter→メインモデル)が続行される(旧版はメインモデルへ強制だった)
 - 役割分担の経済的根拠(来歴): 別課金プールのcodexへの外注がトークン削減の本質。Anthropicプール内では上位tierメインとsonnetサブエージェントの単価差が委譲の裁定になる
+
+## 2026-09-06: 実装レーンをcodex workerから組み込みsubagentへ
+
+codexへの実装依頼で意図とのズレ・やり直しが多く所要時間が伸びている、というユーザーの体感が動機。実装を`claude/agents/impl-worker.md`(sonnet/xhigh)へ移した。2026-08-21に退役していたsubagentへの実装委譲が、形を変えて復活したことになる。
+
+**動機は体感の改善とAnthropic側への一本化であり、「codexが原因だと確定したから」ではない。** 段2のfable-reviewは「ズレの発生点がmanagerの再パケット化にある可能性が高く、切り分けずに2変数を同時に動かしている」と指摘したが、ユーザー判断で切り分けは実施しない。切替後の効果計測も行わない(体感で運用する)。したがってどちらが効いたかは今後も確定しない。
+
+確定した内容:
+
+- manager/watcherを実装レーンから外す。メインが分割・dispatch・受け入れ検査を持つ。scope-okトークンとfingerprint照合は、codex workerがsandbox内で外から観測できないことへの対処だったので役目が消えた
+- 段9の査読はcodexへ集約(意図一致+脆弱性4観点の両方、全hunk対象)。実装がAnthropic側に寄ったためopus-review(Anthropic)は一次査読に使えない。**これは「独立した2つの査読」ではなく「Anthropic authorに対する単一のcross-vendorゲート」**で、観点の独立性は作られない。opus-reviewは高リスク変更の第2意見として休眠
+- 手順書にはsubagentレーンだけを書く。codexレーンへ戻すときはgit履歴から読んで適用する。role fileとagmsg configは削除せず残す
+- 外部write抑止のフックは導入しない(ユーザー判断)。subagentは親の権限を継承し、`Bash(gh api:*)`等が許可済みのため外部writeは無プロンプトで通る。**remote mutationは事後検知もできない残存リスク**
+
+**cred-split決定の反転**: `.claude/docs/cred-split/E-decision-table.md`は「機械的編集の束ねはcodex-impl、Claude subagent経路(7.21%)を可搬分として外へ出す」を決定として記録している。本変更はこれを反転させ、Anthropicプールの消費が増える(増分の上限は当時の7.21%)。メインOpus / subagent sonnetの単価差は裁定として残る。
+
+**実効model/effortの確認方法**: `claude/projects/<project-slug>/<session>/subagents/agent-<name>-<id>.jsonl`に`"model"`と`"effort"`が残る。メインのtranscriptには`isSidechain`レコードとして現れない。2026-09-06の実測は`claude-sonnet-5`・`effort: xhigh`で、frontmatterの値がそのまま実効値になっていた。`CLAUDE_CODE_SUBAGENT_MODEL`(=sonnet)との優先順位は両方がsonnetのため未判別のまま。**frontmatterで`model`を変えた定義を追加したら、初回dispatch後に必ずこのファイルで確認する**(2026-07-29の記録はenv優先、公式docは v2.1.251以降frontmatter優先とあり、両説が未解決)。

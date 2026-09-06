@@ -21,7 +21,7 @@ description: staged済みの大きな変更を論理単位(意思決定単位)�
 ### 2. 保険と中間スナップショット構築
 
 - `git diff --cached > full-staged.patch` を 2 箇所に保存(復元保険)
-- 「commit k 適用後」のファイル実体(HEAD から変化するファイルのみ、repo 相対パス)を stage1..stageN-1 として構築(実装役 codex-impl 等へ委譲可。混入自己チェックと各 stage の GOWORK=off go build/vet 等のコンパイル検証を必須にする)
+- 「commit k 適用後」のファイル実体(HEAD から変化するファイルのみ、repo 相対パス)を stage1..stageN-1 として構築(実装subagentへ委譲可。混入自己チェックと各 stage の GOWORK=off go build/vet 等のコンパイル検証を必須にする)
 - 検収: 本体 git status/log の無傷確認、stage への他単位混入を grep でスポットチェック、コンパイル検証のスポット再現
 
 ### 3. tree 構築と stat 提示(commit はまだ作らない)
