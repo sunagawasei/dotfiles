@@ -1,0 +1,371 @@
+# pane closeの確認を、tty前景プロセスグループがpane一次プロセス自身のグループかどうかで判定する。
+# グループ全メンバーの走査だと、reparent後もshellのpgidを保つ常駐プロセス(zeno.zshのdenoサーバ)に
+# 恒久的にヒットし、アイドルなpaneで確認が出続ける。
+diff --git a/src/app/input/navigate.rs b/src/app/input/navigate.rs
+index f53102e7..032d1d1e 100644
+--- a/src/app/input/navigate.rs
++++ b/src/app/input/navigate.rs
+@@ -619,7 +619,7 @@ impl App {
+         else {
+             return false;
+         };
+-        crate::detect::foreground_has_non_shell_member(shell_pid)
++        crate::detect::pane_has_running_foreground(shell_pid)
+     }
+ 
+     fn foreground_process_name_for_pane(
+@@ -629,7 +629,7 @@ impl App {
+     ) -> Option<String> {
+         let terminal_id = self.state.terminal_id_for_pane(ws_idx, pane_id)?;
+         let shell_pid = self.terminal_runtimes.get(&terminal_id)?.child_pid()?;
+-        crate::detect::foreground_non_shell_process_name(shell_pid)
++        crate::detect::pane_foreground_display_name(shell_pid)
+     }
+ 
+     pub(crate) fn zoom_focused_pane_via_api(&mut self) {
+diff --git a/src/detect/mod.rs b/src/detect/mod.rs
+index 9c134b56..5925cc31 100644
+--- a/src/detect/mod.rs
++++ b/src/detect/mod.rs
+@@ -333,38 +333,92 @@ fn is_shell_process_name(name: &str) -> bool {
+     )
+ }
+ 
+-/// Returns true when the foreground job contains a process that isn't the pane
+-/// shell idling at its prompt.
+-///
+-/// Close confirmation uses this predicate. A member counts as "running" when
+-/// either: it's a different PID than the pane's own shell PID (a shell script,
+-/// nested shell, or program the shell launched — even if that member's own name
+-/// happens to be shell-like, e.g. a nested `bash`), or it IS the shell PID but
+-/// its name isn't shell-like (direct/argv command panes and agent-launched panes
+-/// run the agent/editor itself as the pane's primary process, so `shell_pid`
+-/// there names the agent, not a shell).
+-pub(crate) fn foreground_job_has_non_shell_member(
+-    job: &crate::platform::ForegroundJob,
++/// True when `leader` is the pane's own shell idling at a bare prompt: its
++/// argv carries no non-flag arguments (a script, a `-c` payload, etc. would
++/// mean it's not idle). Fails closed (false = not idle) when argv is missing
++/// or empty, since we can't confirm the shell isn't mid-command.
++fn is_idle_pane_shell(leader: &crate::platform::ForegroundProcess, shell_pid: u32) -> bool {
++    leader.pid == shell_pid
++        && is_shell_process_name(&normalized_process_name(leader))
++        && leader.argv.as_deref().is_some_and(|argv| {
++            !argv.is_empty() && argv[1..].iter().all(|arg| arg.starts_with('-'))
++        })
++}
++
++/// Core running-vs-idle decision, isolated from OS syscalls so it can be unit
++/// tested with synthetic data. `leader` is the foreground process group's
++/// leader when `fg_pgid == shell_pid` (irrelevant otherwise, since a
++/// foreground group other than the pane shell's own always counts as
++/// running).
++fn foreground_job_is_running(
++    fg_pgid: Option<u32>,
+     shell_pid: u32,
++    leader: Option<&crate::platform::ForegroundProcess>,
+ ) -> bool {
+-    job.processes.iter().any(|process| {
+-        process.pid != shell_pid || !is_shell_process_name(&normalized_process_name(process))
+-    })
++    let Some(fg_pgid) = fg_pgid else {
++        return false;
++    };
++    if fg_pgid != shell_pid {
++        return true;
++    }
++    !leader.is_some_and(|leader| is_idle_pane_shell(leader, shell_pid))
++}
++
++/// Cap on the sanitized display name length, so a process advertising an
++/// unusually long name can't stretch the confirmation dialog.
++const DISPLAY_NAME_MAX_LEN: usize = 32;
++
++/// Display name for a foreground group leader. `normalized_process_name` may
++/// fall back to raw argv0 (process-controlled, can carry secrets or control
++/// characters) when it can't resolve a known agent, so this only trusts that
++/// result when it round-trips through the agent allowlist; otherwise it falls
++/// back to the kernel-reported `comm` name. Either way the result is
++/// sanitized before display.
++fn foreground_display_name(leader: &crate::platform::ForegroundProcess) -> String {
++    let resolved = normalized_process_name(leader);
++    let name = if identify_agent(&resolved).is_some() {
++        resolved
++    } else {
++        leader.name.clone()
++    };
++    sanitize_display_name(path_basename(&name))
++}
++
++fn sanitize_display_name(name: &str) -> String {
++    name.chars()
++        .filter(|c| !c.is_control())
++        .take(DISPLAY_NAME_MAX_LEN)
++        .collect()
+ }
+ 
+-/// Returns true when the pane shell's foreground job contains a non-shell process.
+-pub fn foreground_has_non_shell_member(shell_pid: u32) -> bool {
+-    foreground_job(shell_pid)
+-        .is_some_and(|job| foreground_job_has_non_shell_member(&job, shell_pid))
++/// Returns true when the pane shell's tty foreground job is something other
++/// than the pane's own shell idling at its prompt.
++///
++/// Close confirmation uses this predicate. A pgid other than the pane shell's
++/// own always counts as running (a shell script, nested shell, or program the
++/// shell launched). When the foreground pgid IS the pane shell's own, it's
++/// idle only if the leader is shell-like with no non-flag argv — otherwise it
++/// counts as running (this also covers direct/argv command panes and
++/// agent-launched panes, where `shell_pid` names the agent itself, not a
++/// shell). A leader we couldn't look up fails closed as running.
++///
++/// Known limitation: without job control (`set +m`, non-interactive shells) a
++/// foreground child can share the shell's own pgid, in which case it's
++/// indistinguishable from the idle shell and won't trigger confirmation.
++pub fn pane_has_running_foreground(shell_pid: u32) -> bool {
++    let fg_pgid = foreground_process_group_id(shell_pid);
++    let leader = fg_pgid
++        .and_then(foreground_group_leader_job)
++        .and_then(|job| job.processes.into_iter().next());
++    foreground_job_is_running(fg_pgid, shell_pid, leader.as_ref())
+ }
+ 
+-/// Display name for the first non-shell member of the pane shell's foreground job.
+-pub fn foreground_non_shell_process_name(shell_pid: u32) -> Option<String> {
+-    let job = foreground_job(shell_pid)?;
+-    let process = job.processes.iter().find(|process| {
+-        process.pid != shell_pid || !is_shell_process_name(&normalized_process_name(process))
+-    })?;
+-    Some(path_basename(&normalized_process_name(process)).to_string())
++/// Display name for the pane shell's tty foreground group leader.
++pub fn pane_foreground_display_name(shell_pid: u32) -> Option<String> {
++    let fg_pgid = foreground_process_group_id(shell_pid)?;
++    let job = foreground_group_leader_job(fg_pgid)?;
++    let leader = job.processes.into_iter().next()?;
++    Some(foreground_display_name(&leader))
+ }
+ 
+ /// Get the foreground process group leader as a one-process job.
+@@ -712,81 +766,172 @@ mod tests {
+         assert!(detection.visible_working);
+     }
+ 
++    // ---- Close confirmation: idle bare shell vs. running foreground ----
++
+     #[test]
+-    fn foreground_job_has_non_shell_member_is_false_for_shell_only_job() {
+-        let job = crate::platform::ForegroundJob {
+-            process_group_id: 10,
+-            processes: vec![foreground_process(10, "zsh", &["zsh"])],
+-        };
++    fn pane_has_running_foreground_is_false_for_login_shell_argv_dash_zsh() {
++        // argv[0] can carry the login-shell "-zsh" form even though `name` (comm)
++        // never does; the idle check only looks at argv[1..], so this is a no-op.
++        let leader = foreground_process(10, "zsh", &["-zsh"]);
++        assert!(!foreground_job_is_running(Some(10), 10, Some(&leader)));
++    }
+ 
+-        assert!(!foreground_job_has_non_shell_member(&job, 10));
++    #[test]
++    fn pane_has_running_foreground_is_false_for_plain_zsh_argv() {
++        let leader = foreground_process(10, "zsh", &["zsh"]);
++        assert!(!foreground_job_is_running(Some(10), 10, Some(&leader)));
+     }
+ 
+     #[test]
+-    fn foreground_job_has_non_shell_member_is_true_when_nvim_runs_in_foreground() {
+-        let job = crate::platform::ForegroundJob {
+-            process_group_id: 100,
+-            processes: vec![
+-                foreground_process(10, "zsh", &["zsh"]),
+-                foreground_process(100, "nvim", &["nvim", "main.rs"]),
+-            ],
+-        };
++    fn pane_has_running_foreground_is_false_for_zsh_login_flag_only() {
++        let leader = foreground_process(10, "zsh", &["zsh", "-l"]);
++        assert!(!foreground_job_is_running(Some(10), 10, Some(&leader)));
++    }
+ 
+-        assert!(foreground_job_has_non_shell_member(&job, 10));
++    #[test]
++    fn pane_has_running_foreground_is_true_for_shell_script_argv() {
++        let leader = foreground_process(10, "bash", &["bash", "deploy.sh"]);
++        assert!(foreground_job_is_running(Some(10), 10, Some(&leader)));
+     }
+ 
+     #[test]
+-    fn foreground_job_has_non_shell_member_is_true_when_node_agent_runs_in_foreground() {
+-        let job = crate::platform::ForegroundJob {
+-            process_group_id: 200,
+-            processes: vec![
+-                foreground_process(10, "zsh", &["zsh"]),
+-                foreground_process(200, "node", &["node", "/usr/local/bin/claude", "chat"]),
+-            ],
+-        };
++    fn pane_has_running_foreground_is_true_for_shell_dash_c_argv() {
++        // A non-flag argument follows `-c`, so this isn't a bare idle shell.
++        let leader = foreground_process(10, "bash", &["bash", "-c", "make all"]);
++        assert!(foreground_job_is_running(Some(10), 10, Some(&leader)));
++    }
++
++    #[test]
++    fn pane_has_running_foreground_is_true_for_shell_rcfile_path_argv() {
++        // "--rcfile" takes a value; that value doesn't start with '-'.
++        let leader = foreground_process(10, "bash", &["bash", "--rcfile", "/path/rc"]);
++        assert!(foreground_job_is_running(Some(10), 10, Some(&leader)));
++    }
+ 
+-        assert!(foreground_job_has_non_shell_member(&job, 10));
++    #[test]
++    fn pane_has_running_foreground_is_false_for_pwsh_flag_only_argv() {
++        let leader = foreground_process(10, "pwsh", &["pwsh", "-NoLogo"]);
++        assert!(!foreground_job_is_running(Some(10), 10, Some(&leader)));
+     }
+ 
+     #[test]
+-    fn foreground_job_has_non_shell_member_is_true_when_agent_is_the_pane_primary_process() {
++    fn pane_has_running_foreground_is_true_when_agent_is_the_pane_primary_process() {
+         // Direct/argv command panes (or `herdr agent start`) run the agent itself as
+-        // the pane's child, not a shell. The foreground job's sole member then has
+-        // the same PID as the "shell" PID passed in — a PID-based check can't tell
+-        // this apart from a shell idling at a prompt (see Finding 2 regression).
+-        let job = crate::platform::ForegroundJob {
+-            process_group_id: 200,
+-            processes: vec![foreground_process(
+-                200,
+-                "node",
+-                &["node", "/usr/local/bin/claude"],
+-            )],
++        // the pane's child, not a shell. The foreground group leader then has the
++        // same PID as the "shell" PID passed in — a PID-based check can't tell this
++        // apart from a shell idling at a prompt (see Finding 2 regression).
++        let leader = foreground_process(200, "node", &["node", "/usr/local/bin/claude"]);
++        assert!(foreground_job_is_running(Some(200), 200, Some(&leader)));
++    }
++
++    #[test]
++    fn pane_has_running_foreground_fails_closed_when_argv_is_missing() {
++        let leader = crate::platform::ForegroundProcess {
++            pid: 10,
++            name: "zsh".to_string(),
++            argv0: None,
++            argv: None,
++            cmdline: None,
++        };
++        assert!(foreground_job_is_running(Some(10), 10, Some(&leader)));
++    }
++
++    #[test]
++    fn pane_has_running_foreground_fails_closed_when_argv_is_empty() {
++        let leader = crate::platform::ForegroundProcess {
++            pid: 10,
++            name: "zsh".to_string(),
++            argv0: None,
++            argv: Some(Vec::new()),
++            cmdline: None,
+         };
++        assert!(foreground_job_is_running(Some(10), 10, Some(&leader)));
++    }
+ 
+-        assert!(foreground_job_has_non_shell_member(&job, 200));
++    #[test]
++    fn pane_has_running_foreground_is_true_when_leader_pid_is_not_the_pane_shell() {
++        // A leader that isn't the pane's own shell PID is never treated as the pane
++        // idling at its prompt, regardless of how shell-like it looks.
++        let leader = foreground_process(999, "zsh", &["-zsh"]);
++        assert!(foreground_job_is_running(Some(10), 10, Some(&leader)));
+     }
+ 
+     #[test]
+-    fn foreground_job_has_non_shell_member_is_true_for_nested_shell_running_a_script() {
+-        // The pane shell (pid 10) launched a script under a different shell PID
+-        // (pid 999). Even though "bash" is itself shell-like, it's not the pane's
+-        // OWN idle shell, so it counts as running (see Finding 2 follow-up).
+-        let job = crate::platform::ForegroundJob {
+-            process_group_id: 999,
+-            processes: vec![foreground_process(999, "bash", &["bash", "script.sh"])],
++    fn pane_has_running_foreground_is_true_when_foreground_group_differs_from_shell() {
++        // A foreground pgid other than the pane shell's own always counts as
++        // running; the leader isn't even consulted.
++        assert!(foreground_job_is_running(Some(999), 10, None));
++    }
++
++    #[test]
++    fn pane_has_running_foreground_fails_closed_when_leader_lookup_fails() {
++        assert!(foreground_job_is_running(Some(10), 10, None));
++    }
++
++    #[test]
++    fn pane_has_running_foreground_returns_false_when_foreground_pgid_is_unknown() {
++        assert!(!foreground_job_is_running(None, 10, None));
++    }
++
++    #[test]
++    fn foreground_display_name_excludes_argv_payload() {
++        // The display name must never leak argv content (e.g. secrets passed to
++        // `bash -c`), only the resolved process name's basename.
++        let leader =
++            foreground_process(10, "bash", &["bash", "-c", "curl -H Authorization: token"]);
++        assert_eq!(foreground_display_name(&leader), "bash");
++    }
++
++    #[test]
++    fn foreground_display_name_ignores_unrecognized_argv0() {
++        // argv0 is process-controlled; when it doesn't resolve to a known agent,
++        // the kernel-reported `comm` name is used instead, never argv0's content.
++        let leader = crate::platform::ForegroundProcess {
++            pid: 10,
++            name: "bash".to_string(),
++            argv0: Some("secret-token-abcdefghijklmnopqrstuvwxyz0123456789".to_string()),
++            argv: Some(vec!["bash".to_string()]),
++            cmdline: Some("bash".to_string()),
+         };
++        assert_eq!(foreground_display_name(&leader), "bash");
++    }
+ 
+-        assert!(foreground_job_has_non_shell_member(&job, 10));
++    #[test]
++    fn foreground_display_name_strips_control_characters() {
++        // The control characters live in `name` (comm), not argv0, and argv0 is
++        // absent — so this actually exercises the `leader.name` fallback plus
++        // `sanitize_display_name`, unlike a variant that only dirties argv0.
++        let leader = crate::platform::ForegroundProcess {
++            pid: 10,
++            name: "ba\u{1b}[31msh\n".to_string(),
++            argv0: None,
++            argv: None,
++            cmdline: None,
++        };
++        let display = foreground_display_name(&leader);
++        assert!(!display.chars().any(char::is_control));
++        assert_eq!(display, "ba[31msh");
+     }
+ 
+     #[test]
+-    fn foreground_non_shell_process_name_returns_first_non_shell_basename() {
+-        let process = foreground_process(100, "nvim", &["nvim", "main.rs"]);
++    fn foreground_display_name_truncates_long_names() {
++        let long_name = "a".repeat(50);
++        let leader = crate::platform::ForegroundProcess {
++            pid: 10,
++            name: long_name.clone(),
++            argv0: None,
++            argv: Some(vec![long_name]),
++            cmdline: None,
++        };
++        assert_eq!(foreground_display_name(&leader).len(), DISPLAY_NAME_MAX_LEN);
++    }
+ 
+-        assert_eq!(
+-            path_basename(&normalized_process_name(&process)).to_string(),
+-            "nvim"
+-        );
++    #[test]
++    fn foreground_display_name_prefers_recognized_agent_over_runtime_name() {
++        // Regression: node wrapping a claude script must still surface "claude",
++        // not fall back to the generic runtime's own comm name.
++        let leader = foreground_process(200, "node", &["node", "/usr/local/bin/claude"]);
++        assert_eq!(foreground_display_name(&leader), "claude");
+     }
+ 
+     // ---- Agent identification ----

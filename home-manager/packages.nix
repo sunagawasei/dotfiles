@@ -17,9 +17,12 @@ let
   # copy modeでy/Enterによるyank後もcopy modeに留まる（上流はyank後に必ず抜ける実装で
   # 設定キーなし）。選択ハイライトは解除しカーソル・スクロール位置は維持、q/Escでの
   # 退出時のみ進入時スクロール位置へ復元する。
+  # pane削除の確認判定を、tty前景プロセスグループがpane一次プロセス自身のグループか
+  # どうかで行う。グループ全メンバーの走査だと、reparent後もshellのpgidを保つ常駐
+  # プロセス(zeno.zshのdenoサーバ)に恒久的にヒットし、アイドルなpaneで確認が出続ける。
   # combined-frame-digestは個別機能ではなく、上記UIパッチ全部の合成描画を固定する
   # integration fixture。必ず最後に適用し、UIパッチを変えたらdigestを再生成する。
-  # 並び順は開発branch(~/poc/herdr の v080-upgrade)のcommit順と一致させる。
+  # 並び順は開発branch v080-upgrade(専用worktreeで保持)のcommit順と一致させる。
   # 各パッチは親commit時点のツリーに対するdiffなので、順を崩すとoffset依存になる。
   herdrPatched = herdr.overrideAttrs (old: {
     patches = (old.patches or [ ]) ++ [
@@ -28,6 +31,7 @@ let
       ./patches/herdr-sidebar-token-separator.patch
       ./patches/herdr-copy-mode-yank-stay.patch
       ./patches/herdr-expanded-sidebar-space-numbers.patch
+      ./patches/herdr-confirm-close-leader-only.patch
       ./patches/herdr-combined-frame-digest.patch
     ];
   });
