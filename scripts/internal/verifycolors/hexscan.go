@@ -21,6 +21,7 @@ var (
 		"nvim/lua/plugins/scrollbar.lua",
 		"zsh/.zshrc",
 		"lazygit/config.yml",
+		"gh-dash/config.yml",
 	}
 
 	allowedLiteralColors = map[string]bool{

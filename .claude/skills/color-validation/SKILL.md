@@ -32,6 +32,7 @@ cd scripts && go run ./cmd/generate-color-inventory
 - `wezterm/colors.lua`（丸ごと生成）
 - `home-manager/colors.nix`（丸ごと生成）
 - `lazygit/config.yml`（マーカーブロック置換）
+- `gh-dash/config.yml`（マーカーブロック置換）
 - `vim/vimrc`（cterm256近似値を自動計算してマーカーブロック置換）
 - `claude/statusline.sh`（HEXを10進RGBへ自動変換してマーカーブロック置換）
 - `COLOR-SYSTEM.md`（パレット表をマーカーブロック置換）
@@ -158,9 +159,10 @@ standard = "#9ABED3"          # String Blue
 2. **Neovim** (`nvim/lua/config/palette.lua`) — 構文ハイライト・UI要素・診断表示（generate対象）
 3. **home-manager** (`home-manager/colors.nix`) — Nix側の色定義（generate対象）
 4. **LazyGit** (`lazygit/config.yml`) — テーマカラー・ボーダー・選択色（マーカーブロック）
-5. **vim** (`vim/vimrc`) — cterm256近似（マーカーブロック）
-6. **Claude Code** (`claude/statusline.sh`) — 10進RGB（マーカーブロック）
-7. **Zsh** (`zsh/.zshrc`) — Nix store symlink経由、darwin-rebuild switchで反映
+5. **gh-dash** (`gh-dash/config.yml`) — テーマカラー18スロット（マーカーブロック）
+6. **vim** (`vim/vimrc`) — cterm256近似（マーカーブロック）
+7. **Claude Code** (`claude/statusline.sh`) — 10進RGB（マーカーブロック）
+8. **Zsh** (`zsh/.zshrc`) — Nix store symlink経由、darwin-rebuild switchで反映
 
 ### statusline固有の制約
 
@@ -208,7 +210,7 @@ cd scripts && go run ./cmd/generate-color-inventory --check
 cd scripts && go run ./cmd/verify-colors
 
 # 4. 問題なければコミット
-git add colors/ wezterm/ nvim/ home-manager/ lazygit/ vim/ claude/statusline.sh COLOR-SYSTEM.md
+git add colors/ wezterm/ nvim/ home-manager/ lazygit/ gh-dash/ vim/ claude/statusline.sh COLOR-SYSTEM.md
 git commit -m "feat(theme): カラー定義を更新"
 ```
 

@@ -160,6 +160,95 @@ func TestHerdrTemplateRejectsLiteralQuotedKeyDuplicate(t *testing.T) {
 	}
 }
 
+// ghDashWrapDocument embeds a rendered theme.colors marker block into the surrounding
+// static structure of gh-dash/config.yml, mirroring what replaceGeneratedBlock produces.
+func ghDashWrapDocument(block string) string {
+	return "theme:\n" +
+		"    ui:\n" +
+		"        sectionsShowCount: true\n" +
+		"    colors:\n" +
+		block +
+		"pager:\n" +
+		"    diff: hunk patch /dev/stdin\n"
+}
+
+// ghDashDedentBlock removes 4 leading spaces from every non-empty line, simulating the
+// marker block landing one indent level shallower than gh-dash/config.yml expects.
+func ghDashDedentBlock(block string) string {
+	lines := strings.Split(block, "\n")
+	for index, line := range lines {
+		lines[index] = strings.TrimPrefix(line, "    ")
+	}
+	return strings.Join(lines, "\n")
+}
+
+func ghDashValidBlock(t *testing.T) string {
+	t.Helper()
+	template, err := buildGhDashTemplate(ghDashColorSpecs)
+	if err != nil {
+		t.Fatalf("buildGhDashTemplate rejected the real spec list: %v", err)
+	}
+	return placeholderPattern.ReplaceAllString(template, "#AABBCC")
+}
+
+func TestValidateGhDashGeneratedConfigAcceptsRenderedTemplate(t *testing.T) {
+	if err := validateGhDashGeneratedConfig(ghDashWrapDocument(ghDashValidBlock(t))); err != nil {
+		t.Fatalf("valid gh-dash document rejected: %v", err)
+	}
+}
+
+func TestValidateGhDashGeneratedConfigRejectsStructuralBreaks(t *testing.T) {
+	const primaryLine = "            primary: \"#AABBCC\"\n"
+
+	tests := map[string]func(block string) string{
+		"parent level shift": ghDashDedentBlock,
+		"missing required key": func(block string) string {
+			return strings.Replace(block, primaryLine, "", 1)
+		},
+		"key typo": func(block string) string {
+			return strings.Replace(block, primaryLine, "            prmary: \"#AABBCC\"\n", 1)
+		},
+		"extra key": func(block string) string {
+			return strings.Replace(block, primaryLine, primaryLine+"            extra: \"#AABBCC\"\n", 1)
+		},
+		"duplicate key": func(block string) string {
+			return strings.Replace(block, primaryLine, primaryLine+primaryLine, 1)
+		},
+		"non-hex value": func(block string) string {
+			return strings.Replace(block, primaryLine, "            primary: \"not-a-hex\"\n", 1)
+		},
+		// YAML treats an unquoted "#..." after a value position as a comment start, so an
+		// unquoted hex would actually render as an empty value; the walker must not accept
+		// it as if it were quoted.
+		"unquoted hex value": func(block string) string {
+			return strings.Replace(block, primaryLine, "            primary: #AABBCC\n", 1)
+		},
+		"one-sided quote": func(block string) string {
+			return strings.Replace(block, primaryLine, "            primary: \"#AABBCC\n", 1)
+		},
+	}
+
+	for name, mutate := range tests {
+		t.Run(name, func(t *testing.T) {
+			document := ghDashWrapDocument(mutate(ghDashValidBlock(t)))
+			if err := validateGhDashGeneratedConfig(document); err == nil {
+				t.Fatalf("mutated gh-dash document accepted for case %q", name)
+			}
+		})
+	}
+}
+
+func TestBuildGhDashTemplateRejectsNonContiguousGroups(t *testing.T) {
+	nonContiguous := []ghDashColorSpec{
+		{"text", "primary", "foregrounds.main"},
+		{"border", "primary", "teals.bright"},
+		{"text", "secondary", "foregrounds.dim"},
+	}
+	if _, err := buildGhDashTemplate(nonContiguous); err == nil {
+		t.Fatal("non-contiguous group accepted")
+	}
+}
+
 func TestHerdrTemplateAccentMatchesInventoryOverride(t *testing.T) {
 	const accentToken = "purples.lavender"
 	if !strings.Contains(herdrTemplate, `accent = "{{`+accentToken+`}}"`) {

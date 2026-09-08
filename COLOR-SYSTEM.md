@@ -101,6 +101,7 @@
 *   **Zsh**: コマンド、パス、オプションに個別アクセントを割り当て
 *   **Pure**: path・git・prompt各要素に Ghost Visor を適用
 *   **LazyGit**: ボーダーと選択色のコントラストを調整
+*   **gh-dash**: Issue/PRリストとステータスカラーにGhost Visorを適用
 
 ### バリデーション
 

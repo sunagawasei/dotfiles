@@ -45,10 +45,11 @@ type outputFile struct {
 }
 
 type markerOutput struct {
-	path  string
-	begin string
-	end   string
-	block string
+	path     string
+	begin    string
+	end      string
+	block    string
+	validate func(content string) error
 }
 
 type ezaStyleSpec struct {
@@ -356,6 +357,166 @@ func buildZshCompletionTemplate(specs []ezaStyleSpec) string {
 	return builder.String()
 }
 
+// ghDashColorSpec pairs a gh-dash theme.colors path with the palette token that fills it.
+// It is the single source of truth: buildGhDashTemplate and validateGhDashGeneratedConfig
+// are both derived from this slice, so the two can't drift apart.
+type ghDashColorSpec struct {
+	group string
+	key   string
+	token string
+}
+
+var ghDashColorSpecs = []ghDashColorSpec{
+	{"text", "primary", "foregrounds.main"},
+	{"text", "secondary", "foregrounds.dim"},
+	{"text", "inverted", "core.darkest_bg"},
+	{"text", "faint", "foregrounds.subdued"},
+	{"text", "warning", "ansi.bright_yellow"},
+	{"text", "success", "semantic.success"},
+	{"text", "error", "ansi.bright_red"},
+	{"text", "actor", "foregrounds.heading"},
+	{"background", "selected", "core.active_line"},
+	{"border", "primary", "teals.bright"},
+	{"border", "secondary", "teals.border"},
+	{"border", "faint", "blues_slates.slate_mid"},
+	{"icon", "newcontributor", "semantic.success"},
+	{"icon", "contributor", "teals.mid_bright"},
+	{"icon", "collaborator", "purples.lavender"},
+	{"icon", "member", "purples.bright_purple"},
+	{"icon", "owner", "ansi.bright_yellow"},
+	{"icon", "unknownrole", "foregrounds.subdued"},
+}
+
+// ghDashColorSpecComments documents ghDashColorSpecs entries (keyed by "group.key") whose
+// generated value has no effect upstream. It's a side table rather than a field on
+// ghDashColorSpec so the struct's shape (and existing positional literals of it, e.g. in
+// TestBuildGhDashTemplateRejectsNonContiguousGroups) doesn't need to change.
+var ghDashColorSpecComments = map[string]string{
+	"icon.unknownrole": "gh-dash v4.23.2 は ParseTheme で未配線。設定値は反映されない (internal/tui/theme/theme.go:147)",
+	"text.actor":       "v4.23.2 では描画箇所なし (internal/tui/theme/theme.go:22,49,123-126)",
+}
+
+// buildGhDashTemplate renders the gh-dash theme.colors marker block. Indentation (8/12
+// spaces) must match gh-dash/config.yml's static "theme: colors:" nesting exactly.
+// specs must group entries of the same group contiguously; a non-contiguous group would
+// emit the same YAML mapping key twice and silently keep only the later occurrence.
+func buildGhDashTemplate(specs []ghDashColorSpec) (string, error) {
+	var builder strings.Builder
+	builder.WriteString("        # BEGIN GENERATED COLORS\n")
+	previousGroup := ""
+	seenGroups := make(map[string]bool, len(specs))
+	for _, spec := range specs {
+		if spec.group != previousGroup {
+			if seenGroups[spec.group] {
+				return "", fmt.Errorf("gh-dash color spec group %q is not contiguous", spec.group)
+			}
+			seenGroups[spec.group] = true
+			fmt.Fprintf(&builder, "        %s:\n", spec.group)
+			previousGroup = spec.group
+		}
+		if comment, ok := ghDashColorSpecComments[spec.group+"."+spec.key]; ok {
+			fmt.Fprintf(&builder, "            # %s\n", comment)
+		}
+		fmt.Fprintf(&builder, "            %s: \"{{%s}}\"\n", spec.key, spec.token)
+	}
+	builder.WriteString("        # END GENERATED COLORS\n")
+	return builder.String(), nil
+}
+
+// validateGhDashGeneratedConfig walks the fully spliced gh-dash/config.yml and confirms
+// every theme.colors path in ghDashColorSpecs is present exactly once with a #RRGGBB
+// value, and that no other theme.colors path exists. A check against the marker block
+// alone can't catch this: an indentation slip turns colors' children into theme's
+// siblings while the block itself still renders correctly in isolation.
+func validateGhDashGeneratedConfig(content string) error {
+	type frame struct {
+		indent int
+		key    string
+	}
+	var stack []frame
+	found := make(map[string]int)
+
+	for lineNumber, rawLine := range strings.Split(content, "\n") {
+		trimmed := strings.TrimSpace(rawLine)
+		if trimmed == "" || strings.HasPrefix(trimmed, "#") {
+			continue
+		}
+		indent := len(rawLine) - len(strings.TrimLeft(rawLine, " "))
+		trimmed = strings.TrimPrefix(trimmed, "- ")
+
+		var key, value string
+		hasValue := false
+		if idx := strings.Index(trimmed, ": "); idx >= 0 {
+			key, value, hasValue = trimmed[:idx], strings.TrimSpace(trimmed[idx+2:]), true
+		} else if strings.HasSuffix(trimmed, ":") {
+			key = trimmed[:len(trimmed)-1]
+		} else {
+			continue // not a mapping line; irrelevant to locating theme.colors
+		}
+		if key == "" {
+			continue
+		}
+
+		for len(stack) > 0 && stack[len(stack)-1].indent >= indent {
+			stack = stack[:len(stack)-1]
+		}
+
+		parts := make([]string, 0, len(stack)+1)
+		for _, fr := range stack {
+			parts = append(parts, fr.key)
+		}
+		parts = append(parts, key)
+		path := strings.Join(parts, ".")
+
+		if hasValue {
+			if strings.HasPrefix(path, "theme.colors.") {
+				found[path]++
+				if len(value) < 2 || value[0] != '"' || value[len(value)-1] != '"' {
+					return fmt.Errorf("gh-dash config.yml line %d: %s = %q is not a quoted \"#RRGGBB\" value", lineNumber+1, path, value)
+				}
+				colorValue := value[1 : len(value)-1]
+				if _, _, _, err := colorutil.ParseHexRGB8(colorValue); err != nil {
+					return fmt.Errorf("gh-dash config.yml line %d: %s = %q is not a #RRGGBB value: %w", lineNumber+1, path, colorValue, err)
+				}
+			}
+			continue
+		}
+		stack = append(stack, frame{indent: indent, key: key})
+	}
+
+	expected := make(map[string]bool, len(ghDashColorSpecs))
+	for _, spec := range ghDashColorSpecs {
+		expected["theme.colors."+spec.group+"."+spec.key] = true
+	}
+
+	var missing []string
+	for path := range expected {
+		if found[path] == 0 {
+			missing = append(missing, path)
+		}
+	}
+	if len(missing) > 0 {
+		sort.Strings(missing)
+		return fmt.Errorf("gh-dash config.yml is missing theme.colors keys: %s", strings.Join(missing, ", "))
+	}
+
+	var unexpected []string
+	for path, count := range found {
+		switch {
+		case !expected[path]:
+			unexpected = append(unexpected, fmt.Sprintf("%s (unexpected)", path))
+		case count > 1:
+			unexpected = append(unexpected, fmt.Sprintf("%s (duplicated %d times)", path, count))
+		}
+	}
+	if len(unexpected) > 0 {
+		sort.Strings(unexpected)
+		return fmt.Errorf("gh-dash config.yml has unexpected theme.colors keys: %s", strings.Join(unexpected, ", "))
+	}
+
+	return nil
+}
+
 func generateOutputs(root, sourceName string, palette *colorPalette) ([]outputFile, []markerOutput, error) {
 	if err := validateMarkdownPreviewVendorCommit(root); err != nil {
 		return nil, nil, err
@@ -370,6 +531,10 @@ func generateOutputs(root, sourceName string, palette *colorPalette) ([]outputFi
 	}
 	ezaThemeTemplate := buildEzaThemeTemplate(ezaSpecs)
 	zshCompletionTemplate := buildZshCompletionTemplate(ezaSpecs)
+	ghDashTemplate, err := buildGhDashTemplate(ghDashColorSpecs)
+	if err != nil {
+		return nil, nil, err
+	}
 
 	templates := []struct {
 		path     string
@@ -400,6 +565,7 @@ func generateOutputs(root, sourceName string, palette *colorPalette) ([]outputFi
 		begin    string
 		end      string
 		template string
+		validate func(content string) error
 	}{
 		{
 			path: filepath.Join(root, "lazygit/config.yml"), begin: "    # BEGIN GENERATED COLORS", end: "    # END GENERATED COLORS",
@@ -408,6 +574,11 @@ func generateOutputs(root, sourceName string, palette *colorPalette) ([]outputFi
 		{
 			path: filepath.Join(root, "gh-board/theme.toml"), begin: "# BEGIN GENERATED COLORS", end: "# END GENERATED COLORS",
 			template: ghBoardTemplate,
+		},
+		{
+			path: filepath.Join(root, "gh-dash/config.yml"), begin: "        # BEGIN GENERATED COLORS", end: "        # END GENERATED COLORS",
+			template: ghDashTemplate,
+			validate: validateGhDashGeneratedConfig,
 		},
 		{
 			path: filepath.Join(root, "herdr/config.toml"), begin: "# BEGIN GENERATED COLORS", end: "# END GENERATED COLORS",
@@ -441,7 +612,7 @@ func generateOutputs(root, sourceName string, palette *colorPalette) ([]outputFi
 		if err != nil {
 			return nil, nil, fmt.Errorf("render marker block for %s: %w", relativePath(root, item.path), err)
 		}
-		markers = append(markers, markerOutput{path: item.path, begin: item.begin, end: item.end, block: block})
+		markers = append(markers, markerOutput{path: item.path, begin: item.begin, end: item.end, block: block, validate: item.validate})
 	}
 	return files, markers, nil
 }
@@ -508,6 +679,11 @@ func applyOutputs(files []outputFile, markers []markerOutput, check bool) (bool,
 		updated, err := replaceGeneratedBlock(content, marker)
 		if err != nil {
 			return false, err
+		}
+		if marker.validate != nil {
+			if err := marker.validate(updated); err != nil {
+				return false, fmt.Errorf("validate %s: %w", marker.path, err)
+			}
 		}
 		expected[marker.path] = updated
 	}

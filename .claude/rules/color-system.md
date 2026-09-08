@@ -4,6 +4,7 @@ paths:
   - "**/wezterm/wezterm.lua"
   - "**/nvim/lua/plugins/colorscheme.lua"
   - "**/lazygit/config.yml"
+  - "**/gh-dash/config.yml"
   - "**/*theme*"
   - "**/*color*"
 ---
@@ -27,6 +28,7 @@ paths:
 - WezTerm (`wezterm/wezterm.lua`)
 - Neovim (`nvim/lua/plugins/colorscheme.lua`)
 - LazyGit (`lazygit/config.yml`)
+- gh-dash (`gh-dash/config.yml`)
 - Zsh (プロンプトとシンタックスハイライト)
 
 ## カラー選択ルール

@@ -99,6 +99,33 @@ theme:
         table:
             showSeparator: true
             compact: true
+    colors:
+        # BEGIN GENERATED COLORS
+        text:
+            primary: "#CDE9F5"
+            secondary: "#ABA4C4"
+            inverted: "#0C1226"
+            faint: "#9E97B8"
+            warning: "#DFBE90"
+            success: "#76D6C4"
+            error: "#E2839A"
+            # v4.23.2 では描画箇所なし (internal/tui/theme/theme.go:22,49,123-126)
+            actor: "#B79AD0"
+        background:
+            selected: "#2A3159"
+        border:
+            primary: "#58CAF8"
+            secondary: "#4C4C74"
+            faint: "#453C5F"
+        icon:
+            newcontributor: "#76D6C4"
+            contributor: "#92BFD9"
+            collaborator: "#D0D4F0"
+            member: "#CD73C9"
+            owner: "#DFBE90"
+            # gh-dash v4.23.2 は ParseTheme で未配線。設定値は反映されない (internal/tui/theme/theme.go:147)
+            unknownrole: "#9E97B8"
+        # END GENERATED COLORS
 pager:
     # `hunk pager`はpager modeを強制し、記号キー(? , . [ ])を握り潰す。明示ファイル指定なら
     # pager modeにならないので、ghのpipeを/dev/stdinとして渡す。

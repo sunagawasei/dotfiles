@@ -20,6 +20,7 @@ func Extract(root string) (Result, error) {
 		{"Claude theme", extractClaudeTheme},
 		{"Hunk theme", extractHunk},
 		{"gh-board theme", extractGhBoardTheme},
+		{"gh-dash theme", extractGhDashTheme},
 		{"delta styles", extractDeltaStyles},
 		{"LazyGit and FZF role colors", extractGitUIRoleColors},
 		{"herdr theme", extractHerdrTheme},

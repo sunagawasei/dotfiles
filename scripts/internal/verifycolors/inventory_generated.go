@@ -11,7 +11,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.gutterForeground",
@@ -20,7 +20,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.gutterForeground.lineHighlight",
@@ -29,7 +29,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.comment",
@@ -38,7 +38,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.constant.character.escape",
@@ -47,7 +47,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.constant.language",
@@ -56,7 +56,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.constant.language.boolean.yaml",
@@ -65,7 +65,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.constant.language.null.yaml",
@@ -74,7 +74,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.constant.numeric",
@@ -83,7 +83,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.entity.name.class",
@@ -92,7 +92,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.entity.name.function",
@@ -101,7 +101,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.entity.name.tag",
@@ -110,7 +110,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.entity.name.tag.yaml",
@@ -119,7 +119,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.entity.name.type",
@@ -128,7 +128,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.entity.other.attribute-name",
@@ -137,7 +137,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.invalid.illegal",
@@ -146,7 +146,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.keyword",
@@ -155,7 +155,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.keyword.control.import",
@@ -164,7 +164,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.keyword.operator",
@@ -173,7 +173,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.markup.bold",
@@ -182,7 +182,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.markup.heading",
@@ -191,7 +191,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.markup.italic",
@@ -200,7 +200,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.markup.list",
@@ -209,7 +209,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.markup.quote",
@@ -218,7 +218,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.markup.raw",
@@ -227,7 +227,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.markup.underline.link",
@@ -236,7 +236,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.punctuation.accessor",
@@ -245,7 +245,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.punctuation.definition",
@@ -254,7 +254,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.punctuation.definition.block.sequence.item.yaml",
@@ -263,7 +263,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.punctuation.section",
@@ -272,7 +272,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.punctuation.separator",
@@ -281,7 +281,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.punctuation.terminator",
@@ -290,7 +290,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.source.yaml_constant.numeric",
@@ -299,7 +299,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.storage.modifier",
@@ -308,7 +308,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.storage.type",
@@ -317,7 +317,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.string",
@@ -326,7 +326,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.support.function",
@@ -335,7 +335,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.support.type",
@@ -344,7 +344,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.variable.function",
@@ -353,7 +353,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.variable.language",
@@ -362,7 +362,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "bat.theme.scope.variable.parameter",
@@ -371,7 +371,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1601",
+		Source:     "scripts/cmd/generate-colors/main.go:1777",
 	},
 	{
 		ConsumerID: "claude.theme.autoAccept",
@@ -380,7 +380,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:658",
+		Source:     "scripts/cmd/generate-colors/main.go:834",
 	},
 	{
 		ConsumerID: "claude.theme.autoAcceptShimmer",
@@ -389,7 +389,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:659",
+		Source:     "scripts/cmd/generate-colors/main.go:835",
 	},
 	{
 		ConsumerID: "claude.theme.bashBorder",
@@ -399,7 +399,7 @@ var generatedPairs = []PairSpec{
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "border",
 		Reason:     "border shape provides a non-color cue",
-		Source:     "scripts/cmd/generate-colors/main.go:660",
+		Source:     "scripts/cmd/generate-colors/main.go:836",
 	},
 	{
 		ConsumerID: "claude.theme.bashMessageBackgroundColor",
@@ -408,7 +408,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:672",
+		Source:     "scripts/cmd/generate-colors/main.go:848",
 	},
 	{
 		ConsumerID: "claude.theme.briefLabelClaude",
@@ -417,7 +417,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:678",
+		Source:     "scripts/cmd/generate-colors/main.go:854",
 	},
 	{
 		ConsumerID: "claude.theme.briefLabelYou",
@@ -426,7 +426,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:677",
+		Source:     "scripts/cmd/generate-colors/main.go:853",
 	},
 	{
 		ConsumerID: "claude.theme.chromeYellow",
@@ -435,7 +435,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:648",
+		Source:     "scripts/cmd/generate-colors/main.go:824",
 	},
 	{
 		ConsumerID: "claude.theme.claude",
@@ -444,7 +444,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:633",
+		Source:     "scripts/cmd/generate-colors/main.go:809",
 	},
 	{
 		ConsumerID: "claude.theme.claudeBlueShimmer_FOR_SYSTEM_SPINNER",
@@ -453,7 +453,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:636",
+		Source:     "scripts/cmd/generate-colors/main.go:812",
 	},
 	{
 		ConsumerID: "claude.theme.claudeBlue_FOR_SYSTEM_SPINNER",
@@ -462,7 +462,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:635",
+		Source:     "scripts/cmd/generate-colors/main.go:811",
 	},
 	{
 		ConsumerID: "claude.theme.claudeShimmer",
@@ -471,7 +471,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:634",
+		Source:     "scripts/cmd/generate-colors/main.go:810",
 	},
 	{
 		ConsumerID: "claude.theme.diffAdded",
@@ -480,7 +480,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:664",
+		Source:     "scripts/cmd/generate-colors/main.go:840",
 	},
 	{
 		ConsumerID: "claude.theme.diffAddedDimmed",
@@ -489,7 +489,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:666",
+		Source:     "scripts/cmd/generate-colors/main.go:842",
 	},
 	{
 		ConsumerID: "claude.theme.diffAddedWord",
@@ -498,7 +498,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:668",
+		Source:     "scripts/cmd/generate-colors/main.go:844",
 	},
 	{
 		ConsumerID: "claude.theme.diffRemoved",
@@ -507,7 +507,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:665",
+		Source:     "scripts/cmd/generate-colors/main.go:841",
 	},
 	{
 		ConsumerID: "claude.theme.diffRemovedDimmed",
@@ -516,7 +516,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:667",
+		Source:     "scripts/cmd/generate-colors/main.go:843",
 	},
 	{
 		ConsumerID: "claude.theme.diffRemovedWord",
@@ -525,7 +525,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:669",
+		Source:     "scripts/cmd/generate-colors/main.go:845",
 	},
 	{
 		ConsumerID: "claude.theme.effortUltra",
@@ -534,7 +534,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:647",
+		Source:     "scripts/cmd/generate-colors/main.go:823",
 	},
 	{
 		ConsumerID: "claude.theme.error",
@@ -543,7 +543,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:651",
+		Source:     "scripts/cmd/generate-colors/main.go:827",
 	},
 	{
 		ConsumerID: "claude.theme.fastMode",
@@ -552,7 +552,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:662",
+		Source:     "scripts/cmd/generate-colors/main.go:838",
 	},
 	{
 		ConsumerID: "claude.theme.fastModeShimmer",
@@ -561,7 +561,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:663",
+		Source:     "scripts/cmd/generate-colors/main.go:839",
 	},
 	{
 		ConsumerID: "claude.theme.ide",
@@ -570,7 +570,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:661",
+		Source:     "scripts/cmd/generate-colors/main.go:837",
 	},
 	{
 		ConsumerID: "claude.theme.inactive",
@@ -579,7 +579,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:639",
+		Source:     "scripts/cmd/generate-colors/main.go:815",
 	},
 	{
 		ConsumerID: "claude.theme.inactiveShimmer",
@@ -588,7 +588,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:640",
+		Source:     "scripts/cmd/generate-colors/main.go:816",
 	},
 	{
 		ConsumerID: "claude.theme.inverseText",
@@ -597,7 +597,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:638",
+		Source:     "scripts/cmd/generate-colors/main.go:814",
 	},
 	{
 		ConsumerID: "claude.theme.memoryBackgroundColor",
@@ -606,7 +606,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:673",
+		Source:     "scripts/cmd/generate-colors/main.go:849",
 	},
 	{
 		ConsumerID: "claude.theme.merged",
@@ -615,7 +615,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:654",
+		Source:     "scripts/cmd/generate-colors/main.go:830",
 	},
 	{
 		ConsumerID: "claude.theme.permission",
@@ -624,7 +624,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:643",
+		Source:     "scripts/cmd/generate-colors/main.go:819",
 	},
 	{
 		ConsumerID: "claude.theme.permissionShimmer",
@@ -633,7 +633,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:644",
+		Source:     "scripts/cmd/generate-colors/main.go:820",
 	},
 	{
 		ConsumerID: "claude.theme.planMode",
@@ -642,7 +642,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:657",
+		Source:     "scripts/cmd/generate-colors/main.go:833",
 	},
 	{
 		ConsumerID: "claude.theme.professionalBlue",
@@ -651,7 +651,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:649",
+		Source:     "scripts/cmd/generate-colors/main.go:825",
 	},
 	{
 		ConsumerID: "claude.theme.promptBorder",
@@ -661,7 +661,7 @@ var generatedPairs = []PairSpec{
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "border",
 		Reason:     "border shape provides a non-color cue",
-		Source:     "scripts/cmd/generate-colors/main.go:655",
+		Source:     "scripts/cmd/generate-colors/main.go:831",
 	},
 	{
 		ConsumerID: "claude.theme.promptBorderShimmer",
@@ -671,7 +671,7 @@ var generatedPairs = []PairSpec{
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "border",
 		Reason:     "border shape provides a non-color cue",
-		Source:     "scripts/cmd/generate-colors/main.go:656",
+		Source:     "scripts/cmd/generate-colors/main.go:832",
 	},
 	{
 		ConsumerID: "claude.theme.rate_limit_empty",
@@ -680,7 +680,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:676",
+		Source:     "scripts/cmd/generate-colors/main.go:852",
 	},
 	{
 		ConsumerID: "claude.theme.rate_limit_fill",
@@ -689,7 +689,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:675",
+		Source:     "scripts/cmd/generate-colors/main.go:851",
 	},
 	{
 		ConsumerID: "claude.theme.remember",
@@ -698,7 +698,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:645",
+		Source:     "scripts/cmd/generate-colors/main.go:821",
 	},
 	{
 		ConsumerID: "claude.theme.selectionBg",
@@ -707,7 +707,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:674",
+		Source:     "scripts/cmd/generate-colors/main.go:850",
 	},
 	{
 		ConsumerID: "claude.theme.skill",
@@ -716,7 +716,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:646",
+		Source:     "scripts/cmd/generate-colors/main.go:822",
 	},
 	{
 		ConsumerID: "claude.theme.subtle",
@@ -725,7 +725,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:641",
+		Source:     "scripts/cmd/generate-colors/main.go:817",
 	},
 	{
 		ConsumerID: "claude.theme.success",
@@ -734,7 +734,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:650",
+		Source:     "scripts/cmd/generate-colors/main.go:826",
 	},
 	{
 		ConsumerID: "claude.theme.suggestion",
@@ -743,7 +743,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:642",
+		Source:     "scripts/cmd/generate-colors/main.go:818",
 	},
 	{
 		ConsumerID: "claude.theme.text",
@@ -752,7 +752,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:637",
+		Source:     "scripts/cmd/generate-colors/main.go:813",
 	},
 	{
 		ConsumerID: "claude.theme.userMessageBackground",
@@ -761,7 +761,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:670",
+		Source:     "scripts/cmd/generate-colors/main.go:846",
 	},
 	{
 		ConsumerID: "claude.theme.userMessageBackgroundHover",
@@ -770,7 +770,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:671",
+		Source:     "scripts/cmd/generate-colors/main.go:847",
 	},
 	{
 		ConsumerID: "claude.theme.warning",
@@ -779,7 +779,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:652",
+		Source:     "scripts/cmd/generate-colors/main.go:828",
 	},
 	{
 		ConsumerID: "claude.theme.warningShimmer",
@@ -788,7 +788,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:653",
+		Source:     "scripts/cmd/generate-colors/main.go:829",
 	},
 	{
 		ConsumerID: "delta.style.file-style",
@@ -914,7 +914,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1084",
+		Source:     "scripts/cmd/generate-colors/main.go:1260",
 	},
 	{
 		ConsumerID: "eza.theme.broken_path_overlay",
@@ -923,7 +923,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1091",
+		Source:     "scripts/cmd/generate-colors/main.go:1267",
 	},
 	{
 		ConsumerID: "eza.theme.broken_symlink",
@@ -932,7 +932,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1090",
+		Source:     "scripts/cmd/generate-colors/main.go:1266",
 	},
 	{
 		ConsumerID: "eza.theme.control_char",
@@ -941,7 +941,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1089",
+		Source:     "scripts/cmd/generate-colors/main.go:1265",
 	},
 	{
 		ConsumerID: "eza.theme.date",
@@ -950,7 +950,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1082",
+		Source:     "scripts/cmd/generate-colors/main.go:1258",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.build",
@@ -959,7 +959,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1079",
+		Source:     "scripts/cmd/generate-colors/main.go:1255",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.compiled",
@@ -968,7 +968,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1078",
+		Source:     "scripts/cmd/generate-colors/main.go:1254",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.compressed",
@@ -977,7 +977,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1076",
+		Source:     "scripts/cmd/generate-colors/main.go:1252",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.crypto",
@@ -986,7 +986,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1074",
+		Source:     "scripts/cmd/generate-colors/main.go:1250",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.document",
@@ -995,7 +995,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1075",
+		Source:     "scripts/cmd/generate-colors/main.go:1251",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.image",
@@ -1004,7 +1004,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1070",
+		Source:     "scripts/cmd/generate-colors/main.go:1246",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.lossless",
@@ -1013,7 +1013,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1073",
+		Source:     "scripts/cmd/generate-colors/main.go:1249",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.music",
@@ -1022,7 +1022,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1072",
+		Source:     "scripts/cmd/generate-colors/main.go:1248",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.source",
@@ -1031,7 +1031,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1080",
+		Source:     "scripts/cmd/generate-colors/main.go:1256",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.temp",
@@ -1040,7 +1040,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1077",
+		Source:     "scripts/cmd/generate-colors/main.go:1253",
 	},
 	{
 		ConsumerID: "eza.theme.file_type.video",
@@ -1049,7 +1049,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1071",
+		Source:     "scripts/cmd/generate-colors/main.go:1247",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.block_device",
@@ -1058,7 +1058,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1014",
+		Source:     "scripts/cmd/generate-colors/main.go:1190",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.char_device",
@@ -1067,7 +1067,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1015",
+		Source:     "scripts/cmd/generate-colors/main.go:1191",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.directory",
@@ -1076,7 +1076,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1011",
+		Source:     "scripts/cmd/generate-colors/main.go:1187",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.executable",
@@ -1085,7 +1085,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1018",
+		Source:     "scripts/cmd/generate-colors/main.go:1194",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.mount_point",
@@ -1094,7 +1094,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1019",
+		Source:     "scripts/cmd/generate-colors/main.go:1195",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.normal",
@@ -1103,7 +1103,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1010",
+		Source:     "scripts/cmd/generate-colors/main.go:1186",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.pipe",
@@ -1112,7 +1112,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1013",
+		Source:     "scripts/cmd/generate-colors/main.go:1189",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.socket",
@@ -1121,7 +1121,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1016",
+		Source:     "scripts/cmd/generate-colors/main.go:1192",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.special",
@@ -1130,7 +1130,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1017",
+		Source:     "scripts/cmd/generate-colors/main.go:1193",
 	},
 	{
 		ConsumerID: "eza.theme.filekinds.symlink",
@@ -1139,7 +1139,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1012",
+		Source:     "scripts/cmd/generate-colors/main.go:1188",
 	},
 	{
 		ConsumerID: "eza.theme.flags",
@@ -1148,7 +1148,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1087",
+		Source:     "scripts/cmd/generate-colors/main.go:1263",
 	},
 	{
 		ConsumerID: "eza.theme.git.conflicted",
@@ -1157,7 +1157,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1059",
+		Source:     "scripts/cmd/generate-colors/main.go:1235",
 	},
 	{
 		ConsumerID: "eza.theme.git.deleted",
@@ -1166,7 +1166,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1055",
+		Source:     "scripts/cmd/generate-colors/main.go:1231",
 	},
 	{
 		ConsumerID: "eza.theme.git.ignored",
@@ -1175,7 +1175,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1058",
+		Source:     "scripts/cmd/generate-colors/main.go:1234",
 	},
 	{
 		ConsumerID: "eza.theme.git.modified",
@@ -1184,7 +1184,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1054",
+		Source:     "scripts/cmd/generate-colors/main.go:1230",
 	},
 	{
 		ConsumerID: "eza.theme.git.new",
@@ -1193,7 +1193,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1053",
+		Source:     "scripts/cmd/generate-colors/main.go:1229",
 	},
 	{
 		ConsumerID: "eza.theme.git.renamed",
@@ -1202,7 +1202,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1056",
+		Source:     "scripts/cmd/generate-colors/main.go:1232",
 	},
 	{
 		ConsumerID: "eza.theme.git.typechange",
@@ -1211,7 +1211,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1057",
+		Source:     "scripts/cmd/generate-colors/main.go:1233",
 	},
 	{
 		ConsumerID: "eza.theme.git_repo.branch_main",
@@ -1220,7 +1220,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1060",
+		Source:     "scripts/cmd/generate-colors/main.go:1236",
 	},
 	{
 		ConsumerID: "eza.theme.git_repo.branch_other",
@@ -1229,7 +1229,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1061",
+		Source:     "scripts/cmd/generate-colors/main.go:1237",
 	},
 	{
 		ConsumerID: "eza.theme.git_repo.git_clean",
@@ -1238,7 +1238,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1062",
+		Source:     "scripts/cmd/generate-colors/main.go:1238",
 	},
 	{
 		ConsumerID: "eza.theme.git_repo.git_dirty",
@@ -1247,7 +1247,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1063",
+		Source:     "scripts/cmd/generate-colors/main.go:1239",
 	},
 	{
 		ConsumerID: "eza.theme.header",
@@ -1256,7 +1256,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1085",
+		Source:     "scripts/cmd/generate-colors/main.go:1261",
 	},
 	{
 		ConsumerID: "eza.theme.inode",
@@ -1265,7 +1265,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1083",
+		Source:     "scripts/cmd/generate-colors/main.go:1259",
 	},
 	{
 		ConsumerID: "eza.theme.links.multi_link_file",
@@ -1274,7 +1274,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1052",
+		Source:     "scripts/cmd/generate-colors/main.go:1228",
 	},
 	{
 		ConsumerID: "eza.theme.links.normal",
@@ -1283,7 +1283,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1051",
+		Source:     "scripts/cmd/generate-colors/main.go:1227",
 	},
 	{
 		ConsumerID: "eza.theme.octal",
@@ -1292,7 +1292,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1086",
+		Source:     "scripts/cmd/generate-colors/main.go:1262",
 	},
 	{
 		ConsumerID: "eza.theme.perms.attribute",
@@ -1301,7 +1301,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1032",
+		Source:     "scripts/cmd/generate-colors/main.go:1208",
 	},
 	{
 		ConsumerID: "eza.theme.perms.group_execute",
@@ -1310,7 +1310,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1026",
+		Source:     "scripts/cmd/generate-colors/main.go:1202",
 	},
 	{
 		ConsumerID: "eza.theme.perms.group_read",
@@ -1319,7 +1319,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1024",
+		Source:     "scripts/cmd/generate-colors/main.go:1200",
 	},
 	{
 		ConsumerID: "eza.theme.perms.group_write",
@@ -1328,7 +1328,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1025",
+		Source:     "scripts/cmd/generate-colors/main.go:1201",
 	},
 	{
 		ConsumerID: "eza.theme.perms.other_execute",
@@ -1337,7 +1337,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1029",
+		Source:     "scripts/cmd/generate-colors/main.go:1205",
 	},
 	{
 		ConsumerID: "eza.theme.perms.other_read",
@@ -1346,7 +1346,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1027",
+		Source:     "scripts/cmd/generate-colors/main.go:1203",
 	},
 	{
 		ConsumerID: "eza.theme.perms.other_write",
@@ -1355,7 +1355,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1028",
+		Source:     "scripts/cmd/generate-colors/main.go:1204",
 	},
 	{
 		ConsumerID: "eza.theme.perms.special_other",
@@ -1364,7 +1364,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1031",
+		Source:     "scripts/cmd/generate-colors/main.go:1207",
 	},
 	{
 		ConsumerID: "eza.theme.perms.special_user_file",
@@ -1373,7 +1373,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1030",
+		Source:     "scripts/cmd/generate-colors/main.go:1206",
 	},
 	{
 		ConsumerID: "eza.theme.perms.user_execute_file",
@@ -1382,7 +1382,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1022",
+		Source:     "scripts/cmd/generate-colors/main.go:1198",
 	},
 	{
 		ConsumerID: "eza.theme.perms.user_execute_other",
@@ -1391,7 +1391,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1023",
+		Source:     "scripts/cmd/generate-colors/main.go:1199",
 	},
 	{
 		ConsumerID: "eza.theme.perms.user_read",
@@ -1400,7 +1400,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1020",
+		Source:     "scripts/cmd/generate-colors/main.go:1196",
 	},
 	{
 		ConsumerID: "eza.theme.perms.user_write",
@@ -1409,7 +1409,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1021",
+		Source:     "scripts/cmd/generate-colors/main.go:1197",
 	},
 	{
 		ConsumerID: "eza.theme.punctuation",
@@ -1418,7 +1418,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1081",
+		Source:     "scripts/cmd/generate-colors/main.go:1257",
 	},
 	{
 		ConsumerID: "eza.theme.security_context.none",
@@ -1427,7 +1427,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1064",
+		Source:     "scripts/cmd/generate-colors/main.go:1240",
 	},
 	{
 		ConsumerID: "eza.theme.security_context.selinux.colon",
@@ -1436,7 +1436,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1065",
+		Source:     "scripts/cmd/generate-colors/main.go:1241",
 	},
 	{
 		ConsumerID: "eza.theme.security_context.selinux.range",
@@ -1445,7 +1445,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1069",
+		Source:     "scripts/cmd/generate-colors/main.go:1245",
 	},
 	{
 		ConsumerID: "eza.theme.security_context.selinux.role",
@@ -1454,7 +1454,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1067",
+		Source:     "scripts/cmd/generate-colors/main.go:1243",
 	},
 	{
 		ConsumerID: "eza.theme.security_context.selinux.typ",
@@ -1463,7 +1463,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1068",
+		Source:     "scripts/cmd/generate-colors/main.go:1244",
 	},
 	{
 		ConsumerID: "eza.theme.security_context.selinux.user",
@@ -1472,7 +1472,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1066",
+		Source:     "scripts/cmd/generate-colors/main.go:1242",
 	},
 	{
 		ConsumerID: "eza.theme.size.major",
@@ -1481,7 +1481,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1033",
+		Source:     "scripts/cmd/generate-colors/main.go:1209",
 	},
 	{
 		ConsumerID: "eza.theme.size.minor",
@@ -1490,7 +1490,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1034",
+		Source:     "scripts/cmd/generate-colors/main.go:1210",
 	},
 	{
 		ConsumerID: "eza.theme.size.number_byte",
@@ -1499,7 +1499,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1035",
+		Source:     "scripts/cmd/generate-colors/main.go:1211",
 	},
 	{
 		ConsumerID: "eza.theme.size.number_giga",
@@ -1508,7 +1508,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1038",
+		Source:     "scripts/cmd/generate-colors/main.go:1214",
 	},
 	{
 		ConsumerID: "eza.theme.size.number_huge",
@@ -1517,7 +1517,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1039",
+		Source:     "scripts/cmd/generate-colors/main.go:1215",
 	},
 	{
 		ConsumerID: "eza.theme.size.number_kilo",
@@ -1526,7 +1526,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1036",
+		Source:     "scripts/cmd/generate-colors/main.go:1212",
 	},
 	{
 		ConsumerID: "eza.theme.size.number_mega",
@@ -1535,7 +1535,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1037",
+		Source:     "scripts/cmd/generate-colors/main.go:1213",
 	},
 	{
 		ConsumerID: "eza.theme.size.unit_byte",
@@ -1544,7 +1544,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1040",
+		Source:     "scripts/cmd/generate-colors/main.go:1216",
 	},
 	{
 		ConsumerID: "eza.theme.size.unit_giga",
@@ -1553,7 +1553,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1043",
+		Source:     "scripts/cmd/generate-colors/main.go:1219",
 	},
 	{
 		ConsumerID: "eza.theme.size.unit_huge",
@@ -1562,7 +1562,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1044",
+		Source:     "scripts/cmd/generate-colors/main.go:1220",
 	},
 	{
 		ConsumerID: "eza.theme.size.unit_kilo",
@@ -1571,7 +1571,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1041",
+		Source:     "scripts/cmd/generate-colors/main.go:1217",
 	},
 	{
 		ConsumerID: "eza.theme.size.unit_mega",
@@ -1580,7 +1580,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1042",
+		Source:     "scripts/cmd/generate-colors/main.go:1218",
 	},
 	{
 		ConsumerID: "eza.theme.symlink_path",
@@ -1589,7 +1589,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1088",
+		Source:     "scripts/cmd/generate-colors/main.go:1264",
 	},
 	{
 		ConsumerID: "eza.theme.users.group_other",
@@ -1598,7 +1598,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1049",
+		Source:     "scripts/cmd/generate-colors/main.go:1225",
 	},
 	{
 		ConsumerID: "eza.theme.users.group_root",
@@ -1607,7 +1607,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1050",
+		Source:     "scripts/cmd/generate-colors/main.go:1226",
 	},
 	{
 		ConsumerID: "eza.theme.users.group_yours",
@@ -1616,7 +1616,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1048",
+		Source:     "scripts/cmd/generate-colors/main.go:1224",
 	},
 	{
 		ConsumerID: "eza.theme.users.user_other",
@@ -1625,7 +1625,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1047",
+		Source:     "scripts/cmd/generate-colors/main.go:1223",
 	},
 	{
 		ConsumerID: "eza.theme.users.user_root",
@@ -1634,7 +1634,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1046",
+		Source:     "scripts/cmd/generate-colors/main.go:1222",
 	},
 	{
 		ConsumerID: "eza.theme.users.user_you",
@@ -1643,7 +1643,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1045",
+		Source:     "scripts/cmd/generate-colors/main.go:1221",
 	},
 	{
 		ConsumerID: "gh-board.theme.accent",
@@ -1652,7 +1652,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1567",
+		Source:     "scripts/cmd/generate-colors/main.go:1743",
 	},
 	{
 		ConsumerID: "gh-board.theme.blue",
@@ -1661,7 +1661,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1570",
+		Source:     "scripts/cmd/generate-colors/main.go:1746",
 	},
 	{
 		ConsumerID: "gh-board.theme.border_focused",
@@ -1670,7 +1670,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "border",
-		Source:     "scripts/cmd/generate-colors/main.go:1565",
+		Source:     "scripts/cmd/generate-colors/main.go:1741",
 	},
 	{
 		ConsumerID: "gh-board.theme.border_unfocused",
@@ -1679,7 +1679,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "border",
-		Source:     "scripts/cmd/generate-colors/main.go:1566",
+		Source:     "scripts/cmd/generate-colors/main.go:1742",
 	},
 	{
 		ConsumerID: "gh-board.theme.gray",
@@ -1688,7 +1688,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1571",
+		Source:     "scripts/cmd/generate-colors/main.go:1747",
 	},
 	{
 		ConsumerID: "gh-board.theme.green",
@@ -1697,7 +1697,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1572",
+		Source:     "scripts/cmd/generate-colors/main.go:1748",
 	},
 	{
 		ConsumerID: "gh-board.theme.orange",
@@ -1706,7 +1706,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1573",
+		Source:     "scripts/cmd/generate-colors/main.go:1749",
 	},
 	{
 		ConsumerID: "gh-board.theme.pink",
@@ -1715,7 +1715,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1574",
+		Source:     "scripts/cmd/generate-colors/main.go:1750",
 	},
 	{
 		ConsumerID: "gh-board.theme.purple",
@@ -1724,7 +1724,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1575",
+		Source:     "scripts/cmd/generate-colors/main.go:1751",
 	},
 	{
 		ConsumerID: "gh-board.theme.red",
@@ -1733,7 +1733,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1576",
+		Source:     "scripts/cmd/generate-colors/main.go:1752",
 	},
 	{
 		ConsumerID: "gh-board.theme.shadow_bg",
@@ -1742,7 +1742,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:1569",
+		Source:     "scripts/cmd/generate-colors/main.go:1745",
 	},
 	{
 		ConsumerID: "gh-board.theme.shadow_fg",
@@ -1751,7 +1751,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:1568",
+		Source:     "scripts/cmd/generate-colors/main.go:1744",
 	},
 	{
 		ConsumerID: "gh-board.theme.text",
@@ -1760,7 +1760,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1561",
+		Source:     "scripts/cmd/generate-colors/main.go:1737",
 	},
 	{
 		ConsumerID: "gh-board.theme.text_dim",
@@ -1769,7 +1769,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1562",
+		Source:     "scripts/cmd/generate-colors/main.go:1738",
 	},
 	{
 		ConsumerID: "gh-board.theme.text_inverted",
@@ -1778,7 +1778,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:1564",
+		Source:     "scripts/cmd/generate-colors/main.go:1740",
 	},
 	{
 		ConsumerID: "gh-board.theme.text_muted",
@@ -1787,7 +1787,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1563",
+		Source:     "scripts/cmd/generate-colors/main.go:1739",
 	},
 	{
 		ConsumerID: "gh-board.theme.yellow",
@@ -1796,7 +1796,349 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1577",
+		Source:     "scripts/cmd/generate-colors/main.go:1753",
+	},
+	{
+		ConsumerID: "gh-dash.terminalDefault.taskStart",
+		Foreground: "foregrounds.main",
+		Background: TokenBackground("core.active_line"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/ui.go:1541-1548 (TaskStart case: Background(SelectedBackground), no Foreground call) + internal/tui/ui.go:92-93 (taskSpinner.Style, same shape); background wiring internal/tui/theme/theme.go:79-82 (SelectedBackground shim); gh-dash sets no foreground here at all, so the terminal's default foreground applies - in our environment that's wezterm/wezterm.lua:203 (foreground = colors.foregrounds.main), which is why this pair uses foregrounds.main directly rather than resolving through ghDashColorSpecs. The ratio (9.85) currently matches gh-dash.theme.text.primary.selected because both resolve to foregrounds.main today; that's a coincidence of the current mapping, not a shared use-site - a future divergence between gh-dash's text.primary token and our terminal's default foreground would only be caught here; gh-dash v4.23.2 rev 78b9ca5e21dcee4740502018d46dc5e4b613db86",
+	},
+	{
+		ConsumerID: "gh-dash.theme.ansi.brightWhite.selected",
+		Foreground: "ansi.bright_white",
+		Background: TokenBackground("core.active_line"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/components/notificationrow/notificationrow.go:206-217 (renderActivity, raw \\x1b[97m colors the \"+%d \" new-comments count text, not a glyph; no gh-dash token read - resolved by our WezTerm ANSI palette instead); background: internal/tui/context/styles.go:191-195 (Table.SelectedCellStyle) + internal/tui/components/table/table.go:304-365 (renderRow applies it to the selected row); gh-dash v4.23.2 rev 78b9ca5e21dcee4740502018d46dc5e4b613db86",
+	},
+	{
+		ConsumerID: "gh-dash.theme.ansi.green.selected",
+		Foreground: "ansi.green",
+		Background: TokenBackground("core.active_line"),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "indicator",
+		Source:     "internal/tui/components/notificationrow/notificationrow.go:206-217 (renderActivity, raw \\x1b[32m, no gh-dash token read - resolved by our WezTerm ANSI palette instead); background: internal/tui/context/styles.go:191-195 (Table.SelectedCellStyle) + internal/tui/components/table/table.go:304-365 (renderRow applies it to the selected row); gh-dash v4.23.2 rev 78b9ca5e21dcee4740502018d46dc5e4b613db86",
+	},
+	{
+		ConsumerID: "gh-dash.theme.background.selected",
+		Foreground: "core.active_line",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "surface",
+		Source:     "scripts/cmd/generate-colors/main.go:378",
+	},
+	{
+		ConsumerID: "gh-dash.theme.background.selected.helpLabel",
+		Foreground: "core.active_line",
+		Background: TokenBackground("foregrounds.subdued"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/components/footer/footer.go:51-55",
+	},
+	{
+		ConsumerID: "gh-dash.theme.border.faint",
+		Foreground: "blues_slates.slate_mid",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "border",
+		Source:     "internal/tui/context/styles.go:201-204; internal/tui/components/branchsidebar/branchsidebar.go:59-62; internal/tui/components/prview/* (multiple files); internal/tui/components/table/table.go:371-374",
+	},
+	{
+		ConsumerID: "gh-dash.theme.border.faint.selected",
+		Foreground: "blues_slates.slate_mid",
+		Background: TokenBackground("core.active_line"),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "border",
+		Source:     "internal/tui/components/footer/footer.go:174-189; internal/tui/common/styles.go:50-52",
+	},
+	{
+		ConsumerID: "gh-dash.theme.border.primary",
+		Foreground: "teals.bright",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "border",
+		Source:     "internal/tui/context/styles.go:168-180,217-221; internal/tui/components/search/search.go:59-65; internal/tui/components/sidebar/sidebar.go:51-73; internal/tui/components/tabs/tabs.go:66-74",
+	},
+	{
+		ConsumerID: "gh-dash.theme.border.primary.faintBorder",
+		Foreground: "teals.bright",
+		Background: TokenBackground("blues_slates.slate_mid"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "border",
+		Source:     "internal/tui/context/styles.go:231-233; internal/tui/components/footer/footer.go:174-182",
+	},
+	{
+		ConsumerID: "gh-dash.theme.border.secondary",
+		Foreground: "teals.border",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "border",
+		Source:     "internal/tui/context/styles.go:126-134,215-216,237-240; internal/tui/components/autocomplete/autocomplete.go:220-275; internal/tui/components/inputbox/inputbox.go:128-168; internal/tui/components/tabs/tabs.go:100-107",
+	},
+	{
+		ConsumerID: "gh-dash.theme.icon.collaborator",
+		Foreground: "purples.lavender",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "indicator",
+		Source:     "internal/data/utils.go:19-34; internal/tui/components/issueview/issueview.go:329-345; internal/tui/components/prview/prview.go:483-499",
+	},
+	{
+		ConsumerID: "gh-dash.theme.icon.collaborator.selected",
+		Foreground: "purples.lavender",
+		Background: TokenBackground("core.active_line"),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "indicator",
+		Source:     "internal/data/utils.go:19-27; internal/data/issueapi.go:61-65; internal/data/prapi.go:393-397; internal/tui/components/issuerow/issuerow.go:22-33,75-77; internal/tui/components/prrow/prrow.go:185-216,324-353; internal/tui/components/table/table.go:304-374",
+	},
+	{
+		ConsumerID: "gh-dash.theme.icon.contributor",
+		Foreground: "teals.mid_bright",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "indicator",
+		Source:     "internal/data/utils.go:19-34; internal/tui/components/issueview/issueview.go:329-345; internal/tui/components/prview/prview.go:483-499",
+	},
+	{
+		ConsumerID: "gh-dash.theme.icon.contributor.selected",
+		Foreground: "teals.mid_bright",
+		Background: TokenBackground("core.active_line"),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "indicator",
+		Source:     "internal/data/utils.go:19-30; internal/data/issueapi.go:61-65; internal/data/prapi.go:393-397; internal/tui/components/issuerow/issuerow.go:22-33,75-77; internal/tui/components/prrow/prrow.go:185-216,324-353; internal/tui/components/table/table.go:304-374",
+	},
+	{
+		ConsumerID: "gh-dash.theme.icon.member",
+		Foreground: "purples.bright_purple",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "indicator",
+		Source:     "internal/data/utils.go:19-34; internal/tui/components/issueview/issueview.go:329-345; internal/tui/components/prview/prview.go:483-499",
+	},
+	{
+		ConsumerID: "gh-dash.theme.icon.member.selected",
+		Foreground: "purples.bright_purple",
+		Background: TokenBackground("core.active_line"),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "indicator",
+		Source:     "internal/data/utils.go:19-32; internal/data/issueapi.go:61-65; internal/data/prapi.go:393-397; internal/tui/components/issuerow/issuerow.go:22-33,75-77; internal/tui/components/prrow/prrow.go:185-216,324-353; internal/tui/components/table/table.go:304-374",
+	},
+	{
+		ConsumerID: "gh-dash.theme.icon.newcontributor",
+		Foreground: "semantic.success",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "indicator",
+		Source:     "internal/data/utils.go:19-34; internal/tui/components/issueview/issueview.go:329-345; internal/tui/components/prview/prview.go:483-499",
+	},
+	{
+		ConsumerID: "gh-dash.theme.icon.newcontributor.selected",
+		Foreground: "semantic.success",
+		Background: TokenBackground("core.active_line"),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "indicator",
+		Source:     "internal/data/utils.go:19-24; internal/data/issueapi.go:61-65; internal/data/prapi.go:393-397; internal/tui/components/issuerow/issuerow.go:22-33,75-77; internal/tui/components/prrow/prrow.go:185-216,324-353; internal/tui/components/table/table.go:304-374",
+	},
+	{
+		ConsumerID: "gh-dash.theme.icon.owner",
+		Foreground: "ansi.bright_yellow",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "indicator",
+		Source:     "internal/data/utils.go:19-34; internal/tui/components/issueview/issueview.go:329-345; internal/tui/components/prview/prview.go:483-499",
+	},
+	{
+		ConsumerID: "gh-dash.theme.icon.owner.selected",
+		Foreground: "ansi.bright_yellow",
+		Background: TokenBackground("core.active_line"),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "indicator",
+		Source:     "internal/data/utils.go:19-34; internal/data/issueapi.go:61-65; internal/data/prapi.go:393-397; internal/tui/components/issuerow/issuerow.go:22-33,75-77; internal/tui/components/prrow/prrow.go:185-216,324-353; internal/tui/components/table/table.go:304-374",
+	},
+	{
+		ConsumerID: "gh-dash.theme.text.error",
+		Foreground: "ansi.bright_red",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/common/styles.go:54,66-68 (and other ErrorText use-sites)",
+	},
+	{
+		ConsumerID: "gh-dash.theme.text.error.selected",
+		Foreground: "ansi.bright_red",
+		Background: TokenBackground("core.active_line"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/components/table/table.go:304-374; internal/tui/components/prrow/prrow.go:43-59,109-152; internal/tui/components/branch/branch.go:29-45,85-138; internal/tui/components/notificationrow/notificationrow.go:88-106; internal/tui/components/reposection/reposection.go:555-565; internal/tui/ui.go:1549-1553",
+	},
+	{
+		ConsumerID: "gh-dash.theme.text.faint",
+		Foreground: "foregrounds.subdued",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/common/styles.go:48-59 (and other FaintText use-sites)",
+	},
+	{
+		ConsumerID: "gh-dash.theme.text.faint.faintBorder",
+		Foreground: "foregrounds.subdued",
+		Background: TokenBackground("blues_slates.slate_mid"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/context/styles.go:234-236; internal/tui/components/footer/footer.go:155-157; internal/tui/components/inputbox/inputbox.go:49-56",
+	},
+	{
+		ConsumerID: "gh-dash.theme.text.faint.selected",
+		Foreground: "foregrounds.subdued",
+		Background: TokenBackground("core.active_line"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/context/styles.go:186-190; internal/tui/components/table/table.go:304-374; internal/tui/components/prrow/prrow.go:30-40,81-93,127-128,230-281; internal/tui/components/branch/branch.go:60-72,174-203; internal/tui/components/notificationrow/notificationrow.go:58-60,94-99,161-170; internal/tui/components/tabs/tabs.go:112-138; internal/tui/components/footer/footer.go:184; internal/tui/ui.go:1568-1573",
+	},
+	{
+		ConsumerID: "gh-dash.theme.text.inverted.draftPill",
+		Foreground: "core.darkest_bg",
+		Background: TokenBackground("foregrounds.subdued"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/components/prview/prview.go:280-298; internal/tui/context/styles.go:120-122",
+	},
+	{
+		ConsumerID: "gh-dash.theme.text.inverted.selected",
+		Foreground: "core.darkest_bg",
+		Background: TokenBackground("core.active_line"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/context/styles.go:222-225; internal/tui/components/footer/footer.go:159-190; internal/tui/common/styles.go:50-52",
+	},
+	{
+		ConsumerID: "gh-dash.theme.text.primary",
+		Foreground: "foregrounds.main",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/common/styles.go:45-47 (and other MainTextStyle use-sites)",
+	},
+	{
+		ConsumerID: "gh-dash.theme.text.primary.faintBorder",
+		Foreground: "foregrounds.main",
+		Background: TokenBackground("blues_slates.slate_mid"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/components/inputbox/inputbox.go:43-56; internal/tui/ui.go:1110-1139",
+	},
+	{
+		ConsumerID: "gh-dash.theme.text.primary.selected",
+		Foreground: "foregrounds.main",
+		Background: TokenBackground("core.active_line"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/common/styles.go:101-109; internal/tui/context/styles.go:154-157,194-195,209-213,242-245; internal/tui/components/table/table.go:304-374; internal/tui/components/section/section.go:415-420; internal/tui/components/tabs/tabs.go:66-74,100-107; internal/tui/components/autocomplete/autocomplete.go:229-275; internal/tui/components/prview/prview.go:536-540",
+	},
+	{
+		ConsumerID: "gh-dash.theme.text.secondary",
+		Foreground: "foregrounds.dim",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/context/styles.go:124-134 (and other SecondaryText use-sites)",
+	},
+	{
+		ConsumerID: "gh-dash.theme.text.secondary.faintBorder",
+		Foreground: "foregrounds.dim",
+		Background: TokenBackground("blues_slates.slate_mid"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/components/inputbox/inputbox.go:49-56",
+	},
+	{
+		ConsumerID: "gh-dash.theme.text.secondary.selected",
+		Foreground: "foregrounds.dim",
+		Background: TokenBackground("core.active_line"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/common/styles.go:90-98; internal/tui/components/table/table.go:304-374; internal/tui/components/prrow/prrow.go:185-212; internal/tui/components/branch/branch.go:309-315; internal/tui/components/notificationrow/notificationrow.go:83,110,134-170; internal/tui/components/utils.go:31-55",
+	},
+	{
+		ConsumerID: "gh-dash.theme.text.success",
+		Foreground: "semantic.success",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/common/styles.go:55,69-71 (and other SuccessText use-sites)",
+	},
+	{
+		ConsumerID: "gh-dash.theme.text.success.faintBorder",
+		Foreground: "semantic.success",
+		Background: TokenBackground("blues_slates.slate_mid"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/components/footer/footer.go:138-152; internal/tui/context/styles.go:227-230",
+	},
+	{
+		ConsumerID: "gh-dash.theme.text.success.selected",
+		Foreground: "semantic.success",
+		Background: TokenBackground("core.active_line"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/components/table/table.go:304-374; internal/tui/components/prrow/prrow.go:43-52,69-94,109-152; internal/tui/components/branch/branch.go:29-55,85-138,258-270; internal/tui/components/notificationrow/notificationrow.go:88-103; internal/tui/components/reposection/reposection.go:555-565; internal/tui/ui.go:1554-1558",
+	},
+	{
+		ConsumerID: "gh-dash.theme.text.warning",
+		Foreground: "ansi.bright_yellow",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/common/styles.go:60-65,84-86 (and other WarningText use-sites)",
+	},
+	{
+		ConsumerID: "gh-dash.theme.text.warning.selected",
+		Foreground: "ansi.bright_yellow",
+		Background: TokenBackground("core.active_line"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "internal/tui/components/table/table.go:304-374; internal/tui/components/prrow/prrow.go:76-93; internal/tui/components/branch/branch.go:292-306; internal/tui/components/notificationrow/notificationrow.go:100-103,145-149; internal/tui/components/footer/footer.go:56-61",
 	},
 	{
 		ConsumerID: "herdr.theme.accent",
@@ -1805,7 +2147,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "border",
-		Source:     "scripts/cmd/generate-colors/main.go:1582",
+		Source:     "scripts/cmd/generate-colors/main.go:1758",
 	},
 	{
 		ConsumerID: "herdr.theme.blue",
@@ -1814,7 +2156,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "indicator",
-		Source:     "scripts/cmd/generate-colors/main.go:1595",
+		Source:     "scripts/cmd/generate-colors/main.go:1771",
 	},
 	{
 		ConsumerID: "herdr.theme.green",
@@ -1823,7 +2165,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "indicator",
-		Source:     "scripts/cmd/generate-colors/main.go:1592",
+		Source:     "scripts/cmd/generate-colors/main.go:1768",
 	},
 	{
 		ConsumerID: "herdr.theme.mauve",
@@ -1832,7 +2174,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1591",
+		Source:     "scripts/cmd/generate-colors/main.go:1767",
 	},
 	{
 		ConsumerID: "herdr.theme.overlay0",
@@ -1841,7 +2183,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1587",
+		Source:     "scripts/cmd/generate-colors/main.go:1763",
 	},
 	{
 		ConsumerID: "herdr.theme.overlay1",
@@ -1850,7 +2192,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1588",
+		Source:     "scripts/cmd/generate-colors/main.go:1764",
 	},
 	{
 		ConsumerID: "herdr.theme.red",
@@ -1859,7 +2201,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "indicator",
-		Source:     "scripts/cmd/generate-colors/main.go:1594",
+		Source:     "scripts/cmd/generate-colors/main.go:1770",
 	},
 	{
 		ConsumerID: "herdr.theme.subtext0",
@@ -1868,7 +2210,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1590",
+		Source:     "scripts/cmd/generate-colors/main.go:1766",
 	},
 	{
 		ConsumerID: "herdr.theme.surface1",
@@ -1877,7 +2219,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:1585",
+		Source:     "scripts/cmd/generate-colors/main.go:1761",
 	},
 	{
 		ConsumerID: "herdr.theme.surface_dim",
@@ -1886,7 +2228,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:1586",
+		Source:     "scripts/cmd/generate-colors/main.go:1762",
 	},
 	{
 		ConsumerID: "herdr.theme.teal",
@@ -1895,7 +2237,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "indicator",
-		Source:     "scripts/cmd/generate-colors/main.go:1596",
+		Source:     "scripts/cmd/generate-colors/main.go:1772",
 	},
 	{
 		ConsumerID: "herdr.theme.text",
@@ -1904,7 +2246,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1589",
+		Source:     "scripts/cmd/generate-colors/main.go:1765",
 	},
 	{
 		ConsumerID: "herdr.theme.yellow",
@@ -1913,7 +2255,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "indicator",
-		Source:     "scripts/cmd/generate-colors/main.go:1593",
+		Source:     "scripts/cmd/generate-colors/main.go:1769",
 	},
 	{
 		ConsumerID: "hunk.theme.accent",
@@ -2320,7 +2662,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1530",
+		Source:     "scripts/cmd/generate-colors/main.go:1706",
 	},
 	{
 		ConsumerID: "nvim.bufferline.background",
@@ -2329,7 +2671,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:18",
+		Source:     "nvim/lua/plugins/ui.lua:23",
 	},
 	{
 		ConsumerID: "nvim.bufferline.buffer_selected",
@@ -2338,7 +2680,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:24",
+		Source:     "nvim/lua/plugins/ui.lua:29",
 	},
 	{
 		ConsumerID: "nvim.bufferline.buffer_visible",
@@ -2347,7 +2689,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:23",
+		Source:     "nvim/lua/plugins/ui.lua:28",
 	},
 	{
 		ConsumerID: "nvim.bufferline.close_button",
@@ -2356,7 +2698,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:32",
+		Source:     "nvim/lua/plugins/ui.lua:37",
 	},
 	{
 		ConsumerID: "nvim.bufferline.close_button_selected",
@@ -2365,7 +2707,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:34",
+		Source:     "nvim/lua/plugins/ui.lua:39",
 	},
 	{
 		ConsumerID: "nvim.bufferline.close_button_visible",
@@ -2374,7 +2716,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:33",
+		Source:     "nvim/lua/plugins/ui.lua:38",
 	},
 	{
 		ConsumerID: "nvim.bufferline.error",
@@ -2383,7 +2725,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:38",
+		Source:     "nvim/lua/plugins/ui.lua:43",
 	},
 	{
 		ConsumerID: "nvim.bufferline.error_selected",
@@ -2392,7 +2734,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:40",
+		Source:     "nvim/lua/plugins/ui.lua:45",
 	},
 	{
 		ConsumerID: "nvim.bufferline.error_visible",
@@ -2401,7 +2743,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:39",
+		Source:     "nvim/lua/plugins/ui.lua:44",
 	},
 	{
 		ConsumerID: "nvim.bufferline.hint",
@@ -2410,7 +2752,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:44",
+		Source:     "nvim/lua/plugins/ui.lua:49",
 	},
 	{
 		ConsumerID: "nvim.bufferline.hint_selected",
@@ -2419,7 +2761,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:46",
+		Source:     "nvim/lua/plugins/ui.lua:51",
 	},
 	{
 		ConsumerID: "nvim.bufferline.hint_visible",
@@ -2428,7 +2770,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:45",
+		Source:     "nvim/lua/plugins/ui.lua:50",
 	},
 	{
 		ConsumerID: "nvim.bufferline.indicator_selected",
@@ -2437,7 +2779,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:28",
+		Source:     "nvim/lua/plugins/ui.lua:33",
 	},
 	{
 		ConsumerID: "nvim.bufferline.info",
@@ -2446,7 +2788,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:47",
+		Source:     "nvim/lua/plugins/ui.lua:52",
 	},
 	{
 		ConsumerID: "nvim.bufferline.info_selected",
@@ -2455,7 +2797,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:49",
+		Source:     "nvim/lua/plugins/ui.lua:54",
 	},
 	{
 		ConsumerID: "nvim.bufferline.info_visible",
@@ -2464,7 +2806,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:48",
+		Source:     "nvim/lua/plugins/ui.lua:53",
 	},
 	{
 		ConsumerID: "nvim.bufferline.modified",
@@ -2473,7 +2815,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:29",
+		Source:     "nvim/lua/plugins/ui.lua:34",
 	},
 	{
 		ConsumerID: "nvim.bufferline.modified_selected",
@@ -2482,7 +2824,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:31",
+		Source:     "nvim/lua/plugins/ui.lua:36",
 	},
 	{
 		ConsumerID: "nvim.bufferline.modified_visible",
@@ -2491,7 +2833,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:30",
+		Source:     "nvim/lua/plugins/ui.lua:35",
 	},
 	{
 		ConsumerID: "nvim.bufferline.numbers",
@@ -2500,7 +2842,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:35",
+		Source:     "nvim/lua/plugins/ui.lua:40",
 	},
 	{
 		ConsumerID: "nvim.bufferline.numbers_selected",
@@ -2509,7 +2851,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:37",
+		Source:     "nvim/lua/plugins/ui.lua:42",
 	},
 	{
 		ConsumerID: "nvim.bufferline.numbers_visible",
@@ -2518,7 +2860,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:36",
+		Source:     "nvim/lua/plugins/ui.lua:41",
 	},
 	{
 		ConsumerID: "nvim.bufferline.offset_separator",
@@ -2527,7 +2869,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:53",
+		Source:     "nvim/lua/plugins/ui.lua:58",
 	},
 	{
 		ConsumerID: "nvim.bufferline.pick",
@@ -2536,7 +2878,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:50",
+		Source:     "nvim/lua/plugins/ui.lua:55",
 	},
 	{
 		ConsumerID: "nvim.bufferline.pick_selected",
@@ -2545,7 +2887,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:52",
+		Source:     "nvim/lua/plugins/ui.lua:57",
 	},
 	{
 		ConsumerID: "nvim.bufferline.pick_visible",
@@ -2554,7 +2896,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:51",
+		Source:     "nvim/lua/plugins/ui.lua:56",
 	},
 	{
 		ConsumerID: "nvim.bufferline.separator",
@@ -2563,7 +2905,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:25",
+		Source:     "nvim/lua/plugins/ui.lua:30",
 	},
 	{
 		ConsumerID: "nvim.bufferline.separator_selected",
@@ -2572,7 +2914,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:27",
+		Source:     "nvim/lua/plugins/ui.lua:32",
 	},
 	{
 		ConsumerID: "nvim.bufferline.separator_visible",
@@ -2581,7 +2923,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:26",
+		Source:     "nvim/lua/plugins/ui.lua:31",
 	},
 	{
 		ConsumerID: "nvim.bufferline.tab",
@@ -2590,7 +2932,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:19",
+		Source:     "nvim/lua/plugins/ui.lua:24",
 	},
 	{
 		ConsumerID: "nvim.bufferline.tab_selected",
@@ -2599,7 +2941,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:20",
+		Source:     "nvim/lua/plugins/ui.lua:25",
 	},
 	{
 		ConsumerID: "nvim.bufferline.tab_separator",
@@ -2608,7 +2950,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:21",
+		Source:     "nvim/lua/plugins/ui.lua:26",
 	},
 	{
 		ConsumerID: "nvim.bufferline.tab_separator_selected",
@@ -2617,7 +2959,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:22",
+		Source:     "nvim/lua/plugins/ui.lua:27",
 	},
 	{
 		ConsumerID: "nvim.bufferline.trunc_marker",
@@ -2626,7 +2968,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:54",
+		Source:     "nvim/lua/plugins/ui.lua:59",
 	},
 	{
 		ConsumerID: "nvim.bufferline.warning",
@@ -2635,7 +2977,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:41",
+		Source:     "nvim/lua/plugins/ui.lua:46",
 	},
 	{
 		ConsumerID: "nvim.bufferline.warning_selected",
@@ -2644,7 +2986,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:43",
+		Source:     "nvim/lua/plugins/ui.lua:48",
 	},
 	{
 		ConsumerID: "nvim.bufferline.warning_visible",
@@ -2653,7 +2995,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "nvim/lua/plugins/ui.lua:42",
+		Source:     "nvim/lua/plugins/ui.lua:47",
 	},
 	{
 		ConsumerID: "nvim.highlight.@boolean",
@@ -6114,7 +6456,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-addition.inherited",
@@ -6123,7 +6465,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-attribute",
@@ -6132,7 +6474,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-built_in",
@@ -6141,7 +6483,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-builtin-name",
@@ -6150,7 +6492,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-bullet",
@@ -6159,7 +6501,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-class_hljs-title",
@@ -6168,7 +6510,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-comment",
@@ -6177,7 +6519,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-deletion.inherited",
@@ -6186,7 +6528,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-doctag",
@@ -6195,7 +6537,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-keyword",
@@ -6204,7 +6546,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-link",
@@ -6213,7 +6555,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-literal",
@@ -6222,7 +6564,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-meta",
@@ -6231,7 +6573,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-name",
@@ -6240,7 +6582,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-number",
@@ -6249,7 +6591,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-quote",
@@ -6258,7 +6600,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-regexp",
@@ -6267,7 +6609,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-section",
@@ -6276,7 +6618,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-selector-id",
@@ -6285,7 +6627,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-selector-tag",
@@ -6294,7 +6636,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-string",
@@ -6303,7 +6645,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-subst",
@@ -6312,7 +6654,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-symbol",
@@ -6321,7 +6663,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-tag",
@@ -6330,7 +6672,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-tag_hljs-attr",
@@ -6339,7 +6681,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-template-variable",
@@ -6348,7 +6690,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-title",
@@ -6357,7 +6699,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-type",
@@ -6366,7 +6708,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.highlight.hljs-variable",
@@ -6375,7 +6717,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1423",
+		Source:     "scripts/cmd/generate-colors/main.go:1599",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.blockquote",
@@ -6384,7 +6726,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1099",
+		Source:     "scripts/cmd/generate-colors/main.go:1275",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.h1",
@@ -6393,7 +6735,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1099",
+		Source:     "scripts/cmd/generate-colors/main.go:1275",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.h2",
@@ -6402,7 +6744,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1099",
+		Source:     "scripts/cmd/generate-colors/main.go:1275",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.h3",
@@ -6411,7 +6753,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1099",
+		Source:     "scripts/cmd/generate-colors/main.go:1275",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.h4",
@@ -6420,7 +6762,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1099",
+		Source:     "scripts/cmd/generate-colors/main.go:1275",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.h5",
@@ -6429,7 +6771,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1099",
+		Source:     "scripts/cmd/generate-colors/main.go:1275",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.h6",
@@ -6438,7 +6780,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1099",
+		Source:     "scripts/cmd/generate-colors/main.go:1275",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.kbd",
@@ -6447,7 +6789,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1099",
+		Source:     "scripts/cmd/generate-colors/main.go:1275",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.link",
@@ -6456,7 +6798,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1099",
+		Source:     "scripts/cmd/generate-colors/main.go:1275",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.page-header",
@@ -6465,7 +6807,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1099",
+		Source:     "scripts/cmd/generate-colors/main.go:1275",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.table",
@@ -6474,7 +6816,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1099",
+		Source:     "scripts/cmd/generate-colors/main.go:1275",
 	},
 	{
 		ConsumerID: "nvim.markdown-preview.markdown.text-primary",
@@ -6483,7 +6825,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1099",
+		Source:     "scripts/cmd/generate-colors/main.go:1275",
 	},
 	{
 		ConsumerID: "nvim.scrollbar.GitAdd",
@@ -6735,7 +7077,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2212",
+		Source:     "scripts/cmd/generate-colors/main.go:2388",
 	},
 	{
 		ConsumerID: "statusline.busy.background.surface",
@@ -6744,7 +7086,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2212",
+		Source:     "scripts/cmd/generate-colors/main.go:2388",
 	},
 	{
 		ConsumerID: "statusline.busy.codex",
@@ -6753,7 +7095,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2211",
+		Source:     "scripts/cmd/generate-colors/main.go:2387",
 	},
 	{
 		ConsumerID: "statusline.busy.codex.surface",
@@ -6762,7 +7104,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2211",
+		Source:     "scripts/cmd/generate-colors/main.go:2387",
 	},
 	{
 		ConsumerID: "statusline.context.critical",
@@ -6771,7 +7113,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2204",
+		Source:     "scripts/cmd/generate-colors/main.go:2380",
 	},
 	{
 		ConsumerID: "statusline.context.safe",
@@ -6780,7 +7122,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2204",
+		Source:     "scripts/cmd/generate-colors/main.go:2380",
 	},
 	{
 		ConsumerID: "statusline.context.surface",
@@ -6789,7 +7131,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2204",
+		Source:     "scripts/cmd/generate-colors/main.go:2380",
 	},
 	{
 		ConsumerID: "statusline.context.warning",
@@ -6798,7 +7140,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2204",
+		Source:     "scripts/cmd/generate-colors/main.go:2380",
 	},
 	{
 		ConsumerID: "statusline.directory",
@@ -6807,7 +7149,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2205",
+		Source:     "scripts/cmd/generate-colors/main.go:2381",
 	},
 	{
 		ConsumerID: "statusline.directory.surface",
@@ -6816,7 +7158,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2205",
+		Source:     "scripts/cmd/generate-colors/main.go:2381",
 	},
 	{
 		ConsumerID: "statusline.git",
@@ -6825,7 +7167,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2206",
+		Source:     "scripts/cmd/generate-colors/main.go:2382",
 	},
 	{
 		ConsumerID: "statusline.git.surface",
@@ -6834,7 +7176,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2206",
+		Source:     "scripts/cmd/generate-colors/main.go:2382",
 	},
 	{
 		ConsumerID: "statusline.model",
@@ -6843,7 +7185,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2203",
+		Source:     "scripts/cmd/generate-colors/main.go:2379",
 	},
 	{
 		ConsumerID: "statusline.model.surface",
@@ -6852,7 +7194,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2203",
+		Source:     "scripts/cmd/generate-colors/main.go:2379",
 	},
 	{
 		ConsumerID: "statusline.rate.critical",
@@ -6861,7 +7203,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2214",
+		Source:     "scripts/cmd/generate-colors/main.go:2390",
 	},
 	{
 		ConsumerID: "statusline.rate.safe",
@@ -6870,7 +7212,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2214",
+		Source:     "scripts/cmd/generate-colors/main.go:2390",
 	},
 	{
 		ConsumerID: "statusline.rate.surface",
@@ -6879,7 +7221,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2214",
+		Source:     "scripts/cmd/generate-colors/main.go:2390",
 	},
 	{
 		ConsumerID: "statusline.rate.track",
@@ -6888,7 +7230,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2214",
+		Source:     "scripts/cmd/generate-colors/main.go:2390",
 	},
 	{
 		ConsumerID: "statusline.rate.warning",
@@ -6897,7 +7239,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2214",
+		Source:     "scripts/cmd/generate-colors/main.go:2390",
 	},
 	{
 		ConsumerID: "statusline.week.critical",
@@ -6906,7 +7248,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2217",
+		Source:     "scripts/cmd/generate-colors/main.go:2393",
 	},
 	{
 		ConsumerID: "statusline.week.safe",
@@ -6915,7 +7257,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2217",
+		Source:     "scripts/cmd/generate-colors/main.go:2393",
 	},
 	{
 		ConsumerID: "statusline.week.surface",
@@ -6924,7 +7266,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2217",
+		Source:     "scripts/cmd/generate-colors/main.go:2393",
 	},
 	{
 		ConsumerID: "statusline.week.track",
@@ -6933,7 +7275,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2217",
+		Source:     "scripts/cmd/generate-colors/main.go:2393",
 	},
 	{
 		ConsumerID: "statusline.week.warning",
@@ -6942,7 +7284,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2217",
+		Source:     "scripts/cmd/generate-colors/main.go:2393",
 	},
 	{
 		ConsumerID: "vim.highlight.Boolean",
@@ -6951,7 +7293,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2076",
+		Source:     "scripts/cmd/generate-colors/main.go:2252",
 	},
 	{
 		ConsumerID: "vim.highlight.Character",
@@ -6960,7 +7302,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2071",
+		Source:     "scripts/cmd/generate-colors/main.go:2247",
 	},
 	{
 		ConsumerID: "vim.highlight.ColorColumn.surface",
@@ -6969,7 +7311,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2062",
+		Source:     "scripts/cmd/generate-colors/main.go:2238",
 	},
 	{
 		ConsumerID: "vim.highlight.Comment",
@@ -6978,7 +7320,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2065",
+		Source:     "scripts/cmd/generate-colors/main.go:2241",
 	},
 	{
 		ConsumerID: "vim.highlight.Conceal",
@@ -6987,7 +7329,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2091",
+		Source:     "scripts/cmd/generate-colors/main.go:2267",
 	},
 	{
 		ConsumerID: "vim.highlight.Conditional",
@@ -6996,7 +7338,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2068",
+		Source:     "scripts/cmd/generate-colors/main.go:2244",
 	},
 	{
 		ConsumerID: "vim.highlight.Constant",
@@ -7005,7 +7347,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2078",
+		Source:     "scripts/cmd/generate-colors/main.go:2254",
 	},
 	{
 		ConsumerID: "vim.highlight.CursorColumn.surface",
@@ -7014,7 +7356,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2061",
+		Source:     "scripts/cmd/generate-colors/main.go:2237",
 	},
 	{
 		ConsumerID: "vim.highlight.CursorLine.surface",
@@ -7023,7 +7365,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2060",
+		Source:     "scripts/cmd/generate-colors/main.go:2236",
 	},
 	{
 		ConsumerID: "vim.highlight.CursorLineNr",
@@ -7032,7 +7374,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2057",
+		Source:     "scripts/cmd/generate-colors/main.go:2233",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffAdd",
@@ -7041,7 +7383,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2122",
+		Source:     "scripts/cmd/generate-colors/main.go:2298",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffAdd.surface",
@@ -7050,7 +7392,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2122",
+		Source:     "scripts/cmd/generate-colors/main.go:2298",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffChange",
@@ -7059,7 +7401,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2123",
+		Source:     "scripts/cmd/generate-colors/main.go:2299",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffChange.surface",
@@ -7068,7 +7410,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2123",
+		Source:     "scripts/cmd/generate-colors/main.go:2299",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffDelete",
@@ -7077,7 +7419,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2124",
+		Source:     "scripts/cmd/generate-colors/main.go:2300",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffDelete.surface",
@@ -7086,7 +7428,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2124",
+		Source:     "scripts/cmd/generate-colors/main.go:2300",
 	},
 	{
 		ConsumerID: "vim.highlight.DiffText",
@@ -7095,7 +7437,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2125",
+		Source:     "scripts/cmd/generate-colors/main.go:2301",
 	},
 	{
 		ConsumerID: "vim.highlight.Directory",
@@ -7104,7 +7446,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2110",
+		Source:     "scripts/cmd/generate-colors/main.go:2286",
 	},
 	{
 		ConsumerID: "vim.highlight.ErrorMsg",
@@ -7113,7 +7455,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2118",
+		Source:     "scripts/cmd/generate-colors/main.go:2294",
 	},
 	{
 		ConsumerID: "vim.highlight.Float",
@@ -7122,7 +7464,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2075",
+		Source:     "scripts/cmd/generate-colors/main.go:2251",
 	},
 	{
 		ConsumerID: "vim.highlight.FoldColumn",
@@ -7131,7 +7473,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2095",
+		Source:     "scripts/cmd/generate-colors/main.go:2271",
 	},
 	{
 		ConsumerID: "vim.highlight.Folded",
@@ -7140,7 +7482,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2112",
+		Source:     "scripts/cmd/generate-colors/main.go:2288",
 	},
 	{
 		ConsumerID: "vim.highlight.Folded.surface",
@@ -7149,7 +7491,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2112",
+		Source:     "scripts/cmd/generate-colors/main.go:2288",
 	},
 	{
 		ConsumerID: "vim.highlight.Function",
@@ -7158,7 +7500,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2072",
+		Source:     "scripts/cmd/generate-colors/main.go:2248",
 	},
 	{
 		ConsumerID: "vim.highlight.Identifier",
@@ -7167,7 +7509,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2073",
+		Source:     "scripts/cmd/generate-colors/main.go:2249",
 	},
 	{
 		ConsumerID: "vim.highlight.IncSearch",
@@ -7176,7 +7518,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2106",
+		Source:     "scripts/cmd/generate-colors/main.go:2282",
 	},
 	{
 		ConsumerID: "vim.highlight.IncSearch.surface",
@@ -7185,7 +7527,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2106",
+		Source:     "scripts/cmd/generate-colors/main.go:2282",
 	},
 	{
 		ConsumerID: "vim.highlight.Keyword",
@@ -7194,7 +7536,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2066",
+		Source:     "scripts/cmd/generate-colors/main.go:2242",
 	},
 	{
 		ConsumerID: "vim.highlight.LineNr",
@@ -7203,7 +7545,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2056",
+		Source:     "scripts/cmd/generate-colors/main.go:2232",
 	},
 	{
 		ConsumerID: "vim.highlight.MatchParen",
@@ -7212,7 +7554,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2107",
+		Source:     "scripts/cmd/generate-colors/main.go:2283",
 	},
 	{
 		ConsumerID: "vim.highlight.MatchParen.surface",
@@ -7221,7 +7563,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2107",
+		Source:     "scripts/cmd/generate-colors/main.go:2283",
 	},
 	{
 		ConsumerID: "vim.highlight.ModeMsg",
@@ -7230,7 +7572,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2116",
+		Source:     "scripts/cmd/generate-colors/main.go:2292",
 	},
 	{
 		ConsumerID: "vim.highlight.MoreMsg",
@@ -7239,7 +7581,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2115",
+		Source:     "scripts/cmd/generate-colors/main.go:2291",
 	},
 	{
 		ConsumerID: "vim.highlight.NonText",
@@ -7248,7 +7590,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2052",
+		Source:     "scripts/cmd/generate-colors/main.go:2228",
 	},
 	{
 		ConsumerID: "vim.highlight.Normal",
@@ -7257,7 +7599,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2050",
+		Source:     "scripts/cmd/generate-colors/main.go:2226",
 	},
 	{
 		ConsumerID: "vim.highlight.NormalNC",
@@ -7266,7 +7608,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2051",
+		Source:     "scripts/cmd/generate-colors/main.go:2227",
 	},
 	{
 		ConsumerID: "vim.highlight.Number",
@@ -7275,7 +7617,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2074",
+		Source:     "scripts/cmd/generate-colors/main.go:2250",
 	},
 	{
 		ConsumerID: "vim.highlight.Operator",
@@ -7284,7 +7626,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2079",
+		Source:     "scripts/cmd/generate-colors/main.go:2255",
 	},
 	{
 		ConsumerID: "vim.highlight.Pmenu",
@@ -7293,7 +7635,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2103",
+		Source:     "scripts/cmd/generate-colors/main.go:2279",
 	},
 	{
 		ConsumerID: "vim.highlight.Pmenu.surface",
@@ -7302,7 +7644,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2103",
+		Source:     "scripts/cmd/generate-colors/main.go:2279",
 	},
 	{
 		ConsumerID: "vim.highlight.PmenuSel",
@@ -7311,7 +7653,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2104",
+		Source:     "scripts/cmd/generate-colors/main.go:2280",
 	},
 	{
 		ConsumerID: "vim.highlight.PmenuSel.surface",
@@ -7320,7 +7662,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2104",
+		Source:     "scripts/cmd/generate-colors/main.go:2280",
 	},
 	{
 		ConsumerID: "vim.highlight.PreProc",
@@ -7329,7 +7671,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2080",
+		Source:     "scripts/cmd/generate-colors/main.go:2256",
 	},
 	{
 		ConsumerID: "vim.highlight.Question",
@@ -7338,7 +7680,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2114",
+		Source:     "scripts/cmd/generate-colors/main.go:2290",
 	},
 	{
 		ConsumerID: "vim.highlight.QuickFixLine.surface",
@@ -7347,7 +7689,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2117",
+		Source:     "scripts/cmd/generate-colors/main.go:2293",
 	},
 	{
 		ConsumerID: "vim.highlight.Repeat",
@@ -7356,7 +7698,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2069",
+		Source:     "scripts/cmd/generate-colors/main.go:2245",
 	},
 	{
 		ConsumerID: "vim.highlight.Search",
@@ -7365,7 +7707,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2105",
+		Source:     "scripts/cmd/generate-colors/main.go:2281",
 	},
 	{
 		ConsumerID: "vim.highlight.Search.surface",
@@ -7374,7 +7716,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2105",
+		Source:     "scripts/cmd/generate-colors/main.go:2281",
 	},
 	{
 		ConsumerID: "vim.highlight.Special",
@@ -7383,7 +7725,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2081",
+		Source:     "scripts/cmd/generate-colors/main.go:2257",
 	},
 	{
 		ConsumerID: "vim.highlight.SpellBad",
@@ -7392,7 +7734,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2128",
+		Source:     "scripts/cmd/generate-colors/main.go:2304",
 	},
 	{
 		ConsumerID: "vim.highlight.SpellCap",
@@ -7401,7 +7743,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2129",
+		Source:     "scripts/cmd/generate-colors/main.go:2305",
 	},
 	{
 		ConsumerID: "vim.highlight.Statement",
@@ -7410,7 +7752,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2067",
+		Source:     "scripts/cmd/generate-colors/main.go:2243",
 	},
 	{
 		ConsumerID: "vim.highlight.StatusLine",
@@ -7419,7 +7761,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2097",
+		Source:     "scripts/cmd/generate-colors/main.go:2273",
 	},
 	{
 		ConsumerID: "vim.highlight.StatusLineNC",
@@ -7428,7 +7770,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2098",
+		Source:     "scripts/cmd/generate-colors/main.go:2274",
 	},
 	{
 		ConsumerID: "vim.highlight.String",
@@ -7437,7 +7779,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2070",
+		Source:     "scripts/cmd/generate-colors/main.go:2246",
 	},
 	{
 		ConsumerID: "vim.highlight.TabLine",
@@ -7446,7 +7788,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2099",
+		Source:     "scripts/cmd/generate-colors/main.go:2275",
 	},
 	{
 		ConsumerID: "vim.highlight.TabLineSel",
@@ -7455,7 +7797,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2100",
+		Source:     "scripts/cmd/generate-colors/main.go:2276",
 	},
 	{
 		ConsumerID: "vim.highlight.Title",
@@ -7464,7 +7806,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2111",
+		Source:     "scripts/cmd/generate-colors/main.go:2287",
 	},
 	{
 		ConsumerID: "vim.highlight.Todo",
@@ -7473,7 +7815,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2082",
+		Source:     "scripts/cmd/generate-colors/main.go:2258",
 	},
 	{
 		ConsumerID: "vim.highlight.Type",
@@ -7482,7 +7824,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2077",
+		Source:     "scripts/cmd/generate-colors/main.go:2253",
 	},
 	{
 		ConsumerID: "vim.highlight.Underlined",
@@ -7491,7 +7833,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2090",
+		Source:     "scripts/cmd/generate-colors/main.go:2266",
 	},
 	{
 		ConsumerID: "vim.highlight.VertSplit",
@@ -7500,7 +7842,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2096",
+		Source:     "scripts/cmd/generate-colors/main.go:2272",
 	},
 	{
 		ConsumerID: "vim.highlight.Visual",
@@ -7509,7 +7851,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2102",
+		Source:     "scripts/cmd/generate-colors/main.go:2278",
 	},
 	{
 		ConsumerID: "vim.highlight.Visual.surface",
@@ -7518,7 +7860,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2102",
+		Source:     "scripts/cmd/generate-colors/main.go:2278",
 	},
 	{
 		ConsumerID: "vim.highlight.WarningMsg",
@@ -7527,7 +7869,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2119",
+		Source:     "scripts/cmd/generate-colors/main.go:2295",
 	},
 	{
 		ConsumerID: "vim.highlight.WildMenu",
@@ -7536,7 +7878,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-bg"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2113",
+		Source:     "scripts/cmd/generate-colors/main.go:2289",
 	},
 	{
 		ConsumerID: "vim.highlight.WildMenu.surface",
@@ -7545,7 +7887,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2113",
+		Source:     "scripts/cmd/generate-colors/main.go:2289",
 	},
 	{
 		ConsumerID: "vim.highlight.markdownCodeDelimiter",
@@ -7554,7 +7896,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2087",
+		Source:     "scripts/cmd/generate-colors/main.go:2263",
 	},
 	{
 		ConsumerID: "vim.highlight.markdownHeadingDelimiter",
@@ -7563,7 +7905,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor", "cterm-fg-only"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2089",
+		Source:     "scripts/cmd/generate-colors/main.go:2265",
 	},
 	{
 		ConsumerID: "wezterm.ansi.black",
@@ -8088,7 +8430,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1014",
+		Source:     "scripts/cmd/generate-colors/main.go:1190",
 	},
 	{
 		ConsumerID: "zsh.completion.class.cd",
@@ -8097,7 +8439,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1015",
+		Source:     "scripts/cmd/generate-colors/main.go:1191",
 	},
 	{
 		ConsumerID: "zsh.completion.class.di",
@@ -8106,7 +8448,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1011",
+		Source:     "scripts/cmd/generate-colors/main.go:1187",
 	},
 	{
 		ConsumerID: "zsh.completion.class.ex",
@@ -8115,7 +8457,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1018",
+		Source:     "scripts/cmd/generate-colors/main.go:1194",
 	},
 	{
 		ConsumerID: "zsh.completion.class.fi",
@@ -8124,7 +8466,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1010",
+		Source:     "scripts/cmd/generate-colors/main.go:1186",
 	},
 	{
 		ConsumerID: "zsh.completion.class.ln",
@@ -8133,7 +8475,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1012",
+		Source:     "scripts/cmd/generate-colors/main.go:1188",
 	},
 	{
 		ConsumerID: "zsh.completion.class.or",
@@ -8142,7 +8484,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1090",
+		Source:     "scripts/cmd/generate-colors/main.go:1266",
 	},
 	{
 		ConsumerID: "zsh.completion.class.pi",
@@ -8151,7 +8493,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1013",
+		Source:     "scripts/cmd/generate-colors/main.go:1189",
 	},
 	{
 		ConsumerID: "zsh.completion.class.so",
@@ -8160,7 +8502,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1016",
+		Source:     "scripts/cmd/generate-colors/main.go:1192",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.age",
@@ -8169,7 +8511,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1074",
+		Source:     "scripts/cmd/generate-colors/main.go:1250",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.bak",
@@ -8178,7 +8520,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1077",
+		Source:     "scripts/cmd/generate-colors/main.go:1253",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.flac",
@@ -8187,7 +8529,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1073",
+		Source:     "scripts/cmd/generate-colors/main.go:1249",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.go",
@@ -8196,7 +8538,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1080",
+		Source:     "scripts/cmd/generate-colors/main.go:1256",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.gz",
@@ -8205,7 +8547,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1076",
+		Source:     "scripts/cmd/generate-colors/main.go:1252",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.jpg",
@@ -8214,7 +8556,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1070",
+		Source:     "scripts/cmd/generate-colors/main.go:1246",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.js",
@@ -8223,7 +8565,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1080",
+		Source:     "scripts/cmd/generate-colors/main.go:1256",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.key",
@@ -8232,7 +8574,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1075",
+		Source:     "scripts/cmd/generate-colors/main.go:1251",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.lua",
@@ -8241,7 +8583,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1080",
+		Source:     "scripts/cmd/generate-colors/main.go:1256",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.mkv",
@@ -8250,7 +8592,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1071",
+		Source:     "scripts/cmd/generate-colors/main.go:1247",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.mp3",
@@ -8259,7 +8601,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1072",
+		Source:     "scripts/cmd/generate-colors/main.go:1248",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.mp4",
@@ -8268,7 +8610,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1071",
+		Source:     "scripts/cmd/generate-colors/main.go:1247",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.ninja",
@@ -8277,7 +8619,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1079",
+		Source:     "scripts/cmd/generate-colors/main.go:1255",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.o",
@@ -8286,7 +8628,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1078",
+		Source:     "scripts/cmd/generate-colors/main.go:1254",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.ogg",
@@ -8295,7 +8637,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1072",
+		Source:     "scripts/cmd/generate-colors/main.go:1248",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.pdf",
@@ -8304,7 +8646,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1075",
+		Source:     "scripts/cmd/generate-colors/main.go:1251",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.pem",
@@ -8313,7 +8655,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1074",
+		Source:     "scripts/cmd/generate-colors/main.go:1250",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.png",
@@ -8322,7 +8664,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1070",
+		Source:     "scripts/cmd/generate-colors/main.go:1246",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.py",
@@ -8331,7 +8673,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1080",
+		Source:     "scripts/cmd/generate-colors/main.go:1256",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.rs",
@@ -8340,7 +8682,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1080",
+		Source:     "scripts/cmd/generate-colors/main.go:1256",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.so",
@@ -8349,7 +8691,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1078",
+		Source:     "scripts/cmd/generate-colors/main.go:1254",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.svg",
@@ -8358,7 +8700,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1070",
+		Source:     "scripts/cmd/generate-colors/main.go:1246",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.tar",
@@ -8367,7 +8709,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1076",
+		Source:     "scripts/cmd/generate-colors/main.go:1252",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.tar_gz",
@@ -8376,7 +8718,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1076",
+		Source:     "scripts/cmd/generate-colors/main.go:1252",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.tmp",
@@ -8385,7 +8727,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1077",
+		Source:     "scripts/cmd/generate-colors/main.go:1253",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.ts",
@@ -8394,7 +8736,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1080",
+		Source:     "scripts/cmd/generate-colors/main.go:1256",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.wav",
@@ -8403,7 +8745,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1073",
+		Source:     "scripts/cmd/generate-colors/main.go:1249",
 	},
 	{
 		ConsumerID: "zsh.completion.extension.zip",
@@ -8412,7 +8754,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:1076",
+		Source:     "scripts/cmd/generate-colors/main.go:1252",
 	},
 	{
 		ConsumerID: "zsh.fzf.prompt",
@@ -8421,7 +8763,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/zsh.nix:337",
+		Source:     "home-manager/zsh.nix:338",
 	},
 	{
 		ConsumerID: "zsh.fzf.spinner",
@@ -8430,17 +8772,23 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/zsh.nix:337",
+		Source:     "home-manager/zsh.nix:338",
 	},
 }
 
 var generatedCoverageNotes = []CoverageNote{
-	{ID: "herdr.theme.panel_bg.reset", Reason: "panel_bg is strictly checked as the fixed string \"reset\"; it restores the terminal default background after Clear, so the effective color depends on WezTerm core.background at 0.90 opacity composited with the wallpaper and cannot be represented as a static color pair", Source: "scripts/cmd/generate-colors/main.go:1583"},
-	{ID: "herdr.theme.peach.unused", Reason: "herdr 0.8.0 has no consumer for peach because AgentState has no Interrupted variant and no rendering branch uses it; the key is still generated to keep all 16 custom theme keys managed, but it has no visible color pair", Source: "scripts/cmd/generate-colors/main.go:1597"},
-	{ID: "herdr.theme.surface0.reset", Reason: "surface0 is strictly checked as the fixed string \"reset\"; it restores the terminal default background after Clear, so the effective color depends on WezTerm core.background at 0.90 opacity composited with the wallpaper and cannot be represented as a static color pair", Source: "scripts/cmd/generate-colors/main.go:1584"},
+	{ID: "gh-dash.inventory.survey", Reason: "gh-dash v4.23.2's production Go source (excluding _test.go) was scanned exhaustively for the gh-dash.theme.* use-site table in gh_dash.go, in three passes over one direction each - the first review round only covered pass 1, and a later round added pass 2; both misses are why all 3 passes are now run on every re-verification. Pass 1 (foreground is a theme slot): classified by what the background is - (a) a theme slot, 21 sites, static pair; (b) an upstream-hardcoded literal, 4 sites, coverage note; (c) runtime/external data (e.g. GitHub label colors), 1 site, coverage note; (d) ambient/undetermined at the call site, 15 sites, report-only. Pass 2 (foreground is not a theme slot, background is a theme slot - the reverse direction, tracked in gh-dash.theme.literalForegrounds): 19 sites, of which 2 resolve through our own WezTerm ANSI palette (raw ANSI SGR codes) and are registered as static pairs; the remaining 17 are hardcoded literals or state-based literal choices and stay a coverage note. Pass 3 (background is a theme slot, no Foreground call at all in the same style chain, so the terminal's own default foreground applies): 1 site so far (gh-dash.terminalDefault.taskStart) - scan for Background( calls whose style chain never calls Foreground(. Scan targets: every Foreground(/Border*Foreground(/Styles.Colors.* reference, every literal AdaptiveColor{}/lipgloss.Color(...), every raw \\x1b[ escape, and every .Inherit(...) call (0 found in gh-dash's own source; Bubbles v0.21.0's internal use in textarea is the only known instance and is handled per-call-site, e.g. the text.secondary.faintBorder override). Every row-producing type (PR, branch, Issue, notification - the only 4 that implement ToTableRow/table.Row{}) was checked exhaustively", Source: "gh-dash v4.23.2 rev 78b9ca5e21dcee4740502018d46dc5e4b613db86; row producers: internal/tui/components/prrow/prrow.go:324-353, internal/tui/components/branch/branch.go:230-255, internal/tui/components/issuerow/issuerow.go:22-33, internal/tui/components/notificationrow/notificationrow.go:22-29; checked and excluded as out of scope: ClosedIssue (pill background only, already in the statusPill note), Styles.Colors.SuccessText (background is the terminal's own canvas, not a theme slot), the checks component's border, MergedGlyph, the carousel's default ANSI index 212 (overridden by the theme style), LogoColor, the CLI's sponsor colors, and Bubbles textinput's default index 240 (its prompt component isn't rendered by gh-dash); re-run all 3 passes and re-diff against ghDashPairTable in sourceinventory/gh_dash.go whenever flake.lock bumps gh-dash. Always fetch files at the pinned rev: GitHub's code search API answers for HEAD, so a slot that HEAD renders can look used when the pinned rev never renders it (ActorText is exactly that case)"},
+	{ID: "gh-dash.theme.icon.unknownrole.upstreamUnwired", Reason: "gh-dash v4.23.2's ParseTheme has no assignment for UnknownRoleIconColor (the icon color shim block ends right after Owner); the config value parses successfully but is never reflected into the running theme. Generation keeps producing this key alongside the other 5 icon colors, but no contrast pair is registered for it", Source: "internal/config/parser.go:253 (ColorThemeIcon.UnknownRole yaml field) + internal/tui/theme/theme.go:28 (UnknownRoleIconColor field) + internal/tui/theme/theme.go:147 (ParseTheme's icon color shim block ends without it); gh-dash v4.23.2 rev 78b9ca5e21dcee4740502018d46dc5e4b613db86"},
+	{ID: "gh-dash.theme.literalForegrounds", Reason: "sites where the rendered foreground is a literal or runtime value while the background is a theme slot (the reverse of the usual token-foreground-on-literal-background direction); these can't be static pairs from the token side either, since the foreground isn't a token (2 sibling sites where the foreground turned out to be measurable through our own ANSI palette are registered as pairs instead: gh-dash.theme.ansi.brightWhite.selected and .ansi.green.selected). None of the 17 sites below is a runtime/external color (e.g. a GitHub label); all pick among a fixed set of hardcoded literals depending on state. 12 use Styles.Colors.* (OpenPR and OpenIssue are the same alias, #42A0FA) on SelectedBackground across the PR/branch/issue/notification rows: OpenPR/OpenIssue #42A0FA, ClosedPR #656C76 (notification rows use ClosedPR for closed issues too, not ClosedIssue), MergedPR #A371F7. 3 are literal AdaptiveColor{} values: the Discussion icon (black/white), the Release icon (blue), and the active NotificationsView icon (gold, on FaintBorder - the one originally known here). 2 are literal lipgloss.Color(...) values: ANSI 256-color-cube index 33 (the unread blue dot; not representable in our 16-color palette) and hex literal #e0af68 (the repo section footer's modified-file count). notificationrow.go's raw ANSI is confirmed to be only the 2 escapes covered by gh-dash.theme.ansi.brightWhite.selected / .ansi.green.selected (\\x1b[97m and \\x1b[32m) - a whole-file grep for \\x1b found exactly those 2 matches, no \\x1b[90m or others", Source: "Styles.Colors.* literals: internal/tui/context/styles.go:96-116; OpenPR x selected: internal/tui/components/prrow/prrow.go:76-85, internal/tui/components/branch/branch.go:58-64, internal/tui/components/notificationrow/notificationrow.go:47-64; ClosedPR x selected: internal/tui/components/prrow/prrow.go:86-88, internal/tui/components/branch/branch.go:65-67, internal/tui/components/notificationrow/notificationrow.go:50-56,66-73; MergedPR x selected: internal/tui/components/prrow/prrow.go:89-91, internal/tui/components/branch/branch.go:68-70, internal/tui/components/notificationrow/notificationrow.go:50-53; OpenIssue x selected: internal/tui/components/issuerow/issuerow.go:87-92, internal/tui/components/notificationrow/notificationrow.go:66-74; Discussion icon (AdaptiveColor{Light:#000000,Dark:#ffffff}) x selected: internal/tui/components/notificationrow/notificationrow.go:75-78; Release icon (AdaptiveColor{Light:#0969da,Dark:#58a6ff}) x selected: internal/tui/components/notificationrow/notificationrow.go:78-81; unread blue dot (lipgloss.Color(\"33\")) x selected: internal/tui/components/notificationrow/notificationrow.go:113-125; active NotificationsView icon (AdaptiveColor{Light:#B8860B,Dark:#FFD700}) x FaintBorder: internal/tui/components/footer/footer.go:138-152 + internal/tui/context/styles.go:227-230; repo footer modified-count (lipgloss.Color(\"#e0af68\")) x selected: internal/tui/components/reposection/reposection.go:555-565 + internal/tui/context/styles.go:186-190; config→Theme wiring: SelectedBackground = internal/tui/theme/theme.go:79-82, FaintBorder = internal/tui/theme/theme.go:87-90; gh-dash v4.23.2 rev 78b9ca5e21dcee4740502018d46dc5e4b613db86"},
+	{ID: "gh-dash.theme.text.actor.unused", Reason: "ActorText has zero production renderer references in gh-dash v4.23.2: it's defined on Theme and assigned in ParseTheme, but no component reads theme.ActorText to render anything; re-check at the next gh-dash bump, and when upstream starts rendering it, re-check whether foregrounds.heading collides with any other gh-dash slot (an unused slot's color is the hardest collision to notice, because nothing renders it until upstream wires it up). Precedent: herdr.theme.peach.unused (herdr.go:119-123)", Source: "internal/tui/theme/theme.go:22 (field) + internal/tui/theme/theme.go:49 (default) + internal/tui/theme/theme.go:123-126 (ParseTheme shim); gh-dash v4.23.2 rev 78b9ca5e21dcee4740502018d46dc5e4b613db86"},
+	{ID: "gh-dash.theme.text.inverted.labels", Reason: "label pill backgrounds are GitHub label colors fetched at runtime, not palette tokens, so contrast can't be statically guaranteed", Source: "internal/tui/context/styles.go:120-122 (PillStyle Foreground(InvertedText)) + internal/tui/components/prview/prview.go:301-315 (renderLabels) + internal/tui/common/labels.go:9-22 (label background wiring); config→Theme wiring internal/tui/theme/theme.go:107-110 (InvertedText shim); gh-dash v4.23.2 rev 78b9ca5e21dcee4740502018d46dc5e4b613db86"},
+	{ID: "gh-dash.theme.text.inverted.statusPill", Reason: "the non-draft status pill (PR: OPEN non-draft/CLOSED/MERGED; issue: OPEN/CLOSED) renders InvertedText on a hardcoded background, not a palette token, so it can't be a static pair. gh-dash v4.23.2 hardcodes 4 such colors: OpenPR/OpenIssue #42A0FA, ClosedPR #656C76, MergedPR #A371F7, ClosedIssue #C38080; re-check at the next gh-dash bump in case any of them moves to a token", Source: "internal/tui/context/styles.go:96-116 (Colors.OpenPR/ClosedPR/MergedPR/OpenIssue/ClosedIssue literals) + internal/tui/context/styles.go:120-122 (PillStyle Foreground(InvertedText)) + internal/tui/components/prview/prview.go:280-298 (PR status pill) + internal/tui/components/issueview/issueview.go:311-326 (issue status pill); config→Theme wiring internal/tui/theme/theme.go:107-110 (InvertedText shim); gh-dash v4.23.2 rev 78b9ca5e21dcee4740502018d46dc5e4b613db86"},
+	{ID: "herdr.theme.panel_bg.reset", Reason: "panel_bg is strictly checked as the fixed string \"reset\"; it restores the terminal default background after Clear, so the effective color depends on WezTerm core.background at 0.90 opacity composited with the wallpaper and cannot be represented as a static color pair", Source: "scripts/cmd/generate-colors/main.go:1759"},
+	{ID: "herdr.theme.peach.unused", Reason: "herdr 0.8.0 has no consumer for peach because AgentState has no Interrupted variant and no rendering branch uses it; the key is still generated to keep all 16 custom theme keys managed, but it has no visible color pair", Source: "scripts/cmd/generate-colors/main.go:1773"},
+	{ID: "herdr.theme.surface0.reset", Reason: "surface0 is strictly checked as the fixed string \"reset\"; it restores the terminal default background after Clear, so the effective color depends on WezTerm core.background at 0.90 opacity composited with the wallpaper and cannot be represented as a static color pair", Source: "scripts/cmd/generate-colors/main.go:1760"},
 	{ID: "nvim.bufferline.runtime-default-groups", Reason: "BufferLine groups not present in opts.highlights are discovered at runtime; their background is ambient, but plugin-default foregrounds are not statically attributable to palette tokens", Source: "nvim/lua/plugins/ui.lua"},
 	{ID: "wezterm.runtime-dynamic-colors", Reason: "window_background_gradient, compose_cursor, and runtime format-tab-title pairs are not statically extracted; format-tab-title requires parsing dynamic Lua branches, including Claude state icon teals.bright/foregrounds.bright on explicit inactive or hover tab backgrounds, so runtime pairs matching config.colors today could diverge without detection", Source: "wezterm/wezterm.lua:165,220,365-420"},
-	{ID: "zsh.completion.file-type-subset", Reason: "zsh list-colors statically covers only the generated extension set; other extensions, exact filenames such as README and Makefile, temporary-name suffixes, and source-adjacent compiled inference fall back to fi while eza keeps its internal file_type classification. LS_COLORS is unset by interactive zsh only, so future non-interactive scripts invoking eza must unset it themselves; no repository scripts currently invoke eza", Source: "scripts/cmd/generate-colors/main.go:1009"},
+	{ID: "zsh.completion.file-type-subset", Reason: "zsh list-colors statically covers only the generated extension set; other extensions, exact filenames such as README and Makefile, temporary-name suffixes, and source-adjacent compiled inference fall back to fi while eza keeps its internal file_type classification. LS_COLORS is unset by interactive zsh only, so future non-interactive scripts invoking eza must unset it themselves; no repository scripts currently invoke eza", Source: "scripts/cmd/generate-colors/main.go:1185"},
 }
 
 // END GENERATED COLOR INVENTORY
