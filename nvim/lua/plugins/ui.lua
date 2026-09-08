@@ -10,6 +10,11 @@ return {
           -- [No Name]バッファを非表示（claudecode.nvim新タブdiff対策）
           return vim.fn.bufname(buf) ~= ""
         end,
+        truncate_names = false,
+        -- tab_size=0 は最小タブ幅を敷かない指定。enforce_regular_tabs が true になると
+        -- ここから負の名前上限が算出されるため、既定値でも明示固定する
+        enforce_regular_tabs = false,
+        tab_size = 0,
       })
 
       -- bufferline の前景設定
