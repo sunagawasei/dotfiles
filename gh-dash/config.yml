@@ -3,6 +3,10 @@ prSections:
       filters: is:open author:@me
     - title: Needs My Review
       filters: is:open review-requested:@me
+    - title: Platform Team
+      filters: is:open team-review-requested:cycloud-io/cycloud-platform-developers
+    - title: DevEx Team
+      filters: is:open team-review-requested:cycloud-io/devex-section
     - title: Involved
       filters: is:open involves:@me -author:@me
 issuesSections:
@@ -35,7 +39,7 @@ repo:
 defaults:
     preview:
         open: true
-        width: 0.45
+        width: 0.6
     prsLimit: 20
     prApproveComment: LGTM
     issuesLimit: 20
@@ -77,15 +81,28 @@ defaults:
                 hidden: true
     refetchIntervalMinutes: 30
 keybindings: {}
-repoPaths: {}
+repoPaths:
+    cycloud-io/*: ~/work/*
+    ca-studio-apps/*: ~/work/*
+    CyberAgent-Infosys/*: ~/work/*
+    ca-data-pf/*: ~/work/*
+    caad-develop/*: ~/work/*
+    ca-ciu/*: ~/work/*
+    PERMAN/*: ~/work/*
+    sunagawasei/*: ~/poc/*
+    # cloneのディレクトリ名がrepo名と違う2件はワイルドカードで解決できない
+    cycloud-io/openstack-core-usage-report: ~/work/openstack-core-collector
+    CyberAgent-Infosys/caad-valuedomain-tool: ~/work/value_domain_management
 theme:
     ui:
         sectionsShowCount: true
         table:
             showSeparator: true
-            compact: false
+            compact: true
 pager:
-    diff: ""
+    # `hunk pager`はpager modeを強制し、記号キー(? , . [ ])を握り潰す。明示ファイル指定なら
+    # pager modeにならないので、ghのpipeを/dev/stdinとして渡す。
+    diff: hunk patch /dev/stdin
 confirmQuit: false
 showAuthorIcons: true
 smartFilteringAtLaunch: true
