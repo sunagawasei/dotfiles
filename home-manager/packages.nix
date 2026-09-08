@@ -171,6 +171,9 @@ in
     # GitHub Projects v2 TUI
     ghBoard
 
+    # GitHub issue/PR トリアージ TUI
+    gh-dash
+
     # その他
     zoxide
 
