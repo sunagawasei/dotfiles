@@ -202,7 +202,6 @@ claude/hooks/*
 !claude/skills/
 claude/skills/*
 !claude/skills/commit/
-!claude/skills/copilot/
 !claude/skills/issue-draft/
 !claude/skills/session-harvest/
 !claude/skills/session-verify/
@@ -216,5 +215,4 @@ claude/skills/*
 !claude/agents/
 claude/agents/*
 !claude/agents/commit.md
-!claude/agents/copilot.md
 !claude/agents/impl-worker.md
