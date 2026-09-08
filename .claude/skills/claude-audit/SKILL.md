@@ -5,6 +5,8 @@ description: skill/rule/CLAUDE.md/メモリの棚卸しと公式ベストプラ�
 
 # Claude資産の棚卸し
 
+委譲するサブエージェントは断りのない限り `model: sonnet`。メイン(Fable/Opus)は検証と適用に徹する。
+
 グローバル設定と全プロジェクトのClaude資産(CLAUDE.md・rules・skills・メモリ)から、重複ルール・矛盾する指示・陳腐化した記述を洗い出して整理する。あわせて公式ベストプラクティスに照らして全CLAUDE.mdの構成・サイズを是正する。目安: 月1回、モデル移行期、または「設定が増えて出力の質が落ちた」と感じた時。
 
 ## 対象の列挙
@@ -25,18 +27,18 @@ description: skill/rule/CLAUDE.md/メモリの棚卸しと公式ベストプラ�
 
 ### 0. 公式最新推奨の確認
 
-- `claude-code-guide`エージェント(**`model: sonnet`**)に、CLAUDE.md/rules/skills関連の**公式一次情報**を調査させる: code.claude.com/docsの`memory` / `features-overview` / `large-codebases`ページ、Anthropic公式ブログ(Steering Claude Code等)。**記憶で答えさせずWebFetch/WebSearchで現物確認**させる
+- `claude-code-guide`エージェントに、CLAUDE.md/rules/skills関連の**公式一次情報**を調査させる: code.claude.com/docsの`memory` / `features-overview` / `large-codebases`ページ、Anthropic公式ブログ(Steering Claude Code等)。**記憶で答えさせずWebFetch/WebSearchで現物確認**させる
 - 得るもの: 推奨サイズ(2026-07時点は「CLAUDE.mdは200行未満・毎セッション必要な事実のみ」)、使い分け基準(30行超の手順→skill、path固有→rules、確実に実行させたいもの→hook)、公式frontmatterフィールド(ruleは`paths:`のみ)、アンチパターン
 - 以降のフェーズはこの調査結果を基準に判断する(数値は時期により更新されうるため、記憶で決め打ちせず毎回この確認をやり直す)
 
 ### 1. sonnet班の並列起動
 
-- プロジェクトを作業量バランスでグループ化(メモリ50件超は単独班)し、general-purposeサブエージェント(**`model: sonnet`**)を並列起動
+- プロジェクトを作業量バランスでグループ化(メモリ50件超は単独班)し、general-purposeサブエージェントを並列起動
 - プロンプトに必ず含める: 担当範囲の絶対パス(メモリdirのslugも) / 上記の検出観点 / 適用範囲(メモリ更新・統合・MEMORY.md同期・明確な誤りの修正) / **安全ルール**(git commit/push禁止・ソースコード本体変更禁止・削除は「repoに記録済み/統合済み/明確に陳腐化」のみ・迷ったら残して報告) / 報告フォーマット(修正した点・削除統合した点・未対応の提案)
 
 ### 2. 全CLAUDE.mdの洗い出しと是正
 
-フェーズ0で確認した基準をもとに、CLAUDE.md単体にフォーカスした是正パスをsonnet班(**`model: sonnet`**)に実施させる。
+フェーズ0で確認した基準をもとに、CLAUDE.md単体にフォーカスした是正パスをsonnet班に実施させる。
 
 - 網羅列挙(サブディレクトリ・`.claude/CLAUDE.md`含む):
   ```bash
@@ -65,7 +67,7 @@ cd ~/.config/claude/projects && for d in ./*/memory; do cd "$d" 2>/dev/null || c
 
 - 判断が分かれるもの(削除可否・公開可否・方針矛盾の解消方法)は**AskUserQuestionでまとめて確認**
 - git非追跡ファイルの整理は削除でなく`attic/`退避(可逆)を選ぶ
-- dotfiles(`~/.config`)の変更はユーザー承認後、commitエージェント(`model: sonnet`)でコミット。他リポジトリはcommitしない(working treeに残して報告)
+- dotfiles(`~/.config`)の変更はユーザー承認後、commitエージェントでコミット。他リポジトリはcommitしない(working treeに残して報告)
 
 ## 定期トリガー
 

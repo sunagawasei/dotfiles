@@ -5,29 +5,8 @@ description: |
   writing well-formed commit messages, staging files, and committing.
   Keeps the main context clean by handling all git output internally.
 
-  Use this agent whenever a git commit is about to be created — not only when the
-  user says "commit", but any time committing is the next step, including when you
-  decide to commit after finishing a task. Always delegate the commit to this agent
-  instead of running `git commit` inline.
-
-  <example>
-  Context: The user explicitly asks to commit.
-  user: "commit"
-  assistant: "I'll use the commit agent to create the commit."
-  <commentary>
-  Explicit commit request — delegate to the commit agent.
-  </commentary>
-  </example>
-
-  <example>
-  Context: Claude has just finished an edit and is about to record the change,
-  without the user saying "commit".
-  assistant: "The change is complete — delegating to the commit agent to stage and commit it."
-  <commentary>
-  A commit is being made, so route through the commit agent rather than committing
-  inline, even though the user did not ask explicitly.
-  </commentary>
-  </example>
+  Use this agent whenever a commit is the next step — whether the user asked for one
+  or you decided to record a finished change — instead of running `git commit` inline.
 model: inherit
 color: yellow
 tools:

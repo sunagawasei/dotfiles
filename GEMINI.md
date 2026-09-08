@@ -1,57 +1,24 @@
 # GEMINI.md
 
-このファイルは、Gemini CLIがこのリポジトリ（dotfiles）を理解し、適切に操作するためのコンテキストを提供します。
+macOS上の開発ツール設定を管理する個人用dotfiles。stow等の自動化ツールは使わず手動管理。
 
-## プロジェクト概要
+## 言語
 
-macOS環境での開発効率を最大化するためにカスタマイズされた個人用dotfilesリポジトリです。統一されたカスタムダークテーマ、パフォーマンスの最適化、およびAIエージェント（Gemini, Claude, Codex）との親和性を重視して設計されています。
+すべての応答・説明・コード内コメントは日本語で行う。
 
-- **プロジェクト種別**: 非コードプロジェクト（設定ファイル / Dotfiles）
-- **管理方式**: 手動管理（`stow` 等のツールは使用せず、各ツールを `~/.config/` に配置）
-- **主要言語**: 設定ファイル（Lua, YAML, TOML, JSON, Zsh/Fish shell）、ドキュメント（日本語優先）
+## 標準と違う慣習
 
-## 言語設定
+- 配色は `colors/ghost-visor.toml` が唯一のソース。wezterm・nvim・home-manager・lazygit・gh-dash・vim・statusline・`COLOR-SYSTEM.md` は `cd scripts && go run ./cmd/generate-colors` で生成する。派生側を直接編集しない
+- Nix / home-manager の反映は `darwin-apply`（`sudo darwin-rebuild switch --flake ~/.config` のラッパー）
+- 新規ファイルは `git add` してから rebuild する。flakeはgit追跡ファイルしか見ないため、未追跡だとNix評価が失敗する
 
-- **重要**: AIエージェントからの応答および説明はすべて **日本語** で行ってください（`AGENTS.md` の規定による）。
-- コミットメッセージは日本語または英語（`feat:`, `fix:`, `perf:` 等のプレフィックスを推奨）を使用します。
+## 記録の義務
 
-## 主要なコンポーネントと技術スタック
+- キーバインドや操作を追加・変更したら `KEYMAPS.md` に記録する
+- コミットは Conventional Commits（`<type>(<scope>): <subject>`）。本文の言語と粒度は `git log` の既存スタイルに合わせる
 
-| カテゴリ | ツール | 主要設定ファイル |
-| :--- | :--- | :--- |
-| **ターミナル** | WezTerm | `wezterm/wezterm.lua`, `wezterm/keybinds.lua` |
-| **エディタ** | Neovim (LazyVim) | `nvim/init.lua`, `nvim/lua/` |
-| **シェル** | Zsh / Fish | `zsh/.zshrc`, `fish/` |
-| **プロンプト** | Pure | `zsh/.zshrc` (inline via zinit) |
-| **Git TUI** | LazyGit | `lazygit/config.yml` |
-| **AI統合** | Claude / Codex / Gemini | `claude/`, `codex/`, `gemini/` |
-| **ランチャー** | Raycast | `raycast/config.json` |
+## 関連ドキュメント
 
-## 開発・設定の原則
-
-1. **モジュラー構造**: 各ツールの設定は独立したディレクトリにまとめられています。
-2. **統一カラーシステム**: `COLOR-SYSTEM.md` に定義された独自のダークテーマ（Cyan/Magentaアクセント）を全ツールで共有しています。
-3. **パフォーマンス重視**: 高速な起動とレスポンスを維持するため、プラグインの厳選と最適化が行われています。
-4. **日本語環境の最適化**: IME設定やフォント、ドキュメントにおいて日本語環境が考慮されています。
-
-## 設定変更のワークフロー
-
-1. **調査**: 変更対象のツールのディレクトリ（例: `nvim/`）を確認します。
-2. **編集**: 設定ファイルを直接編集します。
-3. **検証**: 該当するアプリケーションを再起動またはリロードして動作を確認します。
-4. **記録**: キーバインドを変更した場合は `KEYMAPS.md`（存在する場合）を更新し、色を変更した場合は `COLOR-SYSTEM.md` との整合性を確認します。
-5. **コミット**: 変更内容を簡潔なメッセージと共にコミットします。
-
-## 重要な参照ファイル
-
-- **README.md**: リポジトリ全体の概要
-- **AGENTS.md**: AIエージェントへの基本指示（日本語応答の強制など）
-- **CLAUDE.md**: Claude Code向けの詳細指示
-- **COLOR-SYSTEM.md**: カラーパレットと色選択のガイドライン
-- **nvim/CLAUDE.md**: Neovim (LazyVim) 特有の設定ガイド
-
-## Gemini への指示
-
-- **スタイルの継承**: 新しい設定やスクリプトを提案する際は、既存の Lua や Shell スクリプトのスタイル、および `COLOR-SYSTEM.md` のカラーパレットを厳守してください。
-- **慎重な変更**: 設定の変更は破壊的な影響を与える可能性があるため、変更前に必ず現在の設定内容を `read_file` で確認してください。
-- **日本語での対話**: ユーザーへの説明、提案、およびコード内のコメントは日本語で行ってください。
+- `AGENTS.md` — 全AIエージェント共通の指針
+- `CLAUDE.md` — Claude Code向けの指針
+- `COLOR-SYSTEM.md` / `KEYMAPS.md` / `nvim/CLAUDE.md`

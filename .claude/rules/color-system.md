@@ -66,29 +66,10 @@ go run ./cmd/verify-cvd-pairs
 go run ./cmd/verify-colors
 ```
 
-### 段8: report-only集合の差分確認
+### report-only集合の差分確認・手書きoverrideの出所
 
-report-onlyは非強制集合であり、below-AAの増減を記録する観測値です。
-report-only集合と矛盾するfixture凍結を行わないでください。
-beforeは、そのtaskで編集を始める前の作業ツリーから採ります。
-HEADで代用すると、未commitの先行task成果と当該taskの差分が混ざるためです。
-
-実行可能な順序は次のとおりです。
-
-1. 編集開始前に作業ツリーを基準ツリーへコピーし、基準ツリーで`verify-colors`を実行します。
-   `git show HEAD`から基準を作らないでください。
-   例：`before_root=$(mktemp -d); before_report="$before_root/verify.txt"; rsync -a --exclude .git ./ "$before_root/"; (cd "$before_root/scripts" && go run ./cmd/verify-colors > "$before_report")`
-2. 編集後の作業ツリーでも`after_report=$(mktemp); (cd scripts && go run ./cmd/verify-colors > "$after_report")`を実行します。
-3. 出力の`[REPORT-ONLY BELOW-AA]`行を`ConsumerID profile role`へ正規化し、`sort -u`します。
-   例：`sed -n 's/^\[REPORT-ONLY BELOW-AA\] \([^ ]*\) profile=\([^ ]*\) role=\([^ ]*\).*$/\1 \2 \3/p' "$before_report" | sort -u > before.sorted; sed -n 's/^\[REPORT-ONLY BELOW-AA\] \([^ ]*\) profile=\([^ ]*\) role=\([^ ]*\).*$/\1 \2 \3/p' "$after_report" | sort -u > after.sorted`
-4. `comm -13 before.sorted after.sorted`で新規、`comm -23 before.sorted after.sorted`で解消を出します。
-
-### 手書きoverrideの出所と再検証
-
-inventoryのoverrideを追加するときは、Source欄へ消費側の`file:line`を必ず書きます。
-消費側toolの版とrev（例：`herdr v0.8.0 rev 346411fa21afd297f5ed3b3fa56f9e3fbf7654b7`）も必ず書きます。
-pairが静的に決まる前提条件（例：`panel_bg`が`reset`、`surface_dim`が特定tokenへ配線されること）をSource欄へ記録します。
-`flake.lock`で消費側toolを`bump`したら、該当overrideを再検証してください。
+手順の正本は `.claude/skills/color-validation/SKILL.md`（「段8: report-only集合の差分確認」「手書きoverrideの出所と再検証」）。
+report-onlyは非強制集合なので、fixture凍結で強制しない。
 
 ## 一貫性要件
 
