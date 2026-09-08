@@ -17,7 +17,7 @@ description: ユーザーが「別workspaceを立ち上げて調査/対処させ
 2. `herdr workspace create --cwd <対象ディレクトリ> --label <タスク内容が分かるラベル>` で新規workspaceを作る。レスポンスの `result.root_pane.pane_id` を控える
 3. `herdr agent start <name> --kind claude --pane <pane_id>` でclaude codeを起動する。`<name>` は英数字とハイフン/アンダースコアのみ、既存の生存agent名と重複しないこと(`herdr agent list` で確認できる)
 4. `herdr agent prompt <name> "<依頼内容>" --wait --until working --timeout 15000` で依頼を送る。ここで待つのは着弾確認だけで、完了は待たない。`agent_prompt_stalled` やtimeoutが返ったらプロンプトが届いていないので、`agent read` で状況を見て再送する
-5. 完了通知を予約する。Bashツールの `run_in_background` で `herdr agent wait <name> --timeout 1800000` を1本流す。settled状態(idle/done/blocked)に達した時点でexitし、1通の完了通知として届く。**`--timeout` は必ず付ける**(省略すると無期限待ちになり、委譲先が死んだ場合に通知が永久に来ない)。timeoutは委譲失敗の証拠ではないので、`agent read` で実況を確認して判断する
+5. 完了通知を予約する。Bashツールの `run_in_background` で `herdr agent wait <name> --timeout 1800000` を1本流す。settled状態(idle/done/blocked)に達した時点でexitし、1通の完了通知として届く。**`--timeout` は必ず付ける**(省略すると無期限待ちになり、委譲先が死んだ場合に通知が永久に来ない)。timeoutは委譲失敗の証拠ではないので、`agent read` で実況を確認して判断する。**質問待ちで止まった相手に対して wait を再度張らない** — `agent wait` は委譲先が質問を出して止まった状態も settled として即 exit するため、再armすると同じ画面を繰り返し報告するだけのループになる(2026-09-07実例)。同じ質問待ちが2回返ったら再armをやめ、ユーザーがpaneで応答するのを待つ
 6. **予約したら即座に元のタスクへ戻る**。sleepやポーリングで完了を待たない。通知が届いたら `herdr agent read <name>` で結果を確認し、`blocked` で返ってきた場合は質問への回答を `agent prompt` で送る(Q&Aの往復もこの形で回せる)
 7. 作業が完了し不要になったworkspaceは、ユーザーの明示的な指示があれば `herdr workspace close <workspace_id>` で閉じる。自分が作成した以外のworkspaceは閉じない(`herdr` skillの規約と同じ)
 
