@@ -106,8 +106,11 @@ driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.c
    - role file(`grok-review.cursor.md`)にreadiness probeへの応答例外を記載済み
    - **レビュー本体の成功基準**: 「[review]パケットの鉄則」の出力形式(Findings/Required tests/Residual risk/Confidence。clean reviewはFindingsなしを含む)を主が返すこと。返さない場合はspawn/probe時エラー・usage-limit応答・timeout・無応答・部分応答・形式不正・異常終了のいずれであってもすべて不成功とみなしフォールバックへ切替。**切替時は部分査読を継ぎ足さず段9を最初からやり直す**(遅着した主の応答とフォールバック応答を二重採用しない)
    - **停止条件**: grok-reviewの誤陰性・査読形式不良を1件でも観測した時点でフォールバックを停止する。停止状態はセッションをまたいで有効とし(このファイルまたはCLAUDE.mdへの追記で記録)、定義した再有効化手順(ユーザー承認を得て本節を書き換える)以外では再開しない
+   - **運用実績**: 2026-09-02のtheme-b2タスクで4巡(Medium 2件→Low 1件→Low 1件→findingsなし)。全findingが一次情報で裏取りでき誤陰性・誤検出はゼロ、未実行項目はinferenceと明記して区別していた。停止条件に該当せず暫定運用を継続する
 3. **フォールバック不能クラス**: 最終outbound payload全体(diff本文+補足説明+ログ+添付コンテキスト)に秘密の実値(credential・token等)が含まれると判断される場合、grok-review(cursor系)は対象外。機械的secret scannerは実装せず、メインの目視確認に依る(誤判定は残存リスクとして受容)。この場合はcodex単独で、codexも不能なら項4
 4. **段9ブロック**: 主・フォールバック双方が使用不能な場合。段9を無言スキップせずタスクをブロックしてユーザーに報告する。**ユーザーの明示的waiverがある場合のみ例外**とし、waiverは3条件を満たす: (a)対象diffをrepository identity・base tree・commit対象の完全なstaged treeを含むfingerprintに固定し、commit直前に再照合する (b)「段9成功」ではなく「段9未実施・ユーザーwaiver」として検収記録に残す (c)waiver後に対象diffが変更されたら旧waiverは無効・再承認必須
+
+opus-reviewは2026-09-09にusage limitから復旧済み(probe実測)。ただし段9の主系には戻さない — 実装レーンがsubagent(Anthropic)へ移った構成では同一vendorの一次査読になるため、高リスク変更でメインが第2意見を要ると判断したときだけ起こす。
 
 外部送信の安全境界: cursor harness経由の査読役(grok-review・opus-review)へは、ユーザーが受容したデータ境界としてprivate diff送付を許容する(2026-08-27ユーザー確認済み)。調査役(grok-research等)への最小化義務(未公開コード断片を含めない)とは別軸。ユーザーが受容を撤回した時点で即時無効。
 
