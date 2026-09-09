@@ -19,6 +19,54 @@ local function visual_selection()
   return text
 end
 
+-- ピッカーを開いた時点のカーソル行に最も近いシンボルへ選択を移す on_complete callback。
+-- telescope の symbol item は LSP の selectionRange(名前の範囲)なので、宣言行の上に
+-- いないときは「カーソル行以前で最後の宣言」に落ちる
+local function cursor_follower(row)
+  local done = false
+  return function(picker)
+    if done then
+      return
+    end
+    done = true
+    -- 打鍵済みなら選択を動かさない
+    if picker.closed or picker:_get_prompt() ~= "" then
+      return
+    end
+
+    local manager = picker.manager
+    local items = {}
+    for i = 1, manager and manager:num_results() or 0 do
+      local entry = manager:get_entry(i)
+      local item = entry and entry.value
+      if type(item) == "table" and item.lnum then
+        local col = item.col or 1
+        items[#items + 1] = {
+          index = i,
+          pos = { item.lnum, col },
+          range = {
+            start = { line = item.lnum - 1, character = col - 1 },
+            ["end"] = { line = (item.end_lnum or item.lnum) - 1, character = (item.end_col or col) - 1 },
+          },
+        }
+      end
+    end
+
+    -- select_index の fallback は pos 昇順を前提にするので、表示順に依存しないよう自分で並べる
+    table.sort(items, function(a, b)
+      if a.pos[1] ~= b.pos[1] then
+        return a.pos[1] < b.pos[1]
+      end
+      return a.pos[2] < b.pos[2]
+    end)
+
+    local idx = require("util.lsp_symbol_cursor").select_index(items, row)
+    if idx then
+      picker:set_selection(picker:get_row(items[idx].index))
+    end
+  end
+end
+
 return {
   "nvim-telescope/telescope.nvim",
   dependencies = { "nvim-lua/plenary.nvim" },
@@ -55,7 +103,10 @@ return {
     {
       "<leader>ss",
       function()
-        require("telescope.builtin").lsp_document_symbols({ symbols = LazyVim.config.get_kind_filter() })
+        require("telescope.builtin").lsp_document_symbols({
+          symbols = LazyVim.config.get_kind_filter(),
+          on_complete = { cursor_follower(vim.api.nvim_win_get_cursor(0)[1] - 1) },
+        })
       end,
       desc = "LSP Symbols (Telescope)",
     },
@@ -67,4 +118,6 @@ return {
       desc = "Help Pages (Telescope)",
     },
   },
+  -- 既定の preview_cutoff = 120 だと 120桁未満の幅でプレビューが畳まれる
+  opts = { defaults = { layout_config = { horizontal = { preview_cutoff = 1 } } } },
 }
