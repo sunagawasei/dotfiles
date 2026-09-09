@@ -31,14 +31,9 @@ go run ./cmd/verify-colors
 
 Conventional Commits（`<type>(<scope>): <description>`）。type は `feat` / `fix` / `perf` / `refactor` / `docs` / `chore`、scope は `nvim` / `wezterm` / `theme` / `zsh` / `git` / `scripts` / `docs` / `claude` など。本文の言語と粒度は `git log` の既存スタイルに合わせる。
 
-## 記録の義務
-
-キーバインドや操作を追加・変更したら `KEYMAPS.md` に記録する。
-
 ## 関連ドキュメント
 
 - `AGENTS.md` — 全AIエージェント共通の指針
 - `CLAUDE.md` — Claude Code向けの指針
 - `COLOR-SYSTEM.md` — カラーシステムの詳細
-- `KEYMAPS.md` — キーバインド一覧
 - `nvim/CLAUDE.md` — Neovim設定の詳細

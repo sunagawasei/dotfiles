@@ -58,7 +58,7 @@ in
       "homerow"
       # Pkg 型 cask。未インストールだと activation の非対話 brew bundle が sudo で止まるため、
       # 先に brew install --cask karabiner-elements を対話実行する。
-      # 設定本体は gitignore 対象なので、手動設定の内容は KEYMAPS.md に記録する。
+      # 設定本体は gitignore 対象なので、手動設定の内容は CLAUDE.md に記録する。
       "karabiner-elements"
       # アプリケーション
       "chatgpt"

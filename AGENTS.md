@@ -14,12 +14,10 @@ macOS上の開発ツール設定を管理する個人用dotfiles。stow等の自
 
 ## 記録の義務
 
-- キーバインドや操作を追加・変更したら `KEYMAPS.md` に記録する
 - コミットは Conventional Commits（`<type>(<scope>): <subject>`）。本文の言語と粒度は `git log` の既存スタイルに合わせる
 
 ## 関連ドキュメント
 
 - `CLAUDE.md` — Claude Code向けの指針
 - `COLOR-SYSTEM.md` — カラーシステムのガイドライン
-- `KEYMAPS.md` — キーバインド一覧
 - `nvim/CLAUDE.md` — Neovim設定の詳細

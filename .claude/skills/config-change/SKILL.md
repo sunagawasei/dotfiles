@@ -89,7 +89,7 @@ Conventional Commits形式に従い、日本語または英語で記述：
 ```
 feat(nvim): CodeCompanionプラグインを追加
 fix(wezterm): キーバインドの競合を解消
-docs: KEYMAPS.mdにターミナル操作を追加
+docs: nvimのターミナル操作をCLAUDE.mdへ追記
 refactor(theme): カラー定義をTOML形式に統一
 ```
 

@@ -35,3 +35,17 @@ darwin-apply
 - **`nix.enable = false`**: Nix デーモン管理は nix-darwin に委ねず別管理。
 - **アーキテクチャ**: `aarch64-darwin`（Apple Silicon）固定。
 - **`darwinConfigurations` の attr 名**: hostname と一致させる。PC 交換時は `flake.nix` 側も改名する。
+
+## Karabiner-Elements の手動設定(内蔵キーボードの無効化)
+
+設定本体(`~/.config/karabiner/`)はgitignore対象なので、GUIで設定する内容をここに記録する。
+
+Devicesタブ:
+
+- roBa(VID `0x1d50` / PID `0x615e`)の行で "Disable the built-in keyboard while this device is connected" を有効にする
+- roBaの "Modify events" は外す。roBaのイベントを変換する必要がないため。keyboard行とpointing行の2行に分かれている場合は両方外す(pointing行はPMW3610トラックボールのポインタ入力をKarabinerの仮想HID経由にしないため)
+- 内蔵キーボードの行は "Modify events" をonのままにする。キー入力を落とすためにKarabinerがデバイスをgrabする必要がある
+
+Expertタブ:
+
+- `enable_cgeventtap_fallback` はoffのまま維持する。onにするとイベントの発生元デバイスを判別できず、内蔵キーボードだけの無効化が成立しない

@@ -108,8 +108,8 @@ yarn-error.log*
 !.claude/rules/
 .claude/rules/*
 !.claude/rules/color-system.md
-!.claude/rules/keymaps.md
 !.claude/rules/neovim.md
+!.claude/rules/wezterm-keybinds.md
 
 # MCP Serena設定・キャッシュ（ローカル環境固有）
 .serena/

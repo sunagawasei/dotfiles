@@ -45,7 +45,7 @@ description: skill/rule/CLAUDE.md/メモリの棚卸しと公式ベストプラ�
   find ~/work ~/poc ~/.config -maxdepth 4 -name 'CLAUDE.md' -not -path '*/node_modules/*' -not -path '*/.git/*' -not -path '*/attic/*'
   ```
   各ファイルの行数を測定。upstream管理ファイル(symlink等。例: herdrの`CLAUDE.md`→`AGENTS.md`)は対象外
-- **基準超過(目安200行超)**: スリム化。原則は「情報は削除でなく移設」— 詳細・手順・リファレンスを`.claude/docs/`や既存参照ドキュメント(KEYMAPS.md等)へロスレス移設して1行参照化。ルート/サブ/`.claude`間の二重ロード重複は一本化
+- **基準超過(目安200行超)**: スリム化。原則は「情報は削除でなく移設」— 詳細・手順・リファレンスを`.claude/docs/`や既存参照ドキュメントへロスレス移設して1行参照化。ルート/サブ/`.claude`間の二重ロード重複は一本化
 - **基準内(目安200行以内)**: 軽量点検のみ — (a)30行超の手順ブロック→移設 (b)明白な重複 (c)実構成との乖離、の3基準。**問題なければ触らない**(無理に変更を作らない)
 - 非公式frontmatterフィールド(過去の例: ruleの`trigger:`)が見つかったら、対象ファイル本体だけでなく**生成テンプレート(add-rule references等)からも**除去する
 

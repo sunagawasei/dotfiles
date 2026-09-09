@@ -57,7 +57,7 @@ formatters_by_ft = {
 
 ## キーマップ追加
 
-`lua/config/keymaps.lua`に記述し、`KEYMAPS.md`にドキュメント化：
+`lua/config/keymaps.lua`に記述する：
 
 ```lua
 vim.keymap.set("n", "<leader>xx", function()
