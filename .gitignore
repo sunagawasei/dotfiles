@@ -10,6 +10,7 @@ kot/
 
 # アプリケーション設定ストア
 configstore/
+karabiner/
 raycast/
 
 # Homebrew（trust.json等の自動生成状態ファイル）

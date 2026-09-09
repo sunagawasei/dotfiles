@@ -195,3 +195,19 @@ MacBook内蔵キーボードとroBa（ZMK自作キーボード）の両方で押
 - `Option+f`: 1単語ずつ受諾（forward-word）
 - `Ctrl+F`: 1文字ずつ受諾（partial-accept）
 - `Ctrl+O`: 非英数字（`/`・空白・`.`・`-` 等）を区切りに受諾（partial-accept）
+
+# Karabiner-Elements
+
+## 内蔵キーボードの無効化(尊師スタイル)
+
+設定本体(`~/.config/karabiner/`)はgitignore対象なので、手動設定する内容をここに記録する。
+
+Devicesタブ:
+
+- roBa(VID `0x1d50` / PID `0x615e`)の行で "Disable the built-in keyboard while this device is connected" を有効にする
+- roBaの "Modify events" は外す。roBaのイベントを変換する必要がないため。keyboard行とpointing行の2行に分かれている場合は両方外す(pointing行はPMW3610トラックボールのポインタ入力をKarabinerの仮想HID経由にしないため)
+- 内蔵キーボードの行は "Modify events" をonのままにする。キー入力を落とすためにKarabinerがデバイスをgrabする必要がある
+
+Expertタブ:
+
+- `enable_cgeventtap_fallback` はoffのまま維持する。onにするとイベントの発生元デバイスを判別できず、内蔵キーボードだけの無効化が成立しない
