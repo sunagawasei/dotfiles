@@ -1,0 +1,17 @@
+# Neovimの検索ピッカーが --ignore-file で読む、リポジトリ横断の除外リスト。
+# .gitignore を無視して検索するため、どのリポジトリでも中身を読まないものをここで落とす。
+.git/
+node_modules/
+.terraform/
+.venv/
+venv/
+__pycache__/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+.next/
+.nuxt/
+.svelte-kit/
+target/debug/
+target/release/
+.gradle/

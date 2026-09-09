@@ -3,7 +3,7 @@ return {
   version = "*",
   event = "VeryLazy",
   config = function()
-    -- 番号付きターミナルの上限(lazygit=99 / hunk=98 とは別枠)
+    -- 番号付きターミナルの上限(lazygit=99 / hunk=98 / hunk_staged=96 とは別枠)
     local MAX_NUMBERED_TERMINALS = 9
 
     require("toggleterm").setup({
@@ -188,43 +188,54 @@ return {
     end
 
     -- Hunk統合(AIエージェント差分レビュー用TUI)
-    local hunk = Terminal:new({
-      cmd = "hunk diff",
-      direction = "float",
-      hidden = true,
-      count = 98,
-      env = {
-        NVIM = vim.v.servername,
-        -- Hunkの`e`キー(open file in $EDITOR)を、lazygitのnvim-remoteプリセット同様
-        -- 既存Neovimインスタンスのバッファとして開くようリダイレクトする
-        EDITOR = vim.fn.stdpath("config") .. "/bin/hunk-nvim-editor/nvim",
-      },
-      float_opts = {
-        border = "curved",
-        width = function() return math.floor(vim.o.columns * 0.95) end,
-        height = function() return math.floor(vim.o.lines * 0.95) end,
-      },
-      on_open = function(term)
-        vim.cmd("startinsert!")
-        vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", { noremap = true, silent = true })
-      end,
-      on_close = function(term)
-        vim.schedule(function()
-          if vim.bo.buftype == "terminal" then
-            vim.cmd("startinsert!")
-          end
-        end)
-      end,
-    })
+    local function new_hunk_terminal(cmd, count)
+      return Terminal:new({
+        cmd = cmd,
+        direction = "float",
+        hidden = true,
+        count = count,
+        env = {
+          NVIM = vim.v.servername,
+          -- Hunkの`e`キー(open file in $EDITOR)を、lazygitのnvim-remoteプリセット同様
+          -- 既存Neovimインスタンスのバッファとして開くようリダイレクトする
+          EDITOR = vim.fn.stdpath("config") .. "/bin/hunk-nvim-editor/nvim",
+        },
+        float_opts = {
+          border = "curved",
+          width = function() return math.floor(vim.o.columns * 0.95) end,
+          height = function() return math.floor(vim.o.lines * 0.95) end,
+        },
+        on_open = function(term)
+          vim.cmd("startinsert!")
+          vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", { noremap = true, silent = true })
+        end,
+        on_close = function(term)
+          vim.schedule(function()
+            if vim.bo.buftype == "terminal" then
+              vim.cmd("startinsert!")
+            end
+          end)
+        end,
+      })
+    end
+
+    local hunk = new_hunk_terminal("hunk diff", 98)
+    local hunk_staged = new_hunk_terminal("hunk diff --staged", 96)
 
     _G.hunk_toggle = function()
       hunk:toggle()
     end
 
+    _G.hunk_staged_toggle = function()
+      hunk_staged:toggle()
+    end
+
     _G.hunk_hide = function()
-      if hunk:is_open() and hunk:is_focused() then
-        hunk:close()
-        return 0
+      for _, term in ipairs({ hunk, hunk_staged }) do
+        if term:is_open() and term:is_focused() then
+          term:close()
+          return 0
+        end
       end
       error("hunk is not the focused window")
     end
@@ -232,6 +243,7 @@ return {
     _G.toggle_last_terminal = function()
       if lazygit:is_open() and lazygit:is_focused() then lazygit:close() end
       if hunk:is_open() and hunk:is_focused() then hunk:close() end
+      if hunk_staged:is_open() and hunk_staged:is_focused() then hunk_staged:close() end
       vim.cmd("ToggleTerm")
     end
 
@@ -250,7 +262,7 @@ return {
     end
 
     -- 番号付きターミナルのうち存在するものだけを昇順で返す
-    -- (lazygit=99 / hunk=98 はサイクル対象外)
+    -- (lazygit=99 / hunk=98 / hunk_staged=96 はサイクル対象外)
     local function numbered_terminal_ids()
       local ids = {}
       for _, term in ipairs(require("toggleterm.terminal").get_all(true)) do
@@ -445,6 +457,14 @@ return {
       end,
       mode = { "n" },
       desc = "Hunk (diff review)",
+    },
+    {
+      "<leader>gV",
+      function()
+        _G.hunk_staged_toggle()
+      end,
+      mode = { "n" },
+      desc = "Hunk (staged diff review)",
     },
 
     -- ターミナルモード操作

@@ -1,0 +1,25 @@
+# ripgrep/fdがこのリポジトリで自動的に読む除外リスト。
+# .gitignoreを無視して検索したときに、エージェントの会話ログとキャッシュが結果を埋めるのを防ぐ。
+codex/sessions/
+codex/cache/
+codex/plugins/
+codex/computer-use/
+codex/shell_snapshots/
+codex/generated_images/
+cursor/chats/
+claude/cache/
+claude/debug/
+claude/history.jsonl
+claude/security/
+claude/file-history/
+claude/projects/
+claude/plugins/
+claude/paste-cache/
+claude/todos/
+claude/shell-snapshots/
+claude/statsig/
+gcloud/
+gws/cache/
+raycast/
+agents/skills/
+zsh/.zcompcache/

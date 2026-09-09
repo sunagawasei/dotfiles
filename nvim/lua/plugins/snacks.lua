@@ -1,6 +1,9 @@
 -- lsp_symbols の on_show が登録する vim.on_key handler。前回の解除漏れを次回に外すため保持する
 local follow_ns ---@type integer?
 
+-- .gitignore を無視して検索する。代わりに rgignore でリポジトリ横断のノイズを落とす
+local rg_args = { "--no-ignore-vcs", "--ignore-file", vim.fn.stdpath("config") .. "/rgignore" }
+
 return {
   "folke/snacks.nvim",
   dependencies = { "delphinus/md-render.nvim" },
@@ -29,6 +32,7 @@ return {
           end,
         },
         grep = {
+          args = rg_args,
           preview = function(ctx)
             require("md-render.snacks").preview()(ctx)
           end,

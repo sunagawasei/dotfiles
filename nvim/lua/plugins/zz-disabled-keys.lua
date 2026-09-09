@@ -76,6 +76,7 @@ return {
       { "<leader>sa", false },
       { "<leader>sb", false },
       { "<leader>sc", false },
+      { "<leader>sh", false },
       { "<leader>si", false },
       { "<leader>sl", false },
       { "<leader>sp", false },

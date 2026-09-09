@@ -97,6 +97,13 @@ return {
         enabled = false,
       }
 
+      -- <leader>ss はLazyVimのsnacks_picker extraがLspAttach時にbuffer-localで張る
+      -- キーマップなので、zz-disabled-keys.luaのsnacksブロックへfalseを書いても外れない。
+      -- Telescope版を試用するため末尾に追加し、後勝ちで無効化する
+      opts.servers["*"] = opts.servers["*"] or {}
+      opts.servers["*"].keys = opts.servers["*"].keys or {}
+      table.insert(opts.servers["*"].keys, { "<leader>ss", false })
+
       return opts
     end,
   },
