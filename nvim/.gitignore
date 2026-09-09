@@ -5,7 +5,6 @@ local.lua
 *.local.lua
 
 # LazyVim specific
-lazy-lock.json
 .lazy.lua
 
 # IDE and editor files

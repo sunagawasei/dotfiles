@@ -69,9 +69,6 @@ useful_phrases.md
 # Vim netrw履歴
 vim/.netrwhist
 
-# Neovimプラグインのロックファイル
-nvim/lazy-lock.json
-
 # Neovimスペルチェック辞書（自動生成）
 *.utf-8.add.spl
 
