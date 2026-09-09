@@ -94,11 +94,9 @@ return {
         },
         lualine_c = {
           "diagnostics",
-          {
-            "filename",
-            path = 3,            -- 短縮相対パス
-            shorting_target = 40,
-          },
+          function()
+            return require("util.statusline_path").current()
+          end,
         },
         lualine_x = { "filetype" },
         lualine_y = { "location" },
@@ -108,11 +106,9 @@ return {
         lualine_a = {},
         lualine_b = {},
         lualine_c = {
-          {
-            "filename",
-            path = 3,            -- 短縮相対パス
-            shorting_target = 40,
-          },
+          function()
+            return require("util.statusline_path").current()
+          end,
         },
         lualine_x = {},
         lualine_y = {},
