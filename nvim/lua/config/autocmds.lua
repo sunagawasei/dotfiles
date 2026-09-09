@@ -132,7 +132,7 @@ vim.api.nvim_create_autocmd("TermOpen", {
     end, vim.tbl_extend("force", opts, { desc = "Find Files (from terminal)" }))
     vim.keymap.set("t", "<leader><space>", function()
       vim.cmd("stopinsert")
-      Snacks.picker.files()
+      require("fff").find_files({ cwd = LazyVim.root() })
     end, vim.tbl_extend("force", opts, { desc = "Find Files (from terminal)" }))
     vim.keymap.set("t", "<leader>fg", function()
       vim.cmd("stopinsert")
