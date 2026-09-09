@@ -10,9 +10,10 @@ return {
       {
         "<leader><space>",
         function()
-          require("fff").find_files({ cwd = LazyVim.root() })
+          -- LazyVim.root()はLSPルートを先に見るため、nvim配下を開いていると~/.config/nvimに絞られる
+          require("fff").find_files({ cwd = LazyVim.root.git() })
         end,
-        desc = "Find Files (Root Dir, fff)",
+        desc = "Find Files (Git Root, fff)",
       },
       {
         "<leader>sg",
@@ -20,14 +21,6 @@ return {
           require("fff").live_grep({ cwd = LazyVim.root() })
         end,
         desc = "Grep (Root Dir, fff)",
-      },
-      {
-        "<leader>fP",
-        function()
-          -- LazyVim.root()はLSPルートを先に見るため、nvim配下を開いていると~/.config/nvimに絞られる
-          require("fff").find_files({ cwd = LazyVim.root.git() })
-        end,
-        desc = "Find Files (Git Root, fff)",
       },
     },
   },
