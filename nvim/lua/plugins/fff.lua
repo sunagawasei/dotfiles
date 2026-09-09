@@ -29,13 +29,6 @@ return {
         end,
         desc = "Find Files (Git Root, fff)",
       },
-      {
-        "<leader>sF",
-        function()
-          require("fff").live_grep({ cwd = LazyVim.root() })
-        end,
-        desc = "Grep (fff)",
-      },
     },
   },
   {
