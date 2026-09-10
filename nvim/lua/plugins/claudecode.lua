@@ -117,6 +117,13 @@ return {
     { "<leader>as", "<cmd>ClaudeCodeSend<cr>", mode = "v", desc = "Send selection to Claude" },
     { "<leader>as", "<cmd>.ClaudeCodeSend<cr>", mode = "n", desc = "Send current line to Claude" },
     {
+      "<leader>ah",
+      function()
+        require("utils.claudecode_hunk").send()
+      end,
+      desc = "Send Git hunk under cursor to Claude",
+    },
+    {
       "<leader>at",
       "<cmd>ClaudeCodeTreeAdd<cr>",
       desc = "Add file from tree explorer",
