@@ -82,6 +82,8 @@
     "/System/Applications/Calendar.app"
     "/System/Applications/System Settings.app"
     "/Applications/Slack.app"
+    # 尊師モードでroBaが使えなくなったとき、Profilesタブからnormalへ戻す復旧経路
+    "/Applications/Karabiner-Elements.app"
   ];
 
   # ── Finder ──────────────────────────────────────────────────────────

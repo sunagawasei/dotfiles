@@ -59,11 +59,26 @@ sonshi status  # 選択中の profile を表示する(引数なしも同じ)
 
 `sonshi on` の状態では roBa の接続に関係なく内蔵キーボードが効かない。roBa の電池切れ・BLE 不調・
 別 Mac へのペアリング切り替えで roBa が使えなくなると、内蔵キーボードで `sonshi off` を打てない。
-キーボードを使わない復旧経路は3つ。
+キーボードを使わない復旧経路は2つ。
 
-1. Finder → アプリケーション → Karabiner-Elements を開き、Profiles タブで `normal` を選ぶ
-   (トラックパッドだけで完結する)
+1. Dock の Karabiner-Elements を開き、Profiles タブで `normal` を選ぶ(トラックパッドだけで完結する)。
+   Dock への配置は `configuration.nix` の `system.defaults.dock.persistent-apps` で宣言している
 2. roBa を再接続する
+
+**ロック画面で roBa が使えない場面は塞げていない。** ロック画面には Dock も Finder もアップル
+メニューも無いので、経路1が使えない。安い順に3つ。
+
+- Touch ID か Apple Watch でロックを解除する。解除できればログイン後の画面になり経路1が使える
+- 外付けキーボードを挿してパスワードを打つ
+- 電源ボタン長押しで強制再起動する。未保存の作業やファイルシステムの更新を壊すので最後の手段。
+  再起動後の最初のログインは Touch ID が使えずパスワードが要る。ログインウィンドウは Karabiner が
+  ユーザーセッションで立ち上がる前なので内蔵キーボードが効くと見込んでいる(未検証)。**ログイン後は
+  内蔵キーが再び無効になる**(profile の選択が残っていれば `sonshi` が再適用される)。デスクトップに
+  着いたら経路1、つまり Dock の Karabiner-Elements から `normal` に戻す。この時点でも
+  `sonshi status` は打てない
+
+内蔵キーボードのキーコンボで `normal` へ戻す脱出コードを試したが、発火させられなかったので入れて
+いない。経緯は commit message に残してある。
 
 **メニューバーの Karabiner アイコンはあてにしない。** このマシンはメニューバーの項目が多く、
 Karabiner のアイコンが MacBook のノッチの裏へ回り込んで見えない。アイコンが見えているときは
@@ -86,7 +101,7 @@ profile `sonshi`:
   を付け、修飾キー保持中の入力も対象にする。`to` は書かずイベントを捨てる
 - `pointing_button` は含めない。内蔵トラックパッドを生かすため
 - `devices` に roBa(vendor_id 7504 / product_id 24926)の `disable_built_in_keyboard_if_exists: true`
-  を残す。上のルールの `from.any` に漏れがあっても roBa 接続中はデバイス設定側で落ちる
+  を置く。上のルールの `from.any` に漏れがあっても、roBa 接続中はデバイス層で落ちる
 
 profile `normal`:
 
@@ -216,6 +231,7 @@ profile `normal`:
         }
       ],
       "name": "sonshi",
+      "selected": true,
       "virtual_hid_keyboard": {
         "keyboard_type_v2": "jis"
       }
@@ -233,7 +249,6 @@ profile `normal`:
         }
       ],
       "name": "normal",
-      "selected": true,
       "virtual_hid_keyboard": {
         "keyboard_type_v2": "jis"
       }
@@ -285,5 +300,5 @@ Nix 環境から呼ばれて PATH に依存できないため、そちらは実�
 
 ### 選択の永続性
 
-profile の選択は `karabiner.json` の `selected` に書かれるので、ログイン後は macOS を再起動しても
-残る。ログインウィンドウ(ログイン前)と Karabiner 起動前の短時間は対象外。
+profile の選択は `karabiner.json` の `selected` に書かれる。ログインウィンドウ(ログイン前)と
+Karabiner 起動前の短時間は対象外。**macOS 再起動後も選択が残ることは未検証。**
