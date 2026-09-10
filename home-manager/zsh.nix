@@ -80,6 +80,12 @@ in
 
       # Rust
       [ -f "$HOME/.cargo/env" ] && . "$HOME/.cargo/env"
+
+      # claude CLI は CLAUDE_CODE_SSE_PORT に一致する lock を cwd 照合を飛ばして
+      # 選ぶため、同じ repo を複数 workspace で開いても取り違えない。
+      if [ -n "$HERDR_WORKSPACE_ID" ]; then
+        export CLAUDE_CODE_SSE_PORT=$(( 10000 + $(printf '%s' "$HERDR_WORKSPACE_ID" | cksum | cut -d' ' -f1) % 39152 ))
+      fi
     '';
 
     # ---- .zprofile (profileExtra) ----
