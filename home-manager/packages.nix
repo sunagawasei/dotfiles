@@ -147,6 +147,70 @@ let
       exec sudo /run/current-system/sw/bin/darwin-rebuild switch --flake "$HOME/.config"
     '';
   };
+
+  # 尊師スタイル(内蔵キーボード上にroBaを載せる運用)用にKarabiner-Elements profileを
+  # 切り替える。--select-profileは存在しないprofile名でも終了コード0を返すため、
+  # 切り替え後に--show-current-profile-nameで読み戻して検証する。
+  sonshi = pkgs.writeShellApplication {
+    name = "sonshi";
+    text = ''
+      karabiner_cli="/Library/Application Support/org.pqrs/Karabiner-Elements/bin/karabiner_cli"
+
+      usage() {
+        echo "usage: sonshi {on|off|status}" >&2
+      }
+
+      switch_to() {
+        local target="$1"
+        "$karabiner_cli" --select-profile "$target"
+        local current
+        current="$("$karabiner_cli" --show-current-profile-name)"
+        if [ "$current" != "$target" ]; then
+          echo "sonshi: profile '$target' への切り替えに失敗した(現在の profile: '$current')" >&2
+          exit 1
+        fi
+        echo "sonshi: profile を '$target' へ切り替えた"
+      }
+
+      show_status() {
+        local current
+        current="$("$karabiner_cli" --show-current-profile-name)"
+        case "$current" in
+          sonshi)
+            echo "sonshi: 選択中の profile は 'sonshi'(内蔵キーボードのキーを常に無効にする設定)。profile名の確認のみで、ルール内容の健全性は保証しない。"
+            ;;
+          normal)
+            echo "sonshi: 選択中の profile は 'normal'(内蔵キーボードを使う設定)。profile名の確認のみで、ルール内容の健全性は保証しない。"
+            ;;
+          *)
+            echo "sonshi: 選択中の profile が 'sonshi'/'normal' のどちらでもない('$current')" >&2
+            exit 1
+            ;;
+        esac
+      }
+
+      if [ "$#" -gt 1 ]; then
+        usage
+        exit 2
+      fi
+
+      case "''${1:-status}" in
+        on)
+          switch_to sonshi
+          ;;
+        off)
+          switch_to normal
+          ;;
+        status)
+          show_status
+          ;;
+        *)
+          usage
+          exit 2
+          ;;
+      esac
+    '';
+  };
 in
 {
   home.packages = with pkgs; [
@@ -191,6 +255,9 @@ in
 
     # nix-darwin適用ラッパー(Claudeへの限定開放用)
     darwinApply
+
+    # 尊師スタイル用Karabiner-Elements profile切り替え
+    sonshi
   ];
 
   # eza/bat のテーマ配置先を用意し、bat のテーマキャッシュを毎回再構築する
