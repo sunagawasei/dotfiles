@@ -90,6 +90,18 @@ return {
       vim.notify("claudecode.nvim send notifier could not be loaded", vim.log.levels.WARN)
     end
 
+    -- 同じ herdr workspace の claude だけが繋がるよう、WebSocket のポートを
+    -- workspace ごとの固定値にする。使えないときは既定範囲のまま起動する。
+    local port_ok, port_mod = pcall(require, "utils.claudecode_port")
+    if port_ok then
+      local range = port_mod.range_for_pinned_port()
+      if range then
+        opts.port_range = range
+      end
+    else
+      vim.notify("claudecode.nvim port pinning could not be loaded", vim.log.levels.WARN)
+    end
+
     -- setup()を呼び出す（この時点で上記の差し替え済みハンドラが登録される）
     require("claudecode").setup(opts)
 
