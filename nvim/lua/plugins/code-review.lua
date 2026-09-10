@@ -25,14 +25,19 @@ return {
           return
         end
 
-        local content = formatter.format(comments)
-        local cwd_hash = vim.fn.sha256(vim.fn.getcwd()):sub(1, 8)
-        local tmpfile = "/tmp/claude-review-" .. cwd_hash .. ".md"
-        vim.fn.writefile(vim.split(content, "\n", { plain = true }), tmpfile)
-
         local ok_cc = pcall(require, "claudecode")
         if not ok_cc then
           vim.notify("claudecode.nvim is not loaded", vim.log.levels.ERROR)
+          return
+        end
+
+        local content = formatter.format(comments)
+        local tmpfile, tmp_err = require("utils.claudecode_tmpfile").create(
+          vim.split(content, "\n", { plain = true }),
+          { subdir = "claudecode-review", ext = "md" }
+        )
+        if not tmpfile then
+          vim.notify(tmp_err or "unknown error", vim.log.levels.ERROR)
           return
         end
 
