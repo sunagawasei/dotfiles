@@ -10,7 +10,7 @@ index 1594f83d..dc976060 100644
          assert_eq!(
              frame_digest(&frame),
 -            "ce383feeaac30922502b7c4f8af53b5ca30e816ec4503ca6d015738b584da487"
-+            "b67dd0e2abc01fed2057c970adefc400753be90c95c170145e8856efa033ee97"
++            "f776153b640eadefde0a2a94b1c7d5ad768a96cb99502b9d4f8b987894bb1e88"
          );
      }
  

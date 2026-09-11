@@ -20,6 +20,9 @@ let
   # pane削除の確認判定を、tty前景プロセスグループがpane一次プロセス自身のグループか
   # どうかで行う。グループ全メンバーの走査だと、reparent後もshellのpgidを保つ常駐
   # プロセス(zeno.zshのdenoサーバ)に恒久的にヒットし、アイドルなpaneで確認が出続ける。
+  # 非focus paneの端末内容をTerminalモード中もdim表示する(上流はNavigateモード限定)。
+  # TerminalDirtyPatchの部分再描画パスにも同じdim判定を適用し、dimが抜けて
+  # 高頻度更新paneがちらつくのを防ぐ。
   # combined-frame-digestは個別機能ではなく、上記UIパッチ全部の合成描画を固定する
   # integration fixture。必ず最後に適用し、UIパッチを変えたらdigestを再生成する。
   # 並び順は開発branch v080-upgrade(専用worktreeで保持)のcommit順と一致させる。
@@ -32,6 +35,7 @@ let
       ./patches/herdr-copy-mode-yank-stay.patch
       ./patches/herdr-expanded-sidebar-space-numbers.patch
       ./patches/herdr-confirm-close-leader-only.patch
+      ./patches/herdr-dim-inactive-panes.patch
       ./patches/herdr-combined-frame-digest.patch
     ];
   });

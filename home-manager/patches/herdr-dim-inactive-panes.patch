@@ -1,0 +1,996 @@
+# 非focus paneの端末内容をdim表示する(Terminalモード中も含む)。上流のdim判定は
+# Navigateモード限定で、作業中(Terminalモード)は非focusペインが暗くならなかった。
+# TerminalDirtyPatchによる部分再描画パスにも同じdim判定をORで適用する。部分再描画は
+# 全面再描画のdim後がけを通らないため、高頻度更新paneが明滅するのを防ぐ。
+diff --git a/src/app/mod.rs b/src/app/mod.rs
+index af0539bb..08724c3e 100644
+--- a/src/app/mod.rs
++++ b/src/app/mod.rs
+@@ -635,6 +635,7 @@ impl App {
+             pane_borders: config.ui.pane_borders,
+             pane_scrollbars: config.ui.pane_scrollbars,
+             pane_gaps: config.ui.pane_gaps,
++            dim_inactive_panes: config.ui.dim_inactive_panes,
+             show_agent_labels_on_pane_borders: config.ui.show_agent_labels_on_pane_borders,
+             hide_tab_bar_when_single_tab: config.ui.hide_tab_bar_when_single_tab,
+             tab_bar_position: config.ui.tab_bar_position,
+@@ -1444,6 +1445,7 @@ impl App {
+                 self.state.pane_borders = config.ui.pane_borders;
+                 self.state.pane_scrollbars = config.ui.pane_scrollbars;
+                 self.state.pane_gaps = config.ui.pane_gaps;
++                self.state.dim_inactive_panes = config.ui.dim_inactive_panes;
+                 self.state.show_agent_labels_on_pane_borders =
+                     config.ui.show_agent_labels_on_pane_borders;
+                 self.state.hide_tab_bar_when_single_tab = config.ui.hide_tab_bar_when_single_tab;
+@@ -2866,7 +2868,7 @@ mod tests {
+         std::fs::create_dir_all(path.parent().unwrap()).unwrap();
+         std::fs::write(
+             &path,
+-            "[terminal]\ndefault_shell = \"nu\"\nshell_mode = \"non_login\"\nnew_cwd = \"home\"\n[keys]\nnew_workspace = \"prefix+m\"\nprefix = \"ctrl+a\"\n[update]\nversion_check = false\nmanifest_check = false\n[ui]\nagent_panel_sort = \"priority\"\nredraw_on_focus_gained = false\ncopy_on_select = false\nright_click_passthrough_modifier = \"ctrl\"\nprompt_new_workspace_name = true\n[ui.toast]\ndelivery = \"herdr\"\n[experimental]\nswitch_ascii_input_source_in_prefix = true\n",
++            "[terminal]\ndefault_shell = \"nu\"\nshell_mode = \"non_login\"\nnew_cwd = \"home\"\n[keys]\nnew_workspace = \"prefix+m\"\nprefix = \"ctrl+a\"\n[update]\nversion_check = false\nmanifest_check = false\n[ui]\nagent_panel_sort = \"priority\"\nredraw_on_focus_gained = false\ndim_inactive_panes = false\ncopy_on_select = false\nright_click_passthrough_modifier = \"ctrl\"\nprompt_new_workspace_name = true\n[ui.toast]\ndelivery = \"herdr\"\n[experimental]\nswitch_ascii_input_source_in_prefix = true\n",
+         )
+         .unwrap();
+         std::env::set_var(crate::config::CONFIG_PATH_ENV_VAR, &path);
+@@ -2913,6 +2915,7 @@ mod tests {
+         );
+         assert_eq!(app.state.agent_panel_sort, state::AgentPanelSort::Priority);
+         assert!(!app.state.redraw_on_focus_gained);
++        assert!(!app.state.dim_inactive_panes);
+         assert!(!app.state.copy_on_select);
+         assert!(app.state.prompt_new_workspace_name);
+         assert!(app.state.selection.is_some());
+diff --git a/src/app/state.rs b/src/app/state.rs
+index dedf823f..ebee748d 100644
+--- a/src/app/state.rs
++++ b/src/app/state.rs
+@@ -1500,6 +1500,7 @@ pub struct AppState {
+     pub pane_borders: bool,
+     pub pane_scrollbars: bool,
+     pub pane_gaps: bool,
++    pub dim_inactive_panes: bool,
+     pub show_agent_labels_on_pane_borders: bool,
+     pub hide_tab_bar_when_single_tab: bool,
+     pub tab_bar_position: TabBarPositionConfig,
+@@ -1663,6 +1664,19 @@ impl AppState {
+         }
+     }
+ 
++    /// Whether `info` should render its terminal content dimmed: split-pane dimming is
++    /// enabled, the pane lacks focus, and the active tab actually has more than one pane
++    /// (so a solo or zoomed pane is never dimmed). Shared by the full-frame renderer and
++    /// the retained-frame patcher so both apply the same modifier bits to the same cells.
++    pub(crate) fn pane_should_dim(&self, info: &PaneInfo) -> bool {
++        if !self.dim_inactive_panes || info.is_focused {
++            return false;
++        }
++        self.active
++            .and_then(|ws_idx| self.workspaces.get(ws_idx))
++            .is_some_and(|ws| ws.layout.pane_count() > 1)
++    }
++
+     /// Returns true when the given (workspace, tab, pane) refers to the
+     /// currently focused pane in the active workspace's active tab.
+     pub(crate) fn runtime_for_pane_in_workspace<'a>(
+@@ -1871,6 +1885,7 @@ impl AppState {
+             pane_borders: true,
+             pane_scrollbars: true,
+             pane_gaps: false,
++            dim_inactive_panes: true,
+             show_agent_labels_on_pane_borders: false,
+             hide_tab_bar_when_single_tab: false,
+             tab_bar_position: TabBarPositionConfig::Top,
+diff --git a/src/config/model.rs b/src/config/model.rs
+index e9df244e..0c58d63b 100644
+--- a/src/config/model.rs
++++ b/src/config/model.rs
+@@ -820,6 +820,8 @@ pub struct UiConfig {
+     pub pane_scrollbars: bool,
+     /// Keep split panes visually separated instead of sharing divider borders. Default: true.
+     pub pane_gaps: bool,
++    /// Dim the terminal content of split panes that do not have focus. Default: true.
++    pub dim_inactive_panes: bool,
+     /// Show agent labels in split pane borders when no manual pane label is set. Default: false.
+     pub show_agent_labels_on_pane_borders: bool,
+     /// Hide the tab row when the workspace has one tab. Default: false.
+@@ -1028,6 +1030,7 @@ impl Default for UiConfig {
+             pane_borders: true,
+             pane_scrollbars: true,
+             pane_gaps: true,
++            dim_inactive_panes: true,
+             show_agent_labels_on_pane_borders: false,
+             hide_tab_bar_when_single_tab: false,
+             tab_bar_position: TabBarPositionConfig::Top,
+@@ -1261,6 +1264,7 @@ agent_panel_scope = "current"
+         assert!(default_config.ui.pane_borders);
+         assert!(default_config.ui.pane_scrollbars);
+         assert!(default_config.ui.pane_gaps);
++        assert!(default_config.ui.dim_inactive_panes);
+         assert!(!default_config.ui.show_agent_labels_on_pane_borders);
+         assert!(!default_config.ui.hide_tab_bar_when_single_tab);
+         assert_eq!(
+@@ -1273,6 +1277,7 @@ agent_panel_scope = "current"
+ pane_borders = false
+ pane_scrollbars = false
+ pane_gaps = true
++dim_inactive_panes = false
+ show_agent_labels_on_pane_borders = true
+ hide_tab_bar_when_single_tab = true
+ tab_bar_position = "bottom"
+@@ -1281,11 +1286,19 @@ tab_bar_position = "bottom"
+         assert!(!config.ui.pane_borders);
+         assert!(!config.ui.pane_scrollbars);
+         assert!(config.ui.pane_gaps);
++        assert!(!config.ui.dim_inactive_panes);
+         assert!(config.ui.show_agent_labels_on_pane_borders);
+         assert!(config.ui.hide_tab_bar_when_single_tab);
+         assert_eq!(config.ui.tab_bar_position, TabBarPositionConfig::Bottom);
+     }
+ 
++    #[test]
++    fn dim_inactive_panes_omitted_defaults_true() {
++        let toml = "[ui]\npane_borders = true\n";
++        let config: Config = toml::from_str(toml).unwrap();
++        assert!(config.ui.dim_inactive_panes);
++    }
++
+     #[test]
+     fn worktrees_directory_defaults_and_parses() {
+         let default_config = Config::default();
+diff --git a/src/main.rs b/src/main.rs
+index 3ddaebcd..257aec54 100644
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -315,6 +315,9 @@ const DEFAULT_CONFIG: &str = r##"# herdr configuration
+ # Keep split panes visually separated instead of sharing divider borders.
+ # pane_gaps = true
+ 
++# Dim the terminal content of split panes that do not have focus.
++# dim_inactive_panes = true
++
+ # Show detected/reported agent labels in split pane borders when no manual pane name is set.
+ # show_agent_labels_on_pane_borders = false
+ 
+diff --git a/src/server/headless.rs b/src/server/headless.rs
+index f72d1a94..f89740de 100644
+--- a/src/server/headless.rs
++++ b/src/server/headless.rs
+@@ -28,6 +28,7 @@ use interprocess::local_socket::traits::Stream as _;
+ #[cfg(unix)]
+ use interprocess::local_socket::ListenerNonblockingMode;
+ use ratatui::layout::Rect;
++use ratatui::style::Modifier;
+ use tokio::sync::mpsc;
+ use tracing::{debug, error, info, warn};
+ 
+@@ -201,15 +202,24 @@ fn apply_terminal_dirty_patch(
+     frame: &mut FrameData,
+     area: Rect,
+     patch: crate::pane::TerminalDirtyPatch,
++    dim: bool,
+ ) -> bool {
+     if !rect_fits_frame(area, frame) {
+         return false;
+     }
+     let width = usize::from(frame.width);
+-    for (local_y, row_cells) in patch.rows {
++    for (local_y, mut row_cells) in patch.rows {
+         if local_y >= area.height || row_cells.len() != usize::from(area.width) {
+             return false;
+         }
++        // The dirty patch carries fresh terminal-generated cells with no dimming applied.
++        // OR in the bit here so a dimmed pane's patched rows stay dimmed like the rest of
++        // the pane, matching the full-frame renderer's post-pass in `render_panes`.
++        if dim {
++            for cell in &mut row_cells {
++                cell.modifier |= Modifier::DIM.bits();
++            }
++        }
+         let frame_y = area.y + local_y;
+         let start = usize::from(frame_y) * width + usize::from(area.x);
+         let end = start + usize::from(area.width);
+@@ -3902,6 +3912,7 @@ impl HeadlessServer {
+             ) else {
+                 retained_fallback!("missing_runtime");
+             };
++            let dim = self.app.state.pane_should_dim(&info);
+             match runtime.collect_dirty_patch(info.inner_rect.width, info.inner_rect.height) {
+                 crate::pane::TerminalDirtyPatchOutcome::Clean => {
+                     crate::render_prof::event("retained.pane_clean");
+@@ -3915,7 +3926,7 @@ impl HeadlessServer {
+                     if dirty_patch_intersects_hyperlinks(&frame, info.inner_rect, &patch) {
+                         retained_fallback!("hyperlink_intersection");
+                     }
+-                    if !apply_terminal_dirty_patch(&mut frame, info.inner_rect, patch) {
++                    if !apply_terminal_dirty_patch(&mut frame, info.inner_rect, patch, dim) {
+                         retained_fallback!("patch_apply_failed");
+                     }
+                     touched = true;
+@@ -4897,7 +4908,7 @@ mod tests {
+     use super::*;
+ 
+     use crate::app::AppState;
+-    use crate::protocol::CursorState;
++    use crate::protocol::{CellData, CursorState};
+ 
+     #[path = "pane_graphics.rs"]
+     mod pane_graphics_tests;
+@@ -4938,6 +4949,96 @@ mod tests {
+         );
+     }
+ 
++    fn dirty_patch_test_cell(symbol: &str, modifier: u16) -> CellData {
++        CellData {
++            symbol: symbol.to_owned(),
++            fg: 0,
++            bg: 0,
++            modifier,
++            skip: false,
++            hyperlink: None,
++        }
++    }
++
++    /// Regression test for the flicker this feature fixes: a dimmed pane's retained-patch
++    /// rows must end up looking identical to what a full re-render of the same pane would
++    /// produce, for both ordinary terminal cells and cells the terminal itself already
++    /// marked faint (SGR 2). The oracle is a real `render_and_stream()` on an identically
++    /// constructed second server, not a hand-built expected frame, so this also catches a
++    /// future change to what `render_panes`'s dim post-pass covers.
++    #[tokio::test]
++    async fn dirty_patch_dims_patched_row_to_match_full_frame_render() {
++        // A mix of an ordinary cell and one the terminal itself already marked faint
++        // (SGR 2), in the same dirty row, matching what a real terminal's dirty patch
++        // can contain (confirmed empirically: SGR 2 sets `Modifier::DIM` on that cell).
++        let update: &[u8] = b"\r\x1b[2mfaint\x1b[0m plain";
++
++        let (mut retained_server, retained_rx, _retained_left, retained_right) =
++            two_pane_retained_test_server(b"left pane", b"right pane");
++        let (mut full_server, full_rx, _full_left, full_right) =
++            two_pane_retained_test_server(b"left pane", b"right pane");
++
++        retained_server.render_and_stream();
++        let _ = retained_rx
++            .recv_timeout(Duration::from_millis(100))
++            .expect("retained baseline");
++        full_server.render_and_stream();
++        let _ = full_rx
++            .recv_timeout(Duration::from_millis(100))
++            .expect("full baseline");
++
++        // Apply the same update to the same (unfocused, dimmed) pane on both servers.
++        retained_server
++            .app
++            .state
++            .runtime_for_pane_in_workspace(&retained_server.app.terminal_runtimes, 0, retained_right)
++            .expect("retained runtime")
++            .test_process_pty_bytes(update);
++        full_server
++            .app
++            .state
++            .runtime_for_pane_in_workspace(&full_server.app.terminal_runtimes, 0, full_right)
++            .expect("full runtime")
++            .test_process_pty_bytes(update);
++
++        assert!(retained_server.render_retained_pty_update_and_stream());
++        full_server.render_and_stream();
++
++        let retained_frame = read_server_frame(
++            retained_rx
++                .recv_timeout(Duration::from_millis(100))
++                .expect("retained frame"),
++        );
++        let full_frame = read_server_frame(
++            full_rx
++                .recv_timeout(Duration::from_millis(100))
++                .expect("full frame"),
++        );
++        assert_frame_data_eq(&retained_frame, &full_frame);
++    }
++
++    #[test]
++    fn dirty_patch_leaves_cells_undimmed_for_a_focused_or_solo_pane() {
++        let width = 1u16;
++        let area = Rect::new(0, 0, width, 1);
++        let cell = dirty_patch_test_cell("x", 0);
++
++        let mut frame = FrameData {
++            cells: vec![dirty_patch_test_cell(" ", 0)],
++            width,
++            height: 1,
++            cursor: None,
++            hyperlinks: Vec::new(),
++            graphics: Vec::new(),
++        };
++        let patch = crate::pane::TerminalDirtyPatch {
++            rows: vec![(0, vec![cell.clone()])],
++        };
++
++        assert!(apply_terminal_dirty_patch(&mut frame, area, patch, false));
++        assert_eq!(frame.cells, vec![cell]);
++    }
++
+     fn test_headless_server() -> HeadlessServer {
+         test_headless_server_with_event_hub(api::EventHub::default())
+     }
+@@ -5040,6 +5141,434 @@ mod tests {
+             .join("\n")
+     }
+ 
++    // -----------------------------------------------------------------------
++    // Dim-transition coverage: since a dimmed pane's retained patch can only OR
++    // the DIM bit in (never clear it), a transition that changes which pane is
++    // dimmed must force a full re-render so every cell's modifier is recomputed
++    // from scratch, including cells whose terminal content never changed. Each
++    // test below drives the transition through its real production entry point
++    // (not a synthetic stand-in), confirms the entry point's own return value
++    // forces a full render, and checks the resulting frame cell-by-cell for
++    // every pane — not a single probe cell.
++    // -----------------------------------------------------------------------
++
++    /// A real 2-pane workspace (left focused, right not) with distinct initial screens,
++    /// wired into a `HeadlessServer` the same way `retained_test_server` does for one pane.
++    fn two_pane_retained_test_server(
++        left_screen: &[u8],
++        right_screen: &[u8],
++    ) -> (
++        HeadlessServer,
++        std::sync::mpsc::Receiver<Vec<u8>>,
++        crate::layout::PaneId,
++        crate::layout::PaneId,
++    ) {
++        let mut server = test_headless_server();
++        let mut workspace = crate::workspace::Workspace::test_new("test");
++        let left = workspace.tabs[0].root_pane;
++        let right = workspace.test_split(ratatui::layout::Direction::Horizontal);
++        workspace.tabs[0].layout.focus_pane(left);
++        workspace.insert_test_runtime(
++            left,
++            crate::terminal::TerminalRuntime::test_with_screen_bytes(40, 20, left_screen),
++        );
++        workspace.insert_test_runtime(
++            right,
++            crate::terminal::TerminalRuntime::test_with_screen_bytes(40, 20, right_screen),
++        );
++        server.app.state.workspaces = vec![workspace];
++        server.app.state.active = Some(0);
++        server.app.state.selected = 0;
++        server.app.state.mode = crate::app::Mode::Terminal;
++
++        let (client_tx, _client_control_rx, client_rx) = test_client_writer();
++        server.clients.insert(
++            1,
++            ClientConnection::new(
++                (100, 30),
++                crate::kitty_graphics::HostCellSize::default(),
++                crate::terminal_theme::TerminalTheme::default(),
++                None,
++                1,
++                RenderEncoding::SemanticFrame,
++                Some(client_tx),
++            ),
++        );
++        server.effective_size = (100, 30);
++        server.foreground_client_id = Some(1);
++        server.sync_foreground_client_state();
++        server.resize_shared_runtime_to_effective_size();
++
++        (server, client_rx, left, right)
++    }
++
++    /// Asserts every cell inside `info.inner_rect` carries (or doesn't carry) `Modifier::DIM`,
++    /// not just a single probe cell — the whole pane, including cells whose content never
++    /// changed across the transition being tested.
++    fn assert_pane_fully_dimmed(frame: &FrameData, info: &crate::layout::PaneInfo, expected: bool) {
++        let inner = info.inner_rect;
++        let width = usize::from(frame.width);
++        for y in inner.y..inner.y + inner.height {
++            for x in inner.x..inner.x + inner.width {
++                let idx = usize::from(y) * width + usize::from(x);
++                let dimmed = frame.cells[idx].modifier & Modifier::DIM.bits() != 0;
++                assert_eq!(
++                    dimmed, expected,
++                    "cell ({x},{y}) in pane {:?}: dimmed={dimmed}, expected {expected}",
++                    info.id
++                );
++            }
++        }
++    }
++
++    #[tokio::test]
++    async fn focus_move_forces_full_render_and_dims_every_cell_of_the_newly_unfocused_pane() {
++        let (mut server, client_rx, left, right) =
++            two_pane_retained_test_server(b"left pane", b"right pane");
++
++        server.render_and_stream();
++        let baseline = read_server_frame(
++            client_rx
++                .recv_timeout(Duration::from_millis(100))
++                .expect("baseline frame"),
++        );
++        assert_eq!(
++            server.app.state.workspaces[0].focused_pane_id(),
++            Some(left)
++        );
++        for info in &server.app.state.view.pane_infos.clone() {
++            assert_pane_fully_dimmed(&baseline, info, !info.is_focused);
++        }
++
++        // Real production entry point for a focus move: the same
++        // `Method::PaneFocusDirection` request the JSON API and (via
++        // `focus_pane_direction_via_api`) the focus-pane keybind both dispatch to.
++        let (respond_to, _response_rx) = std::sync::mpsc::channel();
++        let forces_full = server.handle_api_request_with_shutdown_check(api::ApiRequestMessage {
++            request: api::schema::Request {
++                id: "focus".into(),
++                method: api::schema::Method::PaneFocusDirection(
++                    api::schema::PaneFocusDirectionParams {
++                        pane_id: None,
++                        direction: api::schema::PaneDirection::Right,
++                    },
++                ),
++            },
++            respond_to,
++            response_write_complete: None,
++        });
++        assert!(forces_full, "a focus move must be classified as render-changing");
++        assert_eq!(
++            server.app.state.workspaces[0].focused_pane_id(),
++            Some(right),
++            "focus move must actually move focus, not just satisfy a classification check"
++        );
++
++        // Focus alone dirties no pane's PTY content. If the retained path were used here
++        // instead of a full re-render, it would find nothing to patch and (since the
++        // cursor is host-managed and not exposed by these test runtimes) nothing to
++        // stream at all — silently leaving the client's cached frame at its stale,
++        // pre-move dim state forever.
++        assert!(server.render_retained_pty_update_and_stream());
++        assert!(
++            client_rx.recv_timeout(Duration::from_millis(50)).is_err(),
++            "retained path must not stream anything when nothing is PTY-dirty after a focus move"
++        );
++        let stale = server.clients[&1]
++            .render_state
++            .last_frame()
++            .expect("client has a cached baseline frame")
++            .clone();
++        assert_eq!(
++            stale.cells, baseline.cells,
++            "retained path leaves the client's cached frame at the stale pre-move dim state"
++        );
++
++        // The real headless loop instead forces a full re-render for this transition (see
++        // the `forces_full` assertion above), which recomputes DIM for every cell.
++        server.render_and_stream();
++        let after_move = read_server_frame(
++            client_rx
++                .recv_timeout(Duration::from_millis(100))
++                .expect("full frame after focus move"),
++        );
++        for info in &server.app.state.view.pane_infos.clone() {
++            assert_pane_fully_dimmed(&after_move, info, !info.is_focused);
++        }
++    }
++
++    #[tokio::test]
++    async fn process_exit_pane_close_forces_full_render_and_undims_the_remaining_pane() {
++        let (mut server, client_rx, left, right) =
++            two_pane_retained_test_server(b"left pane", b"right pane");
++
++        server.render_and_stream();
++        let baseline = read_server_frame(
++            client_rx
++                .recv_timeout(Duration::from_millis(100))
++                .expect("baseline frame"),
++        );
++        assert_eq!(server.app.state.workspaces[0].layout.pane_count(), 2);
++        assert_eq!(
++            server.app.state.workspaces[0].focused_pane_id(),
++            Some(left)
++        );
++        // Establish that the surviving pane really does start out dimmed, so undimming
++        // it below is a real state transition and not trivially true either way.
++        for info in &server.app.state.view.pane_infos.clone() {
++            assert_pane_fully_dimmed(&baseline, info, !info.is_focused);
++        }
++
++        // Kill the *focused* (left, undimmed) pane, not the already-dimmed one: the OR
++        // in `apply_terminal_dirty_patch` can never clear DIM, so the case that actually
++        // exercises that risk is the surviving pane (right) going from dimmed to focused
++        // and needing its DIM cleared, not a pane that was already dimmed disappearing.
++        //
++        // Real production entry point for an unattended pane close: the shell exiting
++        // delivers `AppEvent::PaneDied`, which the headless loop's internal-event drain
++        // dispatches unconditionally (see `handle_internal_event_with_forwarding`).
++        let forces_full =
++            server.handle_internal_event_with_forwarding(AppEvent::PaneDied { pane_id: left });
++        assert!(
++            forces_full,
++            "an auto-close from a dying process must be classified as render-changing"
++        );
++        assert_eq!(
++            server.app.state.workspaces[0].layout.pane_count(),
++            1,
++            "PaneDied must actually remove the pane, not just satisfy a classification check"
++        );
++        assert_eq!(
++            server.app.state.workspaces[0].focused_pane_id(),
++            Some(right),
++            "closing the focused pane must hand focus to the surviving pane"
++        );
++
++        server.render_and_stream();
++        let after_close = read_server_frame(
++            client_rx
++                .recv_timeout(Duration::from_millis(100))
++                .expect("full frame after pane close"),
++        );
++        let pane_infos = server.app.state.view.pane_infos.clone();
++        assert_eq!(pane_infos.len(), 1);
++        // The surviving pane was dimmed (right, unfocused) before the close and must now
++        // be fully undimmed (every cell, not just the ones that were PTY-dirty).
++        assert_pane_fully_dimmed(&after_close, &pane_infos[0], false);
++    }
++
++    /// Restores the previous `CONFIG_PATH_ENV_VAR` (or clears it, if it was unset) and
++    /// removes the temp config file on drop, so a mid-test panic can't leave the env var
++    /// pointed at a deleted file or leak the temp file for later tests to trip over.
++    struct ConfigPathEnvGuard {
++        previous: Option<std::ffi::OsString>,
++        path: std::path::PathBuf,
++    }
++
++    impl ConfigPathEnvGuard {
++        fn set(path: std::path::PathBuf) -> Self {
++            let previous = std::env::var_os(crate::config::CONFIG_PATH_ENV_VAR);
++            std::env::set_var(crate::config::CONFIG_PATH_ENV_VAR, &path);
++            Self { previous, path }
++        }
++    }
++
++    impl Drop for ConfigPathEnvGuard {
++        fn drop(&mut self) {
++            match self.previous.take() {
++                Some(value) => std::env::set_var(crate::config::CONFIG_PATH_ENV_VAR, value),
++                None => std::env::remove_var(crate::config::CONFIG_PATH_ENV_VAR),
++            }
++            let _ = std::fs::remove_file(&self.path);
++        }
++    }
++
++    #[test]
++    fn config_path_env_guard_restores_previous_value_and_removes_temp_file() {
++        let _lock = crate::config::test_config_env_lock().lock().unwrap();
++        let sentinel = std::env::temp_dir().join("herdr-config-guard-sentinel.toml");
++        std::env::set_var(crate::config::CONFIG_PATH_ENV_VAR, &sentinel);
++
++        let path = std::env::temp_dir().join(format!(
++            "herdr-headless-dim-reload-guard-{}-{}.toml",
++            std::process::id(),
++            std::time::SystemTime::now()
++                .duration_since(std::time::UNIX_EPOCH)
++                .map(|d| d.as_nanos())
++                .unwrap_or(0)
++        ));
++        std::fs::write(&path, "[ui]\n").unwrap();
++        {
++            let _guard = ConfigPathEnvGuard::set(path.clone());
++            assert_eq!(
++                std::env::var(crate::config::CONFIG_PATH_ENV_VAR).unwrap(),
++                path.to_string_lossy()
++            );
++            assert!(path.exists());
++        }
++        assert_eq!(
++            std::env::var(crate::config::CONFIG_PATH_ENV_VAR).unwrap(),
++            sentinel.to_string_lossy(),
++            "guard must restore the previous value even when one was already set"
++        );
++        assert!(!path.exists(), "guard must remove the temp file on drop");
++
++        std::env::remove_var(crate::config::CONFIG_PATH_ENV_VAR);
++    }
++
++    #[tokio::test]
++    async fn config_reload_toggles_dim_inactive_panes_on_disk_and_the_rendered_frame_follows() {
++        let _lock = crate::config::test_config_env_lock().lock().unwrap();
++        let path = std::env::temp_dir().join(format!(
++            "herdr-headless-dim-reload-{}-{}.toml",
++            std::process::id(),
++            std::time::SystemTime::now()
++                .duration_since(std::time::UNIX_EPOCH)
++                .map(|d| d.as_nanos())
++                .unwrap_or(0)
++        ));
++        std::fs::write(&path, "[ui]\ndim_inactive_panes = false\n").unwrap();
++        let _env_guard = ConfigPathEnvGuard::set(path.clone());
++
++        let (mut server, client_rx, _left, _right) =
++            two_pane_retained_test_server(b"left pane", b"right pane");
++        assert!(server.app.state.dim_inactive_panes);
++
++        // Real production entry point for a config reload: the same `ServerReloadConfig`
++        // JSON API request the reload keybind (`runtime_server_reload_config`) also
++        // dispatches to.
++        let (respond_to, response_rx) = std::sync::mpsc::channel();
++        let forces_full = server.handle_api_request_with_shutdown_check(api::ApiRequestMessage {
++            request: api::schema::Request {
++                id: "reload".into(),
++                method: api::schema::Method::ServerReloadConfig(Default::default()),
++            },
++            respond_to,
++            response_write_complete: None,
++        });
++        assert!(forces_full, "a config reload must be classified as render-changing");
++        let response = response_rx
++            .recv_timeout(Duration::from_millis(100))
++            .expect("reload response");
++        assert!(!response.contains("\"error\""), "reload failed: {response}");
++        assert!(
++            !server.app.state.dim_inactive_panes,
++            "reload must actually flip the live value, not just report success"
++        );
++        // The reload also raises a "reloaded config" toast, which is orthogonal to this
++        // feature and would otherwise paint undimmed UI chrome over the panes below.
++        server.app.state.toast = None;
++
++        server.render_and_stream();
++        let disabled = read_server_frame(
++            client_rx
++                .recv_timeout(Duration::from_millis(100))
++                .expect("frame after disabling dim_inactive_panes"),
++        );
++        for info in &server.app.state.view.pane_infos.clone() {
++            assert_pane_fully_dimmed(&disabled, info, false);
++        }
++
++        std::fs::write(&path, "[ui]\ndim_inactive_panes = true\n").unwrap();
++        let (respond_to, response_rx) = std::sync::mpsc::channel();
++        let forces_full = server.handle_api_request_with_shutdown_check(api::ApiRequestMessage {
++            request: api::schema::Request {
++                id: "reload-again".into(),
++                method: api::schema::Method::ServerReloadConfig(Default::default()),
++            },
++            respond_to,
++            response_write_complete: None,
++        });
++        assert!(forces_full);
++        let response = response_rx
++            .recv_timeout(Duration::from_millis(100))
++            .expect("reload response");
++        assert!(!response.contains("\"error\""), "reload failed: {response}");
++        assert!(server.app.state.dim_inactive_panes);
++        server.app.state.toast = None;
++
++        server.render_and_stream();
++        let re_enabled = read_server_frame(
++            client_rx
++                .recv_timeout(Duration::from_millis(100))
++                .expect("frame after re-enabling dim_inactive_panes"),
++        );
++        for info in &server.app.state.view.pane_infos.clone() {
++            assert_pane_fully_dimmed(&re_enabled, info, !info.is_focused);
++        }
++    }
++
++    #[tokio::test]
++    async fn pane_split_forces_full_render_and_dims_the_newly_unfocused_pane() {
++        let (mut server, client_rx, root_pane_id) = retained_test_server(b"root pane");
++
++        server.render_and_stream();
++        let _ = client_rx
++            .recv_timeout(Duration::from_millis(100))
++            .expect("baseline frame");
++        assert_eq!(server.app.state.workspaces[0].layout.pane_count(), 1);
++
++        // Real production entry point for a pane split: the same `Method::PaneSplit`
++        // request the JSON API and (via `split_focused_pane_via_api`) the split-pane
++        // keybind both dispatch to `HeadlessServer::handle_api_request_with_shutdown_check`.
++        // This does spawn a real shell for the new pane (confirmed fast in practice, see
++        // the report), but going through this entry point is what actually exercises the
++        // handler wiring, not just the split implementation behind it.
++        let (respond_to, response_rx) = std::sync::mpsc::channel();
++        let forces_full = server.handle_api_request_with_shutdown_check(api::ApiRequestMessage {
++            request: api::schema::Request {
++                id: "split".into(),
++                method: api::schema::Method::PaneSplit(api::schema::PaneSplitParams {
++                    workspace_id: None,
++                    target_pane_id: None,
++                    direction: api::schema::SplitDirection::Right,
++                    ratio: None,
++                    cwd: None,
++                    focus: true,
++                    env: Default::default(),
++                }),
++            },
++            respond_to,
++            response_write_complete: None,
++        });
++        assert!(forces_full, "a pane split must be classified as render-changing");
++        let response = response_rx
++            .recv_timeout(Duration::from_millis(100))
++            .expect("split response");
++        assert!(
++            !response.contains("\"error\""),
++            "split request failed: {response}"
++        );
++        assert_eq!(
++            server.app.state.workspaces[0].layout.pane_count(),
++            2,
++            "split must actually add a pane, not just report success"
++        );
++        let new_pane_id = server.app.state.workspaces[0]
++            .layout
++            .pane_ids()
++            .into_iter()
++            .find(|&id| id != root_pane_id)
++            .expect("split created a second pane");
++        assert_eq!(
++            server.app.state.workspaces[0].focused_pane_id(),
++            Some(new_pane_id),
++            "a focusing split must focus the new pane, leaving the original unfocused"
++        );
++
++        server.render_and_stream();
++        let after_split = read_server_frame(
++            client_rx
++                .recv_timeout(Duration::from_millis(100))
++                .expect("full frame after split"),
++        );
++        let pane_infos = server.app.state.view.pane_infos.clone();
++        assert_eq!(pane_infos.len(), 2);
++        for info in &pane_infos {
++            assert_pane_fully_dimmed(&after_split, info, !info.is_focused);
++        }
++    }
++
+     fn read_server_shutdown_reason(bytes: Vec<u8>) -> Option<String> {
+         match read_server_message(bytes) {
+             ServerMessage::ServerShutdown { reason } => reason,
+diff --git a/src/ui/panes.rs b/src/ui/panes.rs
+index 86ab6927..d2bc45c0 100644
+--- a/src/ui/panes.rs
++++ b/src/ui/panes.rs
+@@ -313,7 +313,6 @@ pub(super) fn render_panes(
+         return;
+     };
+ 
+-    let multi_pane = ws.layout.pane_count() > 1;
+     let terminal_active = app.mode == Mode::Terminal;
+ 
+     for info in pane_infos {
+@@ -325,8 +324,7 @@ pub(super) fn render_panes(
+             rt.render(frame, info.inner_rect, show_cursor);
+             render_pane_scrollbar(app, frame, info, rt);
+ 
+-            let should_dim = !info.is_focused && multi_pane && !terminal_active;
+-            if should_dim {
++            if app.pane_should_dim(info) {
+                 let inner = info.inner_rect;
+                 let buf = frame.buffer_mut();
+                 for y in inner.y..inner.y + inner.height {
+@@ -1495,4 +1493,225 @@ mod tests {
+         };
+         assert!(relative_luminance((r, g, b)) > relative_luminance((12, 14, 16)));
+     }
++
++    // -------------------------------------------------------------------
++    // AppState::pane_should_dim (the dim judgment function)
++    // -------------------------------------------------------------------
++
++    fn unfocused_pane_info(id: PaneId) -> PaneInfo {
++        PaneInfo {
++            id,
++            rect: Rect::default(),
++            inner_rect: Rect::default(),
++            scrollbar_rect: None,
++            borders: Borders::NONE,
++            is_focused: false,
++        }
++    }
++
++    fn active_multi_pane_app() -> (AppState, PaneId) {
++        let mut workspace = Workspace::test_new("test");
++        let root = workspace.tabs[0].root_pane;
++        workspace.test_split(ratatui::layout::Direction::Horizontal);
++        let mut app = AppState::test_new();
++        app.workspaces = vec![workspace];
++        app.active = Some(0);
++        (app, root)
++    }
++
++    #[test]
++    fn pane_should_dim_true_for_unfocused_pane_in_multi_pane_workspace() {
++        let (app, root) = active_multi_pane_app();
++        assert!(app.pane_should_dim(&unfocused_pane_info(root)));
++    }
++
++    #[test]
++    fn pane_should_dim_false_for_focused_pane() {
++        let (app, root) = active_multi_pane_app();
++        let mut info = unfocused_pane_info(root);
++        info.is_focused = true;
++        assert!(!app.pane_should_dim(&info));
++    }
++
++    #[test]
++    fn pane_should_dim_false_when_disabled_in_config() {
++        let (mut app, root) = active_multi_pane_app();
++        app.dim_inactive_panes = false;
++        assert!(!app.pane_should_dim(&unfocused_pane_info(root)));
++    }
++
++    #[test]
++    fn pane_should_dim_false_for_single_pane_workspace() {
++        let workspace = Workspace::test_new("test");
++        let root = workspace.tabs[0].root_pane;
++        let mut app = AppState::test_new();
++        app.workspaces = vec![workspace];
++        app.active = Some(0);
++
++        assert!(!app.pane_should_dim(&unfocused_pane_info(root)));
++    }
++
++    #[test]
++    fn pane_should_dim_ignores_pane_count_in_other_workspaces() {
++        // A single-pane active workspace must not dim just because a different,
++        // unrelated workspace happens to have multiple panes: `pane_should_dim`
++        // must key off the same workspace `ws.layout.pane_count()` already used,
++        // not the pane count anywhere in `app.workspaces`.
++        let solo = Workspace::test_new("solo");
++        let solo_root = solo.tabs[0].root_pane;
++        let mut busy = Workspace::test_new("busy");
++        busy.test_split(ratatui::layout::Direction::Horizontal);
++
++        let mut app = AppState::test_new();
++        app.workspaces = vec![solo, busy];
++        app.active = Some(0);
++
++        assert!(!app.pane_should_dim(&unfocused_pane_info(solo_root)));
++    }
++
++    #[test]
++    fn pane_should_dim_ignores_pane_count_in_other_tabs_of_same_workspace() {
++        // `Workspace` derefs `.layout` to the *active* tab only, so a multi-pane
++        // background tab must not affect a single-pane active tab's dimming
++        // (matching the pre-existing `ws.layout.pane_count() > 1` semantics).
++        let mut workspace = Workspace::test_new("test");
++        let root = workspace.tabs[0].root_pane;
++        let background_tab = workspace.test_add_tab(Some("background"));
++        workspace.active_tab = background_tab;
++        workspace.test_split(ratatui::layout::Direction::Horizontal);
++        workspace.active_tab = 0;
++
++        let mut app = AppState::test_new();
++        app.workspaces = vec![workspace];
++        app.active = Some(0);
++
++        assert!(!app.pane_should_dim(&unfocused_pane_info(root)));
++    }
++
++    // -------------------------------------------------------------------
++    // render_panes dimming (full-frame path)
++    // -------------------------------------------------------------------
++
++    struct DimRenderCase {
++        app: AppState,
++        runtimes: TerminalRuntimeRegistry,
++        pane_infos: Vec<PaneInfo>,
++    }
++
++    fn dim_runtime() -> TerminalRuntime {
++        TerminalRuntime::test_with_scrollback_bytes(40, 8, 1024, b"ready\n")
++    }
++
++    fn dim_case(workspace: Workspace) -> DimRenderCase {
++        let mut app = AppState::test_new();
++        app.mode = Mode::Terminal;
++        app.workspaces = vec![workspace];
++        app.active = Some(0);
++
++        let area = Rect::new(0, 0, 40, 8);
++        let runtimes = TerminalRuntimeRegistry::new();
++        let pane_infos = compute_pane_infos(
++            &app,
++            &runtimes,
++            area,
++            false,
++            crate::kitty_graphics::HostCellSize::default(),
++        );
++
++        DimRenderCase {
++            app,
++            runtimes,
++            pane_infos,
++        }
++    }
++
++    fn dim_split_case() -> DimRenderCase {
++        let mut workspace = Workspace::test_new("test");
++        let root = workspace.tabs[0].root_pane;
++        let split = workspace.test_split(ratatui::layout::Direction::Horizontal);
++        workspace.tabs[0].runtimes.insert(root, dim_runtime());
++        workspace.tabs[0].runtimes.insert(split, dim_runtime());
++        dim_case(workspace)
++    }
++
++    fn dim_single_pane_case() -> DimRenderCase {
++        let mut workspace = Workspace::test_new("test");
++        let root = workspace.tabs[0].root_pane;
++        workspace.tabs[0].runtimes.insert(root, dim_runtime());
++        dim_case(workspace)
++    }
++
++    fn dim_zoomed_case() -> DimRenderCase {
++        let mut workspace = Workspace::test_new("test");
++        let root = workspace.tabs[0].root_pane;
++        let split = workspace.test_split(ratatui::layout::Direction::Horizontal);
++        workspace.tabs[0].runtimes.insert(root, dim_runtime());
++        workspace.tabs[0].runtimes.insert(split, dim_runtime());
++        workspace.zoomed = true;
++        dim_case(workspace)
++    }
++
++    /// One `(is_focused, content_is_dimmed)` pair per rendered pane.
++    fn dim_flags(case: &DimRenderCase) -> Vec<(bool, bool)> {
++        let mut terminal =
++            ratatui::Terminal::new(ratatui::backend::TestBackend::new(40, 8)).unwrap();
++        terminal
++            .draw(|frame| render_panes(&case.app, &case.runtimes, frame, &case.pane_infos, &[]))
++            .unwrap();
++        let buffer = terminal.backend().buffer().clone();
++
++        case.pane_infos
++            .iter()
++            .map(|info| {
++                let inner = info.inner_rect;
++                assert!(inner.width > 0 && inner.height > 0);
++                let probe = (inner.x + inner.width / 2, inner.y + inner.height / 2);
++                let dimmed = buffer[probe].style().add_modifier.contains(Modifier::DIM);
++                (info.is_focused, dimmed)
++            })
++            .collect()
++    }
++
++    #[tokio::test]
++    async fn unfocused_pane_dims_while_typing_in_terminal_mode() {
++        // This is the core of the fix: dimming used to be suppressed whenever
++        // `app.mode == Mode::Terminal`, which is where a session spends nearly
++        // all of its time, making the feature effectively unreachable.
++        let case = dim_split_case();
++        assert!(case.app.dim_inactive_panes);
++        assert_eq!(case.app.mode, Mode::Terminal);
++
++        let flags = dim_flags(&case);
++
++        assert_eq!(flags.len(), 2);
++        assert!(flags.contains(&(false, true)));
++        assert!(flags.contains(&(true, false)));
++    }
++
++    #[tokio::test]
++    async fn disabled_dim_inactive_panes_leaves_unfocused_pane_undimmed() {
++        let mut case = dim_split_case();
++        case.app.dim_inactive_panes = false;
++
++        let flags = dim_flags(&case);
++
++        assert_eq!(flags.len(), 2);
++        assert!(flags.iter().all(|(_, dimmed)| !dimmed));
++    }
++
++    #[tokio::test]
++    async fn single_pane_workspace_is_never_dimmed() {
++        let case = dim_single_pane_case();
++        assert!(case.app.dim_inactive_panes);
++
++        assert_eq!(dim_flags(&case), vec![(true, false)]);
++    }
++
++    #[tokio::test]
++    async fn zoomed_pane_is_never_dimmed() {
++        let case = dim_zoomed_case();
++        assert!(case.app.dim_inactive_panes);
++
++        assert_eq!(dim_flags(&case), vec![(true, false)]);
++    }
+ }
