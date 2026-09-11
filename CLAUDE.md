@@ -14,6 +14,10 @@ macOS上の開発ツール設定を管理する個人用dotfilesリポジトリ�
 
 カラー関連ファイルを変更したら `color-validation` skill の検証手順を必ず通す。
 
+### herdrのローカルパッチ
+
+herdr(ターミナルマルチプレクサ)は flake input のソースへローカルパッチを当てて配備する。パッチ、`home-manager/patches/`、`home-manager/herdr.nix` を触るときは `claude/skills/herdr-deploy/SKILL.md` の配備手順を必ず通す。commitしただけでは稼働バイナリは変わらない。
+
 ## 開発コマンド
 
 ```bash

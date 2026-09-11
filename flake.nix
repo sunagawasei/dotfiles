@@ -36,6 +36,9 @@
       hunk,
       ...
     }:
+    let
+      herdrPkgs = import ./home-manager/herdr.nix { herdr = herdr.packages.aarch64-darwin.default; };
+    in
     {
       # attr名はhostname。darwin-rebuildは--flakeでattrを省略すると
       # scutil --get LocalHostName で解決するため、PC交換時はここを改名する。
@@ -46,6 +49,13 @@
           home-manager.darwinModules.home-manager
           nix-homebrew.darwinModules.nix-homebrew
         ];
+      };
+
+      # herdrパッチ検査CLI(反映確認)向けに、パッチ適用前後のsrcと本体を公開する。
+      packages.aarch64-darwin = {
+        herdr-src-unpatched = herdrPkgs.srcUnpatched;
+        herdr-src-patched = herdrPkgs.srcPatched;
+        herdr-patched = herdrPkgs.patched;
       };
     };
 }

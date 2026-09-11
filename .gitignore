@@ -210,6 +210,7 @@ claude/skills/*
 !claude/skills/herdr-english-reply/
 !claude/skills/split-commits/
 !claude/skills/workspace-delegate/
+!claude/skills/herdr-deploy/
 !claude/agents/
 claude/agents/*
 !claude/agents/commit.md
