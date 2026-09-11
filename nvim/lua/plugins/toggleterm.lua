@@ -208,6 +208,14 @@ return {
         on_open = function(term)
           vim.cmd("startinsert!")
           vim.api.nvim_buf_set_keymap(term.bufnr, "n", "q", "<cmd>close<CR>", { noremap = true, silent = true })
+          -- hunkバッファ限定: フォーカス位置とレビューノートをClaudeへ@参照で送る
+          vim.api.nvim_buf_set_keymap(term.bufnr, "t", "<C-a>", "", {
+            noremap = true,
+            silent = true,
+            callback = function()
+              require("utils.hunk_notes").send(term, cmd)
+            end,
+          })
         end,
         on_close = function(term)
           vim.schedule(function()
