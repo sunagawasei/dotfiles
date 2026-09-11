@@ -1,12 +1,34 @@
-# ripgrep/fdがこのリポジトリで自動的に読む除外リスト。
-# .gitignoreを無視して検索したときに、エージェントの会話ログとキャッシュが結果を埋めるのを防ぐ。
+# ripgrep/fd/fffがこのリポジトリで自動的に読む除外リスト。gitは読まない。
+# 先頭の !** が.gitignoreの除外を打ち消し、gitignore済みの設定ファイルも検索対象にする。
+# 以降の行は後勝ちで効く。
+!**
+
+# 検索性を落とすもの。中身を読む価値がなく、件数だけ膨らませる。
+.git/
+codex/.tmp/
+codex/vendor_imports/
 codex/sessions/
 codex/cache/
 codex/plugins/
 codex/computer-use/
 codex/shell_snapshots/
 codex/generated_images/
-cursor/chats/
+codex/attachments/
+codex/browser/
+codex/tmp/
+codex/process_manager/
+codex/thread-writer-locks/
+codex/app-server-control/
+codex/sqlite/
+codex/history.jsonl
+codex/session_index.jsonl
+codex/.codex-global-state.json
+codex/installation_id
+codex/cloud-config-bundle-cache.json
+codex/cloud-requirements-cache.json
+codex/models_cache.json
+codex/Documents/
+cursor/
 claude/cache/
 claude/debug/
 claude/history.jsonl
@@ -18,8 +40,77 @@ claude/paste-cache/
 claude/todos/
 claude/shell-snapshots/
 claude/statsig/
+claude/backups/
+claude/image-cache/
+claude/telemetry/
+claude/jobs/
+claude/run/
+claude/ide/
+claude/chrome/
+claude/teams/
+claude/.claude.json
+claude/remote-settings.json
+codex/skills/.system/
+herdr/session.json
+claude/security_warnings_state_*.json
+claude/stats-cache.json
+claude/hooks/add_newline
+claude/hooks/herdr-title
+claude/hooks/herdr-notify
+claude/hooks/herdr-task-label
+claude/hooks/subagent-busy
+nvim/spell/*.spl
+.copilot/logs/
+.serena/cache/
+.playwright-cli/
+karabiner/automatic_backups/
+kot/
+vim/.netrwhist
+helm/
 gcloud/
 gws/cache/
 raycast/
 agents/skills/
 zsh/.zcompcache/
+zsh/.zcompdump*
+*.log
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*-shm
+*-wal
+*.json.lock
+*.bak
+herdr/.plugins.lock
+helm/repositories.lock
+
+# 認証情報。!** が.gitignoreの保護を打ち消すため、ここで閉じ直す。
+# 名前で網羅はできない(gh/hosts.ymlはoauth tokenを持つが名前に現れない)ので、
+# 認証情報を置くディレクトリごと落とす。
+gh/
+gws/
+cycloud/
+github-copilot/
+notion/
+gemini/
+configstore/
+codex/auth.json
+claude/daemon/
+claude/sessions/
+zsh/.zsh_history
+auth.json
+auth.db*
+.netrc
+.authinfo*
+.env
+.env.*
+!.env.example
+!.env.template
+!.env.sample
+*token_cache*
+*.token
+*.key
+*.pem
+*.p12
+id_rsa*
+id_ed25519*
