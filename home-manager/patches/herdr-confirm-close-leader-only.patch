@@ -2,10 +2,10 @@
 # グループ全メンバーの走査だと、reparent後もshellのpgidを保つ常駐プロセス(zeno.zshのdenoサーバ)に
 # 恒久的にヒットし、アイドルなpaneで確認が出続ける。
 diff --git a/src/app/input/navigate.rs b/src/app/input/navigate.rs
-index f53102e7..032d1d1e 100644
+index 32b6d892..c2c79696 100644
 --- a/src/app/input/navigate.rs
 +++ b/src/app/input/navigate.rs
-@@ -619,7 +619,7 @@ impl App {
+@@ -659,7 +659,7 @@ impl App {
          else {
              return false;
          };
@@ -14,7 +14,7 @@ index f53102e7..032d1d1e 100644
      }
  
      fn foreground_process_name_for_pane(
-@@ -629,7 +629,7 @@ impl App {
+@@ -669,7 +669,7 @@ impl App {
      ) -> Option<String> {
          let terminal_id = self.state.terminal_id_for_pane(ws_idx, pane_id)?;
          let shell_pid = self.terminal_runtimes.get(&terminal_id)?.child_pid()?;
@@ -24,10 +24,10 @@ index f53102e7..032d1d1e 100644
  
      pub(crate) fn zoom_focused_pane_via_api(&mut self) {
 diff --git a/src/detect/mod.rs b/src/detect/mod.rs
-index 9c134b56..5925cc31 100644
+index 54330597..049c0bf6 100644
 --- a/src/detect/mod.rs
 +++ b/src/detect/mod.rs
-@@ -333,38 +333,92 @@ fn is_shell_process_name(name: &str) -> bool {
+@@ -345,38 +345,92 @@ fn is_shell_process_name(name: &str) -> bool {
      )
  }
  
@@ -95,8 +95,12 @@ index 9c134b56..5925cc31 100644
 +        leader.name.clone()
 +    };
 +    sanitize_display_name(path_basename(&name))
-+}
-+
+ }
+ 
+-/// Returns true when the pane shell's foreground job contains a non-shell process.
+-pub fn foreground_has_non_shell_member(shell_pid: u32) -> bool {
+-    foreground_job(shell_pid)
+-        .is_some_and(|job| foreground_job_has_non_shell_member(&job, shell_pid))
 +fn sanitize_display_name(name: &str) -> String {
 +    name.chars()
 +        .filter(|c| !c.is_control())
@@ -104,10 +108,13 @@ index 9c134b56..5925cc31 100644
 +        .collect()
  }
  
--/// Returns true when the pane shell's foreground job contains a non-shell process.
--pub fn foreground_has_non_shell_member(shell_pid: u32) -> bool {
--    foreground_job(shell_pid)
--        .is_some_and(|job| foreground_job_has_non_shell_member(&job, shell_pid))
+-/// Display name for the first non-shell member of the pane shell's foreground job.
+-pub fn foreground_non_shell_process_name(shell_pid: u32) -> Option<String> {
+-    let job = foreground_job(shell_pid)?;
+-    let process = job.processes.iter().find(|process| {
+-        process.pid != shell_pid || !is_shell_process_name(&normalized_process_name(process))
+-    })?;
+-    Some(path_basename(&normalized_process_name(process)).to_string())
 +/// Returns true when the pane shell's tty foreground job is something other
 +/// than the pane's own shell idling at its prompt.
 +///
@@ -128,15 +135,8 @@ index 9c134b56..5925cc31 100644
 +        .and_then(foreground_group_leader_job)
 +        .and_then(|job| job.processes.into_iter().next());
 +    foreground_job_is_running(fg_pgid, shell_pid, leader.as_ref())
- }
- 
--/// Display name for the first non-shell member of the pane shell's foreground job.
--pub fn foreground_non_shell_process_name(shell_pid: u32) -> Option<String> {
--    let job = foreground_job(shell_pid)?;
--    let process = job.processes.iter().find(|process| {
--        process.pid != shell_pid || !is_shell_process_name(&normalized_process_name(process))
--    })?;
--    Some(path_basename(&normalized_process_name(process)).to_string())
++}
++
 +/// Display name for the pane shell's tty foreground group leader.
 +pub fn pane_foreground_display_name(shell_pid: u32) -> Option<String> {
 +    let fg_pgid = foreground_process_group_id(shell_pid)?;
@@ -146,7 +146,7 @@ index 9c134b56..5925cc31 100644
  }
  
  /// Get the foreground process group leader as a one-process job.
-@@ -712,81 +766,172 @@ mod tests {
+@@ -754,81 +808,172 @@ mod tests {
          assert!(detection.visible_working);
      }
  
@@ -164,11 +164,17 @@ index 9c134b56..5925cc31 100644
 +        let leader = foreground_process(10, "zsh", &["-zsh"]);
 +        assert!(!foreground_job_is_running(Some(10), 10, Some(&leader)));
 +    }
- 
--        assert!(!foreground_job_has_non_shell_member(&job, 10));
++
 +    #[test]
 +    fn pane_has_running_foreground_is_false_for_plain_zsh_argv() {
 +        let leader = foreground_process(10, "zsh", &["zsh"]);
++        assert!(!foreground_job_is_running(Some(10), 10, Some(&leader)));
++    }
+ 
+-        assert!(!foreground_job_has_non_shell_member(&job, 10));
++    #[test]
++    fn pane_has_running_foreground_is_false_for_zsh_login_flag_only() {
++        let leader = foreground_process(10, "zsh", &["zsh", "-l"]);
 +        assert!(!foreground_job_is_running(Some(10), 10, Some(&leader)));
      }
  
@@ -181,15 +187,16 @@ index 9c134b56..5925cc31 100644
 -                foreground_process(100, "nvim", &["nvim", "main.rs"]),
 -            ],
 -        };
-+    fn pane_has_running_foreground_is_false_for_zsh_login_flag_only() {
-+        let leader = foreground_process(10, "zsh", &["zsh", "-l"]);
-+        assert!(!foreground_job_is_running(Some(10), 10, Some(&leader)));
++    fn pane_has_running_foreground_is_true_for_shell_script_argv() {
++        let leader = foreground_process(10, "bash", &["bash", "deploy.sh"]);
++        assert!(foreground_job_is_running(Some(10), 10, Some(&leader)));
 +    }
  
 -        assert!(foreground_job_has_non_shell_member(&job, 10));
 +    #[test]
-+    fn pane_has_running_foreground_is_true_for_shell_script_argv() {
-+        let leader = foreground_process(10, "bash", &["bash", "deploy.sh"]);
++    fn pane_has_running_foreground_is_true_for_shell_dash_c_argv() {
++        // A non-flag argument follows `-c`, so this isn't a bare idle shell.
++        let leader = foreground_process(10, "bash", &["bash", "-c", "make all"]);
 +        assert!(foreground_job_is_running(Some(10), 10, Some(&leader)));
      }
  
@@ -202,13 +209,6 @@ index 9c134b56..5925cc31 100644
 -                foreground_process(200, "node", &["node", "/usr/local/bin/claude", "chat"]),
 -            ],
 -        };
-+    fn pane_has_running_foreground_is_true_for_shell_dash_c_argv() {
-+        // A non-flag argument follows `-c`, so this isn't a bare idle shell.
-+        let leader = foreground_process(10, "bash", &["bash", "-c", "make all"]);
-+        assert!(foreground_job_is_running(Some(10), 10, Some(&leader)));
-+    }
-+
-+    #[test]
 +    fn pane_has_running_foreground_is_true_for_shell_rcfile_path_argv() {
 +        // "--rcfile" takes a value; that value doesn't start with '-'.
 +        let leader = foreground_process(10, "bash", &["bash", "--rcfile", "/path/rc"]);

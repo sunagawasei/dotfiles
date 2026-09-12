@@ -3,35 +3,35 @@
 # TerminalDirtyPatchによる部分再描画パスにも同じdim判定をORで適用する。部分再描画は
 # 全面再描画のdim後がけを通らないため、高頻度更新paneが明滅するのを防ぐ。
 diff --git a/src/app/mod.rs b/src/app/mod.rs
-index af0539bb..08724c3e 100644
+index fac01ad4..f08c9f35 100644
 --- a/src/app/mod.rs
 +++ b/src/app/mod.rs
-@@ -635,6 +635,7 @@ impl App {
-             pane_borders: config.ui.pane_borders,
+@@ -655,6 +655,7 @@ impl App {
+             pane_outer_borders: config.ui.pane_outer_borders,
              pane_scrollbars: config.ui.pane_scrollbars,
              pane_gaps: config.ui.pane_gaps,
 +            dim_inactive_panes: config.ui.dim_inactive_panes,
              show_agent_labels_on_pane_borders: config.ui.show_agent_labels_on_pane_borders,
              hide_tab_bar_when_single_tab: config.ui.hide_tab_bar_when_single_tab,
              tab_bar_position: config.ui.tab_bar_position,
-@@ -1444,6 +1445,7 @@ impl App {
-                 self.state.pane_borders = config.ui.pane_borders;
+@@ -1501,6 +1502,7 @@ impl App {
+                 self.state.pane_outer_borders = config.ui.pane_outer_borders;
                  self.state.pane_scrollbars = config.ui.pane_scrollbars;
                  self.state.pane_gaps = config.ui.pane_gaps;
 +                self.state.dim_inactive_panes = config.ui.dim_inactive_panes;
                  self.state.show_agent_labels_on_pane_borders =
                      config.ui.show_agent_labels_on_pane_borders;
                  self.state.hide_tab_bar_when_single_tab = config.ui.hide_tab_bar_when_single_tab;
-@@ -2866,7 +2868,7 @@ mod tests {
+@@ -2997,7 +2999,7 @@ mod tests {
          std::fs::create_dir_all(path.parent().unwrap()).unwrap();
          std::fs::write(
              &path,
--            "[terminal]\ndefault_shell = \"nu\"\nshell_mode = \"non_login\"\nnew_cwd = \"home\"\n[keys]\nnew_workspace = \"prefix+m\"\nprefix = \"ctrl+a\"\n[update]\nversion_check = false\nmanifest_check = false\n[ui]\nagent_panel_sort = \"priority\"\nredraw_on_focus_gained = false\ncopy_on_select = false\nright_click_passthrough_modifier = \"ctrl\"\nprompt_new_workspace_name = true\n[ui.toast]\ndelivery = \"herdr\"\n[experimental]\nswitch_ascii_input_source_in_prefix = true\n",
-+            "[terminal]\ndefault_shell = \"nu\"\nshell_mode = \"non_login\"\nnew_cwd = \"home\"\n[keys]\nnew_workspace = \"prefix+m\"\nprefix = \"ctrl+a\"\n[update]\nversion_check = false\nmanifest_check = false\n[ui]\nagent_panel_sort = \"priority\"\nredraw_on_focus_gained = false\ndim_inactive_panes = false\ncopy_on_select = false\nright_click_passthrough_modifier = \"ctrl\"\nprompt_new_workspace_name = true\n[ui.toast]\ndelivery = \"herdr\"\n[experimental]\nswitch_ascii_input_source_in_prefix = true\n",
+-            "[terminal]\ndefault_shell = \"nu\"\nshell_mode = \"non_login\"\nnew_cwd = \"home\"\n[keys]\nnew_workspace = \"prefix+m\"\nprefix = \"ctrl+a\"\n[update]\nversion_check = false\nmanifest_check = false\n[server]\nheadless_cols = 160\nheadless_rows = 50\n[ui]\nagent_panel_sort = \"priority\"\nredraw_on_focus_gained = false\ncopy_on_select = false\nright_click_passthrough_modifier = \"ctrl\"\nprompt_new_workspace_name = true\n[ui.toast]\ndelivery = \"herdr\"\n[experimental]\nswitch_ascii_input_source_in_prefix = true\n",
++            "[terminal]\ndefault_shell = \"nu\"\nshell_mode = \"non_login\"\nnew_cwd = \"home\"\n[keys]\nnew_workspace = \"prefix+m\"\nprefix = \"ctrl+a\"\n[update]\nversion_check = false\nmanifest_check = false\n[server]\nheadless_cols = 160\nheadless_rows = 50\n[ui]\nagent_panel_sort = \"priority\"\nredraw_on_focus_gained = false\ndim_inactive_panes = false\ncopy_on_select = false\nright_click_passthrough_modifier = \"ctrl\"\nprompt_new_workspace_name = true\n[ui.toast]\ndelivery = \"herdr\"\n[experimental]\nswitch_ascii_input_source_in_prefix = true\n",
          )
          .unwrap();
          std::env::set_var(crate::config::CONFIG_PATH_ENV_VAR, &path);
-@@ -2913,6 +2915,7 @@ mod tests {
+@@ -3045,6 +3047,7 @@ mod tests {
          );
          assert_eq!(app.state.agent_panel_sort, state::AgentPanelSort::Priority);
          assert!(!app.state.redraw_on_focus_gained);
@@ -40,18 +40,18 @@ index af0539bb..08724c3e 100644
          assert!(app.state.prompt_new_workspace_name);
          assert!(app.state.selection.is_some());
 diff --git a/src/app/state.rs b/src/app/state.rs
-index dedf823f..ebee748d 100644
+index 5a303247..cca3ef17 100644
 --- a/src/app/state.rs
 +++ b/src/app/state.rs
-@@ -1500,6 +1500,7 @@ pub struct AppState {
-     pub pane_borders: bool,
+@@ -1491,6 +1491,7 @@ pub struct AppState {
+     pub pane_outer_borders: bool,
      pub pane_scrollbars: bool,
      pub pane_gaps: bool,
 +    pub dim_inactive_panes: bool,
      pub show_agent_labels_on_pane_borders: bool,
      pub hide_tab_bar_when_single_tab: bool,
      pub tab_bar_position: TabBarPositionConfig,
-@@ -1663,6 +1664,19 @@ impl AppState {
+@@ -1671,6 +1672,19 @@ impl AppState {
          }
      }
  
@@ -71,8 +71,8 @@ index dedf823f..ebee748d 100644
      /// Returns true when the given (workspace, tab, pane) refers to the
      /// currently focused pane in the active workspace's active tab.
      pub(crate) fn runtime_for_pane_in_workspace<'a>(
-@@ -1871,6 +1885,7 @@ impl AppState {
-             pane_borders: true,
+@@ -1885,6 +1899,7 @@ impl AppState {
+             pane_outer_borders: true,
              pane_scrollbars: true,
              pane_gaps: false,
 +            dim_inactive_panes: true,
@@ -80,10 +80,10 @@ index dedf823f..ebee748d 100644
              hide_tab_bar_when_single_tab: false,
              tab_bar_position: TabBarPositionConfig::Top,
 diff --git a/src/config/model.rs b/src/config/model.rs
-index e9df244e..0c58d63b 100644
+index f07054bb..2baffa4f 100644
 --- a/src/config/model.rs
 +++ b/src/config/model.rs
-@@ -820,6 +820,8 @@ pub struct UiConfig {
+@@ -887,6 +887,8 @@ pub struct UiConfig {
      pub pane_scrollbars: bool,
      /// Keep split panes visually separated instead of sharing divider borders. Default: true.
      pub pane_gaps: bool,
@@ -92,38 +92,40 @@ index e9df244e..0c58d63b 100644
      /// Show agent labels in split pane borders when no manual pane label is set. Default: false.
      pub show_agent_labels_on_pane_borders: bool,
      /// Hide the tab row when the workspace has one tab. Default: false.
-@@ -1028,6 +1030,7 @@ impl Default for UiConfig {
-             pane_borders: true,
+@@ -1123,6 +1125,7 @@ impl Default for UiConfig {
+             pane_outer_borders: true,
              pane_scrollbars: true,
              pane_gaps: true,
 +            dim_inactive_panes: true,
              show_agent_labels_on_pane_borders: false,
              hide_tab_bar_when_single_tab: false,
              tab_bar_position: TabBarPositionConfig::Top,
-@@ -1261,6 +1264,7 @@ agent_panel_scope = "current"
-         assert!(default_config.ui.pane_borders);
+@@ -1400,6 +1403,7 @@ status_indicators = "symbols"
+         assert!(default_config.ui.pane_outer_borders);
          assert!(default_config.ui.pane_scrollbars);
          assert!(default_config.ui.pane_gaps);
 +        assert!(default_config.ui.dim_inactive_panes);
          assert!(!default_config.ui.show_agent_labels_on_pane_borders);
          assert!(!default_config.ui.hide_tab_bar_when_single_tab);
          assert_eq!(
-@@ -1273,6 +1277,7 @@ agent_panel_scope = "current"
- pane_borders = false
+@@ -1415,6 +1419,7 @@ pane_borders = false
+ pane_outer_borders = false
  pane_scrollbars = false
  pane_gaps = true
 +dim_inactive_panes = false
  show_agent_labels_on_pane_borders = true
  hide_tab_bar_when_single_tab = true
  tab_bar_position = "bottom"
-@@ -1281,11 +1286,19 @@ tab_bar_position = "bottom"
-         assert!(!config.ui.pane_borders);
+@@ -1432,6 +1437,7 @@ tab_bar_right_separator = " · "
+         assert!(!config.ui.pane_outer_borders);
          assert!(!config.ui.pane_scrollbars);
          assert!(config.ui.pane_gaps);
 +        assert!(!config.ui.dim_inactive_panes);
          assert!(config.ui.show_agent_labels_on_pane_borders);
          assert!(config.ui.hide_tab_bar_when_single_tab);
          assert_eq!(config.ui.tab_bar_position, TabBarPositionConfig::Bottom);
+@@ -1443,6 +1449,13 @@ tab_bar_right_separator = " · "
+         assert_eq!(config.ui.tab_bar_right_separator, " · ");
      }
  
 +    #[test]
@@ -137,10 +139,10 @@ index e9df244e..0c58d63b 100644
      fn worktrees_directory_defaults_and_parses() {
          let default_config = Config::default();
 diff --git a/src/main.rs b/src/main.rs
-index 3ddaebcd..257aec54 100644
+index 19049d33..b36d9491 100644
 --- a/src/main.rs
 +++ b/src/main.rs
-@@ -315,6 +315,9 @@ const DEFAULT_CONFIG: &str = r##"# herdr configuration
+@@ -335,6 +335,9 @@ const DEFAULT_CONFIG: &str = r##"# herdr configuration
  # Keep split panes visually separated instead of sharing divider borders.
  # pane_gaps = true
  
@@ -151,7 +153,7 @@ index 3ddaebcd..257aec54 100644
  # show_agent_labels_on_pane_borders = false
  
 diff --git a/src/server/headless.rs b/src/server/headless.rs
-index f72d1a94..f89740de 100644
+index 9161cd34..31ff8f33 100644
 --- a/src/server/headless.rs
 +++ b/src/server/headless.rs
 @@ -28,6 +28,7 @@ use interprocess::local_socket::traits::Stream as _;
@@ -162,7 +164,7 @@ index f72d1a94..f89740de 100644
  use tokio::sync::mpsc;
  use tracing::{debug, error, info, warn};
  
-@@ -201,15 +202,24 @@ fn apply_terminal_dirty_patch(
+@@ -199,15 +200,24 @@ fn apply_terminal_dirty_patch(
      frame: &mut FrameData,
      area: Rect,
      patch: crate::pane::TerminalDirtyPatch,
@@ -188,7 +190,7 @@ index f72d1a94..f89740de 100644
          let frame_y = area.y + local_y;
          let start = usize::from(frame_y) * width + usize::from(area.x);
          let end = start + usize::from(area.width);
-@@ -3902,6 +3912,7 @@ impl HeadlessServer {
+@@ -4293,6 +4303,7 @@ impl HeadlessServer {
              ) else {
                  retained_fallback!("missing_runtime");
              };
@@ -196,7 +198,7 @@ index f72d1a94..f89740de 100644
              match runtime.collect_dirty_patch(info.inner_rect.width, info.inner_rect.height) {
                  crate::pane::TerminalDirtyPatchOutcome::Clean => {
                      crate::render_prof::event("retained.pane_clean");
-@@ -3915,7 +3926,7 @@ impl HeadlessServer {
+@@ -4306,7 +4317,7 @@ impl HeadlessServer {
                      if dirty_patch_intersects_hyperlinks(&frame, info.inner_rect, &patch) {
                          retained_fallback!("hyperlink_intersection");
                      }
@@ -205,16 +207,7 @@ index f72d1a94..f89740de 100644
                          retained_fallback!("patch_apply_failed");
                      }
                      touched = true;
-@@ -4897,7 +4908,7 @@ mod tests {
-     use super::*;
- 
-     use crate::app::AppState;
--    use crate::protocol::CursorState;
-+    use crate::protocol::{CellData, CursorState};
- 
-     #[path = "pane_graphics.rs"]
-     mod pane_graphics_tests;
-@@ -4938,6 +4949,96 @@ mod tests {
+@@ -5343,6 +5354,96 @@ mod tests {
          );
      }
  
@@ -311,7 +304,7 @@ index f72d1a94..f89740de 100644
      fn test_headless_server() -> HeadlessServer {
          test_headless_server_with_event_hub(api::EventHub::default())
      }
-@@ -5040,6 +5141,434 @@ mod tests {
+@@ -5447,6 +5548,439 @@ mod tests {
              .join("\n")
      }
  
@@ -430,6 +423,7 @@ index f72d1a94..f89740de 100644
 +            },
 +            respond_to,
 +            response_write_complete: None,
++            stream_active: None,
 +        });
 +        assert!(forces_full, "a focus move must be classified as render-changing");
 +        assert_eq!(
@@ -619,6 +613,7 @@ index f72d1a94..f89740de 100644
 +            },
 +            respond_to,
 +            response_write_complete: None,
++            stream_active: None,
 +        });
 +        assert!(forces_full, "a config reload must be classified as render-changing");
 +        let response = response_rx
@@ -652,6 +647,7 @@ index f72d1a94..f89740de 100644
 +            },
 +            respond_to,
 +            response_write_complete: None,
++            stream_active: None,
 +        });
 +        assert!(forces_full);
 +        let response = response_rx
@@ -700,10 +696,12 @@ index f72d1a94..f89740de 100644
 +                    cwd: None,
 +                    focus: true,
 +                    env: Default::default(),
++                    right_click: Default::default(),
 +                }),
 +            },
 +            respond_to,
 +            response_write_complete: None,
++            stream_active: None,
 +        });
 +        assert!(forces_full, "a pane split must be classified as render-changing");
 +        let response = response_rx
@@ -747,10 +745,10 @@ index f72d1a94..f89740de 100644
          match read_server_message(bytes) {
              ServerMessage::ServerShutdown { reason } => reason,
 diff --git a/src/ui/panes.rs b/src/ui/panes.rs
-index 86ab6927..d2bc45c0 100644
+index 7a57fc8a..a1464352 100644
 --- a/src/ui/panes.rs
 +++ b/src/ui/panes.rs
-@@ -313,7 +313,6 @@ pub(super) fn render_panes(
+@@ -352,7 +352,6 @@ pub(super) fn render_panes(
          return;
      };
  
@@ -758,7 +756,7 @@ index 86ab6927..d2bc45c0 100644
      let terminal_active = app.mode == Mode::Terminal;
  
      for info in pane_infos {
-@@ -325,8 +324,7 @@ pub(super) fn render_panes(
+@@ -364,8 +363,7 @@ pub(super) fn render_panes(
              rt.render(frame, info.inner_rect, show_cursor);
              render_pane_scrollbar(app, frame, info, rt);
  
@@ -768,7 +766,7 @@ index 86ab6927..d2bc45c0 100644
                  let inner = info.inner_rect;
                  let buf = frame.buffer_mut();
                  for y in inner.y..inner.y + inner.height {
-@@ -1495,4 +1493,225 @@ mod tests {
+@@ -1604,4 +1602,225 @@ mod tests {
          };
          assert!(relative_luminance((r, g, b)) > relative_luminance((12, 14, 16)));
      }

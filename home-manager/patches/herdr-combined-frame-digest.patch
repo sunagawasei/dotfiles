@@ -2,15 +2,15 @@
 # This is not an individual feature patch and must always be applied last.
 # If any preceding UI patch is changed or removed, regenerate this frame digest.
 diff --git a/src/ui/tab_surface.rs b/src/ui/tab_surface.rs
-index 1594f83d..dc976060 100644
+index 99ca9727..9914248d 100644
 --- a/src/ui/tab_surface.rs
 +++ b/src/ui/tab_surface.rs
 @@ -304,7 +304,7 @@ mod tests {
          assert_eq!(frame.hyperlinks, vec![uri.to_owned()]);
          assert_eq!(
              frame_digest(&frame),
--            "ce383feeaac30922502b7c4f8af53b5ca30e816ec4503ca6d015738b584da487"
-+            "f776153b640eadefde0a2a94b1c7d5ad768a96cb99502b9d4f8b987894bb1e88"
+-            "a7c21fa42305a41231c7ae254f264f6ef923f46301d8fc4cd35ab6dfdd651b6b"
++            "d4b297c3a068869c8f1a4296ef9c2bbba1f5556546c682e09e79203e081b3b41"
          );
      }
  

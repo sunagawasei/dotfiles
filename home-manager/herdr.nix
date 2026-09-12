@@ -27,7 +27,7 @@ let
   # 高頻度更新paneがちらつくのを防ぐ。
   # combined-frame-digestは個別機能ではなく、上記UIパッチ全部の合成描画を固定する
   # integration fixture。必ず最後に適用し、UIパッチを変えたらdigestを再生成する。
-  # 並び順は開発branch v080-upgrade(専用worktreeで保持)のcommit順と一致させる。
+  # 並び順は開発branch v082-upgrade(専用worktreeで保持)のcommit順と一致させる。
   # 各パッチは親commit時点のツリーに対するdiffなので、順を崩すとoffset依存になる。
   patches = [
     ./patches/herdr-active-pane-border-white.patch

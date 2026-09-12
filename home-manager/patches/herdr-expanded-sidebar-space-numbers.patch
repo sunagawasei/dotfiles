@@ -1,5 +1,5 @@
 diff --git a/src/ui.rs b/src/ui.rs
-index b26b50bd..c3e48194 100644
+index 456b0b84..005a9ca8 100644
 --- a/src/ui.rs
 +++ b/src/ui.rs
 @@ -1078,7 +1078,7 @@ mod tests {
@@ -24,10 +24,10 @@ index b26b50bd..c3e48194 100644
          std::fs::remove_dir_all(repo).ok();
      }
 diff --git a/src/ui/sidebar.rs b/src/ui/sidebar.rs
-index 776d9de6..412a1aee 100644
+index 51cddbe1..d91d45c1 100644
 --- a/src/ui/sidebar.rs
 +++ b/src/ui/sidebar.rs
-@@ -1252,6 +1252,17 @@ fn render_workspace_list(
+@@ -1280,6 +1280,17 @@ fn render_workspace_list(
              Style::default().fg(p.subtext0)
          };
  
@@ -45,7 +45,7 @@ index 776d9de6..412a1aee 100644
          let label = ws.display_name_from(&app.terminals, terminal_runtimes);
          let display_label = if card.indented {
              grouped_child_display_label(&label, ws.branch().as_deref(), ws.custom_name.is_some())
-@@ -1303,28 +1314,30 @@ fn render_workspace_list(
+@@ -1331,28 +1342,30 @@ fn render_workspace_list(
                  break;
              }
              let mut spans = Vec::new();
@@ -88,7 +88,7 @@ index 776d9de6..412a1aee 100644
              };
              let trailing_width = if row_index == 0 && parent_group.is_some() {
                  2
-@@ -1339,9 +1352,7 @@ fn render_workspace_list(
+@@ -1367,9 +1380,7 @@ fn render_workspace_list(
                  branch_style,
                  branch_style,
                  p,
@@ -99,7 +99,7 @@ index 776d9de6..412a1aee 100644
              ));
              frame.render_widget(
                  Paragraph::new(Line::from(spans)),
-@@ -2357,6 +2368,38 @@ rows = [[{ token = "git_status", fg = "#123456" }]]
+@@ -2686,6 +2697,38 @@ rows = [[{ token = "git_status", fg = "#123456" }]]
              .expect("workspace list should render");
      }
  

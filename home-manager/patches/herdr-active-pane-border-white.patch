@@ -1,8 +1,8 @@
 diff --git a/src/ui/panes.rs b/src/ui/panes.rs
-index b904ce00..86ab6927 100644
+index f20b55b5..7a57fc8a 100644
 --- a/src/ui/panes.rs
 +++ b/src/ui/panes.rs
-@@ -479,9 +479,9 @@ fn render_pane_borders(
+@@ -518,9 +518,9 @@ fn render_pane_borders(
          let cell = &mut buf[(x, y)];
          cell.set_symbol(symbol);
          let color = if focused {
@@ -14,7 +14,7 @@ index b904ce00..86ab6927 100644
          };
          cell.set_style(Style::default().fg(color));
      }
-@@ -646,9 +646,9 @@ fn render_pane_border_titles(
+@@ -685,9 +685,9 @@ fn render_pane_border_titles(
              continue;
          }
          let color = if info.is_focused {
@@ -26,7 +26,7 @@ index b904ce00..86ab6927 100644
          };
          let mut style = Style::default().fg(color);
          if info.is_focused {
-@@ -1206,9 +1206,9 @@ mod tests {
+@@ -1270,9 +1270,9 @@ mod tests {
  
          let buffer = terminal.backend().buffer();
          assert_eq!(buffer[(2, 2)].symbol(), "┼");
@@ -38,7 +38,7 @@ index b904ce00..86ab6927 100644
      }
  
      #[test]
-@@ -1244,8 +1244,8 @@ mod tests {
+@@ -1308,8 +1308,8 @@ mod tests {
              .unwrap();
  
          let buffer = terminal.backend().buffer();

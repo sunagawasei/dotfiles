@@ -15,7 +15,7 @@
     };
     nix-homebrew.url = "github:zhaofengli/nix-homebrew";
     gws-cli.url = "github:googleworkspace/cli";
-    herdr.url = "github:herdrdev/herdr/v0.8.0";
+    herdr.url = "github:herdrdev/herdr/v0.8.2";
     hunk = {
       url = "github:modem-dev/hunk";
       inputs.nixpkgs.follows = "nixpkgs";

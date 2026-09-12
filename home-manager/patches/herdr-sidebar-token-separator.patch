@@ -1,8 +1,8 @@
 diff --git a/src/ui/sidebar.rs b/src/ui/sidebar.rs
-index d9f6197f..776d9de6 100644
+index a6dfbcd3..51cddbe1 100644
 --- a/src/ui/sidebar.rs
 +++ b/src/ui/sidebar.rs
-@@ -1735,7 +1735,7 @@ rows = [[{ token = "$hype", fg = "#abcdef", bold = true, dim = false }, "workspa
+@@ -1913,7 +1913,7 @@ rows = [[{ token = "$hype", fg = "#abcdef", bold = true, dim = false }, "workspa
          let buffer = terminal.backend().buffer();
          let h = buffer[(find_symbol_x(buffer, row, 25, "H"), row)].style();
          let i = buffer[(find_symbol_x(buffer, row, 25, "I"), row)].style();
@@ -11,7 +11,7 @@ index d9f6197f..776d9de6 100644
  
          for style in [h, i] {
              assert_eq!(style.fg, Some(ratatui::style::Color::Rgb(0xab, 0xcd, 0xef)));
-@@ -1840,7 +1840,7 @@ rows = [[{ token = "git_status", fg = "#123456" }]]
+@@ -2018,7 +2018,7 @@ rows = [[{ token = "git_status", fg = "#123456" }]]
          let first = row_text(buffer, body.y, 17);
  
          assert!(first.contains("logs"), "rendered row: {first:?}");
