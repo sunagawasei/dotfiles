@@ -103,13 +103,24 @@ return {
     {
       "<leader>ss",
       function()
-        require("telescope.builtin").lsp_document_symbols({
+        local opts = {
           symbols = LazyVim.config.get_kind_filter(),
-          -- 既定の symbol_width = 25 は gopls が返す `(*Receiver).Method` のレシーバで
-          -- 埋まりメソッド名が消える。1未満は results ウィンドウ幅に対する比率
-          symbol_width = 0.8,
+          -- レシーバをできるだけ見せる。1未満は results ウィンドウ幅に対する比率
+          symbol_width = 0.7,
+          -- gen_from_lsp_symbols は生成時に一度だけ hidden を判定する。telescope が
+          -- picker 生成の直前に立てる path_display より前に作るので、自分で明示する
+          path_display = { "hidden" },
           on_complete = { cursor_follower(vim.api.nvim_win_get_cursor(0)[1] - 1) },
-        })
+        }
+        -- `(recv).name` 形の symbol 名を返すのは gopls だけとは限らないので、Go に限る
+        if vim.bo.filetype == "go" then
+          local inner = require("telescope.make_entry").gen_from_lsp_symbols(opts)
+          opts.entry_maker = function(item)
+            item.text = require("util.lsp_symbol_name").method_first(item.text)
+            return inner(item)
+          end
+        end
+        require("telescope.builtin").lsp_document_symbols(opts)
       end,
       desc = "LSP Symbols (Telescope)",
     },
