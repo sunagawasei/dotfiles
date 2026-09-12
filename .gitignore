@@ -152,6 +152,9 @@ herdr/*
 !herdr/open-in-nvim.sh
 !herdr/config.toml
 
+# herdrのdebugビルドが実行時に使う設定ディレクトリ(cargo testが書き込む)
+/herdr-dev/
+
 # Cursor CLI (local configuration)
 cursor/
 
