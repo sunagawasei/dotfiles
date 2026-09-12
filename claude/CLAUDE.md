@@ -56,10 +56,11 @@
 
 - **メイン(本セッション)**: ユーザーとの対話でのプラン化・統合・検収(要件適合+diff査読+git log+test)・git。権限=**writeの承認・統合・commitの唯一の制御主体**
 - **fable-review(Fable・headless claude-code)**: 設計レビュー(段2)、codex査読(段3)指摘への対応可否収束を担当。findings-onlyでrepo不変。権限=claude_reviewer(repo writeはsandbox+spawn probeで強制。repo readはproject(`~/.config`)配下と継承add-dir全体に開く。credential path read・外部状態変更の禁止は規約でのみ抑止しsandboxは強制しない)。**repo不変≠orchestration状態不変**: agmsg message store/team registration/run状態はsandboxのwrite denyの対象外で技術的に書け、`$SKILL_DIR`全体(全team・全projectの過去message含む)がread可能。busへの書き込み・他teamの履歴readはrole file規約でのみ抑止する残余リスク。network egressの実挙動は未検証(not checked)
+- **design-review(Opus5・headless claude-code)**: 節約モードでのfable-review相当。段2の設計レビュー・段3のcodex査読指摘への対応可否収束を担当。`spawn.claude_model.design-review: opus`。findings-onlyでrepo不変。権限はfable-reviewと同じclaude_reviewer layout。通常モードでは起動しない。手順の正本は`claude/skills/orchestrate-agents/references/economy-mode.md`
 - **opus-review(Opus5・headless cursor)**: 平常時は使わない第2意見(休眠)。段9の査読はcodexへ集約済み。高リスク変更で独立した第2の目が要るとメインが判断したときだけ起こす。findings-onlyでrepo不変。権限=cursor_readonly(Write/Shell deny。readはcredential denylist。projectが`~/.config`だと`gh`/`gcloud`/`cursor`/`codex`はworkspace内でdenyされない)
 - **grok-review(Grok4.6・headless cursor)**: codex(review役)応答不能時の段9フォールバック(暫定運用)。codex同等の役割(意図一致査読+脆弱性4観点)を代行する。実装がAnthropic側に寄った現構成では、cross-vendorの査読を保つ唯一の代替経路。findings-onlyでrepo不変。権限=cursor_readonly。トリガー・復帰・停止条件・waiver・fallback不能クラスの判定は`claude/skills/orchestrate-agents/SKILL.md`「段9査読者フォールバックチェーン」節が正本
 - **実装subagent(Claude Code組み込みAgent tool・`claude/agents/impl-worker.md`・sonnet/xhigh)**: 承認済みsubtaskの**ファイルセットの範囲だけ**編集する。commit/push禁止。完了報告はメイン宛。親セッションの権限をそのまま継承するため、外部write・repo外read・機密情報readの禁止は**契約文でのみ抑止する**(強制境界は無い)。実行中にメインへ問い合わせることはできず、判断が要る場面では変更を加えず`question`として返す
-- **manager / watcher(headless codex)**: 休眠。実装レーンをcodex workerへ戻したときだけ使う。role fileとagmsg configは残してあるが、subagentレーンでは起動しない
+- **manager / watcher(headless codex)**: 休眠。実装レーンをcodex workerへ戻したときだけ使う。role fileとagmsg configは残してあるが、subagentレーンでは起動しない。**節約モードでは`codex-impl`が段5の実装を担う**(manager/watcher自体は休眠のまま。手順は`claude/skills/orchestrate-agents/references/economy-mode.md`)。**`codex-impl`のrole fileはメイン直結へ変更済みで、managerからのpacketもwatcherへの完了報告も前提にしない。manager/watcherレーンを復帰させるにはrole fileを元へ戻す作業が要る**
 - **codex(review役)**: プラン査読(承認依頼前の常時ゲート)+段9のdiff査読。**意図一致査読と脆弱性4観点の両方を全hunk対象で担当する**(実装がAnthropic側に寄ったため、cross-vendorの査読はここ1本になる)。権限=read-only
 - **codex-research**: コードベース内・外部ソース読解の横断調査。file:line一覧・構造化データを返す。パッチは作らない。権限=read-only運用
 - **grok-research(Grok4.6・headless cursor)**: 公開情報とredacted packetに限った第二の調査経路。権限=read-only
@@ -68,7 +69,7 @@
 
 1. メインが依頼を受け、**ユーザーとの対話でプラン案を起案する**。段2へ渡すpacketには**4 field(疑う前提 / 反対案 / その帰結 / 未解決の問い)を必須**で載せ、「該当なし」と書くなら理由も書く。プランの確定は段4
 2. fable-reviewが設計レビュー。**ユーザー承認の代替にしない**
-3. codex(review役)がプラン査読(**段2実施時は査読完了の最終返信後に、指摘への対応を反映して送る。段2省略はredactすると議論が成立しない場合で、かつ依頼送信前に決定した場合のみ**)。**その指摘への対応可否(採用/見送り/別タスク)はfable-reviewが振り分けて収束させる。この判断を最終とする**
+3. codex(review役)がプラン査読(**節約モードでは指摘の収束先もdesign-review**)(**段2実施時は査読完了の最終返信後に、指摘への対応を反映して送る。段2省略はredactすると議論が成立しない場合で、かつ依頼送信前に決定した場合のみ**)。**その指摘への対応可否(採用/見送り/別タスク)はfable-reviewが振り分けて収束させる。この判断を最終とする**
 4. **ユーザー承認**。これより前に実装subagentへdispatchを1件も出さない。承認対象はサブタスク方針を含むプラン全体
 5. **メインがサブタスクへ分割し、実装subagentへdispatchする**。各subtaskは自己完結パケットで、**スコープのファイルセットを明示する**。並列で走らせる場合はファイルセットを重複させず、**dispatch中はメインが同じrepoを編集しない**。subagentは実行中にメインへ問い合わせられないため、判断が要る場面では変更を加えず`question`で返る。メインが回答してSendMessageで継続させる
 6. **メインが受け入れ検査をする**。完了報告の変更ファイル一覧と`git diff --stat`を突き合わせ、**申告外のパスに差分があればそのsubagentの逸脱として差し戻す**(並列時は帰属が確定しないので、説明のつかない差分が1つでもあればゲートを止める)。報告された検証は1-2コマンドでスポット再現する
@@ -83,6 +84,8 @@
 ### 実装レーンの2形態(subagent / team)
 
 既定は**subagent**。teamを使うのは、サブタスク同士が作業中に情報をやり取りする必要があるとき、または3人以上を並行させて共有タスクリストで進行管理する規模のときだけ。**この環境ではteammateは別プロセスにならない**(2026-09-06実測。tmux/iTerm2でないとin-processにフォールバックする)ため、「独立した文脈で並行に考えさせる」も「あとから呼び戻して継続させる」もsubagentで取れる。有効化・制約・実効model/effortの確認方法は`claude/skills/orchestrate-agents/SKILL.md`が正本。
+
+Anthropicプランの消費を抑える節約モード(段2をdesign-review、段5をcodex-implへ切り替える)の手順は`claude/skills/orchestrate-agents/references/economy-mode.md`が正本。**このモードは段9の査読をcodexのままにするため、codex-implが書いたコードをcodexが一次査読する。「同一vendorが自分の系列の成果を一次査読する配置を作らない」に反する例外で、2026-09-12にユーザーが受容を明示した。節約モードの中だけで成立し、通常モードには適用しない。**
 
 **このフローの対象**は設計または実装判断を伴う依頼。**例外**は、挙動・公開契約・認証・security boundary・課金・外部write・依存関係を変えず、変更対象と期待diffが一意で、diff単体の機械検証で正しさが確定する原子的編集のみ(行数は基準にしない)。1つでも満たさなければ段1から通す。subtaskが1本でも段5〜11を通す。**例外を通す編集はメインが自分で書き、Anthropic author扱いで段9のcodex(review役)ゲートだけを通す**(subagentへdispatchしない)。
 

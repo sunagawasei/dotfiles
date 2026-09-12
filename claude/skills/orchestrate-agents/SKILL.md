@@ -26,6 +26,8 @@ description: 全タスク共通の単一委譲フロー(対話でのプラン起
 
 ### 段2 fable-review(設計ゲート)
 
+**節約モードでは、この段の送付先だけが`design-review`(claude-code, opus)に替わる**。両方へは送らない。役割・確認事項・パケット書式は同じ。**以下に出てくる`fable-review`向けの設定値・起動コマンド・rollback手順はfable-review固有のもので、design-reviewには適用しない** — design-reviewの設定値と起動手順は`references/economy-mode.md`が正本。
+
 プランを`fable-review`へ送る。返るのは findings。**ユーザー承認の代替にしない**。認証・秘密情報を含むプランは送付前に該当部分をredactする(redactすると議論不成立ならF3の規約どおり段2を省く)。
 
 ```bash
@@ -50,7 +52,7 @@ driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.c
 
 渡すプランには段2の指摘への対応を反映する。段3packetの必須fieldとして、段2の全findingについてfinding ID・振り分け(採用/見送り/別タスク)・見送りと別タスクは理由を一対一で列挙する(段2省略時は「段2省略(redactすると議論不成立、依頼送信前に決定)」と明記)。**認証・秘密情報を含むfindingは理由を`redacted(理由: 認証/秘密)`で代替でき、これはpacket不備に当たらない。redactedを使ったfindingは、内容(理由の具体)を平文開示せずfinding ID・重大度・振り分け(採用/見送り/別タスク)・解決状態(対応済み/未対応)を段4のユーザー承認時と段11の検収報告の両方に明記する(ユーザーは元のfable-review返信にagmsg履歴から直接アクセスできる)**。一覧から落ちたfindingがあればpacket不備として扱う。この対応は初回送信に適用し、段3findingsを受けた再送(収束ループ)は下記「レビュー収束条件」に従う。
 
-承認依頼前の常時ゲート。書式は下記「[review]パケットの鉄則」。
+承認依頼前の常時ゲート。書式は下記「[review]パケットの鉄則」。**節約モードでは、この段のfindingsの収束を依頼する相手も`design-review`になる**(fable-reviewは起動しない)。
 
 ### 段4 ユーザー承認
 
@@ -59,6 +61,8 @@ driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.c
 ### 段5 メインの分割とdispatch
 
 メインが承認済みプランをサブタスクへ分割し、実装subagent(`claude/agents/impl-worker.md`・sonnet/xhigh)へdispatchする。managerは介さない。
+
+**節約モードでは、この段のdispatch先だけが`codex-impl`(agmsg・`send.sh`)に替わる**。両方へはdispatchしない。段9の査読者はcodexのまま(同一vendor査読になる受容済みの例外)。**以下に出てくるAgent tool固有の記述(実行中に問い合わせられない・回答はSendMessageで継続)はcodex-implには当てはまらない** — codex-implは実行中にclaudeへ質問を送り、次のagmsg turnで回答を受ける。この経路と起動手順・切替条件は`references/economy-mode.md`が正本。
 
 **並列で走らせるときの2条件**(どちらも守れないなら直列にする):
 
