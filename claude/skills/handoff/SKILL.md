@@ -1,5 +1,5 @@
 ---
-name: workspace-delegate
+name: handoff
 description: ユーザーが「別workspaceを立ち上げて調査/対処させて」「新しいworkspaceでやらせて」のように言ったときに使う。Agent tool(本セッション内のサブエージェント)ではなく、herdr経由で独立した新規ターミナル+新規claude codeプロセスを起動して作業を委譲する。Requires HERDR_ENV=1.
 ---
 

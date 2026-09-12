@@ -201,7 +201,7 @@ claude/hooks/*
 claude/skills/*
 !claude/skills/commit/
 !claude/skills/issue-draft/
-!claude/skills/session-harvest/
+!claude/skills/wrapup/
 !claude/skills/session-verify/
 !claude/skills/orchestrate-agents/
 !claude/skills/japanese-tech-writing/
@@ -209,7 +209,7 @@ claude/skills/*
 !claude/skills/herdr/
 !claude/skills/herdr-english-reply/
 !claude/skills/split-commits/
-!claude/skills/workspace-delegate/
+!claude/skills/handoff/
 !claude/skills/herdr-deploy/
 !claude/agents/
 claude/agents/*

@@ -1,5 +1,5 @@
 ---
-name: session-harvest
+name: wrapup
 description: セッション終了時に、このセッションの学び・指摘・繰り返しをskill/rule/メモリ/CLAUDE.mdへ還元し、無効化された既存資産を削除し、やり残しを総点検するワークフロー
 ---
 
@@ -47,7 +47,7 @@ description: セッション終了時に、このセッションの学び・指�
 ### 5. 適用
 
 - 承認分をsonnetサブエージェント（model: sonnet）に委譲して適用（メインは検証）。dotfilesの変更はユーザー承認後にcommitエージェントでコミット
-- **削除の後始末はsession-harvest内でself-containedに行う**（`/claude-audit`は`~/.config/.claude/skills/`のプロジェクトローカルskillで、`~/.config`以外のプロジェクトのセッションからは呼べないため委任しない）:
+- **削除の後始末はwrapup内でself-containedに行う**（`/claude-audit`は`~/.config/.claude/skills/`のプロジェクトローカルskillで、`~/.config`以外のプロジェクトのセッションからは呼べないため委任しない）:
   - git追跡ファイル（skill/rule/CLAUDE.md）→ `git rm`。履歴から戻せる
   - git非追跡ファイル（`claude/projects/*/memory/`のメモリは全件がこれ）→ `rm`せず`claude/attic/<YYYY-MM-DD>/<元の相対パス>`へ退避する。`claude/*`が.gitignore対象なのでallowlist追加は不要
   - MEMORY.mdのインデックス行を削除する
@@ -61,4 +61,4 @@ description: セッション終了時に、このセッションの学び・指�
 ## 関連
 
 - 常時規約: 同チェックはタスク完了時にも都度行う（グローバルCLAUDE.md「対話・確認の規約」）
-- 定期棚卸し（資産全体の重複・矛盾・陳腐化）は`/claude-audit`（こちらは蓄積後の掃除。session-harvestは都度の還元で、削除も**このセッションが無効にしたものだけ**を対象とする）
+- 定期棚卸し（資産全体の重複・矛盾・陳腐化）は`/claude-audit`（こちらは蓄積後の掃除。wrapupは都度の還元で、削除も**このセッションが無効にしたものだけ**を対象とする）
