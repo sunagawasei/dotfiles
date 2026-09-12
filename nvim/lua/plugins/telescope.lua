@@ -105,7 +105,7 @@ return {
       function()
         local opts = {
           symbols = LazyVim.config.get_kind_filter(),
-          -- レシーバをできるだけ見せる。1未満は results ウィンドウ幅に対する比率
+          -- 1未満は results ウィンドウ幅に対する比率
           symbol_width = 0.7,
           -- gen_from_lsp_symbols は生成時に一度だけ hidden を判定する。telescope が
           -- picker 生成の直前に立てる path_display より前に作るので、自分で明示する
@@ -116,7 +116,7 @@ return {
         if vim.bo.filetype == "go" then
           local inner = require("telescope.make_entry").gen_from_lsp_symbols(opts)
           opts.entry_maker = function(item)
-            item.text = require("util.lsp_symbol_name").method_first(item.text)
+            item.text = require("util.lsp_symbol_name").strip_receiver(item.text)
             return inner(item)
           end
         end
