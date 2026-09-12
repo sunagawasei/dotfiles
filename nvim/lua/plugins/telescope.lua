@@ -105,6 +105,9 @@ return {
       function()
         require("telescope.builtin").lsp_document_symbols({
           symbols = LazyVim.config.get_kind_filter(),
+          -- 既定の symbol_width = 25 は gopls が返す `(*Receiver).Method` のレシーバで
+          -- 埋まりメソッド名が消える。1未満は results ウィンドウ幅に対する比率
+          symbol_width = 0.8,
           on_complete = { cursor_follower(vim.api.nvim_win_get_cursor(0)[1] - 1) },
         })
       end,
