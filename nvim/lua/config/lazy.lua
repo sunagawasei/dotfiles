@@ -24,6 +24,7 @@ require("lazy").setup({
     { import = "lazyvim.plugins.extras.lang.helm" },
     { import = "lazyvim.plugins.extras.lang.terraform" },
     { import = "lazyvim.plugins.extras.lang.yaml" },
+    { import = "lazyvim.plugins.extras.lang.json" },
     { import = "lazyvim.plugins.extras.lang.docker" },
     -- { import = "lazyvim.plugins.extras.lang.markdown" }, -- markdownlintを無効化するため無効化
     { import = "lazyvim.plugins.extras.ui.mini-indentscope" },
