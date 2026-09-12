@@ -35,7 +35,7 @@ description: セッション終了時に、このセッションの学び・指�
 - 候補ごとに既存のskill/rule/メモリ/CLAUDE.mdをgrepし、既にあれば「更新」、なければ「新規」に振り分け。重複を作らない
 - スコープ判断を伴う候補（skill/rule/メモリ/設定）は、対象プロジェクト側とグローバル（`~/.config`）側の両方を確認し、同じ内容を両スコープに重複して置かない
 - (f)の候補は特にグローバルCLAUDE.mdの「出力規約」「対話・確認の規約」セクションと突き合わせ、既存文言の微調整で吸収できないか優先確認する
-- **削除候補の逆引き確認**: 主の逆引きは (a) MEMORY.mdのインデックス行 (b) CLAUDE.md・skill・ruleからの名前/パス参照。加えて全プロジェクトのメモリを`grep -rl <name> claude/projects/*/memory`で走査する（全プロジェクト分でも一瞬で終わる）。`[[link]]`はグローバルメモリdirに未解決が多数あるため「指している側が無い=安全」の判定には使えない。**削除の前後で未解決件数が増えていないかの差分確認にだけ使う**
+- **削除候補の逆引き確認**: 主の逆引きは (a) MEMORY.mdのインデックス行 (b) CLAUDE.md・skill・ruleからの名前/パス参照。加えて全プロジェクトのメモリを`grep -rl <name> ~/.config/claude/projects/*/memory`で走査する（全プロジェクト分でも一瞬で終わる）。`[[link]]`はグローバルメモリdirに未解決が多数あるため「指している側が無い=安全」の判定には使えない。**削除の前後で未解決件数が増えていないかの差分確認にだけ使う**
 - 安全基準: 削除は「repoに記録済み/統合済み/明確に陳腐化」のいずれかに該当するもののみ。迷ったら残して報告する
 
 ### 4. ユーザー確認
@@ -49,7 +49,7 @@ description: セッション終了時に、このセッションの学び・指�
 - 承認分をsonnetサブエージェント（model: sonnet）に委譲して適用（メインは検証）。dotfilesの変更はユーザー承認後にcommitエージェントでコミット
 - **削除の後始末はwrapup内でself-containedに行う**（`/claude-audit`は`~/.config/.claude/skills/`のプロジェクトローカルskillで、`~/.config`以外のプロジェクトのセッションからは呼べないため委任しない）:
   - git追跡ファイル（skill/rule/CLAUDE.md）→ `git rm`。履歴から戻せる
-  - git非追跡ファイル（`claude/projects/*/memory/`のメモリは全件がこれ）→ `rm`せず`claude/attic/<YYYY-MM-DD>/<元の相対パス>`へ退避する。`claude/*`が.gitignore対象なのでallowlist追加は不要
+  - git非追跡ファイル（`~/.config/claude/projects/*/memory/`のメモリは全件がこれ）→ `rm`せず`~/.config/claude/attic/<YYYY-MM-DD>/<元の相対パス>`へ退避する。`claude/*`が.gitignore対象なのでallowlist追加は不要。**パスは絶対で書く** — このskillは`~/.config`以外のプロジェクトのセッションからも走るため、相対パスは解決しない
   - MEMORY.mdのインデックス行を削除する
   - 退避前後で当該メモリdirの未解決`[[link]]`件数が同数であることを確認する
 

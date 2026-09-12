@@ -66,7 +66,7 @@ cd ~/.config/claude/projects && for d in ./*/memory; do cd "$d" 2>/dev/null || c
 ### 4. ユーザー判断と適用
 
 - 判断が分かれるもの(削除可否・公開可否・方針矛盾の解消方法)は**AskUserQuestionでまとめて確認**
-- git非追跡ファイルの整理は削除でなく`attic/`退避(可逆)を選ぶ
+- git非追跡ファイルの整理は削除でなく退避(可逆)を選ぶ。退避先は`~/.config/claude/attic/<YYYY-MM-DD>/<元の相対パス>`(`/wrapup`と同じ場所。散らばると復元時にどちらを見るか分からなくなる)
 - dotfiles(`~/.config`)の変更はユーザー承認後、commitエージェントでコミット。他リポジトリはcommitしない(working treeに残して報告)
 
 ## 定期トリガー
