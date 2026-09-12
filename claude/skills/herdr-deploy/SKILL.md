@@ -11,7 +11,7 @@ herdrは flake input のソースへローカルパッチを当ててビルド�
 
 各手順の末尾に、対応する検査コマンドの段番号(段0〜段3の定義は後述)を添える。
 
-1. 開発ツリー(git worktree、branch `v080-upgrade`)で実装してcommitする(段0)。
+1. 開発ツリー(git worktree、branch `v082-upgrade`)で実装してcommitする(段0)。
 2. その差分を`.patch`ファイルとして`home-manager/patches/`へ置く(段1)。
 3. `home-manager/herdr.nix`の`patches`リストへ登録する(段1)。**`herdr-combined-frame-digest.patch`は必ず最後に置く。** 先行するUIパッチ全部の合成描画を固定するintegration fixtureなので、UIパッチを変えたらdigestを再生成する。並び順は開発branchのcommit順と一致させる。各パッチは親commit時点のツリーに対するdiffなので、順を崩すとoffset依存になる。
 4. パッチファイルと`herdr.nix`を`git add`する(段0)。Nix flakeはgit追跡ファイルしか見ないため、未追跡だと"Path ... is not tracked by Git"でNix評価が失敗する。
@@ -40,6 +40,24 @@ cd scripts && go run ./cmd/verify-herdr-deploy --dev-tree <開発ツリーのパ
 
 開発ツリーのパスは個人ローカルの値なので、環境変数`HERDR_DEV_TREE`か`--dev-tree`フラグから渡す。実値はこのスキルにも他のcommit対象ファイルにも書かない。`HERDR_DEV_TREE`に何を設定するかは、リポジトリルートの`CLAUDE.local.md`(`.gitignore`登録済み)に書く。
 
+## 上流バージョンを上げる
+
+flake inputのpin(タグ)を上げ、8本のパッチを新しい上流commitへ移植する手順。各手順の末尾に対応する検査段を添える。
+
+1. 新しい上流タグからworktreeを作る。
+2. 現行の開発branchのcommitを配備順にcherry-pickする。
+3. conflictを解消してcommitする(段0)。
+4. 開発ツリーで`cargo test`を走らせ、コンパイルと意味の両方を検査する。`nix/package.nix`は`doCheck = false`のため、`darwin-rebuild build`はテストを走らせない — ここが唯一のコンパイルゲートになる。取り込みの確認には`server::headless::tests`の件数(素の上流に暗転パッチ7本分が加わった件数)が使える。
+5. UIパッチが描画へ影響していれば、`combined-frame-digest`の期待値を8パッチ適用後の実測値へ書き直す。
+6. `git diff <sha>^ <sha> -- src/`でパッチファイルを再生成する。`-- src/`は`confirm-close-running-process`が変更する`docs/next/website/src/data/config-reference.json`を落とすために要る(nixのsrc filesetが`website/`を含まず、含めるとpatchPhaseが失敗する)。`git diff`の出力にコメントは含まれないため、コメントヘッダを持つパッチは手で戻す。
+7. `flake.nix`のrefと`flake.lock`を新しい上流revへ更新する(段0)。
+8. `home-manager/herdr.nix`のコメント中のbranch名を新しいbranch名へ更新する。
+9. `darwin-rebuild build --flake ~/.config`で評価とビルドを検証する(sudo不要)。
+10. `darwin-apply`で適用する(段2)。
+11. `verify-herdr-deploy`で段0〜段2を確認する。
+12. ユーザーがherdr serverを再起動する(段3)。
+13. `herdr --skill > claude/skills/herdr/SKILL.md`で同梱skillを再生成し、日本語の追記節を戻す。
+
 ## 完了報告の規約
 
 herdrのローカル変更を扱うタスクの完了報告には、「配備した」と書く代わりに`verify-herdr-deploy`の出力そのものを貼る。走らせずに完了と書く行為が、報告書式の欠落として見えるようにするためである。
@@ -50,4 +68,4 @@ herdrのローカル変更を扱うタスクの完了報告には、「配備し
 
 ## 開発ツリーが両方向にずれうること
 
-配備リスト(`home-manager/herdr.nix`の`patches`)と開発branchは独立にずれる。2026-09-11時点では、非アクティブpaneの暗転パッチが配備側に登録されている一方で開発ツリーに対応するcommitが無く、`panel-contrast-fg-bright`は開発ツリーにcommitがある一方で配備リストからは外れている(2026-09-02のcommit `e138f54`で意図的に外した)。段1はこの両方向のずれを同時に検出する。次のupgradeで開発branchをrebase元にする前に、段1を通しておく。
+配備リスト(`home-manager/herdr.nix`の`patches`)と開発branchは独立にずれうる。現在は配備8本と開発ツリーの8commitが1対1で対応し、段1は差分なしで通る。`panel-contrast-fg-bright`は開発branchにも含めず、パッチファイルだけ未登録で据え置いている。次のupgradeで開発branchをrebase元にする前に、段1を通しておく。
