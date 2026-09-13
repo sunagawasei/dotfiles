@@ -7914,7 +7914,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:226",
+		Source:     "wezterm/wezterm.lua:229",
 	},
 	{
 		ConsumerID: "wezterm.ansi.blue",
@@ -7923,7 +7923,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:230",
+		Source:     "wezterm/wezterm.lua:233",
 	},
 	{
 		ConsumerID: "wezterm.ansi.cyan",
@@ -7932,7 +7932,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:232",
+		Source:     "wezterm/wezterm.lua:235",
 	},
 	{
 		ConsumerID: "wezterm.ansi.green",
@@ -7941,7 +7941,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:228",
+		Source:     "wezterm/wezterm.lua:231",
 	},
 	{
 		ConsumerID: "wezterm.ansi.magenta",
@@ -7950,7 +7950,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:231",
+		Source:     "wezterm/wezterm.lua:234",
 	},
 	{
 		ConsumerID: "wezterm.ansi.red",
@@ -7959,7 +7959,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:227",
+		Source:     "wezterm/wezterm.lua:230",
 	},
 	{
 		ConsumerID: "wezterm.ansi.white",
@@ -7968,7 +7968,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:233",
+		Source:     "wezterm/wezterm.lua:236",
 	},
 	{
 		ConsumerID: "wezterm.ansi.yellow",
@@ -7977,7 +7977,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:229",
+		Source:     "wezterm/wezterm.lua:232",
 	},
 	{
 		ConsumerID: "wezterm.brights.bright_black",
@@ -7986,7 +7986,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:237",
+		Source:     "wezterm/wezterm.lua:240",
 	},
 	{
 		ConsumerID: "wezterm.brights.bright_blue",
@@ -7995,7 +7995,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:241",
+		Source:     "wezterm/wezterm.lua:244",
 	},
 	{
 		ConsumerID: "wezterm.brights.bright_cyan",
@@ -8004,7 +8004,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:243",
+		Source:     "wezterm/wezterm.lua:246",
 	},
 	{
 		ConsumerID: "wezterm.brights.bright_green",
@@ -8013,7 +8013,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:239",
+		Source:     "wezterm/wezterm.lua:242",
 	},
 	{
 		ConsumerID: "wezterm.brights.bright_magenta",
@@ -8022,7 +8022,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:242",
+		Source:     "wezterm/wezterm.lua:245",
 	},
 	{
 		ConsumerID: "wezterm.brights.bright_red",
@@ -8031,7 +8031,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:238",
+		Source:     "wezterm/wezterm.lua:241",
 	},
 	{
 		ConsumerID: "wezterm.brights.bright_white",
@@ -8040,7 +8040,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:244",
+		Source:     "wezterm/wezterm.lua:247",
 	},
 	{
 		ConsumerID: "wezterm.brights.bright_yellow",
@@ -8049,7 +8049,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:240",
+		Source:     "wezterm/wezterm.lua:243",
 	},
 	{
 		ConsumerID: "wezterm.colors.background",
@@ -8058,7 +8058,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/wezterm.lua:204",
+		Source:     "wezterm/wezterm.lua:207",
 	},
 	{
 		ConsumerID: "wezterm.colors.char_select",
@@ -8067,7 +8067,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:673",
+		Source:     "wezterm/wezterm.lua:676",
 	},
 	{
 		ConsumerID: "wezterm.colors.char_select.surface",
@@ -8076,7 +8076,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/wezterm.lua:672",
+		Source:     "wezterm/wezterm.lua:675",
 	},
 	{
 		ConsumerID: "wezterm.colors.copy_mode_active",
@@ -8085,7 +8085,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:249",
+		Source:     "wezterm/wezterm.lua:252",
 	},
 	{
 		ConsumerID: "wezterm.colors.copy_mode_active.surface",
@@ -8094,7 +8094,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/wezterm.lua:248",
+		Source:     "wezterm/wezterm.lua:251",
 	},
 	{
 		ConsumerID: "wezterm.colors.copy_mode_inactive",
@@ -8103,7 +8103,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:251",
+		Source:     "wezterm/wezterm.lua:254",
 	},
 	{
 		ConsumerID: "wezterm.colors.copy_mode_inactive.surface",
@@ -8112,7 +8112,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/wezterm.lua:250",
+		Source:     "wezterm/wezterm.lua:253",
 	},
 	{
 		ConsumerID: "wezterm.colors.cursor",
@@ -8121,7 +8121,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:208",
+		Source:     "wezterm/wezterm.lua:211",
 	},
 	{
 		ConsumerID: "wezterm.colors.cursor.surface",
@@ -8130,7 +8130,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/wezterm.lua:207",
+		Source:     "wezterm/wezterm.lua:210",
 	},
 	{
 		ConsumerID: "wezterm.colors.cursor_border",
@@ -8140,7 +8140,7 @@ var generatedPairs = []PairSpec{
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "border",
 		Reason:     "border or divider shape provides a non-color cue",
-		Source:     "wezterm/wezterm.lua:209",
+		Source:     "wezterm/wezterm.lua:212",
 	},
 	{
 		ConsumerID: "wezterm.colors.foreground",
@@ -8149,7 +8149,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:203",
+		Source:     "wezterm/wezterm.lua:206",
 	},
 	{
 		ConsumerID: "wezterm.colors.foreground.surface",
@@ -8158,7 +8158,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/wezterm.lua:204",
+		Source:     "wezterm/wezterm.lua:207",
 	},
 	{
 		ConsumerID: "wezterm.colors.quick_select_label",
@@ -8167,7 +8167,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:255",
+		Source:     "wezterm/wezterm.lua:258",
 	},
 	{
 		ConsumerID: "wezterm.colors.quick_select_label.surface",
@@ -8176,7 +8176,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/wezterm.lua:254",
+		Source:     "wezterm/wezterm.lua:257",
 	},
 	{
 		ConsumerID: "wezterm.colors.quick_select_match",
@@ -8185,7 +8185,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:257",
+		Source:     "wezterm/wezterm.lua:260",
 	},
 	{
 		ConsumerID: "wezterm.colors.quick_select_match.surface",
@@ -8194,7 +8194,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/wezterm.lua:256",
+		Source:     "wezterm/wezterm.lua:259",
 	},
 	{
 		ConsumerID: "wezterm.colors.scrollbar_thumb",
@@ -8203,7 +8203,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/wezterm.lua:216",
+		Source:     "wezterm/wezterm.lua:219",
 	},
 	{
 		ConsumerID: "wezterm.colors.selection",
@@ -8212,7 +8212,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:212",
+		Source:     "wezterm/wezterm.lua:215",
 	},
 	{
 		ConsumerID: "wezterm.colors.selection.surface",
@@ -8221,7 +8221,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/wezterm.lua:213",
+		Source:     "wezterm/wezterm.lua:216",
 	},
 	{
 		ConsumerID: "wezterm.colors.split",
@@ -8231,7 +8231,7 @@ var generatedPairs = []PairSpec{
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "border",
 		Reason:     "border or divider shape provides a non-color cue",
-		Source:     "wezterm/wezterm.lua:217",
+		Source:     "wezterm/wezterm.lua:220",
 	},
 	{
 		ConsumerID: "wezterm.colors.tab_bar.active_tab",
@@ -8240,7 +8240,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:264",
+		Source:     "wezterm/wezterm.lua:267",
 	},
 	{
 		ConsumerID: "wezterm.colors.tab_bar.active_tab.surface",
@@ -8249,7 +8249,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/wezterm.lua:263",
+		Source:     "wezterm/wezterm.lua:266",
 	},
 	{
 		ConsumerID: "wezterm.colors.tab_bar.inactive_tab",
@@ -8258,7 +8258,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:269",
+		Source:     "wezterm/wezterm.lua:272",
 	},
 	{
 		ConsumerID: "wezterm.colors.tab_bar.inactive_tab.surface",
@@ -8267,7 +8267,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/wezterm.lua:268",
+		Source:     "wezterm/wezterm.lua:271",
 	},
 	{
 		ConsumerID: "wezterm.colors.tab_bar.inactive_tab_edge",
@@ -8277,7 +8277,7 @@ var generatedPairs = []PairSpec{
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "border",
 		Reason:     "border or divider shape provides a non-color cue",
-		Source:     "wezterm/wezterm.lua:283",
+		Source:     "wezterm/wezterm.lua:286",
 	},
 	{
 		ConsumerID: "wezterm.colors.tab_bar.inactive_tab_hover",
@@ -8286,7 +8286,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:273",
+		Source:     "wezterm/wezterm.lua:276",
 	},
 	{
 		ConsumerID: "wezterm.colors.tab_bar.inactive_tab_hover.surface",
@@ -8295,7 +8295,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/wezterm.lua:272",
+		Source:     "wezterm/wezterm.lua:275",
 	},
 	{
 		ConsumerID: "wezterm.colors.tab_bar.new_tab",
@@ -8304,7 +8304,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:277",
+		Source:     "wezterm/wezterm.lua:280",
 	},
 	{
 		ConsumerID: "wezterm.colors.tab_bar.new_tab_hover",
@@ -8313,7 +8313,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "wezterm/wezterm.lua:281",
+		Source:     "wezterm/wezterm.lua:284",
 	},
 	{
 		ConsumerID: "wezterm.colors.tab_bar.new_tab_hover.surface",
@@ -8322,7 +8322,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/wezterm.lua:280",
+		Source:     "wezterm/wezterm.lua:283",
 	},
 	{
 		ConsumerID: "wezterm.colors.visual_bell",
@@ -8331,7 +8331,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "wezterm/wezterm.lua:222",
+		Source:     "wezterm/wezterm.lua:225",
 	},
 	{
 		ConsumerID: "wezterm.key_table.copy_mode",
@@ -8763,7 +8763,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/zsh.nix:338",
+		Source:     "home-manager/zsh.nix:344",
 	},
 	{
 		ConsumerID: "zsh.fzf.spinner",
@@ -8772,7 +8772,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "home-manager/zsh.nix:338",
+		Source:     "home-manager/zsh.nix:344",
 	},
 }
 

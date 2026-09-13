@@ -36,6 +36,9 @@ config.skip_close_confirmation_for_processes_named = {
 }
 -- デフォルト作業ディレクトリを~/.configに設定
 config.default_cwd = wezterm.home_dir .. "/.config"
+-- herdr 0.8.2以降はpaneのBELを外側の端末へ転送するため、背景paneが鳴らすBELが
+-- フォーカス中のagentの状態と無関係にシステム音になる。herdrのdone.mp3はafplayなので残る。
+config.audible_bell = "Disabled"
 
 -- ==========================================
 -- Unicode文字幅設定
