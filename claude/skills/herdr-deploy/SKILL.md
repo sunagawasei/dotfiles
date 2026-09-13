@@ -42,7 +42,7 @@ cd scripts && go run ./cmd/verify-herdr-deploy --dev-tree <開発ツリーのパ
 
 ## 上流バージョンを上げる
 
-flake inputのpin(タグ)を上げ、8本のパッチを新しい上流commitへ移植する手順。各手順の末尾に対応する検査段を添える。
+flake inputのpin(タグ)を上げ、9本のパッチを新しい上流commitへ移植する手順。各手順の末尾に対応する検査段を添える。
 
 1. 新しい上流タグからworktreeを作る。
 2. 現行の開発branchのcommitを配備順にcherry-pickする。
@@ -68,4 +68,4 @@ herdrのローカル変更を扱うタスクの完了報告には、「配備し
 
 ## 開発ツリーが両方向にずれうること
 
-配備リスト(`home-manager/herdr.nix`の`patches`)と開発branchは独立にずれうる。現在は配備8本と開発ツリーの8commitが1対1で対応し、段1は差分なしで通る。`panel-contrast-fg-bright`は開発branchにも含めず、パッチファイルだけ未登録で据え置いている。次のupgradeで開発branchをrebase元にする前に、段1を通しておく。
+配備リスト(`home-manager/herdr.nix`の`patches`)と開発branchは独立にずれうる。現在は配備9本と開発ツリーの9commitが1対1で対応し、段1は差分なしで通る。`panel-contrast-fg-bright`は開発branchにも含めず、パッチファイルだけ未登録で据え置いている。次のupgradeで開発branchをrebase元にする前に、段1を通しておく。
