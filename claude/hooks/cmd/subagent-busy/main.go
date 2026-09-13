@@ -26,7 +26,7 @@ const (
 	markerTTL = 24 * time.Hour
 )
 
-var markerComponentPattern = regexp.MustCompile(`^[A-Za-z0-9-]+$`)
+var markerComponentPattern = regexp.MustCompile(`^[A-Za-z0-9_-]+$`)
 
 // InputData は hook から渡される stdin JSON の必要フィールドを表します。
 type InputData struct {

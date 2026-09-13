@@ -11,6 +11,7 @@ RATE_RESET=""
 WEEK_USED=""
 WEEK_RESET=""
 SESSION_ID=""
+TRANSCRIPT_PATH=""
 
 # jqで一括抽出
 eval "$(printf '%s' "$input" | jq -r '
@@ -21,7 +22,8 @@ eval "$(printf '%s' "$input" | jq -r '
   @sh "RATE_RESET=\(.rate_limits.five_hour.resets_at // "")",
   @sh "WEEK_USED=\(.rate_limits.seven_day.used_percentage // "")",
   @sh "WEEK_RESET=\(.rate_limits.seven_day.resets_at // "")",
-  @sh "SESSION_ID=\(.session_id // "")"
+  @sh "SESSION_ID=\(.session_id // "")",
+  @sh "TRANSCRIPT_PATH=\(.transcript_path // "")"
 ' 2>/dev/null)" 2>/dev/null
 
 # ディレクトリ名
@@ -180,6 +182,17 @@ if [[ -n "$SESSION_ID" && "$SESSION_ID" =~ ^[0-9a-fA-F-]+$ ]]; then
     [ -f "$marker" ] || continue
     marker_mtime=$(stat -f %m "$marker" 2>/dev/null) || continue
     (( subagent_marker_now - marker_mtime > SUBAGENT_MARKER_TTL )) && continue
+
+    # 名前なしbackground agentのTaskStopとEsc中断ではSubagentStopが発火せず残る。
+    # ここで落とせるのはフラグが付くEsc分だけで、TaskStop分は45分TTL任せ
+    if [ -n "$TRANSCRIPT_PATH" ]; then
+      marker_agent_id=${marker#"$SUBAGENT_RUN_DIR"/subagent."$SESSION_ID".}
+      subagent_meta="${TRANSCRIPT_PATH%.jsonl}/subagents/agent-${marker_agent_id}.meta.json"
+      if [ -f "$subagent_meta" ] &&
+         jq -e '.stoppedByUser == true' "$subagent_meta" >/dev/null 2>&1; then
+        continue
+      fi
+    fi
 
     marker_pid=""
     IFS= read -r marker_pid < "$marker"
