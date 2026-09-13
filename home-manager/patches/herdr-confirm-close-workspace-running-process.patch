@@ -1,0 +1,814 @@
+# nixのsrc filesetは website/ 配下を含まないため、config-reference.json のhunkは
+# 意図的に除外している(開発branch側にのみ存在。含めるとpatchPhaseが対象ファイル不在で失敗する)。
+diff --git a/src/app/actions.rs b/src/app/actions.rs
+index a45687b4..8db56206 100644
+--- a/src/app/actions.rs
++++ b/src/app/actions.rs
+@@ -1984,26 +1984,41 @@ impl AppState {
+         self.apply_pane_zoom(ws_idx, pane_id, PaneZoomCommand::Toggle);
+     }
+ 
+-    pub(crate) fn workspace_close_would_close_worktree_group(&self, ws_idx: usize) -> bool {
+-        self.workspaces
++    /// ws_idx を閉じたときに実際に消えるworkspace。group に属さなければ自分だけ。
++    pub(crate) fn workspaces_closed_with(&self, ws_idx: usize) -> Vec<usize> {
++        let Some(space) = self
++            .workspaces
+             .get(ws_idx)
+             .and_then(|ws| ws.worktree_space())
+             .filter(|space| !space.is_linked_worktree)
+-            .is_some_and(|space| {
+-                self.workspaces
+-                    .iter()
+-                    .filter(|ws| {
+-                        ws.worktree_space()
+-                            .is_some_and(|member| member.key == space.key)
+-                    })
+-                    .count()
+-                    >= 2
++        else {
++            return vec![ws_idx];
++        };
++        let members: Vec<usize> = self
++            .workspaces
++            .iter()
++            .enumerate()
++            .filter_map(|(idx, ws)| {
++                ws.worktree_space()
++                    .is_some_and(|member| member.key == space.key)
++                    .then_some(idx)
+             })
++            .collect();
++        if members.len() >= 2 {
++            members
++        } else {
++            vec![ws_idx]
++        }
++    }
++
++    pub(crate) fn workspace_close_would_close_worktree_group(&self, ws_idx: usize) -> bool {
++        self.workspaces_closed_with(ws_idx).len() >= 2
+     }
+ 
+     pub(crate) fn confirm_implicit_worktree_group_close(&mut self, ws_idx: usize) -> bool {
+         if self.confirm_close && self.workspace_close_would_close_worktree_group(ws_idx) {
+             self.selected = ws_idx;
++            self.pending_close_workspace_process = None;
+             self.mode = Mode::ConfirmClose;
+             true
+         } else {
+@@ -6142,4 +6157,49 @@ mod tests {
+         assert_eq!(state.workspaces.len(), 1);
+         assert_eq!(state.workspaces[0].display_name(), "notes");
+     }
++
++    #[test]
++    fn workspaces_closed_with_covers_plain_solo_group_and_linked_worktree_cases() {
++        let mut state = app_with_workspaces(&["plain", "parent", "child", "solo-worktree"]);
++        mark_parent_worktree(&mut state, 1);
++        mark_linked_worktree(&mut state, 2);
++        // A worktree parent with no sibling sharing its key: a "solo" worktree space.
++        state.workspaces[3].worktree_space = Some(crate::workspace::WorktreeSpaceMembership {
++            key: "solo-key".into(),
++            label: "herdr".into(),
++            repo_root: "/repo/solo".into(),
++            checkout_path: "/repo/solo".into(),
++            is_linked_worktree: false,
++        });
++
++        // Plain workspace: no worktree_space at all -> itself only.
++        assert_eq!(state.workspaces_closed_with(0), vec![0]);
++        // Solo worktree parent: no sibling shares the key -> itself only.
++        assert_eq!(state.workspaces_closed_with(3), vec![3]);
++        // Group of 2, closed from the non-linked parent: both indices.
++        assert_eq!(state.workspaces_closed_with(1), vec![1, 2]);
++        // Linked worktree member: closing it alone never expands to the group.
++        assert_eq!(state.workspaces_closed_with(2), vec![2]);
++    }
++
++    #[test]
++    fn close_selected_workspace_removes_exactly_the_set_workspaces_closed_with_predicts() {
++        let mut state = app_with_workspaces(&["parent", "child", "unrelated"]);
++        mark_parent_worktree(&mut state, 0);
++        mark_linked_worktree(&mut state, 1);
++        state.active = Some(0);
++        state.selected = 0;
++
++        let parent_id = state.workspaces[0].id.clone();
++        let child_id = state.workspaces[1].id.clone();
++        let unrelated_id = state.workspaces[2].id.clone();
++        assert_eq!(state.workspaces_closed_with(0), vec![0, 1]);
++
++        state.close_selected_workspace();
++
++        let remaining_ids: Vec<_> = state.workspaces.iter().map(|ws| ws.id.clone()).collect();
++        assert_eq!(remaining_ids, vec![unrelated_id]);
++        assert!(!remaining_ids.contains(&parent_id));
++        assert!(!remaining_ids.contains(&child_id));
++    }
+ }
+diff --git a/src/app/input/modal.rs b/src/app/input/modal.rs
+index 4391d487..627e1606 100644
+--- a/src/app/input/modal.rs
++++ b/src/app/input/modal.rs
+@@ -14,6 +14,8 @@ use crate::{
+     layout::{NavDirection, PaneId},
+ };
+ 
++use super::navigate::WorkspaceCloseConfirm;
++
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ pub(super) enum ModalAction {
+     Continue,
+@@ -732,7 +734,8 @@ pub(crate) fn handle_resize_key(state: &mut AppState, raw_key: TerminalKey) {
+     }
+ }
+ 
+-pub(super) fn open_confirm_close(state: &mut AppState) {
++pub(super) fn open_confirm_close(state: &mut AppState, process_name: Option<String>) {
++    state.pending_close_workspace_process = process_name;
+     state.mode = Mode::ConfirmClose;
+ }
+ 
+@@ -747,6 +750,7 @@ pub(super) fn confirm_close_accept(state: &mut AppState) {
+ }
+ 
+ pub(super) fn confirm_close_cancel(state: &mut AppState) {
++    state.pending_close_workspace_process = None;
+     state.mode = Mode::Navigate;
+ }
+ 
+@@ -829,11 +833,16 @@ pub(super) fn apply_context_menu_action(
+             Some("Close" | "Close group"),
+         ) => {
+             state.selected = ws_idx;
+-            if state.confirm_close {
+-                open_confirm_close(state);
+-            } else {
+-                state.close_selected_workspace();
+-                state.mode = Mode::Navigate;
++            // No terminal_runtimes here, so "nothing running" mirrors the production
++            // no-runtime-attached case rather than re-deciding confirm_close by hand.
++            match state.workspace_close_confirmation_with(ws_idx, |_, _| None) {
++                WorkspaceCloseConfirm::Ask { process_name } => {
++                    open_confirm_close(state, process_name);
++                }
++                WorkspaceCloseConfirm::Skip => {
++                    state.close_selected_workspace();
++                    state.mode = Mode::Navigate;
++                }
+             }
+         }
+         (ContextMenuKind::Tab { ws_idx, tab_idx }, Some("New tab")) => {
+@@ -1134,6 +1143,7 @@ impl App {
+         if ws_idx < self.state.workspaces.len() {
+             self.close_workspace_idx_via_api(ws_idx);
+         }
++        self.state.pending_close_workspace_process = None;
+         self.state.mode = if self.state.active.is_some() {
+             Mode::Terminal
+         } else {
+@@ -1289,11 +1299,14 @@ impl App {
+                 Some("Close" | "Close group"),
+             ) => {
+                 self.state.selected = ws_idx;
+-                if self.state.confirm_close {
+-                    open_confirm_close(&mut self.state);
+-                } else {
+-                    self.close_workspace_idx_via_api(ws_idx);
+-                    self.state.mode = Mode::Navigate;
++                match self.workspace_close_confirmation(ws_idx) {
++                    WorkspaceCloseConfirm::Ask { process_name } => {
++                        open_confirm_close(&mut self.state, process_name)
++                    }
++                    WorkspaceCloseConfirm::Skip => {
++                        self.close_workspace_idx_via_api(ws_idx);
++                        self.state.mode = Mode::Navigate;
++                    }
+                 }
+             }
+             (ContextMenuKind::Tab { ws_idx, tab_idx }, Some("New tab")) => {
+@@ -2540,4 +2553,81 @@ mod tests {
+         assert_eq!(app.state.workspaces.len(), 2);
+         assert!(app.state.context_menu.is_none());
+     }
++
++    #[test]
++    fn apply_context_menu_action_via_api_closes_idle_workspace_directly() {
++        let mut app = app_with_test_workspaces(&["solo"]);
++        app.state.mode = Mode::ContextMenu;
++        let menu = ContextMenuState {
++            kind: ContextMenuKind::Workspace { ws_idx: 0 },
++            x: 0,
++            y: 0,
++            list: MenuListState::new(0),
++        };
++        let close_idx = menu
++            .items()
++            .iter()
++            .position(|item| *item == "Close")
++            .expect("close item");
++
++        app.apply_context_menu_action_via_api(menu, close_idx);
++
++        assert!(app.state.workspaces.is_empty());
++        assert_eq!(app.state.mode, Mode::Navigate);
++        assert_eq!(app.state.pending_close_workspace_process, None);
++    }
++
++    #[test]
++    fn apply_context_menu_action_cfg_test_helper_matches_production_close_workspace_result_when_idle(
++    ) {
++        // cfg(test) free-function path used by `apply_context_menu_action`.
++        let mut state = state_with_workspaces(&["solo"]);
++        let mut terminal_runtimes = crate::terminal::TerminalRuntimeRegistry::new();
++        state.mode = Mode::ContextMenu;
++        let menu = ContextMenuState {
++            kind: ContextMenuKind::Workspace { ws_idx: 0 },
++            x: 0,
++            y: 0,
++            list: MenuListState::new(0),
++        };
++        let close_idx = menu
++            .items()
++            .iter()
++            .position(|item| *item == "Close")
++            .expect("close item");
++        apply_context_menu_action(&mut state, &mut terminal_runtimes, menu, close_idx);
++        assert!(state.workspaces.is_empty());
++        assert_eq!(state.mode, Mode::Navigate);
++
++        // Production `App` path used by `apply_context_menu_action_via_api`.
++        let mut app = app_with_test_workspaces(&["solo"]);
++        app.state.mode = Mode::ContextMenu;
++        let menu = ContextMenuState {
++            kind: ContextMenuKind::Workspace { ws_idx: 0 },
++            x: 0,
++            y: 0,
++            list: MenuListState::new(0),
++        };
++        let close_idx = menu
++            .items()
++            .iter()
++            .position(|item| *item == "Close")
++            .expect("close item");
++        app.apply_context_menu_action_via_api(menu, close_idx);
++        assert!(app.state.workspaces.is_empty());
++        assert_eq!(app.state.mode, Mode::Navigate);
++    }
++
++    #[test]
++    fn confirm_close_accept_via_api_clears_pending_process_name() {
++        let mut app = app_with_test_workspaces(&["solo"]);
++        app.state.selected = 0;
++        app.state.mode = Mode::ConfirmClose;
++        app.state.pending_close_workspace_process = Some("nvim".to_string());
++
++        app.confirm_close_accept_via_api();
++
++        assert!(app.state.workspaces.is_empty());
++        assert_eq!(app.state.pending_close_workspace_process, None);
++    }
+ }
+diff --git a/src/app/input/mouse.rs b/src/app/input/mouse.rs
+index 3d27d74e..1e5e21b5 100644
+--- a/src/app/input/mouse.rs
++++ b/src/app/input/mouse.rs
+@@ -3600,6 +3600,9 @@ mod tests {
+         app.state.active = Some(0);
+         app.state.selected = 0;
+         app.state.mode = Mode::Terminal;
++        // This test is about the confirm-click interaction, not about the idle-skip
++        // decision, so force the dialog open regardless of running-process state.
++        app.state.confirm_close_running_process = false;
+ 
+         app.state.context_menu = Some(ContextMenuState {
+             kind: ContextMenuKind::Workspace { ws_idx: 1 },
+diff --git a/src/app/input/navigate.rs b/src/app/input/navigate.rs
+index c2c79696..27f063fc 100644
+--- a/src/app/input/navigate.rs
++++ b/src/app/input/navigate.rs
+@@ -50,6 +50,40 @@ pub(crate) enum ActionContext {
+     Navigate,
+ }
+ 
++#[derive(Debug, Clone, PartialEq, Eq)]
++pub(crate) enum WorkspaceCloseConfirm {
++    Skip,
++    Ask { process_name: Option<String> },
++}
++
++impl AppState {
++    // 本体。プロセス判定を注入可能にして、`App` を持たないcfg(test) helperからも
++    // 本番と同じ判定(idleならSkip)を通せるようにする。
++    pub(crate) fn workspace_close_confirmation_with(
++        &self,
++        ws_idx: usize,
++        running_in_workspace: impl Fn(&Self, usize) -> Option<String>,
++    ) -> WorkspaceCloseConfirm {
++        if !self.confirm_close {
++            return WorkspaceCloseConfirm::Skip;
++        }
++        if !self.confirm_close_running_process {
++            return WorkspaceCloseConfirm::Ask { process_name: None };
++        }
++        let targets = self.workspaces_closed_with(ws_idx);
++        // group close は他のworkspaceも消すので、アイドルでも確認する。
++        let closes_group = targets.len() >= 2;
++        let process_name = targets
++            .iter()
++            .find_map(|idx| running_in_workspace(self, *idx));
++        if closes_group || process_name.is_some() {
++            WorkspaceCloseConfirm::Ask { process_name }
++        } else {
++            WorkspaceCloseConfirm::Skip
++        }
++    }
++}
++
+ impl App {
+     fn cancel_copy_mode_if_active(&mut self) {
+         if self.state.copy_mode.is_some() {
+@@ -224,11 +258,14 @@ impl App {
+             NavigateAction::CloseWorkspace => {
+                 if let Some(ws_idx) = workspace_action_target(&self.state, context) {
+                     self.state.selected = ws_idx;
+-                    if self.state.confirm_close {
+-                        super::modal::open_confirm_close(&mut self.state);
+-                    } else {
+-                        self.close_workspace_idx_via_api(ws_idx);
+-                        leave_navigate_mode(&mut self.state);
++                    match self.workspace_close_confirmation(ws_idx) {
++                        WorkspaceCloseConfirm::Ask { process_name } => {
++                            super::modal::open_confirm_close(&mut self.state, process_name)
++                        }
++                        WorkspaceCloseConfirm::Skip => {
++                            self.close_workspace_idx_via_api(ws_idx);
++                            leave_navigate_mode(&mut self.state);
++                        }
+                     }
+                 }
+             }
+@@ -672,6 +709,35 @@ impl App {
+         crate::detect::pane_foreground_display_name(shell_pid)
+     }
+ 
++    // `terminal_runtimes` は `App` にしかないので、pid探索だけをここで閉包にして
++    // `AppState::workspace_close_confirmation_with` へ注入する。判定の実体はそちら1本。
++    fn workspace_close_confirmation_with(
++        &self,
++        ws_idx: usize,
++        running_name: impl Fn(u32) -> Option<String>,
++    ) -> WorkspaceCloseConfirm {
++        self.state
++            .workspace_close_confirmation_with(ws_idx, |state, idx| {
++                state
++                    .pane_ids_for_workspace(idx)
++                    .into_iter()
++                    .filter_map(|pane_id| {
++                        let terminal_id = state.terminal_id_for_pane(idx, pane_id)?;
++                        self.terminal_runtimes.get(&terminal_id)?.child_pid()
++                    })
++                    .find_map(&running_name)
++            })
++    }
++
++    pub(crate) fn workspace_close_confirmation(&self, ws_idx: usize) -> WorkspaceCloseConfirm {
++        self.workspace_close_confirmation_with(ws_idx, |pid| {
++            crate::detect::pane_has_running_foreground(pid).then(|| {
++                crate::detect::pane_foreground_display_name(pid)
++                    .unwrap_or_else(|| "A process".to_string())
++            })
++        })
++    }
++
+     pub(crate) fn zoom_focused_pane_via_api(&mut self) {
+         self.runtime_pane_zoom(
+             "tui.pane.zoom",
+@@ -1718,11 +1784,16 @@ pub(super) fn execute_navigate_action_in_context(
+         NavigateAction::CloseWorkspace => {
+             if let Some(ws_idx) = workspace_action_target(state, context) {
+                 state.selected = ws_idx;
+-                if state.confirm_close {
+-                    super::modal::open_confirm_close(state);
+-                } else {
+-                    state.close_selected_workspace();
+-                    leave_navigate_mode(state);
++                // No terminal_runtimes here, so "nothing running" mirrors the production
++                // no-runtime-attached case rather than re-deciding confirm_close by hand.
++                match state.workspace_close_confirmation_with(ws_idx, |_, _| None) {
++                    WorkspaceCloseConfirm::Ask { process_name } => {
++                        super::modal::open_confirm_close(state, process_name);
++                    }
++                    WorkspaceCloseConfirm::Skip => {
++                        state.close_selected_workspace();
++                        leave_navigate_mode(state);
++                    }
+                 }
+             }
+         }
+@@ -3875,4 +3946,227 @@ navigate_pane_down = "ctrl+j"
+         assert!(state.detach_requested);
+         assert!(!state.should_quit);
+     }
++
++    // --- workspace close idle-check (ws-close-idle) -------------------------------------
++
++    /// Attaches a runtime with `pid` as its child pid to the given pane, so
++    /// `workspace_close_confirmation(_with)` can find it without spawning a real process.
++    fn attach_running_pid(app: &mut App, ws_idx: usize, pane_id: crate::layout::PaneId, pid: u32) {
++        let terminal_id = app
++            .state
++            .terminal_id_for_pane(ws_idx, pane_id)
++            .expect("pane must have an attached terminal");
++        let (runtime, _rx) = crate::terminal::TerminalRuntime::test_with_channel(80, 24);
++        runtime.test_set_child_pid(pid);
++        app.terminal_runtimes.insert(terminal_id, runtime);
++    }
++
++    #[test]
++    fn workspace_close_idle_no_runtime_skips_confirmation() {
++        let app = app_with_test_workspaces(&["solo"]);
++
++        assert_eq!(
++            app.workspace_close_confirmation(0),
++            WorkspaceCloseConfirm::Skip
++        );
++    }
++
++    #[tokio::test]
++    async fn workspace_close_with_injected_idle_process_skips_confirmation() {
++        let mut app = app_with_test_workspaces(&["solo"]);
++        let pane_id = app.state.workspaces[0].tabs[0].root_pane;
++        attach_running_pid(&mut app, 0, pane_id, 4242);
++
++        let result = app.workspace_close_confirmation_with(0, |_pid| None);
++
++        assert_eq!(result, WorkspaceCloseConfirm::Skip);
++    }
++
++    #[test]
++    fn confirm_close_running_process_false_always_asks_with_no_process_name() {
++        let mut app = app_with_test_workspaces(&["solo"]);
++        app.state.confirm_close_running_process = false;
++
++        assert_eq!(
++            app.workspace_close_confirmation(0),
++            WorkspaceCloseConfirm::Ask { process_name: None }
++        );
++    }
++
++    #[test]
++    fn confirm_close_false_skips_group_close_even_when_it_would_close_multiple_workspaces() {
++        let mut app = app_with_test_workspaces(&["main", "issue"]);
++        mark_worktree_space_member(&mut app.state, 0, "repo-key");
++        mark_worktree_space_member(&mut app.state, 1, "repo-key");
++        app.state.confirm_close = false;
++
++        assert_eq!(
++            app.workspace_close_confirmation(0),
++            WorkspaceCloseConfirm::Skip
++        );
++    }
++
++    #[test]
++    fn worktree_group_close_asks_even_when_selected_workspace_is_idle() {
++        let mut app = app_with_test_workspaces(&["main", "issue"]);
++        mark_worktree_space_member(&mut app.state, 0, "repo-key");
++        mark_worktree_space_member(&mut app.state, 1, "repo-key");
++
++        assert_eq!(
++            app.workspace_close_confirmation(0),
++            WorkspaceCloseConfirm::Ask { process_name: None }
++        );
++    }
++
++    #[tokio::test]
++    async fn worktree_group_close_reports_running_sibling_process_name() {
++        let mut app = app_with_test_workspaces(&["main", "issue"]);
++        mark_worktree_space_member(&mut app.state, 0, "repo-key");
++        mark_worktree_space_member(&mut app.state, 1, "repo-key");
++        let sibling_pane = app.state.workspaces[1].tabs[0].root_pane;
++        attach_running_pid(&mut app, 1, sibling_pane, 4343);
++
++        let result =
++            app.workspace_close_confirmation_with(0, |pid| (pid == 4343).then(|| "nvim".to_string()));
++
++        assert_eq!(
++            result,
++            WorkspaceCloseConfirm::Ask {
++                process_name: Some("nvim".to_string())
++            }
++        );
++
++        // The dialog wiring carries that name into pending_close_workspace_process.
++        let WorkspaceCloseConfirm::Ask { process_name } = result else {
++            unreachable!()
++        };
++        super::super::modal::open_confirm_close(&mut app.state, process_name);
++        assert_eq!(
++            app.state.pending_close_workspace_process,
++            Some("nvim".to_string())
++        );
++    }
++
++    #[tokio::test]
++    async fn workspace_close_scans_non_active_tab_for_running_process() {
++        let mut app = app_with_test_workspaces(&["solo"]);
++        let second_tab = app.state.workspaces[0].test_add_tab(None);
++        assert_eq!(app.state.workspaces[0].active_tab, 0);
++        let second_pane = app.state.workspaces[0].tabs[second_tab].root_pane;
++        attach_running_pid(&mut app, 0, second_pane, 5252);
++
++        let result = app
++            .workspace_close_confirmation_with(0, |pid| (pid == 5252).then(|| "cargo".to_string()));
++
++        assert_eq!(
++            result,
++            WorkspaceCloseConfirm::Ask {
++                process_name: Some("cargo".to_string())
++            }
++        );
++    }
++
++    #[tokio::test]
++    async fn workspace_close_ignores_other_workspace_outside_scope() {
++        let mut app = app_with_test_workspaces(&["target", "unrelated"]);
++        let other_pane = app.state.workspaces[1].tabs[0].root_pane;
++        attach_running_pid(&mut app, 1, other_pane, 6363);
++
++        let result =
++            app.workspace_close_confirmation_with(0, |pid| (pid == 6363).then(|| "node".to_string()));
++
++        assert_eq!(result, WorkspaceCloseConfirm::Skip);
++    }
++
++    #[test]
++    fn implicit_worktree_group_close_does_not_inherit_stale_pending_process_name() {
++        let mut state = state_with_workspaces(&["main", "issue"]);
++        super::super::modal::open_confirm_close(&mut state, Some("nvim".to_string()));
++        assert_eq!(state.pending_close_workspace_process, Some("nvim".to_string()));
++        super::super::modal::confirm_close_cancel(&mut state);
++        assert_eq!(state.pending_close_workspace_process, None);
++
++        mark_worktree_space_member(&mut state, 0, "repo-key");
++        mark_worktree_space_member(&mut state, 1, "repo-key");
++        let deferred = state.confirm_implicit_worktree_group_close(0);
++
++        assert!(deferred);
++        assert_eq!(state.mode, Mode::ConfirmClose);
++        assert_eq!(state.pending_close_workspace_process, None);
++    }
++
++    #[test]
++    fn all_non_test_confirm_close_entry_points_set_or_clear_pending_process() {
++        // `grep -rn "Mode::ConfirmClose" src` shows exactly two non-test setters:
++        // modal.rs `open_confirm_close` and actions.rs `confirm_implicit_worktree_group_close`.
++        let mut state = state_with_workspaces(&["main"]);
++
++        state.pending_close_workspace_process = Some("stale".to_string());
++        super::super::modal::open_confirm_close(&mut state, Some("nvim".to_string()));
++        assert_eq!(state.mode, Mode::ConfirmClose);
++        assert_eq!(state.pending_close_workspace_process, Some("nvim".to_string()));
++
++        let mut group_state = state_with_workspaces(&["main", "issue"]);
++        group_state.pending_close_workspace_process = Some("stale".to_string());
++        mark_worktree_space_member(&mut group_state, 0, "repo-key");
++        mark_worktree_space_member(&mut group_state, 1, "repo-key");
++
++        assert!(group_state.confirm_implicit_worktree_group_close(0));
++        assert_eq!(group_state.mode, Mode::ConfirmClose);
++        assert_eq!(group_state.pending_close_workspace_process, None);
++    }
++
++    #[tokio::test]
++    async fn confirm_close_running_process_toggle_is_asymmetric_for_pane_and_workspace() {
++        // pane: off => closes immediately even with a running process attached.
++        let mut pane_app = app_with_solo_workspace();
++        pane_app.state.confirm_close_running_process = false;
++        let pane_id = pane_app.state.workspaces[0].tabs[0].root_pane;
++        attach_running_pid(&mut pane_app, 0, pane_id, 7474);
++
++        let deferred = pane_app.close_focused_pane_via_api_requires_confirmation();
++
++        assert!(!deferred);
++        assert!(pane_app.state.workspaces.is_empty());
++
++        // workspace: off => always asks, without even scanning for a running process.
++        let mut ws_app = app_with_test_workspaces(&["solo"]);
++        ws_app.state.confirm_close_running_process = false;
++
++        let result = ws_app.workspace_close_confirmation_with(0, |_pid| {
++            panic!("running_name must not be called when confirm_close_running_process is false")
++        });
++
++        assert_eq!(result, WorkspaceCloseConfirm::Ask { process_name: None });
++    }
++
++    #[test]
++    fn tui_close_workspace_idle_closes_directly_via_keybinding() {
++        let mut app = app_with_test_workspaces(&["solo"]);
++        app.state.mode = Mode::Navigate;
++
++        app.execute_tui_navigate_action(NavigateAction::CloseWorkspace, ActionContext::Navigate);
++
++        assert!(app.state.workspaces.is_empty());
++        assert_eq!(app.state.mode, Mode::Navigate);
++        assert_eq!(app.state.pending_close_workspace_process, None);
++    }
++
++    #[test]
++    fn execute_navigate_action_cfg_test_helper_matches_production_close_workspace_result_when_idle(
++    ) {
++        // cfg(test) free-function path used by `execute_navigate_action`.
++        let mut state = state_with_workspaces(&["solo"]);
++        state.mode = Mode::Navigate;
++        execute_navigate_action(&mut state, NavigateAction::CloseWorkspace);
++        assert!(state.workspaces.is_empty());
++        assert_eq!(state.mode, Mode::Navigate);
++
++        // Production `App` path used by `execute_tui_navigate_action`.
++        let mut app = app_with_test_workspaces(&["solo"]);
++        app.state.mode = Mode::Navigate;
++        app.execute_tui_navigate_action(NavigateAction::CloseWorkspace, ActionContext::Navigate);
++        assert!(app.state.workspaces.is_empty());
++        assert_eq!(app.state.mode, Mode::Navigate);
++    }
+ }
+diff --git a/src/app/mod.rs b/src/app/mod.rs
+index f08c9f35..fa995b5a 100644
+--- a/src/app/mod.rs
++++ b/src/app/mod.rs
+@@ -564,6 +564,7 @@ impl App {
+             rename_pane_target: None,
+             pending_close_pane: None,
+             pending_close_pane_process: None,
++            pending_close_workspace_process: None,
+             worktree_create: None,
+             worktree_open: None,
+             worktree_remove: None,
+diff --git a/src/app/state.rs b/src/app/state.rs
+index cca3ef17..94d99457 100644
+--- a/src/app/state.rs
++++ b/src/app/state.rs
+@@ -1413,6 +1413,7 @@ pub struct AppState {
+     pub rename_pane_target: Option<PaneId>,
+     pub pending_close_pane: Option<(usize, PaneId)>,
+     pub pending_close_pane_process: Option<String>,
++    pub pending_close_workspace_process: Option<String>,
+     pub worktree_create: Option<WorktreeCreateState>,
+     pub worktree_open: Option<WorktreeOpenState>,
+     pub worktree_remove: Option<WorktreeRemoveState>,
+@@ -1814,6 +1815,7 @@ impl AppState {
+             rename_pane_target: None,
+             pending_close_pane: None,
+             pending_close_pane_process: None,
++            pending_close_workspace_process: None,
+             worktree_create: None,
+             worktree_open: None,
+             worktree_remove: None,
+diff --git a/src/main.rs b/src/main.rs
+index b36d9491..8f9ee658 100644
+--- a/src/main.rs
++++ b/src/main.rs
+@@ -311,7 +311,12 @@ const DEFAULT_CONFIG: &str = r##"# herdr configuration
+ # Ask for confirmation before closing a workspace
+ # confirm_close = true
+ 
+-# Ask for confirmation before closing a pane with a running foreground process
++# Scope the close confirmation to only when something is actually running.
++# pane, true (default): asks only if that pane has a running foreground process.
++# pane, false: never asks; the pane closes immediately.
++# workspace, true (default): asks only if the workspace (or any workspace in its worktree
++#   group) has a running foreground process; closing a whole worktree group always asks.
++# workspace, false: always asks, even for an idle workspace.
+ # confirm_close_running_process = true
+ 
+ # Ask for a tab name before creating a new tab.
+diff --git a/src/pane.rs b/src/pane.rs
+index b2e1603d..795c63ab 100644
+--- a/src/pane.rs
++++ b/src/pane.rs
+@@ -3037,6 +3037,10 @@ impl PaneRuntime {
+         self.content_seq.fetch_add(1, Ordering::Release);
+     }
+ 
++    pub(crate) fn test_set_child_pid(&self, pid: u32) {
++        self.child_pid.store(pid, Ordering::Release);
++    }
++
+     pub(crate) fn test_with_scrollback_bytes(
+         cols: u16,
+         rows: u16,
+diff --git a/src/terminal/runtime.rs b/src/terminal/runtime.rs
+index 5051a46b..f0b66de1 100644
+--- a/src/terminal/runtime.rs
++++ b/src/terminal/runtime.rs
+@@ -599,6 +599,10 @@ impl TerminalRuntime {
+         self.0.test_process_pty_bytes(bytes);
+     }
+ 
++    pub(crate) fn test_set_child_pid(&self, pid: u32) {
++        self.0.test_set_child_pid(pid);
++    }
++
+     pub(crate) fn test_with_scrollback_bytes(
+         cols: u16,
+         rows: u16,
+diff --git a/src/ui/dialogs.rs b/src/ui/dialogs.rs
+index f21586d9..e161b704 100644
+--- a/src/ui/dialogs.rs
++++ b/src/ui/dialogs.rs
+@@ -625,27 +625,10 @@ fn confirm_close_overlay_text(
+         .get(app.selected)
+         .map(|ws| ws.display_name_from(&app.terminals, terminal_runtimes))
+         .unwrap_or_else(|| "?".to_string());
+-    let selected_space = app
+-        .workspaces
+-        .get(app.selected)
+-        .and_then(|ws| ws.worktree_space());
+-    let group_member_indices = selected_space
+-        .filter(|space| !space.is_linked_worktree)
+-        .map(|space| {
+-            app.workspaces
+-                .iter()
+-                .enumerate()
+-                .filter_map(|(idx, ws)| {
+-                    ws.worktree_space()
+-                        .is_some_and(|member| member.key == space.key)
+-                        .then_some(idx)
+-                })
+-                .collect::<Vec<_>>()
+-        })
+-        .unwrap_or_default();
+-    let closes_group = group_member_indices.len() > 1;
++    let targets = app.workspaces_closed_with(app.selected);
++    let closes_group = targets.len() >= 2;
+     let pane_count = if closes_group {
+-        group_member_indices
++        targets
+             .iter()
+             .filter_map(|idx| app.workspaces.get(*idx))
+             .map(|ws| ws.layout.pane_count())
+@@ -663,7 +646,7 @@ fn confirm_close_overlay_text(
+         format!("{pane_count} panes")
+     };
+     let workspace_text = if closes_group {
+-        let count = group_member_indices.len();
++        let count = targets.len();
+         if count == 1 {
+             "1 workspace, ".to_string()
+         } else {
+@@ -678,7 +661,12 @@ fn confirm_close_overlay_text(
+     } else {
+         "Close workspace?"
+     };
+-    let detail = format!("{ws_name} — {workspace_text}{pane_text}");
++    let process_text = app
++        .pending_close_workspace_process
++        .as_ref()
++        .map(|name| format!(" — {name} is running"))
++        .unwrap_or_default();
++    let detail = format!("{ws_name} — {workspace_text}{pane_text}{process_text}");
+     (title.to_string(), detail)
+ }
+ 
+@@ -989,6 +977,38 @@ mod tests {
+         assert_eq!(detail, "main — 2 workspaces, 2 panes");
+     }
+ 
++    #[test]
++    fn confirm_close_text_appends_pending_process_name() {
++        let mut app = AppState::test_new();
++        app.workspaces = vec![Workspace::test_new("main")];
++        app.ensure_test_terminals();
++        app.selected = 0;
++        app.pending_close_workspace_process = Some("nvim".to_string());
++
++        let terminal_runtimes = crate::terminal::TerminalRuntimeRegistry::new();
++        let (_, detail) = confirm_close_overlay_text(&app, &terminal_runtimes);
++
++        assert_eq!(detail, "main — 1 pane — nvim is running");
++    }
++
++    #[test]
++    fn confirm_close_text_fallback_process_name_reads_as_one_sentence() {
++        let mut app = AppState::test_new();
++        app.workspaces = vec![Workspace::test_new("main")];
++        app.ensure_test_terminals();
++        app.selected = 0;
++        // The fallback used when a display name can't be resolved
++        // (see `App::workspace_close_confirmation`'s "A process").
++        app.pending_close_workspace_process = Some("A process".to_string());
++
++        let terminal_runtimes = crate::terminal::TerminalRuntimeRegistry::new();
++        let (_, detail) = confirm_close_overlay_text(&app, &terminal_runtimes);
++
++        assert_eq!(detail, "main — 1 pane — A process is running");
++        assert!(!detail.contains("running running"));
++        assert!(!detail.contains("process running process"));
++    }
++
+     #[test]
+     fn new_worktree_error_renders_fatal_stderr_line() {
+         let mut app = AppState::test_new();
