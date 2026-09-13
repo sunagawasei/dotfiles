@@ -40,6 +40,39 @@ cd scripts && go run ./cmd/verify-herdr-deploy --dev-tree <開発ツリーのパ
 
 開発ツリーのパスは個人ローカルの値なので、環境変数`HERDR_DEV_TREE`か`--dev-tree`フラグから渡す。実値はこのスキルにも他のcommit対象ファイルにも書かない。`HERDR_DEV_TREE`に何を設定するかは、リポジトリルートの`CLAUDE.local.md`(`.gitignore`登録済み)に書く。
 
+## パッチ列の途中へ新しいパッチを挿す
+
+`combined-frame-digest`は必ず最後尾なので、新しいパッチは常にその手前へ入る。開発branchのcommit順も
+配備順と一致させる必要があるため、末尾にcommitを積むだけでは済まない。**`git reset --hard`は使わない**
+(未commitの変更を巻き込む事故の経路になるうえ、元のtipが名前付きrefから外れる)。
+
+1. 事前検証(読み取りのみ): `git -C <dev> rev-parse --abbrev-ref HEAD` / `git -C <dev> status --porcelain`が空 /
+   `git -C <dev> rev-parse <配備branch>`を記録する。
+2. `git branch <配備branch>-pre-<slug> <現tip>` で**元のtipを名前付きrefで保全する**。
+   `git branch --contains <現tip>` にこのbranchが出ることを確認する。
+3. `git checkout -b <slug> <digestの1つ前のcommit>` → 実装 → commit。
+4. `git cherry-pick <digest commitのsha>` でdigestを最後尾へ戻す。
+5. `<slug>`をチェックアウトした状態で `git branch -f <配備branch> <slug>` → `git checkout <配備branch>`。
+6. `git diff <新commit>^ <新commit> -- src/` でパッチファイル化する。
+7. 作業用branch(`<slug>`等)は配備branchへ畳んだ後に `git branch -D` で掃除する。保全用の
+   `<配備branch>-pre-<slug>` は、稼働確認が済むまで残す。
+
+digestの期待値を再生成する必要があるかは、**そのパッチが`Mode::Terminal`と`Mode::Navigate`のフレームを
+変えるか**で決まる。digest fixture(`src/ui/tab_surface.rs`)はこの2モードしか描かないので、
+ダイアログのoverlayだけを変えるパッチなら再生成は不要。判定はcherry-pick後に
+`nix develop --command cargo test --bin herdr ui::` が緑かどうかで行う。
+
+段9の査読で修正が入って実装commitを差し替えるときは、作業用branchを実装commitに置き直して
+amendし、手順4以降をやり直す。
+
+## テストの走らせ方
+
+`cargo`は`nix develop`の中にしかない。`nix develop --command cargo test --bin herdr <filter>`。
+`--lib`は無い(binary crate)。フィルタ無しの全件実行は`pty::actor`付近でSIGPIPEにより中断するので
+ゲートに使えない。モジュールフィルタ(`app::` / `ui::` / `detect::` / `config::`)で回す。
+**合否は件数でなく失敗テスト名の集合の一致で判定する** — 詳細は
+`claude/projects/-Users-s23159--config/memory/reference_herdr_test_non_hermetic.md`。
+
 ## 上流バージョンを上げる
 
 flake inputのpin(タグ)を上げ、9本のパッチを新しい上流commitへ移植する手順。各手順の末尾に対応する検査段を添える。
