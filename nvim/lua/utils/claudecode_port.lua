@@ -1,9 +1,9 @@
 local M = {}
 
--- claude CLI は CLAUDE_CODE_SSE_PORT と一致する lock を、cwd 照合を飛ばして
--- 無条件に選ぶ。同じ herdr workspace の pane が同じ値を持つので、
--- この nvim と隣の claude が 1 対 1 で結びつく。導出は shell 側の 1 箇所に置き、
--- ここでは読むだけにする(同じハッシュを二重に持つと片方の変更で静かに外れる)。
+-- claude CLI は CLAUDE_CODE_SSE_PORT と一致する lock があればそれを選ぶ。
+-- 同じ herdr workspace の pane が同じ値を持つので、この nvim と隣の claude が
+-- 1 対 1 で結びつく。導出は shell 側の 1 箇所に置き、ここでは読むだけにする
+-- (同じハッシュを二重に持つと片方の変更で静かに外れる)。
 function M.pinned_port()
   local raw = os.getenv("CLAUDE_CODE_SSE_PORT")
   if not raw or raw == "" then
@@ -63,6 +63,43 @@ function M.range_for_pinned_port()
   end
 
   return { min = port, max = port }
+end
+
+local isolated = false
+
+-- claude CLI はポートが一致しないと lock の workspaceFolders と cwd で照合し、
+-- 同じディレクトリを開いた別 workspace の Neovim を掴む。cwd の祖先になり得ない
+-- 文字列を書いて、この照合を不成立にする。
+---@return boolean ok, string|nil err
+function M.isolate_lockfile_workspace()
+  local workspace_id = os.getenv("HERDR_WORKSPACE_ID")
+  if not workspace_id or workspace_id == "" then
+    return true
+  end
+  if isolated then
+    return true
+  end
+
+  local ok, lockfile = pcall(require, "claudecode.lockfile")
+  if not ok then
+    return false, "claudecode.lockfile を読み込めませんでした"
+  end
+
+  local original = lockfile.get_workspace_folders
+  if type(original) ~= "function" then
+    return false, "claudecode.lockfile.get_workspace_folders が見つかりません"
+  end
+
+  lockfile.get_workspace_folders = function(...)
+    local tagged = {}
+    for _, folder in ipairs(original(...)) do
+      table.insert(tagged, folder .. "#herdr=" .. workspace_id)
+    end
+    return tagged
+  end
+  isolated = true
+
+  return true
 end
 
 return M

@@ -98,6 +98,14 @@ return {
       if range then
         opts.port_range = range
       end
+      -- lock 生成は setup() 内なので、その前に workspaceFolders を差し替える。
+      local isolate_ok, isolate_err = port_mod.isolate_lockfile_workspace()
+      if not isolate_ok then
+        vim.notify(
+          isolate_err .. " — 同じディレクトリを開いた別 workspace の claude が繋がる可能性があります",
+          vim.log.levels.WARN
+        )
+      end
     else
       vim.notify("claudecode.nvim port pinning could not be loaded", vim.log.levels.WARN)
     end
