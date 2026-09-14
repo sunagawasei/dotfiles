@@ -62,6 +62,13 @@ argument-hint: "[confirm]"
   - git非追跡ファイル（`~/.config/claude/projects/*/memory/`のメモリは全件がこれ）→ `rm`せず`~/.config/claude/attic/<YYYY-MM-DD>/<元の相対パス>`へ退避する。`claude/*`が.gitignore対象なのでallowlist追加は不要。**パスは絶対で書く** — このskillは`~/.config`以外のプロジェクトのセッションからも走るため、相対パスは解決しない
   - MEMORY.mdのインデックス行を削除する
   - 退避前後で当該メモリdirの未解決`[[link]]`件数が同数であることを確認する
+- **適用後にMEMORY.mdの索引を全件照合する**。メモリの保存は「ファイル作成」と「索引追加」の2手に分かれており、片方だけ成功しても静かに通る。索引に無いファイルはrecallで拾われないため、書いた本人以外からは存在しないのと同じになる（実例: 2026-07-08の1セッションが4件を書いて索引追加を丸ごと飛ばし、2026-09-14のwrapupで件数を突き合わせるまで2か月気づかなかった）。このセッションが作ったものに限らず**dir全体**を対象にする。索引に無いファイルが見つかったら1行要約を書いて追加し、索引にあって実体が無い行は削除する:
+
+  ```bash
+  cd <memory dir>
+  for f in *.md; do [ "$f" = MEMORY.md ] && continue; grep -q "($f)" MEMORY.md || echo "NOT INDEXED: $f"; done
+  grep -o '^- \[[^]]*\](\([^)]*\))' MEMORY.md | sed 's/.*(\(.*\))/\1/' | while read n; do [ -f "$n" ] || echo "DANGLING: $n"; done
+  ```
 
 ### 6. やり残し総点検
 
