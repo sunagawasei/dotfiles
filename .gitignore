@@ -214,6 +214,7 @@ claude/skills/*
 !claude/skills/split-commits/
 !claude/skills/handoff/
 !claude/skills/herdr-deploy/
+!claude/skills/autorun/
 !claude/agents/
 claude/agents/*
 !claude/agents/commit.md
