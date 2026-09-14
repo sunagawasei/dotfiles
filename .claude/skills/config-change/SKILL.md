@@ -57,6 +57,18 @@ go run ./cmd/verify-colors
 source ~/.zshrc
 ```
 
+#### Claude Code のフック
+
+`claude/` 配下を触ったら必ず実行し、**出力を完了報告へ貼る**。
+
+```bash
+cd scripts && go run ./cmd/verify-claude-hooks
+```
+
+登録先の `claude/settings.json` は個人のパスを含むため .gitignore 対象で、repoに入らない。
+clone直後やsettings再生成では登録が消えており、特に `bounded-background`（background実行に
+期限を強制するガード）は消えても何も起きないので気づけない。この検査が唯一の検出手段になる。
+
 ### 3. 説明的なコミットメッセージの作成
 
 Conventional Commits形式に従い、日本語または英語で記述：

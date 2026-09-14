@@ -158,6 +158,32 @@ description: 一行説明
 [内容]
 ```
 
+## フックの登録（repoに入らない）
+
+フック本体は `claude/hooks/cmd/<name>/` で追跡されるが、**登録先の `claude/settings.json` は
+個人のパスを含むため .gitignore 対象**で、repoに入らない。clone直後やsettings再生成では
+登録が無い状態になる。
+
+現在 repo が前提としているフックと、登録が生きているかの検査:
+
+```bash
+cd claude/hooks && go build -o . ./...   # バイナリを作る（claude/hooks/直下・gitignore対象）
+cd scripts && go run ./cmd/verify-claude-hooks
+```
+
+検査は `PreToolUse:Bash -> bounded-background` / `PostToolUse:Write|Edit|MultiEdit|NotebookEdit
+-> add_newline` / `Notification:idle_prompt -> herdr-notify` の3件について、登録の有無、
+登録された command 文字列が期待パスと完全一致すること、バイナリの実在、および
+`bounded-background` が実行時に呼ぶ `bg-deadline` の実在を見る。欠けていれば次に打つコマンドを出す。
+
+ビルドが古くないかは `cmd/<name>/*.go` の mtime とバイナリの mtime の比較で見る。
+**これは「ソースに対応するビルドである」ことの保証ではない**。ビルド後にソースを編集した、という
+典型的な順序を検出するだけで、古いバイナリを後から touch したりコピーした場合は通る。
+
+`bounded-background` は background 実行の Bash に期限を強制するガードで、**消えても何も起きない**
+ため、この検査以外に気づく手段が無い。`claude/` 配下を触るタスクの完了報告には出力を貼る
+（`config-change` skill に規定）。
+
 ## ベストプラクティス
 
 1. **単一責任**: 1ファイル = 1つの規約/ワークフロー
