@@ -9,10 +9,6 @@ paths:
 
 公式 [Effective Go](https://go.dev/doc/effective_go) と [Code Review Comments](https://github.com/golang/go/wiki/CodeReviewComments) を基準に、慣用的でクリーンなGoを書く。
 
-## 言語選択
-
-**コード生成時は、明示的に指定がない限りGoを使用（Pythonは使わない）。** スクリプト・ツールもGoを優先する。
-
 ## プロジェクト方針
 
 - **Goバージョン**: 常に最新安定版を使用
