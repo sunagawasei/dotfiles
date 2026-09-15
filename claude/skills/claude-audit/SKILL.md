@@ -1,11 +1,22 @@
 ---
 name: claude-audit
 description: skill/rule/CLAUDE.md/メモリの棚卸しと公式ベストプラクティスへの準拠化。グローバルと全プロジェクトの重複・矛盾・陳腐化をsonnet並列で検出・整理し、公式一次情報に基づき全CLAUDE.mdの構成・サイズを是正、メイン(Fable/Opus)が検証・適用する定期メンテナンス
+argument-hint: "[memory <絶対dir> ... [--confirm]]"
 ---
 
 # Claude資産の棚卸し
 
 委譲するサブエージェントは断りのない限り `model: sonnet`。メイン(Fable/Opus)は検証と適用に徹する。
+
+## モード
+
+- **引数なし = フル棚卸し**。下記「実行手順」の段0〜4をすべて通す。月1回程度の定期メンテナンス
+- **`memory <絶対dir> ...` = スコープ限定**。指定したmemory dirだけを対象に、整合性(重複・索引↔実体・`[[link]]`解決)だけを見る。段0(公式一次情報のWeb調査)と段2(全CLAUDE.mdの是正)は飛ばす。`/wrapup`から呼ばれる経路がこれ
+  - **段3のメイン検証は飛ばさない**。班の報告はこのモードでもgrep/存在確認でスポットチェックする
+  - `--confirm`なし = 提示せず適用する。`--confirm`あり = 候補一覧を出して採否を取ってから適用する
+  - **対象dirの検証**(1つでも欠けたら何も変更せず`invalid target`を返す): 絶対パスであること / `cd <dir> && pwd -P`の結果が`~/.config/claude/projects/*/memory`にマッチすること / 直下に`MEMORY.md`が実在すること
+  - 呼び出し元へ返す区分: `修正した` / `attic退避した` / `未対応(判断が要る)` / `invalid target`
+  - commitはしない(呼び出し元が行う)
 
 グローバル設定と全プロジェクトのClaude資産(CLAUDE.md・rules・skills・メモリ)から、重複ルール・矛盾する指示・陳腐化した記述を洗い出して整理する。あわせて公式ベストプラクティスに照らして全CLAUDE.mdの構成・サイズを是正する。目安: 月1回、モデル移行期、または「設定が増えて出力の質が落ちた」と感じた時。
 
@@ -58,10 +69,16 @@ description: skill/rule/CLAUDE.md/メモリの棚卸しと公式ベストプラ�
 
 ```bash
 cd ~/.config/claude/projects && for d in ./*/memory; do cd "$d" 2>/dev/null || continue
-  for f in *.md; do [ "$f" = MEMORY.md ] && continue; grep -q "$f" MEMORY.md || echo "$d unindexed:$f"; done
+  for f in *.md; do [ "$f" = MEMORY.md ] && continue
+    grep -qxF "$f" ARCHIVED 2>/dev/null && continue
+    grep -q "($f)" MEMORY.md || echo "$d unindexed:$f"; done
   for n in $(grep -ho '\[\[[a-zA-Z0-9_-]*\]\]' *.md 2>/dev/null | tr -d '[]' | sort -u); do [ -f "$n.md" ] || echo "$d unresolved:[[$n]]"; done
   cd ~/.config/claude/projects; done
 ```
+
+`ARCHIVED`(拡張子なし・1行1ファイル名)は、索引の上限に達したため**意図的に索引から外した**メモリの一覧。上のスクリプトはここに載る名前のNOT INDEXEDを抑止する。抑止できるのは実在ファイルのNOT INDEXEDだけで、DANGLING・重複・未解決リンクは`ARCHIVED`に書かれていても通常どおり報告する。`ARCHIVED`が無いdirでMEMORY.mdが上限近傍(180行以上または23000バイト以上)なら、NOT INDEXEDを漏れと断定せず件数の報告に留める。
+
+索引へ行を足すときは`wc -l` < 200 かつ `wc -c` < 25600 の両方を確認する。超えるなら行を増やさず既存行へ統合する(超過分は毎セッション黙って捨てられる)。
 
 ### 4. ユーザー判断と適用
 
@@ -72,4 +89,7 @@ cd ~/.config/claude/projects && for d in ./*/memory; do cd "$d" 2>/dev/null || c
 ## 定期トリガー
 
 - 手動: `/claude-audit`
+- `/wrapup`段5から`memory <絶対dir>`付きで自動起動される(条件はwrapup側が判断する)
 - 定期化したい場合はCronCreateで月次スケジュールに載せる(例: 毎月1日に`/claude-audit`)
+
+このskillはグローバル(`~/.config/claude/skills/`)に置く。同名のskillをどこかのプロジェクトの`.claude/skills/`に作ると、personalが優先されるためそちらは黙って隠れる。

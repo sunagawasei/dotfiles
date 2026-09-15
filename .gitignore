@@ -97,7 +97,6 @@ yarn-error.log*
 .claude/*
 !.claude/skills/
 .claude/skills/*
-!.claude/skills/claude-audit/
 !.claude/skills/nvim-usage-audit/
 !.claude/skills/color-validation/
 !.claude/skills/config-change/
@@ -215,6 +214,7 @@ claude/skills/*
 !claude/skills/handoff/
 !claude/skills/herdr-deploy/
 !claude/skills/autorun/
+!claude/skills/claude-audit/
 !claude/agents/
 claude/agents/*
 !claude/agents/commit.md
