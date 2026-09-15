@@ -19,8 +19,9 @@ return {
     },
     picker = {
       sources = {
-        -- 既定の --limit 50 では open issue が50件で切れる
+        -- 既定の --limit 50 では open issue / open PR が50件で切れる
         gh_issue = { limit = 500 },
+        gh_pr = { limit = 500 },
         explorer = {
           hidden = true,
           ignored = true,
