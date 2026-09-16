@@ -49,6 +49,16 @@
   system.defaults.NSGlobalDomain._HIHideMenuBar = true;
   system.defaults.CustomUserPreferences.NSGlobalDomain.AppleActionOnDoubleClick = "None";
 
+  # ── キーボード ──────────────────────────────────────────────────────
+  # caps_lock を usage 0(no-op)へ写して無効化する
+  system.keyboard.enableKeyMapping = true;
+  system.keyboard.userKeyMapping = [
+    {
+      HIDKeyboardModifierMappingSrc = 30064771129;
+      HIDKeyboardModifierMappingDst = 30064771072;
+    }
+  ];
+
   # ── Trackpad ────────────────────────────────────────────────────────
   system.defaults.trackpad.Clicking = true;
   system.defaults.trackpad.TrackpadRightClick = true;
