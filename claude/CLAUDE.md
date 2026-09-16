@@ -14,8 +14,9 @@
 - 要点に絞って簡潔に書く。注意書き・免責・前置きは短くし、本題に大半を割く。ただし目的に必要な根拠・再現手順・制約は、簡潔さを理由に落とさない
 - 設計文書・決定のまとめ(ドキュメント・artifact)には現時点の決定と有効な条件だけを書く。否決案の経緯・「AからBへ変更した」型の履歴・検討過程は、求められたときだけ示す
 - commit message・PR bodyには、リポジトリの履歴に一度も入っていない状態からの差分を書かない(「XではなくY」「もうXに依存しない」型)。読む人にXは何も指さない。現在の状態とその理由だけを書く(実例: 2026-09-01、gitに未commitのmulti-source構成とAppProjectを基準にした「〜ではなく」をcommit messageに書き、ユーザーから指摘された)
+- issueコメントには決めること・選択肢・根拠だけを書き、どのPRやレビューで話題になったかの経緯は書かない(実例: 2026-09-15、#208へ`--region`フラグの案A/案Bを投稿する際、PR#209の経緯と「#209では現状維持」を書き添え「今回のprのことは書かなくていい」と指摘された)
 - 自分の評価が外部レビュー(codex等)で覆った/割れたときは、両者の主張・相違点・どちらをなぜ採るかを示す
-- 期間は「M/D〜M/D」形式(「2週間」等の曖昧表現を避ける)。日本語文中の括弧は半角
+- 期間は「M/D〜M/D」形式(「2週間」等の曖昧表現を避ける)。日本語文中の括弧は半角(全角括弧でcommit SHAを囲むとGitHub上で自動リンクが効かない。実例: 2026-09-16、`（283df92）`はリンクにならず`(283df92)`は`commit-link`クラスのリンクになった)
 - コードコメントは「なぜ」のみ・目安2行。背景・経緯・調査結果はcommit message側へ。設定値やフィールド名が条件をそのまま表すならコメント自体不要
 - 個人ローカル環境の値(AWS profile名・個人パス等)はコミット対象に書かず、マシン中立な表現にする。実値はリポジトリルートの `CLAUDE.local.md`(要.gitignore登録)へ分離
 - 日本語の文章規範: 実質的な文章(返信・レポート・ドラフト・ドキュメント)は `claude/skills/japanese-tech-writing/SKILL.md` に従う。`claude/skills/cognitive-rhythm-writing/SKILL.md` も併用する
@@ -49,6 +50,7 @@
 - 不可逆・破壊的操作(リソース削除・データ破棄等)は、影響範囲評価をユーザー提示前にcodex査読へ通す。「他へ影響しない」の判定根拠(依存参照・共有リソース・削除順序・残骸)を査読対象に含める
 - 秘密情報はファイル編集時だけでなく、提案・実行するコマンドの標準出力にも出さない(詳細: `claude/rules/shell-security.md`)
 - commit直前にdiffレビューを通す。既定は変更をunstagedのまま提示し、承認後にadd+commitする
+- `~/.config`配下(グローバルCLAUDE.md・rule・skill・設定)の変更はcommitを提案しない。unstagedのまま残し、変更したファイルを報告して終わる(ユーザーが自分でcommitする)
 
 ## エージェント役割分担
 
@@ -99,6 +101,7 @@ Anthropicプランの消費を抑える節約モード(段2をdesign-review、�
 - **調査は目的で分ける**。未知の挙動を突き止める調査 → codex-research(対象が外部リポジトリのソースでも同様)。メイン直接は既報告citationの1-2コマンドによるスポット確認まで
 - **grok-researchの併走**は、公開情報かredacted packetだけで閉じる問いに限る。**認証・認可・秘密情報・金銭・データ削除・不可逆な外部操作**を扱う調査と、**security boundary・データ喪失・課金・広範囲migrationの採否を直接決める**調査はgrokへ出さず、codex-research単独+メインの直接裏取りにする。**cursor worker全般**(opus-review・grok-review含む)のread-onlyはcredential denylist型で、project配下の機微設定はdenyされない。**秘密の実値**(credential・token等の値そのもの。認証ロジックに触れるdiff全般ではない — 段9の脆弱性4観点は認証/認可境界を含み、これはopus-review/grok-reviewが査読する対象そのもの)を含む査読はcursorへ出さない(機械的secret scannerは無く、メインがdispatch直前に最終outbound payload全体を目視確認する運用。誤判定は残存リスクとして受容)。**fable-review(claude-code)**はBash実行可でproject配下read全域が開くうえsandboxのcredential denyも及ばないため、credential read・外部状態変更の禁止はrole file規約でのみ抑止する(強制境界ではない)
 - **併走の判定はdispatch前**に行い、根拠を`[task:<id>]`へ記録する。先行結論をblindに渡さず同じ問いを独立に調べさせる
+- **併走の目的は発見の多様性であり、判定の統計的検証(不一致率・閾値・判定不能率等)の道具にしない**。統合はメインが両トラックの結果を目視で比較し、食い違いは成果物に明記する運用を既定にする。定量的な検証機構を(自分であれ査読者であれ)提案したくなったら、対象規模(件数・システムの重要度)に見合うかを先に自問する(実例: 2026-09-16、issue triageの併走に不一致率3割の閾値を作り込もうとしてcodex査読が2巡連続でHighを出し、advisor()の指摘で目視比較まで簡素化)
 - 委譲中はcodex-researchの返却まで同じ対象領域のRead/Grep/Globを控える。安全・権限・緊急性で例外的に読む場合はその理由を記録する
 - workerのraw dumpをメインやユーザーへ転載せず、`decision / evidence(file:lineまたはURL) / unknown / next action`だけを受け取る。`[research]`は1トピック=1パケットに分ける
 - codex系への送信は非同期send既定(返信はagmsg Monitorの自動再開で受ける)。送信前のensure-codex・パケット書式・Q&Aループ・検収ゲートの詳細: `claude/skills/orchestrate-agents/SKILL.md`
