@@ -59,6 +59,16 @@ export ACCESS_KEY_ID="$(kubectl get secret my-secret -o jsonpath='{.data.ACCESS_
 
 実例: 2026-08-26、`cluster-backup` Secretの`ACCESS_KEY_ID`をマスクする意図で`head -c 20`を使い、base64値の先頭20文字を標準出力に出してしまった。
 
+## 出力抑止のリダイレクトは順序で意味が変わる
+
+`2>&1 >/dev/null` は stderr を「その時点の stdout(パイプ先)」へ複製したあとで stdout だけを捨てるため、**stderr がパイプに残る**。秘密を出しうるコマンドで「出力を捨てたつもり」が成立しない。
+
+正しい形は `>/dev/null 2>&1`(左から右へ適用されるので stdout を捨てた先に stderr を寄せる)。
+
+そもそも**秘密を出しうるコマンドは終了コードだけで判定する**のが確実(例: `gcloud auth print-access-token >/dev/null 2>&1 && echo OK || echo FAILED`)。
+
+実例: 2026-09-15、`gcloud auth print-access-token 2>&1 >/dev/null | head -5` でエラーメッセージだけを見るつもりが、GCPのaccess tokenをセッションログに出力した。
+
 ## ベストプラクティス
 
 1. 環境変数は使用直前に取得
