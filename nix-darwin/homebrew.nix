@@ -25,10 +25,10 @@ in
       # で `brew bundle` の upgrade が失敗し activation 全体が中断するのを防ぐ。
       # パッケージ更新が必要なときは手動で `brew upgrade` する。
       upgrade = false;
-      cleanup = "uninstall";
-      # Homebrew 新仕様により `brew bundle --cleanup` は確認フラグを要求する。
-      # 非対話の activation では --force-cleanup を渡して従来動作を維持する
-      # (これが無いと "requires --force, --force-cleanup or $HOMEBREW_ASK" で activation が中断)
+      # Homebrew 7.0 で `brew bundle --cleanup` は無効化され、渡すと activation 全体が
+      # 中断する。nix-darwin の cleanup はそのフラグを渡すので "none" にし、
+      # 同等の掃除は --force-cleanup 側に任せる。
+      cleanup = "none";
       extraFlags = [ "--force-cleanup" ];
     };
 
