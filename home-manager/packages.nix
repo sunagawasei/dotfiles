@@ -208,6 +208,33 @@ let
       esac
     '';
   };
+  # キーチェーンACLの永続化は Developer ID 署名に依存し、署名付きバイナリは
+  # Apple 配布の .pkg でのみ得られる。
+  appleContainer = pkgs.stdenvNoCC.mkDerivation rec {
+    pname = "apple-container";
+    version = "1.4.1";
+    src = pkgs.fetchurl {
+      url = "https://github.com/apple/container/releases/download/${version}/container-${version}-installer-signed.pkg";
+      hash = "sha256-wNJxav77sZTJP65mLpyufMGGvLz3RoFmCOxnPdZIpqQ=";
+    };
+    nativeBuildInputs = [ pkgs.libarchive pkgs.makeWrapper ];
+    unpackPhase = ''
+      bsdtar -xf $src Payload
+      bsdtar -xf Payload
+      rm Payload
+    '';
+    # Darwin の fixup は strip して ad-hoc 再署名するため Developer ID 署名が壊れる。
+    dontFixup = true;
+    # profile は libexec をリンクしないため、wrapper で store 実体を exec させて
+    # plugin 探索元の install root を store へ固定する。
+    installPhase = ''
+      mkdir -p $out/bin $out/libexec
+      cp bin/container bin/container-apiserver $out/bin/
+      cp -R libexec/container $out/libexec/
+      mv $out/bin/container $out/bin/.container-real
+      makeWrapper $out/bin/.container-real $out/bin/container
+    '';
+  };
 in
 {
   home.packages = with pkgs; [
@@ -255,6 +282,9 @@ in
 
     # 尊師スタイル用Karabiner-Elements profile切り替え
     sonshi
+
+    # Linux コンテナを軽量 VM で実行 (Apple 署名済み .pkg 由来)
+    appleContainer
   ];
 
   # eza/bat のテーマ配置先を用意し、bat のテーマキャッシュを毎回再構築する

@@ -43,7 +43,6 @@ in
       "perman-aws-vault" # perman/tap
       # nixpkgs で問題があるもの
       "aws-cdk" # nodePackages 版が不安定
-      "container" # apple/container — Linux コンテナを軽量 VM で実行 (nixpkgs 非提供)
       "mysql-client" # nixpkgs にスタンドアロン版なし
       "datadog-labs/pack/pup" # Datadog CLI
       "oauth2l" # macOS 認証統合
