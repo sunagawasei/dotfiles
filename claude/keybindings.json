@@ -10,7 +10,8 @@
         "ctrl+shift+b": "app:toggleBrief",
         "ctrl+shift+o": "app:toggleTeammatePreview",
         "ctrl+r": "history:search",
-        "ctrl+]": "app:openArtifact"
+        "ctrl+]": "app:openArtifact",
+        "alt+r": "app:redraw"
       }
     },
     {
@@ -150,8 +151,6 @@
     {
       "context": "Scroll",
       "bindings": {
-        "pageup": "scroll:pageUp",
-        "pagedown": "scroll:pageDown",
         "wheelup": "scroll:lineUp",
         "wheeldown": "scroll:lineDown",
         "ctrl+home": "scroll:top",
@@ -163,12 +162,12 @@
         "shift+down": "selection:extendDown",
         "shift+home": "selection:extendLineStart",
         "shift+end": "selection:extendLineEnd",
-        "alt+u": "scroll:pageUp",
-        "alt+d": "scroll:pageDown",
+        "alt+u": "scroll:fullPageUp",
+        "alt+d": "scroll:fullPageDown",
         "alt+g": "scroll:top",
         "alt+shift+g": "scroll:bottom",
-        "ctrl+pageup": "scroll:pageUp",
-        "ctrl+pagedown": "scroll:pageDown"
+        "alt+j": "scroll:lineDown",
+        "alt+k": "scroll:lineUp"
       }
     },
     {
