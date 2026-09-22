@@ -32,6 +32,8 @@ in
       "LIST_PACKED"
       "NO_BEEP"
       "NO_LIST_TYPES"   # unsetopt list_types
+      # dotディレクトリ/dotfileを補完候補にも含める（fzf-tab等の補完はこのオプションでglob展開する）
+      "GLOB_DOTS"
     ];
 
     # ---- エイリアス ----
