@@ -67,8 +67,8 @@
 - **grok-review(Grok4.6・headless cursor)**: codex(review役)応答不能時の段9フォールバック(暫定運用)。codex同等の役割(意図一致査読+脆弱性4観点)を代行する。実装がAnthropic側に寄った現構成では、cross-vendorの査読を保つ唯一の代替経路。findings-onlyでrepo不変。権限=cursor_readonly。トリガー・復帰・停止条件・waiver・fallback不能クラスの判定は`claude/skills/orchestrate-agents/SKILL.md`「段9査読者フォールバックチェーン」節が正本
 - **実装subagent(Claude Code組み込みAgent tool・`claude/agents/impl-worker.md`・sonnet/xhigh)**: 承認済みsubtaskの**ファイルセットの範囲だけ**編集する。commit/push禁止。完了報告はメイン宛。親セッションの権限をそのまま継承するため、外部write・repo外read・機密情報readの禁止は**契約文でのみ抑止する**(強制境界は無い)。実行中にメインへ問い合わせることはできず、判断が要る場面では変更を加えず`question`として返す
 - **manager / watcher(headless codex)**: 休眠。実装レーンをcodex workerへ戻したときだけ使う。role fileとagmsg configは残してあるが、subagentレーンでは起動しない。**節約モードでは`codex-impl`が段5の実装を担う**(manager/watcher自体は休眠のまま。手順は`claude/skills/orchestrate-agents/references/economy-mode.md`)。**`codex-impl`のrole fileはメイン直結へ変更済みで、managerからのpacketもwatcherへの完了報告も前提にしない。manager/watcherレーンを復帰させるにはrole fileを元へ戻す作業が要る**
-- **codex(review役)**: プラン査読(承認依頼前の常時ゲート)+段9のdiff査読。**意図一致査読と脆弱性4観点の両方を全hunk対象で担当する**(実装がAnthropic側に寄ったため、cross-vendorの査読はここ1本になる)。権限=read-only
-- **codex-research**: コードベース内・外部ソース読解の横断調査。file:line一覧・構造化データを返す。パッチは作らない。権限=read-only運用
+- **codex(review役)**: プラン査読(承認依頼前の常時ゲート)+段9のdiff査読。**意図一致査読と脆弱性4観点の両方を全hunk対象で担当する**(実装がAnthropic側に寄ったため、cross-vendorの査読はここ1本になる)。権限=read-only。**残存リスク(2026-09-22 codex-research調査で確認、`sunagawasei/agmsg#42`/`#43`で追跡中)**: execpolicyのRules(`$CODEX_HOME/rules/default.rules`)はreviewer/researchのpermission profileと分離されず、対話用途で定義した広いallow rule(`docker compose`全サブコマンド等)がsandbox外・無確認で実行できてしまう。加えてnetwork.enabled=trueかつnetwork_proxy未設定でegressのドメイン制限が無い。repoに対するread-only自体はOS sandboxで担保されるが、この2点は未修正
+- **codex-research**: コードベース内・外部ソース読解の横断調査。file:line一覧・構造化データを返す。パッチは作らない。権限=read-only運用。**残存リスクは上のcodex(review役)と同一**(同じlauncher・同じCODEX_HOMEを使うため)
 - **grok-research(Grok4.6・headless cursor)**: 公開情報とredacted packetに限った第二の調査経路。権限=read-only
 
 ### フロー(全タスク共通・これ1本)
