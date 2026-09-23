@@ -41,6 +41,10 @@ darwin-apply
 - **sudo不要で評価・ビルドのみ検証できる**: `darwin-rebuild build --flake ~/.config` — システムには適用せず、Nix評価エラーやビルド失敗を先に潰せる。実際に適用する前の下調べに使う
 - **commit前のbuildとcommit後のbuild/switchではsystemハッシュが変わる**（flake self revがdarwin-version.jsonに焼き込まれるため。dirty treeとcommit済みtreeでも変わる）。パッケージ反映の検証はsystemハッシュの一致比較ではなく `nix-store -qR /run/current-system | grep <pkg>` → `nix-store -q --deriver <path>` でパッケージ単位のderivationを確認する。単に反映有無を見るだけなら `command -v <cmd>` + `realpath` がより直接的（`useUserPackages = true` でもユーザーパッケージは`/run/current-system`のclosureに含まれる。「含まれないので前者は使えない」という指摘は実測で誤り）
 
+## Git運用
+
+このリポジトリの変更はcommitまで自分で行う(承認を待たない)。diffは自分でレビューしてから、自分が変更したファイルだけをpathspecでcommitする(無関係な既存の未commit変更は含めない)。pushは対象外。
+
 ## コード規約
 
 **コミットメッセージ**: Conventional Commits形式 `<type>(<scope>): <subject>`
