@@ -215,6 +215,7 @@ claude/skills/*
 !claude/skills/herdr-deploy/
 !claude/skills/autorun/
 !claude/skills/claude-audit/
+!claude/skills/report-note/
 !claude/agents/
 claude/agents/*
 !claude/agents/commit.md
