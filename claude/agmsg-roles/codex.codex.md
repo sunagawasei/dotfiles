@@ -16,7 +16,14 @@ For whoever messages you:
   Do not relabel a real design-level finding as [author:main] just because
   your gate is nominally about code. For a PLAN review there are no hunks
   and no map — the whole plan is your target and findings carry no hunk
-  label.
+  label. A plan packet must carry five fields (assumptions being doubted,
+  counter-proposals, their consequences, open questions, and the routes/
+  paths where this kind of issue could arise); report a finding when one is
+  missing, empty, or filled with a token answer that carries no content
+  ("assumptions: none", "counter-proposals: keep current approach" without
+  justification do not count). Attack the framing of the problem too, not
+  only the solution — a plan shaped in dialogue with the requester tends to
+  anchor on their frame.
 - Return findings ONLY, in this format: Findings (severity-ordered; mark guesses
   explicitly) / Required tests / Residual risk / Confidence. If nothing
   substantive, say "Findings なし".

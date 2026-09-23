@@ -1,6 +1,6 @@
 ---
 name: orchestrate-agents
-description: 全タスク共通の単一委譲フロー(対話でのプラン起案→fable-review設計ゲート→codexプラン査読→ユーザー承認→メイン分割→実装subagent→メイン受け入れ検査→統合→codexコード査読→commit)の運用手順。査読役へはagmsgの非同期send+Monitor自動再開、実装はClaude Code組み込みのAgent tool
+description: 全タスク共通の単一委譲フロー(対話でのプラン起案→codexプラン査読→fable-review指摘振り分け→ユーザー承認→メイン分割→実装subagent→メイン受け入れ検査→統合→codexコード査読→commit)の運用手順。査読役へはagmsgの非同期send+Monitor自動再開、実装はClaude Code組み込みのAgent tool
 ---
 
 # 単一委譲フロー
@@ -20,15 +20,30 @@ description: 全タスク共通の単一委譲フロー(対話でのプラン起
 
 メインがユーザーとの対話でプラン案を起案する。**この段より前に第三者のチャレンジは無い**ので、疑いはメインが自分で言語化する。プランの確定は段4のユーザー承認で、段1は起案まで。
 
-- 段2へ渡すpacketには**4 field(疑う前提 / 反対案 / その帰結 / 未解決の問い)を必須**で載せる。「該当なし」と書くなら理由も書く
-- fable-reviewはこの4 fieldの**欠落・空・定型的で実質のない値**をfindingとして返す。自己申告の空洞化に対する検査主体はここだけなので、形だけ埋めて通さない
+- 段2へ渡すpacketには**5 field(疑う前提 / 反対案 / その帰結 / 未解決の問い / この種の指摘が生じうる経路の列挙)を必須**で載せる。「該当なし」と書くなら理由も書く
+- codex(review役)はこの5 fieldの**欠落・空・定型的で実質のない値**をfindingとして返す。自己申告の空洞化に対する検査主体はここだけなので、形だけ埋めて通さない
 - 対話は依頼者のフレームに錨を下ろしやすい。**問題設定自体を疑う**役はメインと段2の両方が負う
+- **実装契約(shell scriptのexit code分類・retry方式・認証呼び出し方式等)を散文で書いていないか自己点検する**。書いていたら削り、プラン本文は「変更ファイル一覧+目的」「時系列」「受入テスト一覧」の3点に絞る。実装契約はコードで確定させ段9(実コード査読)に委ねる
 
-### 段2 fable-review(設計ゲート)
+### 段2 codex(review役)のプラン査読
+
+メインがプランをcodex(review役)へ送る。**節約モードでも送付先は変わらない**(段2は常にcodex)。
+
+packetには**5 field(疑う前提 / 反対案 / その帰結 / 未解決の問い / この種の指摘が生じうる経路の列挙)を必須**で載せる。「該当なし」と書くなら理由も書く。codexは欠落・空・**定型的で実質のない値**もfindingにする(「疑う前提: なし」「反対案: 現案維持」で通さない。該当なしには理由を要求する)。再送(反復査読)では「最初の未査読プラン」ではなく「前回findingsへの対応」として評価する。
+
+**workerのturnは完走したがagmsg配送だけ失敗した場合に限り、bridgeログからの代替を認める**。代替として有効なのは、(a)**現行taskと同一teamの**bridgeログでcodex自身が送信したエントリ(team一致・送信者一致)、(b)現行の段2査読依頼のdispatch時刻(agmsg message storeのtimestamp)より後、(c)codexの直近respawnより後(runログのspawn時刻。respawnが一度も無い場合はcodex初回spawn時刻より後)、(d)完了形式を備え内容が現行プランの査読であること、の4条件をすべて満たすentryだけ。**この4条件は規約レベルの信頼に依る照合であって、bridgeが強制する境界ではない**。**条件を満たすentryがログに無ければ代替の出番はなく、troubleshooting.mdの診断→解消できなければユーザーへ報告して指示を仰ぐ経路一本になる**(段3の先行送信で回避しない)。段2の返信前に段3(振り分け依頼)へ送らない。
+
+出力形式: Findings / Required tests / Residual risk / Confidence。severity順・推測は明記・各findingにIDを付す。findingsゼロの場合もこの形式で明示する。
+
+承認依頼前の常時ゲート。書式は下記「[review]パケットの鉄則」。
+
+### 段3 fable-review(指摘の振り分け)
 
 **節約モードでは、この段の送付先だけが`design-review`(claude-code, opus)に替わる**。両方へは送らない。役割・確認事項・パケット書式は同じ。**以下に出てくる`fable-review`向けの設定値・起動コマンド・rollback手順はfable-review固有のもので、design-reviewには適用しない** — design-reviewの設定値と起動手順は`references/economy-mode.md`が正本。
 
-プランを`fable-review`へ送る。返るのは findings。**ユーザー承認の代替にしない**。認証・秘密情報を含むプランは送付前に該当部分をredactする(redactすると議論不成立ならF3の規約どおり段2を省く)。
+段2(codex)のfindingsとプランを`fable-review`へ送る。返るのは各findingの振り分け(採用/見送り/別タスク)。**この判断を最終とする**。**ユーザー承認の代替にしない**。
+
+認証・秘密情報を含むプランは振り分け依頼前に該当部分をredactする。**redactすると振り分けが成立しない場合は段3を省き、メインが直接振り分ける**(段2への送信そのものは省略できない。段2は必須ゲート)。
 
 ```bash
 AGMSG_CLAUDE_PROBE_TIMEOUT=150 ~/.agents/skills/agmsg/scripts/ensure-headless.sh claude-code <path> fable-review
@@ -40,19 +55,11 @@ driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.c
 
 **turn timeoutの既定300秒では足りない**: `spawn.claude_turn_timeout.fable-review: 1800`で個別設定する(per-nameキーが存在する)。add-dir継承は`spawn.claude_inherit_add_dirs.fable-review: true`で明示する(グローバル既定はoff)。
 
-**layout差はreadiness照合では検出できない**: spawn前後で`spawn.claude_implementer.fable-review`が未設定(または`false`)であること、生成済みsettings.jsonのdenyWriteにprojectパスが含まれることを確認する(F4)。
+**layout差はreadiness照合では検出できない**: spawn前後で`spawn.claude_implementer.fable-review`が未設定(または`false`)であること、生成済みsettings.jsonのdenyWriteにprojectパスが含まれることを確認する。
 
-**rollback範囲は3点セット**: `git checkout`で戻るのはrole fileのみ。agmsgのspawn状態(despawn→旧cursor版`fable-review.cursor.md`で再spawn)とconfig(`spawn.claude_model.fable-review`等のkeyをcursor向け設定へ手動で戻す)は別途の操作が要る。3点いずれか1つの復旧漏れは新driverと旧configの不整合(dead-letterや誤ったlayoutでのspawn)を招くため、rollback時は3点を1セットで実行し、実行後に段2のreadiness照合(spawn世代を跨いだ返信実績の無効化含む)をやり直す。
+**rollback範囲は3点セット**: `git checkout`で戻るのはrole fileのみ。agmsgのspawn状態(despawn→旧cursor版`fable-review.cursor.md`で再spawn)とconfig(`spawn.claude_model.fable-review`等のkeyをcursor向け設定へ手動で戻す)は別途の操作が要る。3点いずれか1つの復旧漏れは新driverと旧configの不整合(dead-letterや誤ったlayoutでのspawn)を招くため、rollback時は3点を1セットで実行し、実行後に段3のreadiness照合(spawn世代を跨いだ返信実績の無効化含む)をやり直す。
 
 **role fileの編集は稼働中workerに反映されない**: claude-code/cursor/codexいずれのdriverも`_spawn.sh`がspawn時にrole fileを`run/`配下へ`cp`し(`<type>-bridge.<team>.<name>.role`)、bridgeはそのスナップショットだけを毎ターン読む。`db/spawn-roles/<name>.<type>.md`(= `claude/agmsg-roles/`のsymlink先)を直接編集しても、稼働中のworkerはspawn時点の内容のまま動き続ける(意図的な設計: source側の編集/削除でlive workerを不意に変えないため)。role file変更を反映するには、その名前のworkerをdespawn→再spawnし、readiness照合(probe)をやり直す。
-
-### 段3 codex(review役)のプラン査読
-
-段2(fable-review)を実施した場合、その査読を完了した最終返信(Findings/Required tests/Residual risk/Confidence形式のもの。findingsゼロの場合もこの形式で明示)を受け取ってから送る(ACK・受領通知・途中報告・blocked通知はこの形式を持たないため対象外)。**workerのturnは完走したがagmsg配送だけ失敗した場合に限り、bridgeログからの代替を認める**。代替として有効なのは、(a)**現行taskと同一teamの**bridgeログでfable-review自身が送信したエントリ(team一致・送信者一致)、(b)現行の段2査読依頼のdispatch時刻(agmsg message storeのtimestamp)より後、(c)fable-reviewの直近respawnより後(runログのspawn時刻。respawnが一度も無い場合はfable-review初回spawn時刻より後)、(d)完了形式を備え内容が現行プランの査読であること、の4条件をすべて満たすentryだけ。**この4条件は規約レベルの信頼に依る照合であって、bridgeが強制する境界ではない**(agmsg message store等はfable-review自身がBashから書ける。既知の残余リスク)。**条件を満たすentryがログに無ければ代替の出番はなく、troubleshooting.mdの診断→解消できなければユーザーへ報告して指示を仰ぐ経路一本になる**(段3の先行送信で回避しない)。段2の返信前に段3へ査読依頼を送らない。段2省略(**redactすると議論が成立しない場合**)は、段2への査読依頼を送信する前に決定した場合に限る。依頼送信後のtimeout・無返信・失敗は省略に再分類できない(respawnした場合は返信実績が無効化されるため再probeをやり直す)。
-
-渡すプランには段2の指摘への対応を反映する。段3packetの必須fieldとして、段2の全findingについてfinding ID・振り分け(採用/見送り/別タスク)・見送りと別タスクは理由を一対一で列挙する(段2省略時は「段2省略(redactすると議論不成立、依頼送信前に決定)」と明記)。**認証・秘密情報を含むfindingは理由を`redacted(理由: 認証/秘密)`で代替でき、これはpacket不備に当たらない。redactedを使ったfindingは、内容(理由の具体)を平文開示せずfinding ID・重大度・振り分け(採用/見送り/別タスク)・解決状態(対応済み/未対応)を段4のユーザー承認時と段11の検収報告の両方に明記する(ユーザーは元のfable-review返信にagmsg履歴から直接アクセスできる)**。一覧から落ちたfindingがあればpacket不備として扱う。この対応は初回送信に適用し、段3findingsを受けた再送(収束ループ)は下記「レビュー収束条件」に従う。
-
-承認依頼前の常時ゲート。書式は下記「[review]パケットの鉄則」。**節約モードでは、この段のfindingsの収束を依頼する相手も`design-review`になる**(fable-reviewは起動しない)。
 
 ### 段4 ユーザー承認
 
@@ -100,7 +107,7 @@ driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.c
 - findingのラベルは`[subtask:<id>]`(subagent作)・`[author:main]`(メイン作)・`[design-level]`(承認済み設計自体の欠陥。対応する単一hunkが無ければfile:line欄に`(design-level, no single hunk)`と明記)
 - **依存を変えるdiffのadvisory確認はメインの明示責務**。段9パケットの必須fieldに確認結果と根拠を含める(欠落時はcommit不可)
 - 段1〜11を通らない原子的編集の例外は、資格要件で認証・security boundary・課金・外部write・依存関係を変えないことが担保されるため脆弱性4観点の対象外
-- fable-reviewは段2の設計レビューと段3の対応可否収束を担当し、段9には関与しない
+- fable-reviewは段3の指摘振り分けを担当し、段9には関与しない
 
 ### 段9査読者フォールバックチェーン(codex応答不能時)
 
@@ -172,7 +179,7 @@ frontmatterの`model`/`effort`はそのまま実効値になる(同日実測で`
 - **agmsg相手のreadiness照合**は「名前がある」ではなく、各nameのregistrationが**期待typeでちょうど1件、かつ当該セッションで返信実績があること**(dead-letterはregistration照合だけでは検出できない)。**新規spawn直後で返信実績がまだ無い場合はtrivialなprobeパケットを1通送り、その応答到達をもって返信実績とする**。**respawn(despawn→再spawn)した場合、respawn前の返信実績は無効**として扱い、必ずrespawn後に新規probeを送り直す。対象はfable-review・codex(review役)、および実際にdispatchするcodex-research/grok-research/grok-review。**実装subagentはagmsgに乗らないのでこの照合の対象外**
 - 起動コマンド(モデル等のconfigはグローバル永続なのでコマンドのみ):
   - codex系(codex, codex-research): `ensure-codex.sh <project> <name>`
-  - claude-code系(fable-review): `AGMSG_CLAUDE_PROBE_TIMEOUT=150 ensure-headless.sh claude-code <project> fable-review`(既定30秒ではfableがprobeを出し切れずrc=124でfail-closedする。probe timeoutはper-nameのconfigキーが無くenv varのみ。model/effort/turn timeoutはper-nameのconfigキーで固定。`spawn.claude_turn_timeout.fable-review: 1800`を設定済み。段2参照)
+  - claude-code系(fable-review): `AGMSG_CLAUDE_PROBE_TIMEOUT=150 ensure-headless.sh claude-code <project> fable-review`(既定30秒ではfableがprobeを出し切れずrc=124でfail-closedする。probe timeoutはper-nameのconfigキーが無くenv varのみ。model/effort/turn timeoutはper-nameのconfigキーで固定。`spawn.claude_turn_timeout.fable-review: 1800`を設定済み。段3参照)
   - cursor系(grok-review、codexフォールバック時のみ): `AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ensure-headless.sh cursor <project> grok-review`
   - cursor系(opus-review、第2意見が要るときのみ): `AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ensure-headless.sh cursor <project> opus-review`(既定180秒ではopus:highの査読が切れる)
   - cursor系(grok-research): `ensure-headless.sh cursor <project> <name>`
@@ -187,6 +194,7 @@ frontmatterの`model`/`effort`はそのまま実効値になる(同日実測で`
 
 - **codex系宛は必ず先に** `~/.agents/skills/agmsg/scripts/ensure-codex.sh <project> [worker名]`(起動済みならno-op)。怠ると依頼は未読のままDBに滞留し返信が来ない(2026-07-05実例)
 - **`ensure-codex.sh`/`spawn.sh`は単独のsimple commandで呼ぶ**。セッションUUIDは`CLAUDE_CODE_SESSION_ID=<リテラルUUID>`と直書きする(シェル変数にするとsandbox除外が効かず、codexが自分のseatbeltを張れずspawnが失敗する)。for/`;`/`&&`/パイプ/コマンド置換の中に入れない
+- **`<from>` はメインセッションの登録名であって `main` ではない**。`main` を渡すと `from agent 'main' is not registered in team ...(registered: claude, ...)` で送信ごと失敗する。エラーメッセージが実際の登録名を列挙するので、そこから拾う(2026-09-18実測、登録名は `claude`)
 - **本文は例外なくファイルに組み立てて `send.sh <team> <from> <to> --stdin < packet.txt`**。4番目の引数に直接書かない。本文にバッククォートが1つでもあるとコマンド置換が発火し、**その部分が欠落したまま送信が成功する**(2026-08-14に1セッションで3回。短文でも起きる)
 - 送信後は自分の送信文面をDBからgrepし、重要な文字列(コマンド名・設定値・file:line)が残っているか確認する
 - **既読フラグは生存判定にも沈黙判定にも使えない**(2026-08-14実証)。codex系workerはturn実行中に新規メッセージを読まないため、作業中のworker宛は未読が溜まって当然。逆に既読でも送信先を間違えていれば返信は来ない
@@ -226,8 +234,8 @@ DO NOTを明記: git commit/push禁止・ファイルセット外の変更禁止
 
 - いずれもread-only。findingsを返すだけで、**fixはメインが適用**する(subagent作hunkのfixはSendMessageで当該subagentへ差し戻す)
 - 自己完結パケット = `git diff`か対象`file:line`(プラン査読の場合はプラン本文) + 意図 + (ループ時)前回指摘→対応の対応表
-- **段2のプラン査読packetは段1の4 field(疑う前提 / 反対案 / その帰結 / 未解決の問い)を必須fieldとして含む**。fable-reviewは欠落・空だけでなく**定型的で実質のない値**もfindingにする(「疑う前提: なし」「反対案: 現案維持」で通さない。該当なしには理由を要求する)。再送(反復査読)では「最初の未査読プラン」ではなく「前回findingsへの対応」として評価する
-- **段3(codex)のプラン査読packetは、段2を実施した場合、段2findingsのfinding ID・振り分け(採用/見送り/別タスク)・見送りと別タスクは理由を一対一で列挙する**(段2省略時は「段2省略(redactすると議論不成立、依頼送信前に決定)」と明記。認証・秘密情報を含むfindingは理由を`redacted(理由: 認証/秘密)`で代替可、packet不備に当たらない。redactedを使ったfindingは、内容(理由の具体)を平文開示せずfinding ID・重大度・振り分け(採用/見送り/別タスク)・解決状態(対応済み/未対応)を段4のユーザー承認時と段11の検収報告の両方に明記する)。欠落は順序違反の可視化点として扱う
+- **段2(codex)のプラン査読packetは段1の5 field(疑う前提 / 反対案 / その帰結 / 未解決の問い / この種の指摘が生じうる経路の列挙)を必須fieldとして含む**。codexは欠落・空だけでなく**定型的で実質のない値**もfindingにする(「疑う前提: なし」「反対案: 現案維持」で通さない。該当なしには理由を要求する)。再送(反復査読)では「最初の未査読プラン」ではなく「前回findingsへの対応」として評価する
+- **段3(fable-review)の振り分けpacketは、段2findingsのfinding ID・見送りと別タスクは理由を一対一で列挙する**(認証・秘密情報を含むfindingは理由を`redacted(理由: 認証/秘密)`で代替可、packet不備に当たらない。redactedを使ったfindingは、内容(理由の具体)を平文開示せずfinding ID・重大度・解決状態(対応済み/未対応)を段4のユーザー承認時と段11の検収報告の両方に明記する。**認証・秘密情報を含むプランで振り分けが成立しない場合は段3を省き、メインが直接振り分ける**)。欠落は順序違反の可視化点として扱う
 - 出力形式: Findings / Required tests / Residual risk / Confidence。severity順・推測は明記・各findingにIDを付す
 - 段9では**codex(フォールバック中はgrok-review)**に、**subtask別のdiff identity・依存関係・subagentの検証結果**・**承認済みプラン本文**・**dependency advisoryの確認結果と根拠(メイン記入。欠落時はcommit不可)**と**段8のauthor再分類マップ(メイン作 / subagent作の2区分)**を渡す。**マップの用途はfindingの差し戻し先の判定で、査読対象は常に全hunk**(マップが無いとラベルを推測で付け、無実のsubtaskが差し戻される)
 

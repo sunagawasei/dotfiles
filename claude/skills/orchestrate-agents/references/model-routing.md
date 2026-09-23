@@ -4,7 +4,7 @@ agmsg configのper-workerキー（`spawn.codex_model.<name>` / `spawn.codex_effo
 
 | 段 | 宛先ワーカー | モデル/effort |
 |---|---|---|
-| 段3のプラン査読・段9のコード査読 | codex | gpt-5.6-sol / xhigh |
+| 段2のプラン査読・段9のコード査読 | codex | gpt-5.6-sol / xhigh |
 | 調査・大量列挙 | codex-research | gpt-5.6-sol / xhigh(遅いと感じたら `spawn.codex_effort.codex-research: high` へ下げる) |
 | 大規模・設計横断の節目レビュー | codex-deep(一時spawn→使い捨て) | gpt-5.6-sol / max |
 
