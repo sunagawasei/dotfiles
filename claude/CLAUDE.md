@@ -1,11 +1,3 @@
-## ルールファイル
-
-`claude/rules/pull-request.md` はPR作成前に明示的に読む。
-
-## スクリプト言語
-
-新規スクリプト・CLIツールは基本Goで書く。
-
 ## 出力規約（全成果物共通）
 
 レポート・issue・PR body・説明・コードコメントすべて:
@@ -19,9 +11,11 @@
 - 期間は「M/D〜M/D」形式(「2週間」等の曖昧表現を避ける)。日本語文中の括弧は半角(全角括弧でcommit SHAを囲むとGitHub上で自動リンクが効かない。実例: 2026-09-16、`（283df92）`はリンクにならず`(283df92)`は`commit-link`クラスのリンクになった)
 - コードコメントは「なぜ」のみ・目安2行。背景・経緯・調査結果はcommit message側へ。設定値やフィールド名が条件をそのまま表すならコメント自体不要
 - 個人ローカル環境の値(AWS profile名・個人パス等)はコミット対象に書かず、マシン中立な表現にする。実値はリポジトリルートの `CLAUDE.local.md`(要.gitignore登録)へ分離
+- 自分の作業環境で測った値(スループット・レイテンシ等)を、原因箇所を切り分ける前にissueやチーム向け文書へ環境全体の制約として書かない。書くのは切り分けが済んで共有環境側の性質だと確定してからにする(実例: 2026-09-18、自宅から遅かった数値を「ワークステーションから実行できない」とissue #182に書き「これわたしの家の問題？というかこういうことはissueに書くべきじゃないんじゃない？」と指摘された。実測するとVPNも自宅回線も無関係で、経路の一部に固有の性質だった)
 - 日本語の文章規範: 実質的な文章(返信・レポート・ドラフト・ドキュメント)は `claude/skills/japanese-tech-writing/SKILL.md` に従う。`claude/skills/cognitive-rhythm-writing/SKILL.md` も併用する
 - 箇条書き・表の項目は「何が・どうなる/どうならない」の形で書く。「そのまま伝播する」「固定していること」のような抽象語で済ませない。1行に主述を2つ詰めず、収まらないなら行を分ける。識別子は主体を明示する(`client` ではなく「source Harbor の client」)。テストの説明は `t.Run` のサブテスト名と1対1で対応づける(実例: 2026-09-07、PR #204のテスト表でこの4点をそれぞれ指摘され4回書き直した)
 - 検証・調査を依頼された報告では、問いへの答えを最初に言い切る。査読の指摘対応・検証手順・残差はその後ろへ置く。ユーザーが「〜ということでいいか」と要約確認を返したら、報告の構成が失敗したと見て次から答えを前に出す(実例: 2026-09-07、Harbor削除伝播の検証結果を査読で覆った点から書き始め、「結果どうだった？」と聞き直された後も3回続けて要約確認を返された)
+- 成果物の分量は「網羅性」ではなく「読む人が判断に使う分」で決める。表や箇条書きで抜けなく書こうとすると、1項目ずつは短くても全体が読まれない長さになる。削減を求められたら、各項目を圧縮するのではなく**項目そのものを落とす**(実例: 2026-09-18、Notion タスクページに設計の全論点を表と箇条書きで書き「記述多すぎ、もっと削って」と言われた。1回目の削減で各行を短くしたが足りず、2回目で節ごと落として通った)
 - 簡潔にするよう求められたときに削るのは詳細であって前提ではない。何の話か・どの画面のどの表示かの前提を落とすと、短くなっても伝わらない(実例: 2026-09-12、herdr v0.9.0の変更内容を「もっと簡潔に」と言われ前提ごと削った箇条書きを返し、「前提がなくて意味がわからなかった」と言われた)
 
 ## 対話・確認の規約
@@ -51,7 +45,6 @@
 - 不可逆・破壊的操作(リソース削除・データ破棄等)は、影響範囲評価をユーザー提示前にcodex査読へ通す。「他へ影響しない」の判定根拠(依存参照・共有リソース・削除順序・残骸)を査読対象に含める
 - 秘密情報はファイル編集時だけでなく、提案・実行するコマンドの標準出力にも出さない(詳細: `claude/rules/shell-security.md`)
 - commit直前にdiffレビューを通す。既定は変更をunstagedのまま提示し、承認後にadd+commitする
-- `~/.config`配下(グローバルCLAUDE.md・rule・skill・設定)の変更はcommitを提案しない。unstagedのまま残し、変更したファイルを報告して終わる(ユーザーが自分でcommitする)
 - ファイル編集の直前に作業ブランチを確認する(直近の`git checkout`/`git branch --show-current`の出力で判断)。調査・確認のため一時的にmain(または既定ブランチ)へ切り替えた直後は、そのまま切り替え忘れて編集を始めやすい(実例: 2026-09-16、value_domain_managementで同一セッション中に2回発生。1回目はmain上の未push commitを発見した直後、2回目はその教訓を得た直後に自分で繰り返した)
 
 ## エージェント役割分担
@@ -61,8 +54,8 @@
 モデル指定はalias自動追従を正とし、固定model IDは書かない。**例外はcursor worker**: label監査があるので `spawn.cursor_model.<name>` / `cursor_model_label.<name>` にカタログ表示ではなくinit.modelの実測をpinする。同一IDが複数のinit.model表示を返す場合は `|` で列挙する(実例: `claude-opus-5-thinking-max` は `Claude Opus 5 1M Max Thinking` と `Claude Opus 5 300K Max`)。片方だけをpinするとdead-letterする。現行のcursor worker(opus-review)は`claude-opus-5-thinking-high`をpinしており、実測4回は`Claude Opus 5 300K High`のみで一致(1M側表示の有無は継続監視、出現したら追記して`|`列挙する)。**grok-review(段9フォールバック・暫定運用)は`cursor-grok-4.6-xhigh`をpin**。2026-08-27に実spawnしてmodel-audit実測済み(`requested='cursor-grok-4.6-xhigh' reported='Cursor Grok 4.6 Extra High' fallback=false`。実測1回、既存grok-researchの実測とも一致。暫定・継続監視)。tier序列: fable > opus > sonnet > haiku。alias解決先・優先仕様: `claude/skills/orchestrate-agents/references/delegation-policy.md`
 
 - **メイン(本セッション)**: ユーザーとの対話でのプラン化・統合・検収(要件適合+diff査読+git log+test)・git。権限=**writeの承認・統合・commitの唯一の制御主体**
-- **fable-review(Fable・headless claude-code)**: 設計レビュー(段2)、codex査読(段3)指摘への対応可否収束を担当。findings-onlyでrepo不変。権限=claude_reviewer(repo writeはsandbox+spawn probeで強制。repo readはproject(`~/.config`)配下と継承add-dir全体に開く。credential path read・外部状態変更の禁止は規約でのみ抑止しsandboxは強制しない)。**repo不変≠orchestration状態不変**: agmsg message store/team registration/run状態はsandboxのwrite denyの対象外で技術的に書け、`$SKILL_DIR`全体(全team・全projectの過去message含む)がread可能。busへの書き込み・他teamの履歴readはrole file規約でのみ抑止する残余リスク。network egressの実挙動は未検証(not checked)
-- **design-review(Opus5・headless claude-code)**: 節約モードでのfable-review相当。段2の設計レビュー・段3のcodex査読指摘への対応可否収束を担当。`spawn.claude_model.design-review: opus`。findings-onlyでrepo不変。権限はfable-reviewと同じclaude_reviewer layout。通常モードでは起動しない。手順の正本は`claude/skills/orchestrate-agents/references/economy-mode.md`
+- **fable-review(Fable・headless claude-code)**: codex査読(段2)指摘への対応可否収束(段3)を担当。独立した設計レビューは行わない。findings-onlyでrepo不変。権限=claude_reviewer(repo writeはsandbox+spawn probeで強制。repo readはproject(`~/.config`)配下と継承add-dir全体に開く。credential path read・外部状態変更の禁止は規約でのみ抑止しsandboxは強制しない)。**repo不変≠orchestration状態不変**: agmsg message store/team registration/run状態はsandboxのwrite denyの対象外で技術的に書け、`$SKILL_DIR`全体(全team・全projectの過去message含む)がread可能。busへの書き込み・他teamの履歴readはrole file規約でのみ抑止する残余リスク。network egressの実挙動は未検証(not checked)
+- **design-review(Opus5・headless claude-code)**: 節約モードでのfable-review相当。codex査読(段2)指摘への対応可否収束(段3)を担当。`spawn.claude_model.design-review: opus`。findings-onlyでrepo不変。権限はfable-reviewと同じclaude_reviewer layout。通常モードでは起動しない。手順の正本は`claude/skills/orchestrate-agents/references/economy-mode.md`
 - **opus-review(Opus5・headless cursor)**: 平常時は使わない第2意見(休眠)。段9の査読はcodexへ集約済み。高リスク変更で独立した第2の目が要るとメインが判断したときだけ起こす。findings-onlyでrepo不変。権限=cursor_readonly(Write/Shell deny。readはcredential denylist。projectが`~/.config`だと`gh`/`gcloud`/`cursor`/`codex`はworkspace内でdenyされない)
 - **grok-review(Grok4.6・headless cursor)**: codex(review役)応答不能時の段9フォールバック(暫定運用)。codex同等の役割(意図一致査読+脆弱性4観点)を代行する。実装がAnthropic側に寄った現構成では、cross-vendorの査読を保つ唯一の代替経路。findings-onlyでrepo不変。権限=cursor_readonly。トリガー・復帰・停止条件・waiver・fallback不能クラスの判定は`claude/skills/orchestrate-agents/SKILL.md`「段9査読者フォールバックチェーン」節が正本
 - **実装subagent(Claude Code組み込みAgent tool・`claude/agents/impl-worker.md`・sonnet/xhigh)**: 承認済みsubtaskの**ファイルセットの範囲だけ**編集する。commit/push禁止。完了報告はメイン宛。親セッションの権限をそのまま継承するため、外部write・repo外read・機密情報readの禁止は**契約文でのみ抑止する**(強制境界は無い)。実行中にメインへ問い合わせることはできず、判断が要る場面では変更を加えず`question`として返す
@@ -73,9 +66,9 @@
 
 ### フロー(全タスク共通・これ1本)
 
-1. メインが依頼を受け、**ユーザーとの対話でプラン案を起案する**。段2へ渡すpacketには**4 field(疑う前提 / 反対案 / その帰結 / 未解決の問い)を必須**で載せ、「該当なし」と書くなら理由も書く。プランの確定は段4
-2. fable-reviewが設計レビュー。**ユーザー承認の代替にしない**
-3. codex(review役)がプラン査読(**節約モードでは指摘の収束先もdesign-review**)(**段2実施時は査読完了の最終返信後に、指摘への対応を反映して送る。段2省略はredactすると議論が成立しない場合で、かつ依頼送信前に決定した場合のみ**)。**その指摘への対応可否(採用/見送り/別タスク)はfable-reviewが振り分けて収束させる。この判断を最終とする**
+1. メインが依頼を受け、**ユーザーとの対話でプラン案を起案する**。段2へ渡すpacketには**5 field(疑う前提 / 反対案 / その帰結 / 未解決の問い / この種の指摘が生じうる経路の列挙)を必須**で載せ、「該当なし」と書くなら理由も書く。プランの確定は段4
+2. codex(review役)がプラン査読(**節約モードでも送付先は変わらない**)。**ユーザー承認の代替にしない**
+3. **その指摘への対応可否(採用/見送り/別タスク)はfable-review(節約モードではdesign-review)が振り分けて収束させる。この判断を最終とする**。認証・秘密情報を含むプランは振り分け依頼前にredactする。redactすると振り分けが成立しない場合は段3を省き、メインが直接振り分ける
 4. **ユーザー承認**。これより前に実装subagentへdispatchを1件も出さない。承認対象はサブタスク方針を含むプラン全体
 5. **メインがサブタスクへ分割し、実装subagentへdispatchする**。各subtaskは自己完結パケットで、**スコープのファイルセットを明示する**。並列で走らせる場合はファイルセットを重複させず、**dispatch中はメインが同じrepoを編集しない**。subagentは実行中にメインへ問い合わせられないため、判断が要る場面では変更を加えず`question`で返る。メインが回答してSendMessageで継続させる
 6. **メインが受け入れ検査をする**。完了報告の変更ファイル一覧と`git diff --stat`を突き合わせ、**申告外のパスに差分があればそのsubagentの逸脱として差し戻す**(並列時は帰属が確定しないので、説明のつかない差分が1つでもあればゲートを止める)。報告された検証は1-2コマンドでスポット再現する
@@ -91,7 +84,7 @@
 
 既定は**subagent**。teamを使うのは、サブタスク同士が作業中に情報をやり取りする必要があるとき、または3人以上を並行させて共有タスクリストで進行管理する規模のときだけ。**この環境ではteammateは別プロセスにならない**(2026-09-06実測。tmux/iTerm2でないとin-processにフォールバックする)ため、「独立した文脈で並行に考えさせる」も「あとから呼び戻して継続させる」もsubagentで取れる。有効化・制約・実効model/effortの確認方法は`claude/skills/orchestrate-agents/SKILL.md`が正本。
 
-Anthropicプランの消費を抑える節約モード(段2をdesign-review、段5をcodex-implへ切り替える)の手順は`claude/skills/orchestrate-agents/references/economy-mode.md`が正本。**このモードは段9の査読をcodexのままにするため、codex-implが書いたコードをcodexが一次査読する。「同一vendorが自分の系列の成果を一次査読する配置を作らない」に反する例外で、2026-09-12にユーザーが受容を明示した。節約モードの中だけで成立し、通常モードには適用しない。**
+Anthropicプランの消費を抑える節約モード(段3をdesign-review、段5をcodex-implへ切り替える)の手順は`claude/skills/orchestrate-agents/references/economy-mode.md`が正本。**このモードは段9の査読をcodexのままにするため、codex-implが書いたコードをcodexが一次査読する。「同一vendorが自分の系列の成果を一次査読する配置を作らない」に反する例外で、2026-09-12にユーザーが受容を明示した。節約モードの中だけで成立し、通常モードには適用しない。**
 
 **このフローの対象**は設計または実装判断を伴う依頼。**例外**は、挙動・公開契約・認証・security boundary・課金・外部write・依存関係を変えず、変更対象と期待diffが一意で、diff単体の機械検証で正しさが確定する原子的編集のみ(行数は基準にしない)。1つでも満たさなければ段1から通す。subtaskが1本でも段5〜11を通す。**例外を通す編集はメインが自分で書き、Anthropic author扱いで段9のcodex(review役)ゲートだけを通す**(subagentへdispatchしない)。
 
@@ -99,7 +92,7 @@ Anthropicプランの消費を抑える節約モード(段2をdesign-review、�
 
 - **外部送信の安全境界は役割で2軸に分ける**(2026-08-27確定)。(i)調査役(grok-research)への送信packetは secret・credential・個人情報・未公開コード断片を含めない最小化義務を負う。抽象化して意味のあるpacketが作れない問いは`grok-research-skipped:safety`を記録して外部送信しない(codex-researchでの調査続行を妨げない)。(ii)cursor harness経由の査読役(opus-review・grok-review)へは、ユーザーが受容したデータ境界としてprivate diff送付を許容する。対象はCLAUDE.mdが適用される全project、個別repositoryのローカル外部送信禁止規約があればそれを優先、ユーザーが受容を撤回した時点で即時無効。秘密の実値(credential・token等)を含むpayloadは両軸とも対象外(判定は機械的scannerでなくメインの目視確認。詳細はSKILL.md「段9査読者フォールバックチェーン」節)
 - **送信前のreadiness照合**: 各nameのregistrationが期待typeでちょうど1件、かつ当該セッションで返信実績があること(dead-letterはregistration照合だけでは検出できない)。**返信実績は直近のspawn/respawn以降の応答に限る**(respawn前の旧instanceの返信実績を新instanceの登録と結びつけて誤ってreadyと判定しない。respawn直後は再度probeし直す)。対象はfable-review・codex(review役)、および実際にdispatchするcodex-research/grok-research/grok-review(agmsg経由の相手のみ。実装subagentはagmsgに乗らないのでこの照合の対象外)。`ensure-headless.sh`はsession team不在でもexit 0のno-opになるため、exit codeだけを準備完了の証拠にしない。**fable-reviewは追加で** `spawn.claude_implementer.fable-review`が未設定(または`false`)であることと、生成済みsettings.jsonのdenyWriteにprojectパスが含まれることを確認する(layout差はregistration照合では検出できない)
-- **認証・秘密情報を含む設計プランは段2(fable-review)へ出す前に該当部分をredactする**。redactすると議論が成立しない場合は段2を省き、メイン+codex(review役)だけでプランを閉じる
+- **認証・秘密情報を含む設計プランは段3(fable-review)へ振り分けを依頼する前に該当部分をredactする**。redactすると振り分けが成立しない場合は段3を省き、codexのfindingsの振り分けはメインが行う
 - **調査は目的で分ける**。未知の挙動を突き止める調査 → codex-research(対象が外部リポジトリのソースでも同様)。メイン直接は既報告citationの1-2コマンドによるスポット確認まで
 - **grok-researchの併走**は、公開情報かredacted packetだけで閉じる問いに限る。**認証・認可・秘密情報・金銭・データ削除・不可逆な外部操作**を扱う調査と、**security boundary・データ喪失・課金・広範囲migrationの採否を直接決める**調査はgrokへ出さず、codex-research単独+メインの直接裏取りにする。**cursor worker全般**(opus-review・grok-review含む)のread-onlyはcredential denylist型で、project配下の機微設定はdenyされない。**秘密の実値**(credential・token等の値そのもの。認証ロジックに触れるdiff全般ではない — 段9の脆弱性4観点は認証/認可境界を含み、これはopus-review/grok-reviewが査読する対象そのもの)を含む査読はcursorへ出さない(機械的secret scannerは無く、メインがdispatch直前に最終outbound payload全体を目視確認する運用。誤判定は残存リスクとして受容)。**fable-review(claude-code)**はBash実行可でproject配下read全域が開くうえsandboxのcredential denyも及ばないため、credential read・外部状態変更の禁止はrole file規約でのみ抑止する(強制境界ではない)
 - **併走の判定はdispatch前**に行い、根拠を`[task:<id>]`へ記録する。先行結論をblindに渡さず同じ問いを独立に調べさせる
@@ -111,10 +104,14 @@ Anthropicプランの消費を抑える節約モード(段2をdesign-review、�
 
 ### 検収・レビュー運用
 
-- **段9のdiff査読はcodex(review役)が全hunkを担当する**: 意図一致・正しさと脆弱性4観点(認証/認可境界・secret出力・外部write・dependency advisory)の両方。実装がAnthropic側(メイン・実装subagent)に寄ったため、cross-vendorの査読はcodex1本になる。**同一vendorが自分の系列の成果を一次査読する配置を作らない**の原則は、これで満たす。**codex応答不能時はgrok-review(cursor・`cursor-grok-4.6-xhigh`、暫定運用)へフォールバックする**(詳細はSKILL.md「段9査読者フォールバックチェーン」節)。opus-reviewはAnthropicなので平常時の査読には使わず、高リスク変更でメインが必要と判断したときの第2意見として休眠させる。**依存を変えるdiffのadvisory確認はメインの明示責務**とし、段9パケットの必須fieldに確認結果と根拠を含める(欠落時はcommit不可)。fable-reviewは段2の設計レビューと段3の対応可否収束を担当し、段9には関与しない
+- **段9のdiff査読はcodex(review役)が全hunkを担当する**: 意図一致・正しさと脆弱性4観点(認証/認可境界・secret出力・外部write・dependency advisory)の両方。実装がAnthropic側(メイン・実装subagent)に寄ったため、cross-vendorの査読はcodex1本になる。**同一vendorが自分の系列の成果を一次査読する配置を作らない**の原則は、これで満たす。**codex応答不能時はgrok-review(cursor・`cursor-grok-4.6-xhigh`、暫定運用)へフォールバックする**(詳細はSKILL.md「段9査読者フォールバックチェーン」節)。opus-reviewはAnthropicなので平常時の査読には使わず、高リスク変更でメインが必要と判断したときの第2意見として休眠させる。**依存を変えるdiffのadvisory確認はメインの明示責務**とし、段9パケットの必須fieldに確認結果と根拠を含める(欠落時はcommit不可)。fable-reviewは段3の対応可否収束を担当し、段9には関与しない
 - 多様性の判定はタスク開始時とゲート通過時の2回、author agent/model/vendor/pool/primary reviewer/riskを記録して照合する。**課金プールの違いはvendor多様性に数えない**(Cursor経由のClaudeはAnthropic、同経由のGPTはOpenAI)。`auto`指定は実効vendorが確定できないため査読ゲートで使わない。alias指定(fable-review=`fable`等)のロールは解決先が実行時に決まるため、**記録は静的設定値に留め、動的な実効modelの機械照合はできないことを残存リスクとして扱う**(claude-code driverにはcursorのようなmodel-audit機構が無い)
 - 査読は検収の代替ではない。メインが実物(`git status`/`git diff`/`git log`/test)を確認して完了とcommitを決める
 - 段9の査読も検収の代替ではない。findingが全て解消したらメインが最終diffを固定し、必須検証を自分で再実行してから検収する(差し戻しで変わった後のdiffが査読を通したdiffと同一であることを確認する)
 - **GitHub Issue・PR・commentの作成/変更は、ユーザーの明示指示があるときだけ**。メインの承認だけでは行わない。既定の台帳はagmsg DBと`[task:<id>]`
 - 重要な判断はサブエージェントに委譲せず、メインが直接行う。実装subagentは実行中に問い合わせられないため、判断が要る場面では変更を加えず`question`で返し、メインが回答して継続させる
 - 検収手順とcodex査読の使いどころは`claude/skills/orchestrate-agents/SKILL.md`。配分の根拠データは`.claude/docs/cred-split/`
+
+## スクリプト言語
+
+新規スクリプト・CLIツールは基本Goで書く。
