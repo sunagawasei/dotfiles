@@ -175,4 +175,15 @@ return {
     -- LazyVimデフォルトのgit diff pickerを無効化（diffview.nvimを使用）
     { "<leader>gd", false },
   },
+  config = function(_, opts)
+    require("snacks").setup(opts)
+
+    -- Snacks.gh の "View diff for PR" (gh_actions メニュー) の開き先をhunkに変える。
+    -- gh_actions は snacks/gh/actions.lua の M.actions テーブルを直接参照するため、
+    -- opts経由のsetupには差し替えポイントが無く、このテーブルへの直接介入が手段になる。
+    require("snacks.gh.actions").actions.gh_diff.action = function(item)
+      if not item then return end
+      require("utils.gh_hunk").open_pr_diff(item.repo, item.number)
+    end
+  end,
 }
