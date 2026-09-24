@@ -71,6 +71,11 @@ keybinding:
   files:
     openStatusFilter: '<c-a>' # Ctrl+Bはherdrのprefixキーに吸われるため回避
 customCommands:
+  - key: "v"
+    context: "localBranches"
+    description: "forkをブラウザで開く"
+    command: "gh repo view --web"
+    output: none
   - key: "<c-g>"
     context: "files"
     description: "Copilot AIでコミットメッセージを生成"
