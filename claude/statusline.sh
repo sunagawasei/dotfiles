@@ -278,14 +278,22 @@ for index in "${!CODEX_BRIDGE_PIDS[@]}"; do
       armed_line = btype "-bridge: armed " identity
       state = 0
     }
-    $0 == armed_line {
+    {
+      # 診断行は"[<pid>] "プレフィックス付きの場合と無しの場合が混在する
+      # （codex-bridge.jsの更新前後で起動したbridgeが混在するため）
+      line = $0
+      if (match(line, /^\[[0-9]+\] /)) {
+        line = substr(line, RLENGTH + 1)
+      }
+    }
+    line == armed_line {
       state = 0
       next
     }
-    index($0, wakeup_prefix) == 1 &&
-        substr($0, length($0) - length(wakeup_suffix) + 1) == wakeup_suffix {
-      wakeup_number = substr($0, length(wakeup_prefix) + 1,
-        length($0) - length(wakeup_prefix) - length(wakeup_suffix))
+    index(line, wakeup_prefix) == 1 &&
+        substr(line, length(line) - length(wakeup_suffix) + 1) == wakeup_suffix {
+      wakeup_number = substr(line, length(wakeup_prefix) + 1,
+        length(line) - length(wakeup_prefix) - length(wakeup_suffix))
       if (wakeup_number ~ /^[0-9]+$/) {
         state = 1
       }

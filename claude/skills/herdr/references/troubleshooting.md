@@ -59,6 +59,16 @@ codex bridge の argv 形式がさらに変わり、ゲート3が現行 bridge �
 - **sandbox 内では `kill -0` と `ps` が `operation not permitted` で失敗するため、ゲート2・3を自分で検証できない**。statusline 本体は sandbox 外で走るので、ゲート1の修正を確認したら実際の表示で見てもらう
 - 反映は `statusLine.refreshInterval`（設定されていれば数秒）で自動的に起こる
 
+### ゲート4のログ行にpidプレフィックスが付くことがある（2026-09-24 追記）
+
+ゲート4（bridge ログの lifecycle 解析、armed/wakeup 行の完全一致・行頭一致）が、一部の bridge のログだけで一致しなくなっていた。原因は agmsg 側（`codex-bridge.js`）の恒久的な仕様変更で、フォーマットの世代交代ではなく**新旧プロセスの混在**が本質。
+
+- agmsg upstream の 2026-08-14 commit（`cbff6f34` 以降）で、`console.error` を全て `[<pid>] ` 付きの1本の関数（`logLine`）に束ねた。streamed なエージェント出力と診断行が同一物理行に混在して破損する不具合（#784）を防ぐための変更で、以後 `armed`/`wakeup` を含む**診断行は必ず** `[<pid>] ` から始まる
+- ローカルの実効インストール先（`~/.agents/skills/agmsg/scripts/drivers/types/codex/codex-bridge.js`）は `install.sh --update` を実行するまでこの変更を反映しない（`project_agmsg_delegation_policy` 系の既知パターン）。bridge は長寿命の Node プロセスで、spawn 時に読み込んだコードをファイル更新後も再読み込みしないため、**同じ日でも「いつ install.sh --update が走った後に bridge が spawn されたか」でログ形式が変わる**
+- 実測（2026-09-24）: ファイル mtime は 9/24 16:32。同時刻に生存していた2つの bridge のうち、9/23 16:31 spawn（更新前）は 953 行中 prefix 0 件、9/24 17:41 spawn（更新後）は診断行 6 件全てに `[<pid>] ` が付いていた
+- 修正: `statusline.sh` のゲート4 awk パーサーに、各行の先頭から `^\[[0-9]+\] ` を剥がしてから armed/wakeup と比較する正規化ステップを追加。プレフィックスの有無どちらでも一致する
+- 検証は自己完結パターン（偽argvプロセス + run/ 配下への仮 meta/pid/log 設置）で、prefix なし/ありの2ケースを回して busy アイコンが両方で出ることを確認した。**session_id に使う偽UUIDは `^[0-9a-fA-F-]+$` に厳密に合わせる**（`fake0000-...` は `k` が非16進で gate1 の正規表現に落ちて何も検出されなくなる、実際にこれで1回空振りした）
+
 ### statusline を疑う前に bridge の生死を確認する（2026-08-18）
 
 「チームのworkerが動いているのにアイコンが出ない」は、**bridge が実際に死んでいる**ケースがある。formatドリフトを追う前にこれを潰す。
