@@ -1,6 +1,6 @@
 ---
 name: orchestrate-agents
-description: 全タスク共通の単一委譲フロー(対話でのプラン起案→codexプラン査読→fable-review指摘振り分け→ユーザー承認→メイン分割→実装subagent→メイン受け入れ検査→統合→codexコード査読→commit)の運用手順。査読役へはagmsgの非同期send+Monitor自動再開、実装はClaude Code組み込みのAgent tool
+description: 全タスク共通の単一委譲フロー(対話でのプラン起案→codexプラン査読→fable-review指摘振り分け→ユーザー承認→メイン分割→実装subagent→メイン受け入れ検査→統合→codexコード査読→fable-review指摘振り分け→commit)の運用手順。査読役へはagmsgの非同期send+Monitor自動再開、実装はClaude Code組み込みのAgent tool
 ---
 
 # 単一委譲フロー
@@ -107,7 +107,7 @@ driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.c
 - findingのラベルは`[subtask:<id>]`(subagent作)・`[author:main]`(メイン作)・`[design-level]`(承認済み設計自体の欠陥。対応する単一hunkが無ければfile:line欄に`(design-level, no single hunk)`と明記)
 - **依存を変えるdiffのadvisory確認はメインの明示責務**。段9パケットの必須fieldに確認結果と根拠を含める(欠落時はcommit不可)
 - 段1〜11を通らない原子的編集の例外は、資格要件で認証・security boundary・課金・外部write・依存関係を変えないことが担保されるため脆弱性4観点の対象外
-- fable-reviewは段3の指摘振り分けを担当し、段9には関与しない
+- codexが返したfindingsへの対応可否(採用/見送り/別タスク)は、段3と同じくfable-review(節約モードではdesign-review)が振り分けて収束させる。手順は次々節「段9の指摘振り分け(fable-review)」
 
 ### 段9査読者フォールバックチェーン(codex応答不能時)
 
@@ -127,7 +127,20 @@ opus-reviewは2026-09-09にusage limitから復旧済み(probe実測)。ただ�
 
 **grok-reviewとgrok-researchは名前が1語しか違わないが権限が異なる別worker**: grok-review(査読役、private diff送付許容)とgrok-research(調査役、最小化義務でsecret・未公開コード断片禁止)を混同しない。`[review]`パケットの宛先は必ず`grok-review`。
 
+### 段9の指摘振り分け(fable-review)
+
+**節約モードでは、この段の送付先だけが`design-review`(claude-code, opus)に替わる**。両方へは送らない。役割・確認事項・パケット書式は段3と同じ(readiness照合・起動コマンド・rollback手順も共通 — fable-reviewは1つのworkerが段3・段9両方のゲートを兼ねる)。**段9の主(codex)・フォールバック(grok-review)のどちらが出したfindingsでも、振り分け先は変わらずfable-review**。
+
+段9のfindings・対象diff(または該当file:line)・段8のauthor再分類マップ・承認済みプラン本文を`fable-review`へ送る。返るのは各findingの振り分け(採用/見送り/別タスク)。**この判断を最終とする**。
+
+- **採用**: codexが付けたラベル(`[subtask:<id>]`/`[author:main]`/`[design-level]`)に従い、段10の3経路で差し戻す
+- **見送り**: 対応せず、理由を段11の検収報告に記録する
+- **別タスク**: 今回のtaskを終端せず、新規`[task:<id>]`として別途扱う。`[design-level]`ラベルの採用時に発生する「task中止→新task発行」(段10第3経路)とは別物 — 別タスクは今回のスコープ外への先送り、`[design-level]`+採用は今回の承認済み設計自体の欠陥
+- 認証・秘密情報を含むdiffは振り分け依頼前に該当部分をredactする。**redactすると振り分けが成立しない場合はこの段を省き、メインが直接振り分ける**(段9のcodex査読そのものは省略できない)
+
 ### 段10 差し戻し(3経路)
+
+段9で**採用**と振り分けられたfindingを、codexが付けたラベルに従って次の3経路のいずれかへ差し戻す(**見送り**・**別タスク**の扱いは前節「段9の指摘振り分け」を参照)。
 
 - **subagent作のfinding**(`[subtask:<id>]`ラベル) → `SendMessage`で当該subagentへ差し戻す。**完了済みのsubagentも名前かagentIdで再開でき、前ターンの文脈を保持している**(2026-09-06実測。パケットに書いた識別子と、前ターンにしか出ていないコマンド出力の両方を答えられた)。**セッションを跨いで文脈が失われている場合は新規spawnし、findingに加えて元のsubtaskパケット(ゴール・制約・ファイルセット)を同梱する**(findingだけ渡すと、設計意図を知らないagentがその行だけ直す)
 - **メイン作hunkのfinding**(`[author:main]`ラベル) → メインが直して段9へ再投入
@@ -163,6 +176,8 @@ subagent・teammateとも、実効値は`claude/projects/<project-slug>/<session
 frontmatterの`model`/`effort`はそのまま実効値になる(同日実測で`claude-sonnet-5`・`effort: xhigh`)。`CLAUDE_CODE_SUBAGENT_MODEL`との優先順位は、両方がsonnetのため未判別。**frontmatterで`model`を変えた定義を追加したら、初回dispatch後にこのファイルで実効値を必ず確認する**。
 
 ## findingラベル
+
+ラベルはcodex(またはgrok-review)がfindingに付ける差し戻し先の分類で、対応可否(採用/見送り/別タスク)の判断は別軸。段9の後、fable-reviewが振り分けた**採用**のfindingだけが、このラベルに従って下表の宛先へ届く。
 
 | ラベル | 出す | 受ける | 意味 |
 |---|---|---|---|
@@ -236,12 +251,13 @@ DO NOTを明記: git commit/push禁止・ファイルセット外の変更禁止
 - 自己完結パケット = `git diff`か対象`file:line`(プラン査読の場合はプラン本文) + 意図 + (ループ時)前回指摘→対応の対応表
 - **段2(codex)のプラン査読packetは段1の5 field(疑う前提 / 反対案 / その帰結 / 未解決の問い / この種の指摘が生じうる経路の列挙)を必須fieldとして含む**。codexは欠落・空だけでなく**定型的で実質のない値**もfindingにする(「疑う前提: なし」「反対案: 現案維持」で通さない。該当なしには理由を要求する)。再送(反復査読)では「最初の未査読プラン」ではなく「前回findingsへの対応」として評価する
 - **段3(fable-review)の振り分けpacketは、段2findingsのfinding ID・見送りと別タスクは理由を一対一で列挙する**(認証・秘密情報を含むfindingは理由を`redacted(理由: 認証/秘密)`で代替可、packet不備に当たらない。redactedを使ったfindingは、内容(理由の具体)を平文開示せずfinding ID・重大度・解決状態(対応済み/未対応)を段4のユーザー承認時と段11の検収報告の両方に明記する。**認証・秘密情報を含むプランで振り分けが成立しない場合は段3を省き、メインが直接振り分ける**)。欠落は順序違反の可視化点として扱う
+- **段9(fable-review)の振り分けpacketは、段9findingsのfinding ID・見送りと別タスクは理由を一対一で列挙する**(redacted代替・開示ルールは段3と同じ)。段8のauthor再分類マップ・承認済みプラン本文・対象diff(または該当file:line)を同梱する。**認証・秘密情報を含むdiffで振り分けが成立しない場合はこの段を省き、メインが直接振り分ける**(段9のcodex査読そのものは省略できない)
 - 出力形式: Findings / Required tests / Residual risk / Confidence。severity順・推測は明記・各findingにIDを付す
 - 段9では**codex(フォールバック中はgrok-review)**に、**subtask別のdiff identity・依存関係・subagentの検証結果**・**承認済みプラン本文**・**dependency advisoryの確認結果と根拠(メイン記入。欠落時はcommit不可)**と**段8のauthor再分類マップ(メイン作 / subagent作の2区分)**を渡す。**マップの用途はfindingの差し戻し先の判定で、査読対象は常に全hunk**(マップが無いとラベルを推測で付け、無実のsubtaskが差し戻される)
 
 ## レビュー収束条件
 
-指摘の反映(再修正)後の差分は再依頼しうるが、**1回で止めるな・延々と回すな**。
+指摘の反映(再修正)後の差分は再依頼しうるが、**1回で止めるな・延々と回すな**。段9のfindingsも段3と同じく、fable-review(節約モードはdesign-review)の振り分けを経て採用/見送り/別タスクが確定する。
 
 - 残るfindingsが Low / nit / 見送り(理由明記) / 別タスク(スコープ外)だけで、substantive(正しさ・設計・回帰)が無い
 - 全findingを 採用 / 見送り / 別タスク に振り分けて反映・判断済み
