@@ -92,6 +92,20 @@ return {
         },
       }
 
+      -- ~/.config/.ignoreの`!**`がmarksmanの除外も打ち消し、md 6000件超を索引化して重くなる。
+      -- ~/.config配下だけ開いたファイルのディレクトリをrootにして走査範囲を絞る
+      local dotfiles = vim.fn.expand("~/.config") .. "/"
+      opts.servers.marksman = vim.tbl_deep_extend("force", opts.servers.marksman or {}, {
+        root_dir = function(bufnr, on_dir)
+          local name = vim.api.nvim_buf_get_name(bufnr)
+          if vim.startswith(name, dotfiles) then
+            on_dir(vim.fs.dirname(name))
+          else
+            on_dir(vim.fs.root(bufnr, { ".marksman.toml", ".git" }))
+          end
+        end,
+      })
+
       -- LazyVimのインラインヒント設定を明示的に無効化
       opts.inlay_hints = {
         enabled = false,
