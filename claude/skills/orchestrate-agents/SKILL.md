@@ -51,7 +51,7 @@ AGMSG_CLAUDE_PROBE_TIMEOUT=150 ~/.agents/skills/agmsg/scripts/ensure-headless.sh
 
 **probe timeoutは既定30秒では足りない**(`_spawn.sh`の`AGMSG_CLAUDE_PROBE_TIMEOUT:-30`)。fableは30秒でprobeの全tool eventを出し切れず`rc=124`でfail-closedする(2026-08-29実測)。turn timeoutと違い**per-nameのconfigキーは存在せず、env varでのみ指定する**ため、起動は常に上記の環境変数込みの1行で行う。値は`$VAR`にせずリテラルで書く(troubleshooting.md項10)。失敗時の診断はtroubleshooting.md項14。
 
-driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.claude_reviewer: true`で担保。per-nameキーは存在しないためグローバルキーで運用する)。**repo writeはsandbox+spawn probeで強制されるが、repo read(project配下=`~/.config`全体+継承add-dir)はBash経由で開く**。credential path read・外部状態変更(認証済みCLIの変更系操作・network write)の禁止はrole file規約でのみ抑止し、sandboxは強制しない(強制境界ではないことを認識のうえ運用する選択)。**sandboxのwrite denyはrepoに限られ、agmsg message store/team registration/run状態はBashから技術的に書け、`$SKILL_DIR`全体(全team・全project分)がread可能** — これも規約でのみ抑止する残余リスクとして扱う。network egressは未検証(`not checked`)。モデルは`spawn.claude_model.fable-review: fable`(alias、自動追従)。effortは`spawn.claude_effort.fable-review: high`。claude-code driverにはcursorのようなmodel-audit機構が無く、実効モデルの動的な機械照合はできない。記録は静的設定値に留め、モデル自身への自己申告は検証証跡として扱わない(残存リスクとして記録するだけに留める)。
+driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.claude_reviewer: true`で担保。per-nameキーは存在しないためグローバルキーで運用する)。**repo writeはsandbox+spawn probeで強制されるが、repo read(project配下=`~/.config`全体+継承add-dir)はBash経由で開く**。credential path read・外部状態変更(認証済みCLIの変更系操作・network write)の禁止はrole file規約でのみ抑止し、sandboxは強制しない(強制境界ではないことを認識のうえ運用する選択)。**sandboxのwrite denyはrepoに限られ、agmsg message store/team registration/run状態はBashから技術的に書け、`$SKILL_DIR`全体(全team・全project分)がread可能** — これも規約でのみ抑止する残余リスクとして扱う。network egressは未検証(`not checked`)。モデルは`spawn.claude_model.fable-review: fable`(alias、自動追従)。effortは未指定(claude-codeのデフォルト)。claude-code driverにはcursorのようなmodel-audit機構が無く、実効モデルの動的な機械照合はできない。記録は静的設定値に留め、モデル自身への自己申告は検証証跡として扱わない(残存リスクとして記録するだけに留める)。
 
 **turn timeoutの既定300秒では足りない**: `spawn.claude_turn_timeout.fable-review: 1800`で個別設定する(per-nameキーが存在する)。add-dir継承は`spawn.claude_inherit_add_dirs.fable-review: true`で明示する(グローバル既定はoff)。
 
@@ -67,7 +67,7 @@ driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.c
 
 ### 段5 メインの分割とdispatch
 
-メインが承認済みプランをサブタスクへ分割し、実装subagent(`claude/agents/impl-worker.md`・sonnet/xhigh)へdispatchする。managerは介さない。
+メインが承認済みプランをサブタスクへ分割し、実装subagent(`claude/agents/impl-worker.md`・sonnet)へdispatchする。managerは介さない。
 
 **節約モードでは、この段のdispatch先だけが`codex-impl`(agmsg・`send.sh`)に替わる**。両方へはdispatchしない。段9の査読者はcodexのまま(同一vendor査読になる受容済みの例外)。**以下に出てくるAgent tool固有の記述(実行中に問い合わせられない・回答はSendMessageで継続)はcodex-implには当てはまらない** — codex-implは実行中にclaudeへ質問を送り、次のagmsg turnで回答を受ける。この経路と起動手順・切替条件は`references/economy-mode.md`が正本。
 
@@ -173,7 +173,7 @@ opus-reviewは2026-09-09にusage limitから復旧済み(probe実測)。ただ�
 
 subagent・teammateとも、実効値は`claude/projects/<project-slug>/<session>/subagents/agent-<name>-<id>.jsonl`に残る。`"model"`と`"effort"`をgrepする。メインのtranscriptには`isSidechain`レコードとして現れないので、そちらを探しても見つからない(2026-09-06実測)。
 
-frontmatterの`model`/`effort`はそのまま実効値になる(同日実測で`claude-sonnet-5`・`effort: xhigh`)。`CLAUDE_CODE_SUBAGENT_MODEL`との優先順位は、両方がsonnetのため未判別。**frontmatterで`model`を変えた定義を追加したら、初回dispatch後にこのファイルで実効値を必ず確認する**。
+frontmatterの`model`/`effort`はそのまま実効値になる(同日実測で`claude-sonnet-5`・当時のfrontmatterは`effort: xhigh`。現在はeffort未指定でデフォルト)。`CLAUDE_CODE_SUBAGENT_MODEL`との優先順位は、両方がsonnetのため未判別。**frontmatterで`model`を変えた定義を追加したら、初回dispatch後にこのファイルで実効値を必ず確認する**。
 
 ## findingラベル
 

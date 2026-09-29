@@ -32,7 +32,7 @@ Anthropicプランの消費を抑える運用。段3(プラン査読の指摘振
 AGMSG_CLAUDE_PROBE_TIMEOUT=150 ~/.agents/skills/agmsg/scripts/ensure-headless.sh claude-code <project> design-review
 ```
 
-probe timeoutの既定30秒では足りない(SKILL.md段3節、troubleshooting.md項14)。値はリテラルで書く(troubleshooting.md項10)。config設定済み: `spawn.claude_model.design-review: opus` / `spawn.claude_effort.design-review: high` / `spawn.claude_turn_timeout.design-review: 1800` / `spawn.claude_inherit_add_dirs.design-review: true`。read-onlyはグローバル既定`spawn.claude_reviewer: true`で担保する。
+probe timeoutの既定30秒では足りない(SKILL.md段3節、troubleshooting.md項14)。値はリテラルで書く(troubleshooting.md項10)。config設定済み: `spawn.claude_model.design-review: opus` / `spawn.claude_turn_timeout.design-review: 1800` / `spawn.claude_inherit_add_dirs.design-review: true`。read-onlyはグローバル既定`spawn.claude_reviewer: true`で担保する。
 
 ### readiness照合
 

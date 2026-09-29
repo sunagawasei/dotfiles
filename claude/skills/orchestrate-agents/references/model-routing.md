@@ -8,11 +8,11 @@ agmsg configのper-workerキー（`spawn.codex_model.<name>` / `spawn.codex_effo
 | 調査・大量列挙 | codex-research | gpt-5.6-sol / xhigh(遅いと感じたら `spawn.codex_effort.codex-research: high` へ下げる) |
 | 大規模・設計横断の節目レビュー | codex-deep(一時spawn→使い捨て) | gpt-5.6-sol / max |
 
-実装は組み込みsubagent(`claude/agents/impl-worker.md`・sonnet/xhigh)が担うのでこの表の対象外。frontmatterの`model`/`effort`がそのまま実効値になる(2026-09-06実測)。
+実装は組み込みsubagent(`claude/agents/impl-worker.md`・sonnet)が担うのでこの表の対象外。frontmatterの`model`/`effort`がそのまま実効値になる(2026-09-06実測)。
 
 `manager` / `watcher` / `codex-impl` / `worker-1` / `worker-2` / `hard-worker-1` のconfigキーは残してあるが休眠。実装レーンをcodex workerへ戻すときだけ使う(当時の設定は`~/.agents/skills/agmsg/db/config.yaml`にそのまま残っている)。
 
-codex以外のワーカーは別driverなのでこの表の対象外(`fable-review`=claude-code・`fable`(alias、effort=high)。claude-code workerにはmodel-audit機構が無く実効モデルの機械照合はできない。`opus-review`=cursor・`claude-opus-5-thinking-high`(effort=high、labelはinit.model実測`Claude Opus 5 300K High`で4回一致。1M側表示の有無は継続監視、出現したら`|`列挙してpin)。`grok-research`=cursor。cursor workerはmodel pinとlabel監査が必須。同一IDの表示揺れは `|` で列挙する)。
+codex以外のワーカーは別driverなのでこの表の対象外(`fable-review`=claude-code・`fable`(alias、effort未指定)。claude-code workerにはmodel-audit機構が無く実効モデルの機械照合はできない。`opus-review`=cursor・`claude-opus-5-thinking-high`(effort=high、labelはinit.model実測`Claude Opus 5 300K High`で4回一致。1M側表示の有無は継続監視、出現したら`|`列挙してpin)。`grok-research`=cursor。cursor workerはmodel pinとlabel監査が必須。同一IDの表示揺れは `|` で列挙する)。
 
 codex-deepは常駐させず、必要時にspawnし終わったらdespawnする:
 

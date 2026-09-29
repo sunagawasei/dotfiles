@@ -7,7 +7,6 @@ description: |
   メインが段5でサブタスクへ分割したあと、各サブタスクの実装をこのagentへ委譲する。
   調査・査読には使わない(調査は codex-research、査読は codex)。
 model: sonnet
-effort: xhigh
 tools: Read, Write, Edit, Bash, Grep, Glob
 ---
 
