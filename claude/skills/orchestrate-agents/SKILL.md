@@ -204,7 +204,7 @@ frontmatterの`model`/`effort`はそのまま実効値になる(同日実測で`
 - SessionEnd teardownでsession teamのheadless worker全員が回収される。次セッションでは必要roleをspawnし直す(config永続なので同モデルで立つ)
 - **despawn前にin-flight dispatchを棚卸しする**。同名workerを後から再spawnすると旧dispatchが再駆動される(2026-08-01実例)
 - turn実行中のworkerをkill/teardownするとそのturnは丸ごと失われ、誰も再駆動しない(respawnはモデル側threadを引き継がない)
-- 実装subagentの生存判定に既読フラグやログのmtimeを使わない。Agent toolの完了通知が唯一の完了シグナル
+- 実装subagentの生存判定に既読フラグやログのmtimeを使わない。Agent toolの完了通知が唯一の完了シグナル。**ユーザーに進捗を問われたら、transcriptの直近のtool呼び出しを読み、ゴールへ進んでいるかで答える**(2026-09-29、transcriptのmtimeだけで「動いている」と答えたが、実際はパケット外の調査で20分以上本題に入っていなかった)
 - **Agent tool経由のsubagent(実装subagent・アドホックなresearch用途とも)の最終レポートは、長文だと通知/転載経路で末尾が欠落することがある**(2026-09-16実測、issue探索タスクで5回中5回発生)。欠落を疑ったら`SendMessage`でその名前へ「直前の返答は<区切りの目印>で切れた。要約ではなく本文をそのまま、続きだけをこの返信として送って」と名指しで依頼する(名前で再開でき前ターンの文脈を保持している)。分割が要る長さなら分割送信を許可してよい
 
 ## 送信の実務
@@ -236,7 +236,7 @@ DO NOTを明記: git commit/push禁止・ファイルセット外の変更禁止
 
 **外部情報が要る作業**: subagentはnetworkを使えるが、委譲先で叩けない外部CLI/APIについては**実出力サンプルをパケットに貼る**(2026-08-12 herdr-titleで確立)。推測で実装しfakeでテストすると**テストは全passするのに実機で動かない**。実例: `herdr tab list`のtabsは`result.tabs`配下だがworkerはトップレベルと推測し、`json.Unmarshal`が成功して空スライスを返し機能が黙って無効化された。併せて「認識できない形式はエラーにする(errなし空を返さない)」をテスト要件に含める。
 
-**環境依存failを含むテストスイート**は、委譲前にベースラインのfail一覧を採取して`baseline-failures.txt`に置き、ゲートを「対象モジュール全green+`comm -13 baseline after`で新規failゼロ」にする。
+**環境依存failを含むテストスイート**は、委譲前にベースラインのfail一覧を採取して`baseline-failures.txt`に置き、ゲートを「対象モジュール全green+`comm -13 baseline after`で新規failゼロ」にする。**ベースラインのfailの原因調査はsubagentに指示しない**(2026-09-29、パケットに「修正前から落ちるテストの失敗理由を報告」と書いたところ、その調査で本題に入らなくなった)。**10分を超えるスイートはsubagentに流させず、メインがMonitorで流す** — subagentの`run_in_background`も600秒でkillされ、subagentは来ない完了通知を待ち続ける。
 
 ### [research]パケット(codex-research / grok-research宛)
 
