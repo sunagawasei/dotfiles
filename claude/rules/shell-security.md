@@ -69,6 +69,12 @@ export ACCESS_KEY_ID="$(kubectl get secret my-secret -o jsonpath='{.data.ACCESS_
 
 実例: 2026-09-15、`gcloud auth print-access-token 2>&1 >/dev/null | head -5` でエラーメッセージだけを見るつもりが、GCPのaccess tokenをセッションログに出力した。
 
+## 中身を知らない設定ファイルを丸ごと表示しない
+
+`cat`/`python3 -m json.tool`/`jq .`等で設定ファイル・状態ファイルを丸ごと出力する前に、その中に秘密が入りうるファイル種別(`settings.json`・`.claude.json`・envファイル等)かどうかを確認する。ファイル名やトップレベルキー名(`env`等)から秘密の有無を判断できないなら、まず対象キーだけを絞ってgrep/jqで取り出す。
+
+実例: 2026-09-29、agmsgのheadless worker用`CLAUDE_CONFIG_DIR`(`claude-worker-home/settings.json`)を調査目的で`python3 -m json.tool`で全表示し、`env`キー内の`CLAUDE_CODE_OAUTH_TOKEN`(実際の秘密値)を平文でそのまま出力した。原因切り分けに必要だったのは`env`キーの有無ではなくファイル全体だったため、事前のキー確認を怠った。
+
 ## ベストプラクティス
 
 1. 環境変数は使用直前に取得
