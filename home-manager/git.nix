@@ -12,6 +12,7 @@ in
       ".DS_Store"
       ".perman-aws-vault"
       "**/.claude/settings.local.json"
+      ".ignore"
     ];
 
     settings = {
