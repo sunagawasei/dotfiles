@@ -23,3 +23,4 @@
     - 1通目が届いた時点で次のpacketを送ると、返ってくるのは新packetへの応答ではなく**前のpacketへの訂正版**で、こちらが直したはずの指摘が再掲され続ける。2巡目の指摘が1巡目と同じ顔ぶれなら、まず「相手がまだ前のpacketを見ている」を疑う(自分の改訂が伝わっていないケースと区別がつかないため、改訂内容を差分として再掲すると両方に効く)。
     - 実務上は、届いたfindingsを**内容で**突き合わせて、既に直した項目は「解消済み」として1行で返し、新規項目だけ対応する。`最終版`の宣言は信用してよい(実測では`最終版`以降の訂正は来なかった)。
     - 送信の`rowid`を控えておき(`sqlite3 <db> "select max(rowid) from messages;"`)、`rowid > <自分の送信>`で待つと、どの返信がどのpacketへの応答か切り分けやすい。**ただしrowidだけでは切り分かない** — 自分の送信より後に届いても内容が前のpacketへの訂正版のことがある。最終判断は本文の中身で行う。
+16. **返信の直後や次のpacket送信直後に届く `[bridge-error] codex turn outcome unknown ... the turn ended without a completion signal. Messages consumed; resend to retry.` は、たいてい無害**(2026-09-29実測、codex・codex-research・codex-research-2で計6回): bridgeログで `orphaned snapshot for turn epoch <N>; notifying its senders and dropping it` → `inflight compensated ... epoch=<N>` と出ていれば、後始末されたのは**応答済みの前回turn**で、直後に `started turn` が続き新しいpacketは処理される。再送しない。`started turn` が続かない、または対象epochが未応答のpacketのものなら項5で再送する
