@@ -93,13 +93,17 @@ return {
       }
 
       -- ~/.config/.ignoreの`!**`がmarksmanの除外も打ち消し、md 6000件超を索引化して重くなる。
-      -- ~/.config配下だけ開いたファイルのディレクトリをrootにして走査範囲を絞る
+      -- ~/.config配下だけ開いたファイルのディレクトリをrootにして走査範囲を絞る。
+      -- ~/.config直下とその1段下(claude/・codex/等)はdir自体が数千件を抱えるので起動しない
       local dotfiles = vim.fn.expand("~/.config") .. "/"
       opts.servers.marksman = vim.tbl_deep_extend("force", opts.servers.marksman or {}, {
         root_dir = function(bufnr, on_dir)
           local name = vim.api.nvim_buf_get_name(bufnr)
           if vim.startswith(name, dotfiles) then
-            on_dir(vim.fs.dirname(name))
+            local _, depth = name:sub(#dotfiles + 1):gsub("/", "")
+            if depth >= 2 then
+              on_dir(vim.fs.dirname(name))
+            end
           else
             on_dir(vim.fs.root(bufnr, { ".marksman.toml", ".git" }))
           end
