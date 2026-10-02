@@ -117,3 +117,7 @@ Anthropicプランの消費を抑える節約モード(段3と段9のfable-revie
 ## スクリプト言語
 
 新規スクリプト・CLIツールは基本Goで書く。
+
+## Playwright MCP
+
+- スクリーンショットは`filename`を指定せずに撮る。`--output-dir ~/.cache/playwright-mcp`が効くのは自動命名のファイルだけで、名前を付けると作業ディレクトリ直下に出てrepoに未追跡ファイルが残る
