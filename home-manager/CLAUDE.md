@@ -28,5 +28,5 @@ darwin-apply
 
 - **fzf の ZSH 統合**: `fzf.nix` で `enableZshIntegration = false` を設定し、`zsh.nix` の Zinit (`fzf-tab`) で管理
 - **Zsh 初期化順序**: `zsh.nix` では `lib.mkMerge` / `lib.mkOrder` で複数の `initContent` ブロックの実行順を制御
-- **CLAUDECODE ガード**: `zsh.nix` に `[[ -n "$CLAUDECODE" ]]` チェックがあり、Claude Code 内では zoxide を無効化
+- **AI シェルの分離**: `.zshenv` の `is_human`(TTY かつ AI の環境変数なし)が偽なら、`.zshrc` 冒頭の `is_human || return 0` で抜ける。AI のシェルにはエイリアス・プラグイン・zoxide・プロンプトが載らない。AI 向け設定(`EDITOR=true`・`alias rm=gomi`)は `.zshenv` の `! is_human` 分岐に書く
 - **カラーテーマ**: `colors/ghost-visor.toml` を single source of truth とし、`ls` は eza の `theme.yml`、zsh 補完リストは export しないシェルローカル変数で配色する。`LS_COLORS` は eza で `theme.yml` より優先されるため、zsh 初期化時に明示的に unset する

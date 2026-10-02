@@ -256,6 +256,13 @@ in
     grpcurl buf gitui imagemagick gifski pwgen tmux ansifilter
     ripgrep oxlint unzip yamlfmt
 
+    # AI エージェントが頻用する CLI(無いと command not found で寄り道する)
+    ast-grep shellcheck shfmt
+    # rm のふり: AI のシェルだけ alias rm=gomi(zsh.nix の envExtra)
+    gomi
+    # macOS に無い timeout だけを公開(coreutils 全体を PATH に入れると BSD 前提の書き方が壊れる)
+    (writeShellScriptBin "timeout" ''exec ${coreutils}/bin/timeout "$@"'')
+
     # GitHub Projects v2 TUI
     ghBoard
 
