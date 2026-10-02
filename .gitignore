@@ -131,6 +131,9 @@ direnv/
 zsh/.zshenv
 zsh/.zprofile
 zsh/.zshrc
+zsh/human.zsh
+zsh/ai.zsh
+zsh/env.zsh
 
 # darwin-rebuild build / nix build が生成するシンボリックリンク
 result
