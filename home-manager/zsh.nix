@@ -38,7 +38,6 @@ in
 
     # ---- エイリアス ----
     shellAliases = {
-      ls = "eza --color=auto";
       vtmp = ''nvim "''${TMPDIR%/}/$(date "+%Y%m%d_%H%M%S").md"'';
       ssh = ''TERM=xterm-256color \ssh'';
       # 適用はdarwin-apply(packages.nix)に一本化。hostnameもflake refもそちらが持つ
@@ -101,13 +100,16 @@ in
         export CLAUDE_CODE_SSE_PORT=$(( 10000 + $(printf '%s' "$HERDR_WORKSPACE_ID" | cksum | cut -d' ' -f1) % 39152 ))
       fi
 
+      # 人間にも AI にも届く設定(my.env)
+      [ -f ~/.config/zsh/env.zsh ] && source ~/.config/zsh/env.zsh
+
       if ! is_human; then
         # 答える人がいないので、エディタ・ページャ・認証プロンプトは待たずに即返す
         export EDITOR=true VISUAL=true GIT_EDITOR=true GIT_SEQUENCE_EDITOR=true
         export PAGER=cat GIT_PAGER=cat MANPAGER=cat
         export GIT_TERMINAL_PROMPT=0
-        # AI は rm を打つしかないので、誤削除をゴミ箱から戻せるようにする
-        alias rm=gomi
+        # AI だけに届く設定(my.ai)
+        [ -f ~/.config/zsh/ai.zsh ] && source ~/.config/zsh/ai.zsh
       fi
     '';
 
@@ -125,6 +127,9 @@ in
       (lib.mkOrder 500 ''
         # AI のシェルは素の zsh のまま使う。エイリアス・プラグイン・プロンプトは人間だけ
         is_human || return 0
+
+        # 人間だけに届く設定(my.human)
+        [ -f ~/.config/zsh/human.zsh ] && source ~/.config/zsh/human.zsh
 
         # コアダンプファイルを作成しない
         limit coredumpsize 0

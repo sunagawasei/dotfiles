@@ -20,7 +20,8 @@ darwin-apply
 
 ### パッケージ追加の判断基準
 
-- 一般ツール → `packages.nix`
+- 設定(エイリアス・環境変数・スキル)を伴うツール、AI が頻用する CLI → `tools/<name>.nix`(置くだけで `home.nix` が読み込む。`my.human` / `my.ai` / `my.env` / `my.skills` は `my.nix` が定義)
+- 設定を伴わない一般ツール → `packages.nix`
 - 開発言語・ランタイム → `dev.nix`
 - クラウド・インフラ → `cloud.nix`
 

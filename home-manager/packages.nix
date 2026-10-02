@@ -242,10 +242,10 @@ in
     nil # Nix LSP
 
     # ファイル操作
-    fd tree unar eza
+    tree unar
 
     # テキスト処理
-    bat jq yq-go wget pv gron nkf
+    bat wget pv gron nkf
 
     # セキュリティ
     gnupg pinentry_mac git-crypt bitwarden-cli
@@ -254,14 +254,7 @@ in
     gh-cli
     lazygit neovim deno bun luarocks lua-language-server hadolint markdownlint-cli
     grpcurl buf gitui imagemagick gifski pwgen tmux ansifilter
-    ripgrep oxlint unzip yamlfmt
-
-    # AI エージェントが頻用する CLI(無いと command not found で寄り道する)
-    ast-grep shellcheck shfmt
-    # rm のふり: AI のシェルだけ alias rm=gomi(zsh.nix の envExtra)
-    gomi
-    # macOS に無い timeout だけを公開(coreutils 全体を PATH に入れると BSD 前提の書き方が壊れる)
-    (writeShellScriptBin "timeout" ''exec ${coreutils}/bin/timeout "$@"'')
+    oxlint unzip yamlfmt
 
     # GitHub Projects v2 TUI
     ghBoard

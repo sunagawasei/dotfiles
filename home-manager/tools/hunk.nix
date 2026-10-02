@@ -1,12 +1,13 @@
-{ ... }:
+{ config, ... }:
 let
-  colors = import ./colors.nix;
+  colors = import ../colors.nix;
 in
 {
   programs.hunk = {
     enable = true;
     enableGitIntegration = true;
-    enableClaudeIntegration = true;
+    # スキルは my.skills で Claude Code と Codex 等の両方へリンクする
+    enableClaudeIntegration = false;
 
     settings = {
       theme = "custom";
@@ -72,4 +73,6 @@ in
       };
     };
   };
+
+  my.skills.hunk-review = "${config.programs.hunk.package}/skills/hunk-review";
 }
