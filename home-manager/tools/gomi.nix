@@ -3,10 +3,13 @@ let
   home = config.home.homeDirectory;
 in
 {
-  home.packages = [ pkgs.gomi ];
-  # AI も rm を打つ。rm 互換オプションを受けるので、誤削除をゴミ箱から戻せる(gomi -b)ようにする
-  my.human.aliases.rm = "gomi";
-  my.ai.aliases.rm = "gomi";
+  # 誤削除をゴミ箱から戻せる(gomi -b)ようにする。
+  # Claude Code の Bash ツールはコマンドごとに全 alias を外す(snapshot 先頭の unalias -a)ので、
+  # alias でなく PATH 上の rm wrapper で、人間にも AI にも届ける
+  home.packages = [
+    pkgs.gomi
+    (pkgs.writeShellScriptBin "rm" ''exec ${pkgs.gomi}/bin/gomi "$@"'')
+  ];
 
   # 既定は /var を削除禁止にするが、macOS の $TMPDIR(/var/folders/...)が削除できなくなる。
   # JSON は YAML のサブセットなので toJSON で書く
