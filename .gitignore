@@ -134,6 +134,7 @@ zsh/.zshrc
 zsh/human.zsh
 zsh/ai.zsh
 zsh/env.zsh
+gomi/config.yaml
 
 # darwin-rebuild build / nix build が生成するシンボリックリンク
 result
