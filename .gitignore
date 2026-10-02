@@ -183,6 +183,7 @@ claude/*
 claude/run/
 !claude/CLAUDE.md
 !claude/statusline.sh
+!claude/settings.public.json
 !claude/keybindings.json
 !claude/themes/
 claude/themes/*

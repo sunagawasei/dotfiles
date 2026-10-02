@@ -1,0 +1,462 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-settings.json",
+  "advisorModel": "fable",
+  "attribution": {
+    "pr": ""
+  },
+  "autoMode": {
+    "allow": [
+      "$defaults",
+      "Bash(darwin-rebuild build:*) in ~/.config — non-applying evaluation/build check, explicitly called out in CLAUDE.md as safe pre-check",
+      "Bash(cd scripts && go run ./cmd/generate-colors:*) in ~/.config — routine color-system generation step",
+      "Bash(cd scripts && go run ./cmd/verify-colors:*) in ~/.config — routine color-system validation step"
+    ],
+    "soft_deny": [
+      "$defaults",
+      "Bash(darwin-rebuild switch:*) in ~/.config — applies system-wide changes via sudo wrapper; review before auto-approving",
+      "Bash(brew bundle --cleanup:*) in ~/.config — known to abort darwin-rebuild switch and documented as disabled/dangerous in CLAUDE.md"
+    ]
+  },
+  "editorMode": "vim",
+  "enabledPlugins": {
+    "aws-serverless@agent-plugins-for-aws": false,
+    "aws-serverless@claude-plugins-official": false,
+    "claude-code-setup@claude-plugins-official": false,
+    "claude-md-management@claude-plugins-official": false,
+    "code-review@claude-plugins-official": false,
+    "code-simplifier@claude-plugins-official": false,
+    "context7@claude-plugins-official": false,
+    "databases-on-aws@agent-plugins-for-aws": false,
+    "deploy-on-aws@agent-plugins-for-aws": false,
+    "deploy-on-aws@claude-plugins-official": false,
+    "feature-dev@claude-plugins-official": false,
+    "frontend-design@claude-plugins-official": false,
+    "gopls-lsp@claude-plugins-official": true,
+    "lua-lsp@claude-plugins-official": true,
+    "modern-go-guidelines@goland-claude-marketplace": true,
+    "notion@claude-plugins-official": true,
+    "playwright@claude-plugins-official": false,
+    "pr-review-toolkit@claude-plugins-official": false,
+    "pyright-lsp@claude-plugins-official": false,
+    "security-guidance@claude-plugins-official": true,
+    "serena@claude-plugins-official": false,
+    "skill-creator@claude-plugins-official": false,
+    "swift-lsp@claude-plugins-official": false,
+    "typescript-lsp@claude-plugins-official": false
+  },
+  "env": {
+    "AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT": "1800",
+    "CLAUDE_AFK_TIMEOUT_MS": "86400000",
+    "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
+    "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
+  },
+  "extraKnownMarketplaces": {
+    "agent-plugins-for-aws": {
+      "source": {
+        "repo": "awslabs/agent-plugins",
+        "source": "github"
+      }
+    },
+    "goland-claude-marketplace": {
+      "source": {
+        "repo": "JetBrains/go-modern-guidelines",
+        "source": "github"
+      }
+    }
+  },
+  "feedbackDrafts": "off",
+  "hooks": {
+    "Notification": [
+      {
+        "hooks": [
+          {
+            "command": "~/.config/claude/hooks/herdr-notify",
+            "timeout": 10,
+            "type": "command"
+          }
+        ],
+        "matcher": "idle_prompt"
+      }
+    ],
+    "PostToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "~/.config/claude/hooks/add_newline",
+            "type": "command"
+          }
+        ],
+        "matcher": "Write|Edit|MultiEdit|NotebookEdit"
+      },
+      {
+        "hooks": [
+          {
+            "command": "bash ~/.claude/hooks/assign-pr-author.sh",
+            "timeout": 30,
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash"
+      }
+    ],
+    "PreToolUse": [
+      {
+        "hooks": [
+          {
+            "command": "~/.config/claude/hooks/bounded-background",
+            "timeout": 10,
+            "type": "command"
+          }
+        ],
+        "matcher": "Bash"
+      }
+    ],
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "command": "bash '~/.config/claude/hooks/herdr-agent-state.sh' session",
+            "timeout": 10,
+            "type": "command"
+          },
+          {
+            "command": "~/.config/claude/hooks/herdr-task-label",
+            "timeout": 5,
+            "type": "command"
+          },
+          {
+            "command": "~/.config/claude/hooks/subagent-busy",
+            "timeout": 10,
+            "type": "command"
+          }
+        ],
+        "matcher": "*"
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "command": "~/.config/claude/hooks/herdr-task-label",
+            "timeout": 5,
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "StopFailure": [
+      {
+        "hooks": [
+          {
+            "command": "~/.config/claude/hooks/herdr-notify",
+            "timeout": 10,
+            "type": "command"
+          }
+        ]
+      }
+    ],
+    "SubagentStart": [
+      {
+        "hooks": [
+          {
+            "command": "~/.config/claude/hooks/subagent-busy",
+            "timeout": 10,
+            "type": "command"
+          }
+        ],
+        "matcher": "*"
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "command": "~/.config/claude/hooks/subagent-busy",
+            "timeout": 10,
+            "type": "command"
+          }
+        ],
+        "matcher": "*"
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "command": "~/.config/claude/hooks/herdr-task-label",
+            "timeout": 5,
+            "type": "command"
+          },
+          {
+            "command": "~/.config/claude/hooks/herdr-title",
+            "timeout": 5,
+            "type": "command"
+          }
+        ]
+      }
+    ]
+  },
+  "language": "日本語",
+  "model": "opus",
+  "modelSettings": {
+    "claude-opus-5-5": {
+      "effortLevel": "medium"
+    }
+  },
+  "outputStyle": "Concise",
+  "permissions": {
+    "allow": [
+      "Bash(rg:*)",
+      "Bash(ls:*)",
+      "Bash(grep:*)",
+      "Bash(nvim:*)",
+      "Bash(find:*)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebSearch",
+      "Bash(sed:*)",
+      "Bash(lazygit:*)",
+      "WebFetch(domain:wezterm.org)",
+      "Bash(defaults read:*)",
+      "WebFetch(domain:wezfurlong.org)",
+      "mcp__ide__getDiagnostics",
+      "Bash(cat:*)",
+      "WebFetch(domain:ghostty.org)",
+      "Read(~/.local/share/nvim/lazy/**)",
+      "Read(~/.local/bin/**)",
+      "Read(~/.cache/nvim/**)",
+      "Bash(tree:*)",
+      "Bash(gh repo view:*)",
+      "Bash(gh issue list:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh pr ready:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run view:*)",
+      "Bash(gh api:*)",
+      "Bash(npm ls:*)",
+      "Bash(npx tsc:*)",
+      "Bash(npx cdk diff:*)",
+      "Bash(go test:*)",
+      "Bash(codex:*)",
+      "Bash(copilot:*)",
+      "Bash(cursor-agent:*)",
+      "Bash(agent:*)",
+      "Bash(aws ecs list-clusters:*)",
+      "Bash(aws ecs list-services:*)",
+      "Bash(aws ecs describe-services:*)",
+      "Bash(aws ecs describe-task-definition:*)",
+      "Bash(aws ecs list-tasks:*)",
+      "Bash(aws ecs describe-tasks:*)",
+      "Bash(aws elbv2 describe-load-balancers:*)",
+      "Bash(aws elbv2 describe-listeners:*)",
+      "Bash(aws elbv2 describe-target-groups:*)",
+      "Bash(aws elbv2 describe-target-health:*)",
+      "Bash(aws rds describe-db-clusters:*)",
+      "Bash(aws rds describe-db-instances:*)",
+      "Bash(aws rds describe-db-engine-versions:*)",
+      "Bash(aws rds describe-db-cluster-parameter-groups:*)",
+      "Bash(aws rds describe-db-cluster-parameters:*)",
+      "Bash(aws rds describe-db-subnet-groups:*)",
+      "Bash(aws rds describe-events:*)",
+      "Bash(aws rds wait:*)",
+      "Bash(aws ec2 describe-vpcs:*)",
+      "Bash(aws ec2 describe-subnets:*)",
+      "Bash(aws ec2 describe-security-groups:*)",
+      "Bash(aws ec2 describe-nat-gateways:*)",
+      "Bash(aws ec2 describe-network-interfaces:*)",
+      "Bash(aws ec2 describe-addresses:*)",
+      "Bash(aws ec2 describe-route-tables:*)",
+      "Bash(aws ec2 describe-internet-gateways:*)",
+      "Bash(aws ec2 wait:*)",
+      "Bash(aws ecr describe-repositories:*)",
+      "Bash(aws acm list-certificates:*)",
+      "Bash(aws cloudformation list-stacks:*)",
+      "Bash(aws cloudformation describe-stacks:*)",
+      "Bash(aws cloudformation list-stack-resources:*)",
+      "Bash(aws cloudformation describe-stack-resources:*)",
+      "Bash(aws cloudformation describe-stack-resource-drifts:*)",
+      "Bash(aws cloudformation describe-stack-events:*)",
+      "Bash(aws cloudformation wait:*)",
+      "Bash(aws logs:*)",
+      "mcp__plugin_Notion_notion__notion-fetch",
+      "mcp__claude_ai_Slack__slack_read_thread",
+      "Bash(go doc:*)",
+      "Bash(go version:*)",
+      "WebFetch(domain:docs.datadoghq.com)",
+      "Bash(ps:*)",
+      "Bash(wezterm show-keys:*)",
+      "Bash(test:*)",
+      "Bash(go run:*)",
+      "Bash(brew list:*)",
+      "mcp__plugin_Notion_notion__notion-get-users",
+      "Bash(gh search:*)",
+      "WebFetch(domain:chawan.net)",
+      "Bash(git:*)",
+      "Bash(brew info:*)",
+      "Bash(brew tap-info:*)",
+      "Bash(brew tap:*)",
+      "Bash(nix search:*)",
+      "Bash(brew search:*)",
+      "Bash(nix flake:*)",
+      "Bash(gh release:*)",
+      "Bash(~/.agents/skills/agmsg/scripts/send.sh:*)",
+      "Bash(~/.agents/skills/agmsg/scripts/watch.sh:*)",
+      "Bash(sqlite3:*)",
+      "Bash(~/.agents/skills/agmsg/scripts/ensure-codex.sh:*)",
+      "Bash(kubectl get:*)",
+      "Bash(kubectl describe:*)",
+      "Bash(kubectl logs:*)",
+      "Bash(kubectl explain:*)",
+      "Bash(kubectl api-resources:*)",
+      "Bash(kubectl api-versions:*)",
+      "Bash(kubectl config get-contexts:*)",
+      "Bash(kubectl config current-context:*)",
+      "Bash(kubectl version:*)",
+      "Bash(kubectl top:*)",
+      "Bash(kubectl diff:*)",
+      "Bash(kubectl kustomize:*)",
+      "Bash(helm template:*)",
+      "Bash(helm list:*)",
+      "Bash(helm get:*)",
+      "Bash(helm show:*)",
+      "Bash(helm status:*)",
+      "Bash(cd:*)",
+      "Bash(jq:*)",
+      "Bash(herdr pane list:*)",
+      "Bash(herdr pane get:*)",
+      "Bash(herdr pane read:*)",
+      "Bash(herdr pane current:*)",
+      "Bash(herdr pane process-info:*)",
+      "Bash(herdr workspace list:*)",
+      "Bash(herdr workspace get:*)",
+      "Bash(darwin-apply)"
+    ],
+    "ask": [
+      "Bash(git push *)",
+      "Bash(psql:*)",
+      "Bash(mysql:*)",
+      "Bash(mongod:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm remove:*)",
+      "Bash(kubectl cordon:*)",
+      "Bash(kubectl uncordon:*)",
+      "Bash(kubectl scale:*)",
+      "Bash(kubectl delete:*)",
+      "Bash(kubectl patch:*)"
+    ],
+    "defaultMode": "auto",
+    "deny": [
+      "Read(.env*)",
+      "Read(.env.*)",
+      "Read(secrets)",
+      "Read(.secrets/**)",
+      "Read(**/*credentials)",
+      "Read(**/credentials/**)",
+      "Read(**/*credentials*.json)",
+      "Read(**/*credentials*.yaml)",
+      "Read(**/*credentials*.yml)",
+      "Read(**/*credentials*.ini)",
+      "Read(**/*credentials*.pem)",
+      "Read(**/*credentials*.txt)",
+      "Read(**/*.token)",
+      "Read(**/*token)",
+      "Read(**/*access_token*)",
+      "Read(**/*refresh_token*)",
+      "Read(**/*auth_token*)",
+      "Read(id_rsa)",
+      "Read(id_ed25519)",
+      "Edit(.env*)",
+      "Edit(**/secrets/**)",
+      "Bash(sudo:*)",
+      "Bash(pip:*)",
+      "Bash(pip3:*)",
+      "Bash(pipx:*)",
+      "Bash(poetry:*)",
+      "Bash(python -m pip:*)",
+      "Bash(python3 -m pip:*)",
+      "mcp__supabase__execute_sql",
+      "Bash(helm*--post-renderer*)",
+      "Bash(kustomize*--enable-alpha-plugins*)",
+      "Bash(kustomize*--enable-exec*)",
+      "Bash(kustomize*--helm-command*)",
+      "EnterPlanMode"
+    ]
+  },
+  "plansDirectory": ".claude/plans",
+  "sandbox": {
+    "allowUnsandboxedCommands": false,
+    "autoAllowBashIfSandboxed": true,
+    "enableWeakerNetworkIsolation": true,
+    "enabled": false,
+    "excludedCommands": [
+      "git:*",
+      "gh:*",
+      "docker:*",
+      "go:*",
+      "terraform:*",
+      "codex:*",
+      "copilot:*",
+      "cursor-agent:*",
+      "worklog:*",
+      "aws:*",
+      "kubectl:*",
+      "hunk:*",
+      "dig:*",
+      "container:*",
+      "agent:*",
+      "ps:*",
+      "pgrep:*",
+      "~/.agents/skills/agmsg/scripts/ensure-codex.sh:*",
+      "~/.agents/skills/agmsg/scripts/spawn.sh:*",
+      "~/.agents/skills/agmsg/scripts/delivery.sh:*",
+      "~/.agents/skills/agmsg/scripts/send.sh:*"
+    ],
+    "filesystem": {
+      "allowRead": [],
+      "allowWrite": [
+        "/tmp",
+        "~/.claude",
+        "~/.config/claude/plugins/data",
+        "~/.config/codex",
+        "~/.config/cursor",
+        "~/.cursor/projects",
+        "~/.agents/skills/agmsg/",
+        "~/Library/Caches/go-build",
+        "~/go",
+        "~/Library/Caches/golangci-lint"
+      ]
+    },
+    "network": {
+      "allowUnixSockets": [
+        "~/.config/herdr/herdr.sock",
+        "~/.agents/skills/agmsg/run"
+      ],
+      "allowedDomains": [
+        "proxy.golang.org",
+        "sum.golang.org",
+        "github.com",
+        "objects.githubusercontent.com",
+        "raw.githubusercontent.com"
+      ]
+    }
+  },
+  "skillOverrides": {
+    "session-verify": "off",
+    "split-commits": "off"
+  },
+  "skipAutoPermissionPrompt": true,
+  "statusLine": {
+    "command": "~/.config/claude/statusline.sh",
+    "refreshInterval": 5,
+    "type": "command"
+  },
+  "syntaxHighlightingDisabled": false,
+  "theme": "custom:ghost-visor",
+  "tui": "fullscreen",
+  "useAutoModeDuringPlan": true,
+  "verbose": false
+}

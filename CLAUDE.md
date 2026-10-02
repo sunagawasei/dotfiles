@@ -20,6 +20,8 @@ herdr(ターミナルマルチプレクサ)は flake input のソースへロー
 
 ## 開発コマンド
 
+settings.json は ignore 対象で repo に入らない。公開用は個人パス・社内識別子を除いた `claude/settings.public.json` を `cd scripts && go run ./cmd/publish-claude-settings` で再生成して commit する(settings.json を変えたら再生成。個人値が残ると出力せず失敗する)。
+
 ```bash
 # Claude Code hooks（Goソース変更後は必ず両方）
 cd claude/hooks && go test ./... && go build -o . ./...
