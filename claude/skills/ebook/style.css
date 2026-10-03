@@ -1,0 +1,21 @@
+@charset "UTF-8";
+html { line-break: strict; -webkit-line-break: strict; word-break: normal; }
+body { margin: 0; padding: 0; line-height: 1.8; text-align: justify; }
+p { margin: 0; padding: 0; text-indent: 1em; }
+div.noindent > p, blockquote > p, li > p, td > p, th > p, figcaption { text-indent: 0; }
+h1 { font-size: 1.4em; font-weight: bold; line-height: 1.5; text-align: left; text-indent: 0;
+     margin: 3em 0 2em; page-break-before: always; }
+h2 { font-size: 1.15em; font-weight: bold; text-align: left; text-indent: 0; margin: 2.2em 0 0.8em; page-break-after: avoid; }
+h3 { font-size: 1em; font-weight: bold; text-align: left; text-indent: 0; margin: 1.6em 0 0.6em; page-break-after: avoid; }
+blockquote { margin: 1em 1em 1em 2em; font-size: 0.95em; }
+blockquote p { text-indent: 0; }
+ul, ol { margin: 1em 0 1em 1.5em; padding: 0; }
+em { font-style: normal; text-emphasis-style: filled sesame; -webkit-text-emphasis-style: filled sesame; -webkit-text-emphasis-position: over right; }
+strong { font-weight: bold; }
+a { color: inherit; text-decoration: underline; }
+div.card { margin: 0.8em 0; }
+img { display: block; margin: 0 auto; width: 100%; max-width: 100%; height: auto; }
+figure { margin: 1.2em 0; text-align: center; page-break-inside: avoid; }
+figcaption { font-size: 0.85em; text-align: center; }
+table { border-collapse: collapse; margin: 1em 0; font-size: 0.9em; }
+td, th { border: 1px solid #888; padding: 0.3em 0.5em; text-indent: 0; }

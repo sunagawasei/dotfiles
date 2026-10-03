@@ -222,6 +222,7 @@ claude/skills/*
 !claude/skills/claude-audit/
 !claude/skills/cursor-delegate/
 !claude/skills/report-note/
+!claude/skills/ebook/
 !claude/agents/
 claude/agents/*
 !claude/agents/commit.md
