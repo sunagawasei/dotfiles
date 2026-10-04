@@ -147,13 +147,13 @@ export const register: Register = on => {
   // 帯: 標準のタスク一覧と同じ畳み方(未完了の上位だけ + `… +N pending`)
   on('ui.render', { component: 'AbovePrompt' }, async ($, e, next) => {
     const b = await read($, board)
-    if (e.props.hasSurvey || b.kind === 'none') return next(e)
+    if (e.props.hasSurvey || b.kind !== 'ok' || !Array.isArray(b.lists)) return next(e)
 
     const { Box, Text } = $.ui.resolve(e)
     const tasks = allTasks(b.lists)
     if (tasks.length === 0 && b.brokenFiles.length === 0) return next(e)
 
-    const live = tasks.filter(t => kindOf(t) !== 'done')
+    const live = [...tasks.filter(t => kindOf(t) === 'active'), ...tasks.filter(t => kindOf(t) === 'open')]
     const rows = live.slice(0, COLLAPSED_ROWS)
     const omitted = live.length - rows.length
 
@@ -176,7 +176,7 @@ export const register: Register = on => {
     const b = await read($, board)
     const { Box, Text } = $.ui.resolve(e)
 
-    if (b.kind !== 'ok') {
+    if (b.kind !== 'ok' || !Array.isArray(b.lists)) {
       return <Text color={SUB}>{`  ${DIR}/*.json がありません`}</Text>
     }
 
