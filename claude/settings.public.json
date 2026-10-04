@@ -21,6 +21,7 @@
   "enabledPlugins": {
     "aws-serverless@agent-plugins-for-aws": false,
     "aws-serverless@claude-plugins-official": false,
+    "cc-plugin-you-should-know@builtin": true,
     "claude-code-setup@claude-plugins-official": false,
     "claude-md-management@claude-plugins-official": false,
     "code-review@claude-plugins-official": false,
@@ -48,6 +49,7 @@
     "AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT": "1800",
     "CLAUDE_AFK_TIMEOUT_MS": "86400000",
     "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
+    "CLAUDE_CODE_ENABLE_TODO_TOOLS": "1",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
   },
