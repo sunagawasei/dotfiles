@@ -1,0 +1,6 @@
+{
+  "name": "task-board",
+  "version": "0.2.0",
+  "description": "別セッションが書く tasks.json のタスク一覧を、標準のタスク一覧に似た見た目でプロンプト上に表示する(読み取り専用・エージェントに影響しない)",
+  "types": "./types/index.d.ts"
+}

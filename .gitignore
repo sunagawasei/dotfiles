@@ -198,6 +198,10 @@ claude/rules/*
 # ~/.agents/skills/agmsg/db/spawn-roles はここへの symlink（agmsg 側は db/ を gitignore するため）
 !claude/agmsg-roles/
 !claude/agmsg-roles/*.md
+!claude/mods/
+claude/mods/*
+!claude/mods/task-board/
+claude/mods/task-board/.claude-plugin/types/
 !claude/hooks/
 claude/hooks/*
 !claude/hooks/go.mod
