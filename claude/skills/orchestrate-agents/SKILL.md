@@ -9,7 +9,7 @@ description: 全タスク共通の単一委譲フロー(対話でのプラン起
 
 ## 前提
 
-- このセッションのagmsg Monitor(`watch.sh ... --team s-<このセッションのUUID>`)がSessionStartから常駐している。**SessionStart時点でそのプロジェクトのteamが無いと常駐しない**(session-start.shは既存registrationから解決するため)。teamを作ったら`ps aux | grep 'watch.sh <このセッションのUUID>'`で確認し、無ければMonitorツールから`watch.sh <session_id> <project_path> <agent_type> <active_name> --team <team>`を自分で張る(pidfileは`run/watch.<session_id>.<n>.pid`)
+- このセッションのagmsg Monitor(`watch.sh ... --team s-<このセッションのUUID>`)がSessionStartから常駐している。**SessionStart時点でそのプロジェクトのteamが無いと常駐しない**(session-start.shは既存registrationから解決するため)。teamを作ったら`ps aux | grep 'watch.sh <このセッションのUUID>'`で確認し、無ければMonitorツールから`watch.sh <session_id> <project_path> <agent_type> <active_name> --team <team>`を自分で張る(pidfileは`run/watch.<session_id>.<n>.pid`)。**このとき自分(claude)もteamに登録されていない**: `ensure-codex.sh`等がteamを新規作成するとworkerだけが登録され、`send.sh`が`from agent 'claude' is not registered`で失敗する。`whoami.sh`の`teams=`はsession idから導出した表示で登録の証拠にならないので、teamの`config.json`で確認し、無ければ`join.sh <team> claude claude-code <project>`で登録する(2026-10-04実測)
 - **自前のpollingループでMonitorを代用しない**。history.sh/inbox.shを叩くループは(a)inbox.shが既読化して返信を消費する (b)宛先フィルタの正規表現が取りこぼす、の2つで壊れる。2026-09-01の実例: `(codex|fable-review|...) → main`のパターンが`codex-research → main`にマッチせず、返信到着に9時間気づかなかった。**このときMonitorプロセス自体は生きており、「Monitorが死んだ」という一次診断も誤りだった** — 無反応時はプロセス生死とフィルタの両方を疑う
 - **返信待ちの間はMonitorを張り直す**。SessionStart指示の「配信0件で期限切れなら再armしない」は、返信を待っていないときの話。workerへ送信して返信待ちなら、期限切れのたびに同じコマンドで張り直す(2026-09-29、0件expiry後にDB pollingで代用し「monitorを起動すれば済む話じゃない?」と指摘された)
 - **agmsg本体・設定(`db/config.yaml`・role file・scripts)の変更はこのセッションでせず、`/handoff`で別workspaceへ渡す**(2026-09-29 ユーザー指示)。worker追加の設定変更・driverの不具合修正とも同じ
