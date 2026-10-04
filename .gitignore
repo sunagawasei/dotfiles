@@ -227,6 +227,7 @@ claude/skills/*
 !claude/skills/cursor-delegate/
 !claude/skills/report-note/
 !claude/skills/ebook/
+!claude/skills/parallel-handoff/
 !claude/agents/
 claude/agents/*
 !claude/agents/commit.md
