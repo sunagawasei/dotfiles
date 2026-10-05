@@ -38,7 +38,7 @@ const parseList = (name: string, text: string): BoardList | undefined => {
       status: String(t.status ?? ''),
       ws: t.ws == null ? null : String(t.ws),
     }))
-    return { name, updatedAt: String(json.updated_at ?? ''), tasks }
+    return { name, updatedAt: String(json.updated_at ?? ''), session: String(json.session ?? ''), tasks }
   } catch {
     return undefined
   }
@@ -59,6 +59,13 @@ async function togglePane($: EngineInterface) {
 }
 
 const allTasks = (lists: BoardList[]) => lists.flatMap(l => l.tasks)
+
+// 現在のセッションIDの先頭8桁を session に含む一覧だけに絞る。1つも無ければ全件(絞り込みなし)
+export const scopeLists = (lists: BoardList[], sessionId: string) => {
+  const short = sessionId.slice(0, 8)
+  const mine = short === '' ? [] : lists.filter(l => l.session.includes(short))
+  return mine.length > 0 ? { lists: mine, scoped: true } : { lists, scoped: false }
+}
 
 const Header = ({ Text, tasks, hint }: any) => {
   const done = tasks.filter((t: BoardTask) => kindOf(t) === 'done').length
@@ -198,6 +205,8 @@ export const register: Register = on => {
     const poll = async () => {
       let board_: Board
       let key: string
+      // /clear では session.start が再発火せず ID だけ変わるため、毎回読む
+      const sessionId = await $.session.id().catch(() => '')
       try {
         const entries = (await $.fs.list(DIR))
           .filter(f => f.kind === 'file' && f.name.endsWith('.json'))
@@ -212,8 +221,8 @@ export const register: Register = on => {
           if (list === undefined) brokenFiles.push(f.name)
           else lists.push(list)
         }
-        key = texts.join('\u0001')
-        board_ = entries.length === 0 ? { kind: 'none' } : { kind: 'ok', lists, brokenFiles }
+        key = `${sessionId}\u0002${texts.join('\u0001')}`
+        board_ = entries.length === 0 ? { kind: 'none' } : { kind: 'ok', lists, brokenFiles, sessionId }
       } catch {
         key = ''
         board_ = { kind: 'none' }
@@ -245,7 +254,7 @@ export const register: Register = on => {
     if (e.props.hasSurvey || b.kind !== 'ok' || !Array.isArray(b.lists)) return next(e)
 
     const { Box, Button, Text } = $.ui.resolve(e)
-    const tasks = allTasks(b.lists)
+    const tasks = allTasks(scopeLists(b.lists, b.sessionId).lists)
     if (tasks.length === 0 && b.brokenFiles.length === 0) return next(e)
 
     const live = [...tasks.filter(t => kindOf(t) === 'active'), ...tasks.filter(t => kindOf(t) === 'open')]
@@ -285,19 +294,20 @@ export const register: Register = on => {
       ...ts.filter(t => kindOf(t) === 'active'),
       ...ts.filter(t => kindOf(t) === 'open'),
     ]
-    const latest = b.lists.map(l => l.updatedAt).sort().pop() ?? ''
+    const scope = scopeLists(b.lists, b.sessionId)
+    const latest = scope.lists.map(l => l.updatedAt).sort().pop() ?? ''
 
     return (
       <Box flexDirection="column">
         <Box>
-          <Header Text={Text} tasks={allTasks(b.lists)} hint="" />
+          <Header Text={Text} tasks={allTasks(scope.lists)} hint={scope.scoped ? '  · このセッションの一覧だけ表示中' : ''} />
           <Box flexShrink={0}>
             <Button key="toggle" label=" ctrl+x t で閉じる" plain dimColor action={TOGGLE_ACTION} onPress={() => togglePane($)} />
           </Box>
         </Box>
-        {b.lists.map(l => (
+        {scope.lists.map(l => (
           <Box key={l.name} flexDirection="column">
-            {b.lists.length > 1 && <Text color={SUB} bold>{`  ${l.name}`}</Text>}
+            {scope.lists.length > 1 && <Text color={SUB} bold>{`  ${l.name}`}</Text>}
             {order(l.tasks).map(t => (
               <Row Box={Box} Text={Text} t={t} />
             ))}
