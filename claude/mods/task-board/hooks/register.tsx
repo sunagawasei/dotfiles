@@ -1,5 +1,5 @@
 import { atom, read, update } from 'claude-code'
-import type { Register } from 'claude-code'
+import type { EngineInterface, Register } from 'claude-code'
 
 import type { Board, BoardList, BoardTask } from '../types'
 
@@ -16,14 +16,14 @@ const ACTIVE = '#58caf8'
 const DONE = '#76d6c4'
 
 const word = (status: string) => status.split(/[\s(:：]/)[0] ?? ''
-const kindOf = (t: BoardTask) => {
+export const kindOf = (t: BoardTask) => {
   const w = word(t.status)
   if (w === 'merged' || w === 'done') return 'done'
   if (w === 'implementing' || w === 'fixing' || w === 'running') return 'active'
   return 'open'
 }
 // 状態の補足(waiting (T3後) の括弧など)だけを薄字で添える
-const note = (t: BoardTask) => {
+export const note = (t: BoardTask) => {
   const rest = t.status.slice(word(t.status).length).replace(/^[:：]\s*/, '').trim()
   return rest === '' ? '' : ` ${rest}`
 }
@@ -41,6 +41,20 @@ const parseList = (name: string, text: string): BoardList | undefined => {
     return { name, updatedAt: String(json.updated_at ?? ''), tasks }
   } catch {
     return undefined
+  }
+}
+
+// keybindings.json で TOGGLE_ACTION に割り当てたキーが、帯・Pane の Button 経由でここへ届く
+const TOGGLE_ACTION = 'app:toggleDiffNoiseFilter'
+let isPaneOpen = false
+
+async function togglePane($: EngineInterface) {
+  if (isPaneOpen) {
+    await $.ui.close({ id: PANE })
+    isPaneOpen = false
+  } else {
+    await $.ui.open({ id: PANE, title: 'tasks', focus: true, closeOnEscape: true })
+    isPaneOpen = true
   }
 }
 
@@ -177,7 +191,6 @@ const registerSidecar = (on: Parameters<Register>[0]) => {
 
 export const register: Register = on => {
   registerSidecar(on)
-  let isPaneOpen = false
 
   on('session.start', async ($, e, next) => {
     let lastKey: string | undefined
@@ -222,13 +235,7 @@ export const register: Register = on => {
   })
 
   on('command.run', { command: 'board' }, async $ => {
-    if (isPaneOpen) {
-      await $.ui.close({ id: PANE })
-      isPaneOpen = false
-    } else {
-      await $.ui.open({ id: PANE, title: 'tasks', focus: true, closeOnEscape: true })
-      isPaneOpen = true
-    }
+    await togglePane($)
     return {}
   })
 
@@ -237,7 +244,7 @@ export const register: Register = on => {
     const b = await read($, board)
     if (e.props.hasSurvey || b.kind !== 'ok' || !Array.isArray(b.lists)) return next(e)
 
-    const { Box, Text } = $.ui.resolve(e)
+    const { Box, Button, Text } = $.ui.resolve(e)
     const tasks = allTasks(b.lists)
     if (tasks.length === 0 && b.brokenFiles.length === 0) return next(e)
 
@@ -247,7 +254,12 @@ export const register: Register = on => {
 
     return (
       <Box flexDirection="column">
-        <Header Text={Text} tasks={tasks} hint="  /board で全件" />
+        <Box>
+          <Header Text={Text} tasks={tasks} hint="  /board で全件" />
+          <Box flexShrink={0}>
+            <Button key="toggle" label=" [全件]" plain dimColor action={TOGGLE_ACTION} onPress={() => togglePane($)} />
+          </Box>
+        </Box>
         {rows.map(t => (
           <Row Box={Box} Text={Text} t={t} />
         ))}
@@ -262,7 +274,7 @@ export const register: Register = on => {
   // Pane: 完了を含む全件。高さを超えれば Pane 側でスクロールする
   on('ui.render', { component: 'Pane', requestId: PANE }, async ($, e, next) => {
     const b = await read($, board)
-    const { Box, Text } = $.ui.resolve(e)
+    const { Box, Button, Text } = $.ui.resolve(e)
 
     if (b.kind !== 'ok' || !Array.isArray(b.lists)) {
       return <Text color={SUB}>{`  ${DIR}/*.json がありません`}</Text>
@@ -277,7 +289,12 @@ export const register: Register = on => {
 
     return (
       <Box flexDirection="column">
-        <Header Text={Text} tasks={allTasks(b.lists)} hint="" />
+        <Box>
+          <Header Text={Text} tasks={allTasks(b.lists)} hint="" />
+          <Box flexShrink={0}>
+            <Button key="toggle" label=" [閉じる]" plain dimColor action={TOGGLE_ACTION} onPress={() => togglePane($)} />
+          </Box>
+        </Box>
         {b.lists.map(l => (
           <Box key={l.name} flexDirection="column">
             {b.lists.length > 1 && <Text color={SUB} bold>{`  ${l.name}`}</Text>}

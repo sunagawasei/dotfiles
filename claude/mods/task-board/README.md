@@ -9,6 +9,7 @@
 
 - 帯: 見出し(`N tasks (… done, … in progress, … open)`)と、未完了の上位5件。残りは `… +N pending`。
 - `/board`: 完了を含む全件を Pane に開く。もう一度 `/board` か Esc で閉じる。
+- `ctrl+x t`: `/board` と同じ開閉。mod 側にキー登録 API が無いため、帯と Pane の `[全件]` / `[閉じる]` Button の `action` に未使用のエンジンアクション `app:toggleDiffNoiseFilter` を結び、`~/.config/claude/keybindings.json` の Global にそのキーを割り当てている。
 - 色と記号は標準のタスク一覧に合わせてある(`◼` 進行中、`◻` 未着手、`✔` 完了)。
 
 ## データ
@@ -54,6 +55,14 @@
 
 ```sh
 claude --plugin-dir <このフォルダ>
+```
+
+## 検証
+
+```sh
+npx -y -p typescript tsc -p .   # 型チェック
+claude plugin validate .        # 構文
+claude plugin test .            # tests/*.test.ts(status の分類と補足)
 ```
 
 ## 制約
