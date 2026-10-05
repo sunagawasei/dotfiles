@@ -50,6 +50,7 @@
     "CLAUDE_AFK_TIMEOUT_MS": "86400000",
     "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
+    "CLAUDE_CODE_PLUGIN_DIRS": "~/.config/claude/mods/task-board",
     "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
   },
   "extraKnownMarketplaces": {
