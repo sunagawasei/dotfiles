@@ -255,9 +255,9 @@ export const register: Register = on => {
     return (
       <Box flexDirection="column">
         <Box>
-          <Header Text={Text} tasks={tasks} hint="  /board で全件" />
+          <Header Text={Text} tasks={tasks} hint="  全件を開く:" />
           <Box flexShrink={0}>
-            <Button key="toggle" label=" [全件]" plain dimColor action={TOGGLE_ACTION} onPress={() => togglePane($)} />
+            <Button key="toggle" label=" ctrl+x t" plain dimColor action={TOGGLE_ACTION} onPress={() => togglePane($)} />
           </Box>
         </Box>
         {rows.map(t => (
@@ -292,7 +292,7 @@ export const register: Register = on => {
         <Box>
           <Header Text={Text} tasks={allTasks(b.lists)} hint="" />
           <Box flexShrink={0}>
-            <Button key="toggle" label=" [閉じる]" plain dimColor action={TOGGLE_ACTION} onPress={() => togglePane($)} />
+            <Button key="toggle" label=" ctrl+x t で閉じる" plain dimColor action={TOGGLE_ACTION} onPress={() => togglePane($)} />
           </Box>
         </Box>
         {b.lists.map(l => (
