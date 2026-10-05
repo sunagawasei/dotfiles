@@ -9,6 +9,8 @@ description: 複数のタスクを git worktree と herdr workspace に1つず�
 
 委譲フロー(段1〜11)の正本はグローバル CLAUDE.md と `orchestrate-agents` のまま。この skill は、それを複数 workspace で並列に回すときの段取りと、速度のために緩める点を定める。
 
+herdr でなく Claude Code の agent team の teammate で回すときは、`references/teammate-mode.md` に従う(返信待ち・片付け・再起動が herdr 版と違う)。
+
 ## 1. 分割
 
 - タスクに `T<番号>` と、何を直すかが分かる名前を付ける。issue 番号だけの名前にしない。

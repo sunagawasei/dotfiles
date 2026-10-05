@@ -40,6 +40,7 @@
 - herdrのworklog workspace(ws:1)へ作業の開始・停止を報告するときは、開始時刻(依頼を受けた時刻。セッションjsonlの該当user messageのtimestampをJSTにしたもの)を本文に必ず書く。書かないと受信時刻で打刻される(実例: 2026-09-29・2026-10-01に開始時刻漏れを指摘された)
 - 会話でも造語・比喩を使わず既存概念の標準用語で言う(実例: git操作を「畳み込み」と呼んで通じず、squash/rebaseの説明に3往復かかった)。標準用語が無い概念にだけ説明的表現を与える
 - **内部機構・仕組みの説明は、求められる前から1メッセージ=1論点まで刻む。** 毎回「ここまで大丈夫ですか」で区切って合図を待ち、合図が来てから次の論点へ進む。見出し3つ+表を1通に積む形は、同じ内容でも通じないことがある(実例: 2026-09-13、Harborの新旧ドメイン共存の説明で、まとめた形は2回続けて「理解できなかった」と言われ、同じ材料を細切れに割り直しただけで最後まで通った)。ユーザーが自分の言葉で言い換えて確認を返してきたら理解が進んでいる合図で、歓迎してよい
+- 選択を求める質問は、本文に書かず`AskUserQuestion`で出す(実例: 2026-10-05、live install の進め方を本文で聞き、「askuserquestion.」と指摘された)。自由記述で答えが返ったら、その問いに先に答えてから進める
 - **説明の途中で外部からの返信(codex等の調査結果、Monitorの通知)が届いても、説明を中断して割り込ませない。** 進行中の論点を最後まで続け、区切りがついてから割り込み分を扱う。調査結果を扱うときもraw の decision/evidence を貼らず、同じ細切れスタイルで説明し直す
 
 ## 操作の安全規約
@@ -101,7 +102,7 @@ Anthropicプランの消費を抑える節約モード(段3と段9のfable-revie
 - **併走の目的は発見の多様性であり、判定の統計的検証(不一致率・閾値・判定不能率等)の道具にしない**。統合はメインが両トラックの結果を目視で比較し、食い違いは成果物に明記する運用を既定にする。定量的な検証機構を(自分であれ査読者であれ)提案したくなったら、対象規模(件数・システムの重要度)に見合うかを先に自問する(実例: 2026-09-16、issue triageの併走に不一致率3割の閾値を作り込もうとしてcodex査読が2巡連続でHighを出し、advisor()の指摘で目視比較まで簡素化)
 - 委譲中はcodex-researchの返却まで同じ対象領域のRead/Grep/Globを控える。安全・権限・緊急性で例外的に読む場合はその理由を記録する
 - workerのraw dumpをメインやユーザーへ転載せず、`decision / evidence(file:lineまたはURL) / unknown / next action`だけを受け取る。`[research]`は1トピック=1パケットに分ける
-- codex系への送信は非同期send既定(返信はagmsg Monitorの自動再開で受ける)。送信前のensure-codex・パケット書式・Q&Aループ・検収ゲートの詳細: `claude/skills/orchestrate-agents/SKILL.md`
+- codex系への送信は非同期send既定(返信はagmsg Monitorの自動再開で受ける)。**ただしagent teamのteammateは、idle中に自分のMonitorの通知では起きない**(sunagawasei/agmsg#60)。teammateはforegroundの`until`ループで待ち、leadが中継する(`claude/skills/parallel-handoff/references/teammate-mode.md`)。送信前のensure-codex・パケット書式・Q&Aループ・検収ゲートの詳細: `claude/skills/orchestrate-agents/SKILL.md`
 - 同一model・同一課金プールへの委譲はコスト裁定が消えるため、往復の価値が無い作業はメインが直接行う(別プール=codex系・cursor系への委譲はこの制約を受けない)。**実装subagentはAnthropicプール内だが、メインOpus / subagent sonnetの単価差が裁定になる**。メイン自身がsonnetで動くセッションでは委譲しない
 
 ### 検収・レビュー運用

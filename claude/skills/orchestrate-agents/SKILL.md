@@ -170,6 +170,8 @@ opus-reviewは2026-09-09にusage limitから復旧済み(probe実測)。ただ�
 - 制約: 1セッションに1チームまで / teammateはさらにteammateを立てられない / `/resume`でteammateは復元されない / spawn時にteammateごとの権限モードを指定できない
 - 状態は`~/.claude/teams/<team>/config.json`、共有タスクは`~/.claude/tasks/<team>/`、受信箱は`teams/<team>/inboxes/<name>.json`
 - 停止は`TaskStop`にteammate名を渡す
+- **idleのteammateは自分のMonitorの通知では起きない**(sunagawasei/agmsg#60で再現確認)。teammateはcodexの返信をforegroundの`until`ループで待ち、leadが全返信を1本のMonitorで拾って`SendMessage`で中継する。手順: `claude/skills/parallel-handoff/references/teammate-mode.md`
+- 書き込みが重なるタスクは、teammateごとに`git worktree`を分ける
 
 ### 実効model/effortの確認
 
