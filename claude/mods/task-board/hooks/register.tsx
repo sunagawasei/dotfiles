@@ -15,7 +15,7 @@ const SUB = '#aba4c4'
 const ACTIVE = '#58caf8'
 const DONE = '#76d6c4'
 
-const word = (status: string) => status.split(/[\s(]/)[0] ?? ''
+const word = (status: string) => status.split(/[\s(:：]/)[0] ?? ''
 const kindOf = (t: BoardTask) => {
   const w = word(t.status)
   if (w === 'merged' || w === 'done') return 'done'
@@ -24,7 +24,7 @@ const kindOf = (t: BoardTask) => {
 }
 // 状態の補足(waiting (T3後) の括弧など)だけを薄字で添える
 const note = (t: BoardTask) => {
-  const rest = t.status.slice(word(t.status).length).trim()
+  const rest = t.status.slice(word(t.status).length).replace(/^[:：]\s*/, '').trim()
   return rest === '' ? '' : ` ${rest}`
 }
 
