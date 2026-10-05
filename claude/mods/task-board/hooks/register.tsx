@@ -88,7 +88,95 @@ const Row = ({ Box, Text, t }: any) => {
   )
 }
 
+// 手書きの一覧と衝突しないよう、サイドカーは専用ファイルだけを書く
+const SIDECAR_FILE = '.claude/tasks/auto.json'
+const SIDECAR_MIN_INTERVAL_MS = 30_000
+const MAX_TASKS = 50
+
+type Task = { id: string; title: string; status: string; ws: string | null }
+
+const PROMPT = (current: string, answer: string) => `あなたはタスク一覧の更新係です。ここまでの会話と直前の回答から、作業タスクの一覧を最新に保ちます。
+
+現在の一覧:
+${current}
+
+直前の回答:
+${answer}
+
+ルール:
+- 一覧を変える必要が無ければ、\`none\` の1語だけを返す。
+- 変える場合は、更新後の一覧全体を次のJSONだけで返す。説明やコードフェンスは付けない。
+  {"tasks":[{"id":"T1","title":"短いタイトル","status":"implementing","ws":null}]}
+- status の先頭の語は implementing / fixing / running(進行中)、merged / done(完了)、waiting / queued(未着手)のどれか。
+- 既存の id は変えない。新しいタスクは次の連番(T<n>)にする。
+- 会話で明示された作業だけを載せる。推測で足さない。完了は完了を確認できたものだけ。
+- 次の場合は、変更があっても none を返す: 雑談、質問への回答だけで作業が発生していない。`
+
+export const parseReply = (text: string, current: Task[]): Task[] | undefined => {
+  const body = text.trim().replace(/^```(?:json)?\s*/, '').replace(/\s*```$/, '')
+  if (body === '' || /^none\b/i.test(body)) return undefined
+  try {
+    const json = JSON.parse(body)
+    if (!Array.isArray(json.tasks) || json.tasks.length > MAX_TASKS) return undefined
+    const tasks: Task[] = json.tasks.map((t: any) => ({
+      id: String(t.id ?? ''),
+      title: String(t.title ?? ''),
+      status: String(t.status ?? ''),
+      ws: t.ws == null ? null : String(t.ws),
+    }))
+    if (tasks.some(t => t.id === '' || t.title === '' || t.status === '')) return undefined
+    if (new Set(tasks.map(t => t.id)).size !== tasks.length) return undefined
+    return JSON.stringify(tasks) === JSON.stringify(current) ? undefined : tasks
+  } catch {
+    return undefined
+  }
+}
+
+const registerSidecar = (on: Parameters<Register>[0]) => {
+  let lastRunAt = 0
+  let isRunning = false
+
+  on('turn.complete', async ($, e, next) => {
+    // 本体の回答が終わったターンだけ。サブエージェントのターンや中断は見ない
+    if (e.agentId !== undefined || e.reason !== 'answer' || e.answer.trim() === '') return next(e)
+    if (isRunning || Date.now() - lastRunAt < SIDECAR_MIN_INTERVAL_MS) return next(e)
+
+    // .claude/tasks/ があるプロジェクトだけ。全プロジェクトにファイルを作らない
+    const hasDir = await $.fs.list(DIR).then(() => true, () => false)
+    if (!hasDir) return next(e)
+
+    isRunning = true
+    lastRunAt = Date.now()
+    const run = async () => {
+      const raw = await $.fs.read(SIDECAR_FILE).catch(() => undefined)
+      let current: Task[] = []
+      try {
+        const json = raw === undefined ? undefined : JSON.parse(raw)
+        if (Array.isArray(json?.tasks)) current = json.tasks
+      } catch {
+        // 壊れたファイルは上書きしない
+        return
+      }
+      const reply = await $.model.fork({ prompt: PROMPT(JSON.stringify(current), e.answer) })
+      if (!reply.isAnswered) return
+      const tasks = parseReply(reply.text, current)
+      if (tasks === undefined) return
+      const updated_at = new Date().toISOString()
+      await $.fs.write(SIDECAR_FILE, JSON.stringify({ updated_at, tasks }, null, 2) + '\n')
+    }
+    // ターンの終了を待たせない。失敗は黙って捨てる(次のターンでやり直す)
+    run()
+      .catch(() => {})
+      .finally(() => {
+        isRunning = false
+      })
+
+    return next(e)
+  })
+}
+
 export const register: Register = on => {
+  registerSidecar(on)
   let isPaneOpen = false
 
   on('session.start', async ($, e, next) => {
