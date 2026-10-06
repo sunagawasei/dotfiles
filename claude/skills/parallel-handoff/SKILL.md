@@ -104,6 +104,7 @@ herdr workspace close <workspace_id>
 - `pkill -f <パターン>` は他の workspace の bats・codex worker も落とす。依頼文に「自分が起動した pid を指定して止める」を入れる。
 - codex の名前は workspace ごとに `codex-<タスク名>` にする。名前 `codex` で ensure-codex を実行すると、同じ session team の別 worker の bridge ファイル(pid/meta/owner)を上書きする。
 - タスク表示(`.claude/tasks/<名前>.json`)は中央が手で書くので、統合・起動・停止のたびに即更新する。更新を忘れると、統合済みなのに「implementing」のまま残る(ユーザーが「なぜ更新されないの？」と指摘)。
+- タスクを追加するときは、同じ `id` の既存行を探して上書きする(upsert)。追記だけだと同じ id が2行出る(2026-10-06、T41・T45・T65・T67 が重複して指摘された)。別のセッションと共有したい作業は、`session` を持たない一覧(`.claude/tasks/shared.json`)に置く。task-board は、現在のセッション ID の先頭8桁を `session` に含む一覧と、`session` の無い一覧だけを出す(2026-10-06、別セッションから依頼された #82 が載らないと指摘された)。完了した作業は、一覧から外して履歴は `git log` に任せる。
 
 ## 関連
 
