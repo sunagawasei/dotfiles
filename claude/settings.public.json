@@ -51,6 +51,7 @@
     "CLAUDE_BASH_MAINTAIN_PROJECT_WORKING_DIR": "1",
     "CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS": "1",
     "CLAUDE_CODE_PLUGIN_DIRS": "~/.config/claude/mods/task-board",
+    "CLAUDE_CODE_SESSIONEND_HOOKS_TIMEOUT_MS": "5000",
     "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
   },
   "extraKnownMarketplaces": {
