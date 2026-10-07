@@ -206,8 +206,8 @@ const hhmm = (at: string) => {
 export const autoNote = (t: BoardTask) =>
   t.auto === undefined ? '' : `  auto(推定) ${hhmm(t.auto.at)} ${t.auto.list}/${t.id} ← 「${t.auto.basis.length > 60 ? `${t.auto.basis.slice(0, 60)}…` : t.auto.basis}」`
 
-// 1行目はタイトルだけ。補足・ws・auto の印は2行目へインデントして出す(長いと1行目が切れて読めないため)
-const Row = ({ Box, Text, t }: any) => {
+// 1行目はタイトルだけ。補足・ws・auto の印は、Pane(withDetail)だけ2行目へインデントして出す。帯はタイトルのみ
+const Row = ({ Box, Text, t, withDetail = false }: any) => {
   const kind = kindOf(t)
   const detail = [
     kind !== 'done' ? note(t) : '',
@@ -233,7 +233,7 @@ const Row = ({ Box, Text, t }: any) => {
           {t.id}: {t.title}
         </Text>
       </Box>
-      {detail !== '' ? (
+      {withDetail && detail !== '' ? (
         <Box paddingLeft={6}>
           <Text color={SUB}>{detail}</Text>
         </Box>
@@ -551,7 +551,7 @@ export const register: Register = on => {
           <Box key={l.name} flexDirection="column">
             {scope.lists.length > 1 && <Text color={SUB} bold>{`  ${l.name}`}</Text>}
             {order(l.tasks).map(t => (
-              <Row Box={Box} Text={Text} t={t} />
+              <Row Box={Box} Text={Text} t={t} withDetail />
             ))}
           </Box>
         ))}
