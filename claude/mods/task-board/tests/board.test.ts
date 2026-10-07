@@ -6,6 +6,7 @@ import {
   autoNote,
   boardKey,
   kindOf,
+  latestUpdate,
   isAutoList,
   joinAnswers,
   mentionsId,
@@ -302,3 +303,9 @@ for (const [text, id, expected] of MENTIONS2) {
     expect(mentionsId(text, id)).toBe(expected)
   })
 }
+
+test('更新時刻は書式が混在しても最も新しい時刻を返し、時刻の無い一覧は無視する', async () => {
+  const at = (updatedAt: string) => ({ ...list('x', ''), updatedAt })
+  expect(latestUpdate([at('2026-10-06T19:23+0900'), at('2026-10-07T13:59:00.000Z'), at('')])).toBe('2026-10-07T13:59:00.000Z')
+  expect(latestUpdate([at('')])).toBe('')
+})

@@ -28,7 +28,8 @@ export const note = (t: BoardTask) => {
   return rest.replace(/^[(（](.*)[)）]$/, '$1').trim()
 }
 
-const parseList = (name: string, text: string): BoardList | undefined => {
+// updated_at が無い一覧は、ファイルの mtime を更新時刻にする(無いと /board 下部の時刻が他の一覧の値のまま残る)
+const parseList = (name: string, text: string, mtimeMs = 0): BoardList | undefined => {
   try {
     const json = JSON.parse(text)
     if (!Array.isArray(json.tasks)) return undefined
@@ -38,7 +39,8 @@ const parseList = (name: string, text: string): BoardList | undefined => {
       status: String(t.status ?? ''),
       ws: t.ws == null ? null : String(t.ws),
     }))
-    return { name, updatedAt: String(json.updated_at ?? ''), session: String(json.session ?? ''), tasks }
+    const updatedAt = json.updated_at == null ? (mtimeMs > 0 ? new Date(mtimeMs).toISOString() : '') : String(json.updated_at)
+    return { name, updatedAt, session: String(json.session ?? ''), tasks }
   } catch {
     return undefined
   }
@@ -92,6 +94,12 @@ export const applyOverlays = (lists: BoardList[], overlays: Overlay[]): BoardLis
 export const viewOf = (lists: BoardList[], overlays: Overlay[], sessionId: string) => {
   const scope = scopeAll(lists, sessionId)
   return { lists: applyOverlays(scope.lists, overlays), scoped: scope.scoped }
+}
+
+// 表示中の一覧のうち最も新しい更新時刻。書式が混在する(+0900 と Z)ので文字列でなく時刻で比べる
+export const latestUpdate = (lists: BoardList[]) => {
+  const ts = lists.map(l => ({ at: l.updatedAt, ms: Date.parse(l.updatedAt) })).filter(x => !Number.isNaN(x.ms))
+  return ts.sort((a, b) => a.ms - b.ms).pop()?.at ?? ''
 }
 
 export const boardKey = (sessionId: string, listTexts: string[], overlayTexts: string[]) =>
@@ -196,6 +204,12 @@ const Header = ({ Text, tasks, hint }: any) => {
 // 会話から推定した行の印。手書き JSON の値を添えて見比べられるようにする
 export const autoMark = (t: BoardTask) =>
   t.auto === undefined ? '' : `auto(推定) JSON: ${t.auto.prev.length > 24 ? `${t.auto.prev.slice(0, 24)}…` : t.auto.prev}`
+
+const stamp = (at: string) => {
+  const d = new Date(at)
+  const p = (n: number) => String(n).padStart(2, '0')
+  return `${d.getFullYear()}-${p(d.getMonth() + 1)}-${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}`
+}
 
 const hhmm = (at: string) => {
   const d = new Date(at)
@@ -425,7 +439,7 @@ const loadBoard = async ($: EngineInterface, root = '') => {
   for (const f of entries) {
     const text = await $.fs.read(at(`${DIR}/${f.name}`)).catch(() => undefined)
     listTexts.push(`${f.name}\0${text}`)
-    const list = text === undefined ? undefined : parseList(f.name.replace(/\.json$/, ''), text)
+    const list = text === undefined ? undefined : parseList(f.name.replace(/\.json$/, ''), text, f.mtimeMs)
     if (list === undefined) brokenFiles.push(f.name)
     else lists.push(list)
   }
@@ -533,7 +547,7 @@ export const register: Register = on => {
       ...ts.filter(t => kindOf(t) === 'open'),
     ]
     const scope = viewOf(b.lists, b.overlays, b.sessionId)
-    const latest = scope.lists.map(l => l.updatedAt).sort().pop() ?? ''
+    const latest = latestUpdate(scope.lists)
     // 会話から推定して重ねた全ての行の、判定時刻と根拠(新しい順)
     const autos = allTasks(scope.lists)
       .filter(t => t.auto !== undefined)
@@ -561,7 +575,7 @@ export const register: Register = on => {
         {b.brokenFiles.length > 0 && (
           <Text color="red">{`  読めないファイル: ${b.brokenFiles.join(', ')}`}</Text>
         )}
-        <Text color={SUB}>{`  ${latest.slice(0, 16).replace('T', ' ')} 更新 · Esc で閉じる`}</Text>
+        <Text color={SUB}>{`  ${latest === '' ? '' : `${stamp(latest)} 更新 · `}Esc で閉じる`}</Text>
       </Box>
     )
   })
