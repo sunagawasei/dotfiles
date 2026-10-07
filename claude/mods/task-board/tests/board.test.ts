@@ -24,14 +24,15 @@ const t = (status: string) => ({ id: 'T1', title: 'x', status, ws: null })
 // [status, 分類, 補足]
 const CASES: [string, string, string][] = [
   ['done', 'done', ''],
-  ['done: x', 'done', ' x'],
-  ['done：x', 'done', ' x'],
-  ['done: 該当0件', 'done', ' 該当0件'],
+  ['done: x', 'done', 'x'],
+  ['done：x', 'done', 'x'],
+  ['done: 該当0件', 'done', '該当0件'],
   ['merged', 'done', ''],
   ['implementing', 'active', ''],
   ['fixing', 'active', ''],
   ['running', 'active', ''],
-  ['waiting (T1後)', 'open', ' (T1後)'],
+  ['waiting (T1後)', 'open', 'T1後'],
+  ['waiting（T1後）', 'open', 'T1後'],
   ['queued', 'open', ''],
   ['', 'open', ''],
 ]
@@ -217,7 +218,7 @@ test('auto の印と Pane の根拠行は、auto つきの行だけに出る', a
   const auto = { ...task('T1', 'merged'), auto: { prev: 'implementing', basis: 'T1 を統合した', at: '2026-10-05T12:00:00.000Z', list: 'a' } }
   expect(autoMark(plain)).toBe('')
   expect(autoNote(plain)).toBe('')
-  expect(autoMark(auto)).toBe(' · auto(推定) JSON: implementing')
+  expect(autoMark(auto)).toBe('auto(推定) JSON: implementing')
   expect(autoNote(auto)).toContain('a/T1 ← 「T1 を統合した」')
 })
 

@@ -15,17 +15,17 @@ const SUB = '#aba4c4'
 const ACTIVE = '#58caf8'
 const DONE = '#76d6c4'
 
-const word = (status: string) => status.split(/[\s(:：]/)[0] ?? ''
+const word = (status: string) => status.split(/[\s(（:：]/)[0] ?? ''
 export const kindOf = (t: BoardTask) => {
   const w = word(t.status)
   if (w === 'merged' || w === 'done') return 'done'
   if (w === 'implementing' || w === 'fixing' || w === 'running') return 'active'
   return 'open'
 }
-// 状態の補足(waiting (T3後) の括弧など)だけを薄字で添える
+// 状態の補足(waiting (T3後) の「T3後」など)。全体を囲む括弧は外す
 export const note = (t: BoardTask) => {
   const rest = t.status.slice(word(t.status).length).replace(/^[:：]\s*/, '').trim()
-  return rest === '' ? '' : ` ${rest}`
+  return rest.replace(/^[(（](.*)[)）]$/, '$1').trim()
 }
 
 const parseList = (name: string, text: string): BoardList | undefined => {
@@ -195,7 +195,7 @@ const Header = ({ Text, tasks, hint }: any) => {
 
 // 会話から推定した行の印。手書き JSON の値を添えて見比べられるようにする
 export const autoMark = (t: BoardTask) =>
-  t.auto === undefined ? '' : ` · auto(推定) JSON: ${t.auto.prev.length > 24 ? `${t.auto.prev.slice(0, 24)}…` : t.auto.prev}`
+  t.auto === undefined ? '' : `auto(推定) JSON: ${t.auto.prev.length > 24 ? `${t.auto.prev.slice(0, 24)}…` : t.auto.prev}`
 
 const hhmm = (at: string) => {
   const d = new Date(at)
@@ -206,30 +206,36 @@ const hhmm = (at: string) => {
 export const autoNote = (t: BoardTask) =>
   t.auto === undefined ? '' : `  auto(推定) ${hhmm(t.auto.at)} ${t.auto.list}/${t.id} ← 「${t.auto.basis.length > 60 ? `${t.auto.basis.slice(0, 60)}…` : t.auto.basis}」`
 
+// 1行目はタイトルだけ。補足・ws・auto の印は2行目へインデントして出す(長いと1行目が切れて読めないため)
 const Row = ({ Box, Text, t }: any) => {
   const kind = kindOf(t)
+  const detail = [
+    kind !== 'done' ? note(t) : '',
+    kind !== 'done' && t.ws !== null ? `@${t.ws}` : '',
+    autoMark(t),
+  ]
+    .filter(x => x !== '')
+    .join('  ')
   return (
-    <Box key={t.id}>
-      <Box flexShrink={0}>
-        <Text color={kind === 'active' ? ACTIVE : kind === 'done' ? DONE : undefined}>
-          {kind === 'done' ? '  ✔ ' : kind === 'active' ? '  ◼ ' : '  ◻ '}
+    <Box key={t.id} flexDirection="column">
+      <Box>
+        <Box flexShrink={0}>
+          <Text color={kind === 'active' ? ACTIVE : kind === 'done' ? DONE : undefined}>
+            {kind === 'done' ? '  ✔ ' : kind === 'active' ? '  ◼ ' : '  ◻ '}
+          </Text>
+        </Box>
+        <Text
+          bold={kind === 'active'}
+          color={kind === 'done' ? SUB : undefined}
+          strikethrough={kind === 'done'}
+          wrap="truncate-end"
+        >
+          {t.id}: {t.title}
         </Text>
       </Box>
-      <Text
-        bold={kind === 'active'}
-        color={kind === 'done' ? SUB : undefined}
-        strikethrough={kind === 'done'}
-        wrap="truncate-end"
-      >
-        {t.id}: {t.title}
-      </Text>
-      {(kind !== 'done' && (note(t) !== '' || t.ws !== null)) || t.auto !== undefined ? (
-        <Box flexShrink={0}>
-          <Text color={SUB}>
-            {kind !== 'done' ? note(t) : ''}
-            {kind !== 'done' && t.ws !== null ? ` @${t.ws}` : ''}
-            {autoMark(t)}
-          </Text>
+      {detail !== '' ? (
+        <Box paddingLeft={6}>
+          <Text color={SUB}>{detail}</Text>
         </Box>
       ) : null}
     </Box>
