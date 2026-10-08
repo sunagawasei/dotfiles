@@ -31,7 +31,7 @@ var hunkSurfaceFields = map[string]bool{
 }
 
 func extractHunk(root string, result *Result) error {
-	const relative = "home-manager/hunk.nix"
+	const relative = "home-manager/tools/hunk.nix"
 	path := sourcePath(root, relative)
 	file, err := os.Open(path)
 	if err != nil {

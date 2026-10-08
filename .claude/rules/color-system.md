@@ -53,7 +53,7 @@ paths:
 ## バリデーション必須
 
 inventoryは各pairの出所を`Source: <file>:<line>`で持つため、**色を1つも変えなくても、色を含むファイル
-（`home-manager/hunk.nix`・`wezterm/keybinds.lua`等）に行が増減しただけでdriftする**。
+（`home-manager/tools/hunk.nix`・`wezterm/keybinds.lua`等）に行が増減しただけでdriftする**。
 色以外の理由でそれらを編集したときも下記を流すこと（怠ると`--check`が後で落ちる）。
 
 カラー変更後は必ず以下を実行して整合性を確認：
