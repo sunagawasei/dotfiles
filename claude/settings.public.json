@@ -98,6 +98,11 @@
             "command": "bash ~/.claude/hooks/assign-pr-author.sh",
             "timeout": 30,
             "type": "command"
+          },
+          {
+            "command": "~/.config/claude/hooks/task-board-nudge",
+            "timeout": 5,
+            "type": "command"
           }
         ],
         "matcher": "Bash"
