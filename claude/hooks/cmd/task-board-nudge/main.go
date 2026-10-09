@@ -46,6 +46,16 @@ func isDone(status string) bool {
 	return head == "done" || head == "merged"
 }
 
+// knownWords mirrors KNOWN_WORDS in mods/task-board/hooks/register.tsx. Any
+// other first word is shown as 未着手, so a row that is really in progress
+// (reviewing/deploying等) looks idle on the board.
+var knownWords = map[string]bool{"implementing": true, "fixing": true, "running": true, "merged": true, "done": true, "waiting": true, "queued": true}
+
+func isKnown(status string) bool {
+	head, _, _ := strings.Cut(strings.TrimSpace(status), " ")
+	return knownWords[head]
+}
+
 func truncate(s string, n int) string {
 	r := []rune(s)
 	if len(r) > n {
@@ -69,7 +79,11 @@ func unfinished(dir string) []string {
 		}
 		for _, t := range tf.Tasks {
 			if !isDone(t.Status) {
-				lines = append(lines, fmt.Sprintf("%s %s [%s] %s", filepath.Base(f), t.ID, t.Status, truncate(t.Title, 40)))
+				mark := ""
+				if !isKnown(t.Status) {
+					mark = " ⚠表にない語(未着手として表示)"
+				}
+				lines = append(lines, fmt.Sprintf("%s %s [%s]%s %s", filepath.Base(f), t.ID, t.Status, mark, truncate(t.Title, 40)))
 			}
 		}
 	}
@@ -92,7 +106,7 @@ func run(in io.Reader, out io.Writer) {
 	}
 	var o output
 	o.HookSpecificOutput.HookEventName = "PostToolUse"
-	o.HookSpecificOutput.AdditionalContext = "節目コマンド(commit/push/PR作成・merge・close)を実行した。次のタスクの status が実態と合っているか確認し、ずれていれば今すぐ .claude/tasks/*.json を更新すること(複数ファイルにまたがる):\n" + strings.Join(lines, "\n") + extra
+	o.HookSpecificOutput.AdditionalContext = "節目コマンド(commit/push/PR作成・merge・close)を実行した。次のタスクの status が実態と合っているか確認し、ずれていれば今すぐ .claude/tasks/*.json を更新すること(複数ファイルにまたがる)。進行中の行は status を implementing / fixing / running のどれかで始める(reviewing・deploying・next などは未着手として表示される):\n" + strings.Join(lines, "\n") + extra
 	_ = json.NewEncoder(out).Encode(o)
 }
 

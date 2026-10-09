@@ -36,6 +36,9 @@ func TestNudge(t *testing.T) {
 			t.Errorf("%s: %s", c, got)
 		}
 	}
+	if got := call(dir, "git commit"); !strings.Contains(got, "A2 [reviewing] ⚠") {
+		t.Errorf("unknown status not flagged: %s", got)
+	}
 	for _, c := range []string{"git status", "gh pr view 1", "ls"} {
 		if got := call(dir, c); got != "" {
 			t.Errorf("%s: unexpected %s", c, got)
