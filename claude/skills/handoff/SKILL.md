@@ -22,7 +22,7 @@ description: ユーザーが「別workspaceを立ち上げて調査/対処させ
 
 1. 対象ディレクトリを決める。ユーザーが指定していなければ、依頼内容から推測するか確認する
 2. `herdr workspace create --cwd <対象ディレクトリ> --label <タスク内容が分かるラベル>` で新規workspaceを作る。レスポンスの `result.root_pane.pane_id` を控える
-3. `herdr agent start <name> --kind claude --pane <pane_id>` でclaude codeを起動する。`<name>` は英数字とハイフン/アンダースコアのみ、既存の生存agent名と重複しないこと(`herdr agent list` で確認できる)
+3. `herdr agent start <name> --kind claude --pane <pane_id>` でclaude codeを起動する。`<name>` は英数字とハイフン/アンダースコアのみ、既存の生存agent名と重複しないこと(`herdr agent list` で確認できる)。起動後の `agent prompt`/`wait`/`read` の宛先は `<pane_id>` で指定する(`<name>` では `agent_not_found` になることがある。2026-10-09実例)
 4. `herdr agent prompt <name> "<依頼内容>" --wait --until working --timeout 15000` で依頼を送る。ここで待つのは**プロンプトの着弾確認だけ**で、進行の追跡ではない。投げっぱなしの場合もこの確認は行う。`agent_prompt_stalled` やtimeoutが返ったらプロンプトが届いていないので、`agent read` で状況を見て再送する
 
 ## 既定(追わない)
@@ -33,7 +33,7 @@ description: ユーザーが「別workspaceを立ち上げて調査/対処させ
 
 ## 追跡を明示されたとき
 
-5. 完了通知を予約する。Bashツールの `run_in_background` で `herdr agent wait <name> --timeout 1800000` を1本流す。settled状態(idle/done/blocked)に達した時点でexitし、1通の完了通知として届く。**`--timeout` は必ず付ける**(省略すると無期限待ちになり、委譲先が死んだ場合に通知が永久に来ない)。timeoutは委譲失敗の証拠ではないので、`agent read` で実況を確認して判断する。**質問待ちで止まった相手に対して wait を再度張らない** — `agent wait` は委譲先が質問を出して止まった状態も settled として即 exit するため、再armすると同じ画面を繰り返し報告するだけのループになる(2026-09-07実例)。同じ質問待ちが2回返ったら再armをやめ、ユーザーがpaneで応答するのを待つ
+5. 完了通知を予約する。**Monitorツール**で `herdr agent wait <pane_id> --timeout 3500000; echo settled` を1本流す(`timeout_ms` は最大値)。Bashの `run_in_background` は10分で打ち切られるので使わない(2026-10-09、3回続けて exit 124 で止まった)。Monitorも30分で切れるので、settled 前に切れたら同じコマンドで張り直す。settled状態(idle/done/blocked)に達した時点でexitし、1通の完了通知として届く。**`--timeout` は必ず付ける**(省略すると無期限待ちになり、委譲先が死んだ場合に通知が永久に来ない)。timeoutは委譲失敗の証拠ではないので、`agent read` で実況を確認して判断する。**質問待ちで止まった相手に対して wait を再度張らない** — `agent wait` は委譲先が質問を出して止まった状態も settled として即 exit するため、再armすると同じ画面を繰り返し報告するだけのループになる(2026-09-07実例)。同じ質問待ちが2回返ったら再armをやめ、ユーザーがpaneで応答するのを待つ
 6. **予約したら即座に元のタスクへ戻る**。sleepやポーリングで完了を待たない。通知が届いたら `herdr agent read <name>` で結果を確認し、`blocked` で返ってきた場合は質問への回答を `agent prompt` で送る(Q&Aの往復もこの形で回せる)
 
 ## workspaceを閉じる
