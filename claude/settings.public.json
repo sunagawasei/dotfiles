@@ -339,7 +339,6 @@
       "Bash(darwin-apply)"
     ],
     "ask": [
-      "Bash(git push *)",
       "Bash(psql:*)",
       "Bash(mysql:*)",
       "Bash(mongod:*)",
