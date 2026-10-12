@@ -10,6 +10,7 @@ in
   # [keys] は標準のキー割り当てを丸ごと置き換える。0.5.5 は [settings] が無いと起動時に panic する
   xdg.configFile."rift/config.toml".text = ''
     [settings]
+    default_disable = false
 
     [modifier_combinations]
     hyper = "Ctrl + Alt + Meta"
