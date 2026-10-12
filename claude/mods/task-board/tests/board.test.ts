@@ -6,6 +6,8 @@ import {
   autoNote,
   boardKey,
   kindOf,
+  markTasks,
+  milestoneOf,
   latestUpdate,
   isAutoList,
   joinAnswers,
@@ -308,4 +310,55 @@ test('更新時刻は書式が混在しても最も新しい時刻を返し、�
   const at = (updatedAt: string) => ({ ...list('x', ''), updatedAt })
   expect(latestUpdate([at('2026-10-06T19:23+0900'), at('2026-10-07T13:59:00.000Z'), at('')])).toBe('2026-10-07T13:59:00.000Z')
   expect(latestUpdate([at('')])).toBe('')
+})
+
+const COMMIT_OUT = '[main 655c2ab] feat(scripts): zmk-build\n 1 file changed, 3 insertions(+)'
+
+test('commit が成功し `# task:T2` があれば、T2 を完了にする', async () => {
+  const m = milestoneOf('git add a && git commit -m "x" # task:T2', COMMIT_OUT)
+  expect(m).toEqual({ ids: ['T2'], status: 'done (commit 655c2ab)', basis: 'git commit 655c2ab' })
+})
+
+test('印にカンマ区切りで複数の id を書ける', async () => {
+  expect(milestoneOf('git commit -m x # task:T2, T3', COMMIT_OUT)?.ids).toEqual(['T2', 'T3'])
+})
+
+test('印が無い commit は何も反映しない', async () => {
+  expect(milestoneOf('git commit -m x', COMMIT_OUT)).toBeUndefined()
+})
+
+test('commit の出力に [branch sha] が無ければ(フックで失敗など)反映しない', async () => {
+  expect(milestoneOf('git commit -m x # task:T2', 'pre-commit hook failed')).toBeUndefined()
+})
+
+test('git commit でも gh pr merge でもないコマンドは、印があっても反映しない', async () => {
+  expect(milestoneOf('git push # task:T2', COMMIT_OUT)).toBeUndefined()
+})
+
+test('gh pr merge が merged を出力したら merged にする', async () => {
+  expect(milestoneOf('gh pr merge 5 --squash # task:T4', '✓ Squashed and merged pull request #5')).toEqual({
+    ids: ['T4'],
+    status: 'merged',
+    basis: 'gh pr merge',
+  })
+  expect(milestoneOf('gh pr merge 5 # task:T4', 'merge blocked')).toBeUndefined()
+})
+
+test('名指しされた未完了の行だけ status を差し替え、完了済みの行と他の行は触らない', async () => {
+  const rows = [
+    { id: 'T1', status: 'done (調査完了)' },
+    { id: 'T2', status: 'implementing' },
+    { id: 'T3', status: 'waiting' },
+  ]
+  expect(markTasks(rows, ['T1', 'T2'], 'done (commit abc1234)')).toEqual([
+    { id: 'T1', status: 'done (調査完了)' },
+    { id: 'T2', status: 'done (commit abc1234)' },
+    { id: 'T3', status: 'waiting' },
+  ])
+})
+
+test('名指しした行が全て完了済みか存在しなければ、変更なし(undefined)', async () => {
+  const rows = [{ id: 'T1', status: 'merged' }]
+  expect(markTasks(rows, ['T1'], 'done')).toBeUndefined()
+  expect(markTasks(rows, ['T9'], 'done')).toBeUndefined()
 })

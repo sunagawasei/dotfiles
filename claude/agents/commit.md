@@ -49,6 +49,10 @@ Use specific file paths — never `git add -A` or `git add .`:
 git add path/to/file1 path/to/file2
 ```
 
+### 3.5. Task marker
+
+If the caller's prompt names a task id (e.g. `task:T2`), end the `git commit` command line with the shell comment `# task:T2` (not in the message). A mod reads it to mark the task done.
+
 ### 4. Write the commit message
 
 **First, check `git log --oneline -20` to match the existing style** — language (Japanese/English), granularity, and tone of the project.

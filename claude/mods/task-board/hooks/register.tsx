@@ -188,6 +188,34 @@ export const toOverlay = (p: Proposal, human: string, at: string): Overlay => ({
   at,
 })
 
+// コマンド末尾の `# task:T2` や `# task:T2,T3` で名指しされた id。シェルのコメントなのでコミットメッセージには残らない
+const TASK_MARK = /#\s*task:\s*([A-Za-z0-9_.-]+(?:\s*,\s*[A-Za-z0-9_.-]+)*)/g
+const MAX_MARKED = 10
+
+// 成功した commit / PR merge で完了にするタスクと status。LLM は使わず、タスクの名指しはコマンドの印だけで決める。
+// tool.call の結果に終了コードが無いので、成功は出力(`[main abc1234] …` / merged)で見る
+export const milestoneOf = (command: string, text: string): { ids: string[]; status: string; basis: string } | undefined => {
+  const ids = [...new Set([...command.matchAll(TASK_MARK)].flatMap(m => m[1]!.split(',').map(s => s.trim())))].slice(0, MAX_MARKED)
+  if (ids.length === 0) return undefined
+  if (/\bgit\s+(-C\s+\S+\s+)?commit\b/.test(command)) {
+    const sha = text.match(/^\[[^\]\n]+\s([0-9a-f]{7,40})\]/m)?.[1]
+    if (sha !== undefined) return { ids, status: `done (commit ${sha})`, basis: `git commit ${sha}` }
+  }
+  if (/\bgh\s+pr\s+merge\b/.test(command) && /merged/i.test(text)) return { ids, status: 'merged', basis: 'gh pr merge' }
+  return undefined
+}
+
+// 名指しされた未完了タスクの status を差し替える。完了済みの行(補足つきの done など)は上書きしない。変更が無ければ undefined
+export const markTasks = <T extends { id: string; status: string }>(tasks: T[], ids: string[], status: string): T[] | undefined => {
+  let changed = false
+  const out = tasks.map(t => {
+    if (!ids.includes(t.id) || ['done', 'merged'].includes(word(t.status))) return t
+    changed = true
+    return { ...t, status }
+  })
+  return changed ? out : undefined
+}
+
 const Header = ({ Text, tasks, hint }: any) => {
   const done = tasks.filter((t: BoardTask) => kindOf(t) === 'done').length
   const active = tasks.filter((t: BoardTask) => kindOf(t) === 'active').length
@@ -356,6 +384,8 @@ const runLegacy = async ($: EngineInterface, answer: string, root: string, sessi
   if (!reply.isAnswered) return
   const tasks = parseReply(reply.text, current)
   if (tasks === undefined) return
+  // fork の間に節目フックが書いた変更を、古い一覧で上書きしない
+  if ((await $.fs.read(path).catch(() => undefined)) !== raw) return
   const updated_at = new Date().toISOString()
   await $.fs.write(path, JSON.stringify({ updated_at, session: `session-${short}`, tasks }, null, 2) + '\n')
 }
@@ -407,7 +437,51 @@ const kick = async ($: EngineInterface): Promise<void> => {
   }
 }
 
+// 節目コマンドが名指しした未完了タスクを、その場で完了へ寄せる。現在のセッションの手書き一覧があれば overlay、無ければ auto 一覧へ書く
+const applyMilestone = async ($: EngineInterface, m: NonNullable<ReturnType<typeof milestoneOf>>): Promise<void> => {
+  const cwd = await $.session.cwd().catch(() => '')
+  const sessionId = await $.session.id().catch(() => '')
+  if (cwd === '' || sessionId === '') return
+  if (!(await $.fs.list(`${cwd}/${DIR}`).then(() => true, () => false))) return
+  const data = await loadBoard($, cwd)
+  const at = new Date().toISOString()
+  const hand = scopeLists(data.lists.filter(l => !isAutoList(l)), sessionId).lists
+  if (hand.length > 0) {
+    const shown = applyOverlays(hand, data.overlays)
+    for (const [i, l] of hand.entries()) {
+      for (const [j, t] of l.tasks.entries()) {
+        if (!m.ids.includes(t.id) || kindOf(shown[i]!.tasks[j]!) === 'done') continue
+        const o = toOverlay({ list: l.name, id: t.id, status: m.status, basis: m.basis }, t.status, at)
+        await $.fs.write(`${cwd}/${overlayPath(l.name, t.id)}`, JSON.stringify(o, null, 2) + '\n')
+      }
+    }
+    return
+  }
+  const short = sessionId.slice(0, 8)
+  const path = `${cwd}/${autoFile(short)}`
+  const raw = await $.fs.read(path).catch(() => undefined)
+  if (raw === undefined) return
+  const json = JSON.parse(raw)
+  if (!Array.isArray(json.tasks)) return
+  const tasks = markTasks<Task>(json.tasks, m.ids, m.status)
+  if (tasks === undefined) return
+  await $.fs.write(path, JSON.stringify({ ...json, updated_at: at, tasks }, null, 2) + '\n')
+}
+
 const registerSidecar = (on: Parameters<Register>[0]) => {
+  // 回答の終了を待たず、commit / PR merge の成功をその場で反映する。結果は変えず、反映は待たない
+  on('tool.call', { tool: 'Bash' }, async ($, e, next) => {
+    const r = await next(e)
+    try {
+      const text = 'text' in r && typeof r.text === 'string' ? r.text : ''
+      const m = r.isError || r.deny !== undefined || text === '' ? undefined : milestoneOf(e.command, text)
+      if (m !== undefined) applyMilestone($, m).catch(() => {})
+    } catch {
+      // 反映の失敗でツールの結果を壊さない
+    }
+    return r
+  })
+
   on('turn.complete', async ($, e, next) => {
     // 本体の回答が終わったターンだけ。サブエージェントのターンや中断は見ない
     if (e.agentId !== undefined || e.reason !== 'answer' || e.answer.trim() === '') return next(e)
