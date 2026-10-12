@@ -12,6 +12,9 @@ in
     [settings]
     default_disable = false
 
+    [settings.layout.stack]
+    stack_offset = 0.0
+
     [modifier_combinations]
     hyper = "Ctrl + Alt + Meta"
     hyper_shift = "Ctrl + Alt + Meta + Shift"
