@@ -18,4 +18,8 @@ declare module 'claude-code' {
   interface PluginState {
     'task-board': { board: Board }
   }
+  // 登録するツール task_set の入力。tool.call フックの e.tool で絞り込めるようにする
+  interface McpToolInputs {
+    'mcp__task-board__task_set': { id: string; status: string; note?: string; list?: string }
+  }
 }

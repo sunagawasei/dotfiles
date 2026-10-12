@@ -2,6 +2,11 @@ import { test, expect } from 'claude-code/testing'
 
 import {
   applyOverlays,
+  applyStatus,
+  ensureTool,
+  loadBoard,
+  runOverlay,
+  runTaskSet,
   autoMark,
   autoNote,
   boardKey,
@@ -14,6 +19,8 @@ import {
   mentionsId,
   note,
   overlayPath,
+  parseSetInput,
+  serialized,
   parseChanges,
   queueAnswer,
   scopeLists,
@@ -361,4 +368,209 @@ test('名指しした行が全て完了済みか存在しなければ、変更�
   const rows = [{ id: 'T1', status: 'merged' }]
   expect(markTasks(rows, ['T1'], 'done')).toBeUndefined()
   expect(markTasks(rows, ['T9'], 'done')).toBeUndefined()
+})
+
+test('明示の指定(overwriteDone)なら、完了済みの行も未完了へ戻せる', async () => {
+  const rows = [{ id: 'T1', status: 'done (誤り)' }]
+  expect(markTasks(rows, ['T1'], 'implementing')).toBeUndefined()
+  expect(markTasks(rows, ['T1'], 'implementing', true)).toEqual([{ id: 'T1', status: 'implementing' }])
+})
+
+test('同じ status への差し替えは変更とみなさない', async () => {
+  expect(markTasks([{ id: 'T1', status: 'implementing' }], ['T1'], 'implementing', true)).toBeUndefined()
+})
+
+test('task_set の入力は、実在の語と空でない id だけ通し、補足は括弧で後ろへ付ける', async () => {
+  expect(parseSetInput({ id: ' T2 ', status: 'done' })).toEqual({ id: 'T2', status: 'done' })
+  expect(parseSetInput({ id: 'T2', status: 'done', note: '調査\n完了' })).toEqual({ id: 'T2', status: 'done (調査 完了)' })
+})
+
+test('task_set の入力は、空の id・未知の語・文字列でない値を理由つきで断る', async () => {
+  expect(typeof parseSetInput({ id: '', status: 'done' })).toBe('string')
+  expect(parseSetInput({ id: 'T2', status: 'reviewing' })).toContain('status は')
+  expect(typeof parseSetInput({ id: 2, status: 'done' })).toBe('string')
+  expect(typeof parseSetInput({ id: 'T2', status: 7 })).toBe('string')
+})
+
+test('補足は100字で切る', async () => {
+  const r = parseSetInput({ id: 'T2', status: 'done', note: 'あ'.repeat(300) })
+  expect(typeof r === 'string' ? '' : r.status.length).toBe('done ()'.length + 100)
+})
+
+test('並列に呼んでも書き込みは呼び出し順に1本ずつ実行する', async () => {
+  const log: string[] = []
+  const step = (name: string, ticks: number) => async () => {
+    log.push(`start ${name}`)
+    for (let i = 0; i < ticks; i++) await Promise.resolve()
+    log.push(`end ${name}`)
+    return name
+  }
+  const results = await Promise.all([serialized(step('a', 30)), serialized(step('b', 1)), serialized(step('c', 1))])
+  expect(results).toEqual(['a', 'b', 'c'])
+  expect(log).toEqual(['start a', 'end a', 'start b', 'end b', 'start c', 'end c'])
+})
+
+test('途中の書き込みが失敗しても、後続の書き込みは実行される', async () => {
+  await serialized(async () => {
+    throw new Error('x')
+  }).catch(() => {})
+  expect(await serialized(async () => 'ok')).toBe('ok')
+})
+
+// 偽の `$`。fs はメモリ上の Map で、list は直下のファイルだけ返す(無ければ失敗)
+const SID_FULL = '861bc654-aaaa-bbbb-cccc-dddddddddddd'
+const fakeEnv = (files: Record<string, string>, fork?: (files: Map<string, string>) => Promise<{ isAnswered: boolean; text: string }>) => {
+  const fs = new Map(Object.entries(files))
+  const $: any = {
+    session: { cwd: async () => '/r', id: async () => SID_FULL },
+    fs: {
+      list: async (dir: string) => {
+        const pre = `${dir.replace(/\/$/, '')}/`
+        const es = [...fs.keys()].filter(k => k.startsWith(pre) && !k.slice(pre.length).includes('/'))
+        if (es.length === 0) throw new Error('ENOENT')
+        return es.map(k => ({ name: k.slice(pre.length), kind: 'file', mtimeMs: 0 }))
+      },
+      read: async (p: string) => {
+        if (!fs.has(p)) throw new Error('ENOENT')
+        return fs.get(p)!
+      },
+      write: async (p: string, text: string) => {
+        fs.set(p, text)
+      },
+    },
+    model: { fork: async () => (fork ? fork(fs) : { isAnswered: false, text: '' }) },
+  }
+  return { $, fs }
+}
+const listJson = (...ids: string[]) =>
+  JSON.stringify({ tasks: ids.map(id => ({ id, title: `t-${id}`, status: 'waiting', ws: null })) })
+const ovFile = (list: string, id: string) => `/r/${overlayPath(list, id)}`
+
+test('同じ id が複数の手書き一覧にあり list が無ければ、何も書かず一覧名を挙げて断る', async () => {
+  const { $, fs } = fakeEnv({ '/r/.claude/tasks/a.json': listJson('T1'), '/r/.claude/tasks/b.json': listJson('T1') })
+  const r: any = await runTaskSet($, { id: 'T1', status: 'done' })
+  expect(r.deny).toContain('a, b')
+  expect(fs.has(ovFile('a', 'T1')) || fs.has(ovFile('b', 'T1'))).toBe(false)
+})
+
+test('list を指定すれば、その一覧の overlay だけ書き、返答に一覧名を付ける', async () => {
+  const { $, fs } = fakeEnv({ '/r/.claude/tasks/a.json': listJson('T1'), '/r/.claude/tasks/b.json': listJson('T1') })
+  const r: any = await runTaskSet($, { id: 'T1', status: 'done', list: 'b' })
+  expect(r.result).toBe('b/T1 を done にしました')
+  expect(fs.has(ovFile('b', 'T1'))).toBe(true)
+  expect(fs.has(ovFile('a', 'T1'))).toBe(false)
+})
+
+test('id が1つの一覧にしか無ければ、list 無しで通る', async () => {
+  const { $, fs } = fakeEnv({ '/r/.claude/tasks/a.json': listJson('T1'), '/r/.claude/tasks/b.json': listJson('T2') })
+  const r: any = await runTaskSet($, { id: 'T2', status: 'implementing' })
+  expect(r.result).toBe('b/T2 を implementing にしました')
+  expect(fs.has(ovFile('b', 'T2'))).toBe(true)
+})
+
+test('一覧が1つなら返答は id だけ。無い id は、あるものを挙げて断る', async () => {
+  const { $ } = fakeEnv({ '/r/.claude/tasks/a.json': listJson('T1') })
+  expect(((await runTaskSet($, { id: 'T1', status: 'done' })) as any).result).toBe('T1 を done にしました')
+  expect(((await runTaskSet($, { id: 'T9', status: 'done' })) as any).deny).toContain('あるのは T1')
+  expect(((await runTaskSet($, { id: 'T1', status: 'done', list: 'zz' })) as any).deny).toContain('一覧 zz')
+})
+
+test('fork の間に task_set が overlay を書いたら、古いサイドカーの提案は捨てて task_set の値を残す', async () => {
+  const taskSet = JSON.stringify({ list: 'a', id: 'T1', status: 'implementing', prev: 'waiting', basis: 'task_set', at: '2026-10-12T00:00:00.000Z' })
+  const reply = { isAnswered: true, text: JSON.stringify({ changes: [{ list: 'a', id: 'T1', status: 'done', basis: 'T1 は完了した' }] }) }
+  const { $, fs } = fakeEnv({ '/r/.claude/tasks/a.json': listJson('T1') }, async f => {
+    f.set(ovFile('a', 'T1'), taskSet)
+    return reply
+  })
+  const data = await loadBoard($, '/r')
+  await runOverlay($, data, scopeLists(data.lists.filter(l => !isAutoList(l)), SID_FULL).lists, 'T1 は完了した', '/r')
+  expect(fs.get(ovFile('a', 'T1'))).toBe(taskSet)
+})
+
+test('fork の間に何も書かれなければ、サイドカーの提案を overlay へ書く', async () => {
+  const reply = { isAnswered: true, text: JSON.stringify({ changes: [{ list: 'a', id: 'T1', status: 'done', basis: 'T1 は完了した' }] }) }
+  const { $, fs } = fakeEnv({ '/r/.claude/tasks/a.json': listJson('T1') }, async () => reply)
+  const data = await loadBoard($, '/r')
+  await runOverlay($, data, scopeLists(data.lists.filter(l => !isAutoList(l)), SID_FULL).lists, 'T1 は完了した', '/r')
+  expect(JSON.parse(fs.get(ovFile('a', 'T1'))!).status).toBe('done')
+})
+
+test('fork の前から overlay があり、fork の間に更新されたら、提案を捨てる', async () => {
+  const before = JSON.stringify({ list: 'a', id: 'T1', status: 'running', prev: 'waiting', basis: 'old', at: '2026-10-12T00:00:00.000Z' })
+  const after = JSON.stringify({ list: 'a', id: 'T1', status: 'implementing', prev: 'waiting', basis: 'task_set', at: '2026-10-12T00:00:00.000Z' })
+  const reply = { isAnswered: true, text: JSON.stringify({ changes: [{ list: 'a', id: 'T1', status: 'done', basis: 'T1 は完了した' }] }) }
+  const { $, fs } = fakeEnv({ '/r/.claude/tasks/a.json': listJson('T1'), [ovFile('a', 'T1')]: before }, async f => {
+    f.set(ovFile('a', 'T1'), after)
+    return reply
+  })
+  const data = await loadBoard($, '/r')
+  await runOverlay($, data, scopeLists(data.lists.filter(l => !isAutoList(l)), SID_FULL).lists, 'T1 は完了した', '/r')
+  expect(fs.get(ovFile('a', 'T1'))).toBe(after)
+})
+
+test('task_set の登録は、.claude/tasks/ が無い間は呼ばず、ある repo へ移った後の poll で1回だけ呼ぶ', async () => {
+  let hasDir = false
+  let calls = 0
+  const $: any = {
+    fs: { list: async () => (hasDir ? [] : Promise.reject(new Error('ENOENT'))) },
+    tool: {
+      register: async () => {
+        calls++
+        return { tool: 'x' }
+      },
+    },
+  }
+  const state = { isRegistered: false }
+  await ensureTool($, state)
+  expect(calls).toBe(0)
+  hasDir = true
+  await ensureTool($, state)
+  await ensureTool($, state)
+  expect(calls).toBe(1)
+})
+
+test('task_set の登録に失敗した回は、次の poll でやり直す', async () => {
+  let calls = 0
+  const $: any = {
+    fs: { list: async () => [] },
+    tool: {
+      register: async () => {
+        calls++
+        if (calls === 1) throw new Error('not bound')
+        return { tool: 'x' }
+      },
+    },
+  }
+  const state = { isRegistered: false }
+  await ensureTool($, state)
+  await ensureTool($, state)
+  await ensureTool($, state)
+  expect(calls).toBe(2)
+})
+
+const AUTO = '/r/.claude/tasks/auto.861bc654.json'
+const autoJson = () => JSON.stringify({ session: 'session-861bc654', tasks: [{ id: 'T1', title: 't', status: 'waiting', ws: null }] })
+
+test('auto 一覧しか無いとき、存在しない list を指定した task_set は断り、ファイルを変えない', async () => {
+  const { $, fs } = fakeEnv({ [AUTO]: autoJson() })
+  const r: any = await runTaskSet($, { id: 'T1', status: 'done', list: 'bogus' })
+  expect(r.deny).toContain('一覧 bogus')
+  expect(fs.get(AUTO)).toBe(autoJson())
+})
+
+test('auto 一覧しか無いとき、list を省くか一覧名に合わせれば task_set は書ける', async () => {
+  const a = fakeEnv({ [AUTO]: autoJson() })
+  expect(((await runTaskSet(a.$, { id: 'T1', status: 'done' })) as any).result).toBe('T1 を done にしました')
+  expect(JSON.parse(a.fs.get(AUTO)!).tasks[0].status).toBe('done')
+  const b = fakeEnv({ [AUTO]: autoJson() })
+  expect(((await runTaskSet(b.$, { id: 'T1', status: 'done', list: 'auto.861bc654' })) as any).result).toBe('T1 を done にしました')
+})
+
+test('commit・merge の印は、同じ id を持つ全ての手書き一覧を更新する(list の指定が無くても)', async () => {
+  for (const ids of [['T1'], ['T1', 'T2']]) {
+    const { $, fs } = fakeEnv({ '/r/.claude/tasks/a.json': listJson('T1'), '/r/.claude/tasks/b.json': listJson('T1', 'T2') })
+    await applyStatus($, { ids, status: 'done (commit abc1234)', basis: 'git commit abc1234', isExplicit: false })
+    expect(fs.has(ovFile('a', 'T1'))).toBe(true)
+    expect(fs.has(ovFile('b', 'T1'))).toBe(true)
+  }
 })

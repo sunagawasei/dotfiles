@@ -205,11 +205,18 @@ export const milestoneOf = (command: string, text: string): { ids: string[]; sta
   return undefined
 }
 
-// 名指しされた未完了タスクの status を差し替える。完了済みの行(補足つきの done など)は上書きしない。変更が無ければ undefined
-export const markTasks = <T extends { id: string; status: string }>(tasks: T[], ids: string[], status: string): T[] | undefined => {
+// 名指しされた行の status を差し替える。既定では完了済みの行(補足つきの done など)を上書きしない。明示の指定(task_set)だけ上書きを許す。
+// 同じ status への差し替えは変更とみなさない。変更が無ければ undefined
+export const markTasks = <T extends { id: string; status: string }>(
+  tasks: T[],
+  ids: string[],
+  status: string,
+  overwriteDone = false,
+): T[] | undefined => {
   let changed = false
   const out = tasks.map(t => {
-    if (!ids.includes(t.id) || ['done', 'merged'].includes(word(t.status))) return t
+    if (!ids.includes(t.id) || t.status === status) return t
+    if (!overwriteDone && ['done', 'merged'].includes(word(t.status))) return t
     changed = true
     return { ...t, status }
   })
@@ -349,7 +356,7 @@ ${answer}
 
 type Loaded = Awaited<ReturnType<typeof loadBoard>>
 
-const runOverlay = async ($: EngineInterface, data: Loaded, hand: BoardList[], answer: string, root: string) => {
+export const runOverlay = async ($: EngineInterface, data: Loaded, hand: BoardList[], answer: string, root: string) => {
   const applied = applyOverlays(hand, data.overlays)
   const tasks = hand.flatMap((l, i) =>
     l.tasks.map((t, j) => ({ list: l.name, id: t.id, title: t.title, status: t.status, shown: applied[i]!.tasks[j]!.status })),
@@ -360,7 +367,16 @@ const runOverlay = async ($: EngineInterface, data: Loaded, hand: BoardList[], a
   const at = new Date().toISOString()
   for (const p of parseChanges(reply.text, tasks, answer)) {
     const human = tasks.find(t => t.list === p.list && t.id === p.id)!.status
-    await $.fs.write(`${root}/${overlayPath(p.list, p.id)}`, JSON.stringify(toOverlay(p, human, at), null, 2) + '\n')
+    const rel = overlayPath(p.list, p.id)
+    const path = `${root}/${rel}`
+    // 提案は fork に渡した時点の overlay を前提に作られている。
+    // 書く直前の overlay がその時点と違えば、task_set などが書いた新しい値を守るため提案を捨てる
+    const prefix = `${rel.slice(rel.lastIndexOf('/') + 1)}\0`
+    const seen = data.overlayTexts.find(x => x.startsWith(prefix))?.slice(prefix.length)
+    await serialized(async () => {
+      if ((await $.fs.read(path).catch(() => undefined)) !== seen) return
+      await $.fs.write(path, JSON.stringify(toOverlay(p, human, at), null, 2) + '\n')
+    })
   }
 }
 
@@ -384,10 +400,12 @@ const runLegacy = async ($: EngineInterface, answer: string, root: string, sessi
   if (!reply.isAnswered) return
   const tasks = parseReply(reply.text, current)
   if (tasks === undefined) return
-  // fork の間に節目フックが書いた変更を、古い一覧で上書きしない
-  if ((await $.fs.read(path).catch(() => undefined)) !== raw) return
   const updated_at = new Date().toISOString()
-  await $.fs.write(path, JSON.stringify({ updated_at, session: `session-${short}`, tasks }, null, 2) + '\n')
+  await serialized(async () => {
+    // fork の間に節目フックや task_set が書いた変更を、古い一覧で上書きしない
+    if ((await $.fs.read(path).catch(() => undefined)) !== raw) return
+    await $.fs.write(path, JSON.stringify({ updated_at, session: `session-${short}`, tasks }, null, 2) + '\n')
+  })
 }
 
 const MAX_PENDING_ANSWERS = 8
@@ -437,35 +455,135 @@ const kick = async ($: EngineInterface): Promise<void> => {
   }
 }
 
-// 節目コマンドが名指しした未完了タスクを、その場で完了へ寄せる。現在のセッションの手書き一覧があれば overlay、無ければ auto 一覧へ書く
-const applyMilestone = async ($: EngineInterface, m: NonNullable<ReturnType<typeof milestoneOf>>): Promise<void> => {
+// 状態を書く処理(節目フック・task_set・サイドカー)を1本の列に並べる。並列呼び出しでも read-modify-write が交錯せず、結果は呼び出し順になる
+let writeQueue: Promise<unknown> = Promise.resolve()
+export const serialized = <T,>(fn: () => Promise<T>): Promise<T> => {
+  const run = writeQueue.then(fn, fn)
+  writeQueue = run.catch(() => {})
+  return run
+}
+
+export type Ref = { list: string; id: string }
+export type StatusChange = { ids: string[]; list?: string; status: string; basis: string; isExplicit: boolean }
+// applied: 書いたタスク / known: 対象の一覧にあるタスク / ambiguous: list 無しで id が複数の一覧にあったときの一覧名(このとき何も書かない) / isMulti: 手書き一覧が複数
+export type StatusResult = { applied: Ref[]; known: Ref[]; ambiguous: string[]; isMulti: boolean }
+
+// 名指しされたタスクの status を、現在のセッションの一覧へその場で反映する。
+// 現在のセッションの手書き一覧があれば overlay(画面だけ重ねる)、無ければ auto 一覧へ書く。
+// isExplicit(task_set)なら完了済みの行も上書きし、節目フックは完了済みの行を守る。
+// 同じ id が複数の手書き一覧にあり list の指定が無いときは、どれを変えるか決められないので何も書かない
+export const applyStatus = async ($: EngineInterface, c: StatusChange): Promise<StatusResult> => {
+  const none: StatusResult = { applied: [], known: [], ambiguous: [], isMulti: false }
   const cwd = await $.session.cwd().catch(() => '')
   const sessionId = await $.session.id().catch(() => '')
-  if (cwd === '' || sessionId === '') return
-  if (!(await $.fs.list(`${cwd}/${DIR}`).then(() => true, () => false))) return
+  if (cwd === '' || sessionId === '') return none
+  if (!(await $.fs.list(`${cwd}/${DIR}`).then(() => true, () => false))) return none
   const data = await loadBoard($, cwd)
   const at = new Date().toISOString()
   const hand = scopeLists(data.lists.filter(l => !isAutoList(l)), sessionId).lists
+  const applied: Ref[] = []
   if (hand.length > 0) {
+    const known = hand.flatMap(l => l.tasks.map(t => ({ list: l.name, id: t.id })))
+    const isMulti = hand.length > 1
+    const inScope = (l: BoardList) => c.list === undefined || l.name === c.list
+    const ambiguous = c.isExplicit && c.ids.length === 1 && c.list === undefined ? hand.filter(l => l.tasks.some(t => t.id === c.ids[0])).map(l => l.name) : []
+    if (ambiguous.length > 1) return { applied, known, ambiguous, isMulti }
     const shown = applyOverlays(hand, data.overlays)
     for (const [i, l] of hand.entries()) {
+      if (!inScope(l)) continue
       for (const [j, t] of l.tasks.entries()) {
-        if (!m.ids.includes(t.id) || kindOf(shown[i]!.tasks[j]!) === 'done') continue
-        const o = toOverlay({ list: l.name, id: t.id, status: m.status, basis: m.basis }, t.status, at)
+        if (!c.ids.includes(t.id)) continue
+        const cur = shown[i]!.tasks[j]!
+        if (cur.status === c.status || (!c.isExplicit && kindOf(cur) === 'done')) continue
+        const o = toOverlay({ list: l.name, id: t.id, status: c.status, basis: c.basis }, t.status, at)
         await $.fs.write(`${cwd}/${overlayPath(l.name, t.id)}`, JSON.stringify(o, null, 2) + '\n')
+        applied.push({ list: l.name, id: t.id })
       }
     }
-    return
+    return { applied, known, ambiguous: [], isMulti }
   }
-  const short = sessionId.slice(0, 8)
-  const path = `${cwd}/${autoFile(short)}`
+  const name = `auto.${sessionId.slice(0, 8)}`
+  const path = `${cwd}/${autoFile(sessionId.slice(0, 8))}`
   const raw = await $.fs.read(path).catch(() => undefined)
-  if (raw === undefined) return
+  if (raw === undefined) return none
   const json = JSON.parse(raw)
-  if (!Array.isArray(json.tasks)) return
-  const tasks = markTasks<Task>(json.tasks, m.ids, m.status)
-  if (tasks === undefined) return
+  if (!Array.isArray(json.tasks)) return none
+  const known = (json.tasks as Task[]).map(t => ({ list: name, id: t.id }))
+  // list の指定が auto 一覧と合わないときは書かない(呼び出し側が「見つかりません」と断るので、書くと失敗を返しながら表示が変わる)
+  if (c.list !== undefined && c.list !== name) return { applied, known, ambiguous: [], isMulti: false }
+  const tasks = markTasks<Task>(json.tasks, c.ids, c.status, c.isExplicit)
+  if (tasks === undefined) return { applied, known, ambiguous: [], isMulti: false }
   await $.fs.write(path, JSON.stringify({ ...json, updated_at: at, tasks }, null, 2) + '\n')
+  return { applied: known.filter(k => c.ids.includes(k.id)), known, ambiguous: [], isMulti: false }
+}
+
+const TOOL_NAME = 'task_set'
+const TOOL_FULL = `mcp__task-board__${TOOL_NAME}`
+const SETTABLE = KNOWN_WORDS.join(' / ')
+
+// 手書き一覧が複数あるときだけ「一覧名/id」で示す(どの一覧のタスクか分かるように)
+export const refLabel = (r: Ref, isMulti: boolean) => (isMulti ? `${r.list}/${r.id}` : r.id)
+
+// task_set の入力を検証する。モデルの入力は信用せず、実在の語と空でない id だけ通す
+export const parseSetInput = (e: {
+  id?: unknown
+  status?: unknown
+  note?: unknown
+  list?: unknown
+}): { id: string; status: string; list?: string } | string => {
+  const id = typeof e.id === 'string' ? e.id.trim() : ''
+  const w = typeof e.status === 'string' ? e.status.trim() : ''
+  if (id === '') return 'id が空です。一覧のタスク id(T1 など)を渡してください'
+  if (!KNOWN_WORDS.includes(w)) return `status は ${SETTABLE} のどれかです`
+  const note = typeof e.note === 'string' ? e.note.replace(/\s+/g, ' ').trim().slice(0, 100) : ''
+  const list = typeof e.list === 'string' && e.list.trim() !== '' ? e.list.trim() : undefined
+  return { id, status: note === '' ? w : `${w} (${note})`, ...(list === undefined ? {} : { list }) }
+}
+
+// task_set を実行して、モデルへ返す結果(result か deny)を作る
+export const runTaskSet = async ($: EngineInterface, input: { id: string; status: string; list?: string }) => {
+  const r = await serialized(() =>
+    applyStatus($, { ids: [input.id], ...(input.list === undefined ? {} : { list: input.list }), status: input.status, basis: TOOL_NAME, isExplicit: true }),
+  )
+  if (r.known.length === 0) return { deny: 'このセッションの一覧がありません。.claude/tasks/ に一覧を作ってから呼んでください' }
+  if (r.ambiguous.length > 1) return { deny: `id ${input.id} は複数の一覧(${r.ambiguous.join(', ')})にあります。list にどれかを指定してください` }
+  const hit = r.known.filter(k => k.id === input.id && (input.list === undefined || k.list === input.list))
+  if (hit.length === 0) {
+    const all = r.known.map(k => refLabel(k, r.isMulti)).join(', ')
+    return { deny: `${input.list === undefined ? '' : `一覧 ${input.list} の `}id ${input.id} は見つかりません。あるのは ${all} です` }
+  }
+  const label = refLabel(hit[0]!, r.isMulti)
+  return { result: r.applied.length > 0 ? `${label} を ${input.status} にしました` : `${label} は既に ${input.status} です` }
+}
+
+// モデルが呼ぶ task_set の登録。スキーマをプロンプトに常駐させる(ToolSearch の奥だとモデルが呼び忘れる)。
+// .claude/tasks/ があるとき、未登録なら登録する。同名の再登録は置き換えなので、失敗した回は次の poll でやり直す
+const TOOL_SPEC = {
+  name: TOOL_NAME,
+  description:
+    'task-board の一覧のタスクの状態を、その場で更新する。着手・完了・やり直しのたびに呼ぶ。コマンドの成否ではなく自分の判断で呼ぶ。id は一覧のタスク id(T1 など)。完了にするのは実際に終わったときだけ。',
+  inputSchema: {
+    type: 'object',
+    properties: {
+      id: { type: 'string', description: '一覧のタスク id(T1 など)' },
+      status: { type: 'string', enum: KNOWN_WORDS, description: '進行中は implementing / fixing / running、完了は done / merged、未着手は waiting / queued' },
+      note: { type: 'string', description: '状態の補足(任意・100字まで)。例: 調査完了、stgデプロイ待ち' },
+      list: { type: 'string', description: '一覧名(任意)。同じ id が複数の一覧にあるときだけ指定する' },
+    },
+    required: ['id', 'status'],
+  },
+  isDeferred: false,
+}
+export const toolState = { isRegistered: false }
+export const ensureTool = async ($: EngineInterface, state = toolState): Promise<void> => {
+  if (state.isRegistered) return
+  if (!(await $.fs.list(DIR).then(() => true, () => false))) return
+  await $.tool.register(TOOL_SPEC).then(
+    () => {
+      state.isRegistered = true
+    },
+    () => {},
+  )
 }
 
 const registerSidecar = (on: Parameters<Register>[0]) => {
@@ -475,11 +593,22 @@ const registerSidecar = (on: Parameters<Register>[0]) => {
     try {
       const text = 'text' in r && typeof r.text === 'string' ? r.text : ''
       const m = r.isError || r.deny !== undefined || text === '' ? undefined : milestoneOf(e.command, text)
-      if (m !== undefined) applyMilestone($, m).catch(() => {})
+      if (m !== undefined) serialized(() => applyStatus($, { ...m, isExplicit: false })).catch(() => {})
     } catch {
       // 反映の失敗でツールの結果を壊さない
     }
     return r
+  })
+
+  // モデルが明示的に呼ぶ状態更新。コマンドの成否ではなく、モデルの判断で着手・完了・やり直しを即座に反映する
+  on('tool.call', { tool: TOOL_FULL }, async ($, e) => {
+    const input = parseSetInput(e)
+    if (typeof input === 'string') return { deny: input }
+    try {
+      return await runTaskSet($, input)
+    } catch {
+      return { deny: '一覧の更新に失敗しました。.claude/tasks/ のファイルを直接直してください' }
+    }
   })
 
   on('turn.complete', async ($, e, next) => {
@@ -501,7 +630,7 @@ const registerSidecar = (on: Parameters<Register>[0]) => {
 }
 
 // root を渡すと、その repo の絶対パスで読む(処理の途中で /cd されても読み先がずれない)
-const loadBoard = async ($: EngineInterface, root = '') => {
+export const loadBoard = async ($: EngineInterface, root = '') => {
   const at = (p: string) => (root === '' ? p : `${root}/${p}`)
   // /clear では session.start が再発火せず ID だけ変わるため、毎回読む
   const sessionId = await $.session.id().catch(() => '')
@@ -540,6 +669,8 @@ export const register: Register = on => {
     const poll = async () => {
       // 間隔内に終わった最後の回答を、間隔が空いた後に処理する
       kick($).catch(() => {})
+      // /cd で .claude/tasks/ のある repo へ移ったときも、数秒で task_set を使えるようにする
+      ensureTool($).catch(() => {})
       let board_: Board
       let key: string
       try {
@@ -563,6 +694,8 @@ export const register: Register = on => {
       description: 'task-board の全件(完了を含む)を Pane で開く / 閉じる',
       immediate: true,
     })
+    // 初回のモデル要求に task_set を載せるため、最初の登録は待つ(以降は poll が見る)
+    await ensureTool($).catch(() => {})
     await poll()
     $.clock.every(POLL_MS, poll)
 
