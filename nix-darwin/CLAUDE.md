@@ -105,7 +105,8 @@ profile `sonshi`:
 
 profile `normal`:
 
-- `complex_modifications` なし。roBa の `disable_built_in_keyboard_if_exists` は設定しない(既定の `false`)
+- `complex_modifications` に1ルール。`caps_lock` を押している間だけ `left_command` + `left_control` + `left_option`(Hyper)を送る。Rift の操作用で、内蔵キーボードに Hyper の1キーを用意する。`sonshi` では内蔵キーが死ぬので入れない。Caps Lock 自体は `configuration.nix` の `userKeyMapping` で OS 側が no-op にしているが、Karabiner はその手前のデバイス入力を掴むため効く見込み(実機で未確認)
+- roBa の `disable_built_in_keyboard_if_exists` は設定しない(既定の `false`)
 
 両 profile 共通:
 
@@ -237,6 +238,35 @@ profile `normal`:
       }
     },
     {
+      "complex_modifications": {
+        "rules": [
+          {
+            "description": "Hyperキー: Caps Lockを押している間 Ctrl+Option+Cmd を送る(Riftの操作用)",
+            "manipulators": [
+              {
+                "from": {
+                  "key_code": "caps_lock",
+                  "modifiers": {
+                    "optional": [
+                      "any"
+                    ]
+                  }
+                },
+                "to": [
+                  {
+                    "key_code": "left_command",
+                    "modifiers": [
+                      "left_control",
+                      "left_option"
+                    ]
+                  }
+                ],
+                "type": "basic"
+              }
+            ]
+          }
+        ]
+      },
       "devices": [
         {
           "identifiers": {
