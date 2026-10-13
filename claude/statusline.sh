@@ -34,14 +34,9 @@ fi
 
 # 5h/週次の枠がstdinに無い従量課金座席では、Claude Codeが.claude.jsonへ保存する月額クレジット上限の使用率で代える
 SPEND_PCT=""
-SPEND_USD=""
 SPEND_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.config/claude}/.claude.json"
 if [ -z "$RATE_USED" ] && [ -z "$WEEK_USED" ] && [ -r "$SPEND_FILE" ]; then
-  read -r SPEND_PCT SPEND_USD < <(jq -r '
-    .cachedUsageUtilization.utilization.spend // empty
-    | select(.enabled == true and .used.currency == "USD")
-    | "\(.percent) \(.used.amount_minor / pow(10; .used.exponent) | floor)"
-  ' "$SPEND_FILE" 2>/dev/null)
+  SPEND_PCT=$(jq -r '.cachedUsageUtilization.utilization.spend | select(.enabled == true) | .percent' "$SPEND_FILE" 2>/dev/null)
 fi
 
 # ディレクトリ名
@@ -514,7 +509,7 @@ if [ -n "$week_used_int" ]; then
   row2+=("#0C1226|${C_WEEK}Week ${week_bar_filled}${C_WEEKTRACK}${week_bar_track}${C_WEEK} ${week_used_int}%${week_remaining:+ ${week_remaining}}")
 fi
 if [ -n "$spend_used_int" ]; then
-  row2+=("#1A2340|${C_SPEND}Credit ${spend_bar_filled}${C_SPENDTRACK}${spend_bar_track}${C_SPEND} ${spend_used_int}%${SPEND_USD:+ \$${SPEND_USD}}")
+  row2+=("#1A2340|${C_SPEND}${spend_bar_filled}${C_SPENDTRACK}${spend_bar_track}${C_SPEND} ${spend_used_int}%")
 fi
 
 # END GENERATED COLORS: SEGMENTS

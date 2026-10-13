@@ -2413,7 +2413,7 @@ if [ -n "$week_used_int" ]; then
   row2+=("{{core.darkest_bg}}|${C_WEEK}Week ${week_bar_filled}${C_WEEKTRACK}${week_bar_track}${C_WEEK} ${week_used_int}%${week_remaining:+ ${week_remaining}}")
 fi
 if [ -n "$spend_used_int" ]; then
-  row2+=("{{core.background}}|${C_SPEND}Credit ${spend_bar_filled}${C_SPENDTRACK}${spend_bar_track}${C_SPEND} ${spend_used_int}%${SPEND_USD:+ \$${SPEND_USD}}")
+  row2+=("{{core.background}}|${C_SPEND}${spend_bar_filled}${C_SPENDTRACK}${spend_bar_track}${C_SPEND} ${spend_used_int}%")
 fi
 
 # END GENERATED COLORS: SEGMENTS
