@@ -150,6 +150,10 @@ in
 
     "hyper + M" = "toggle_fullscreen"
     "hyper + Space" = "toggle_window_floating"
+    "hyper + T" = { set_workspace_layout = { mode = "traditional" } }
+    "hyper + S" = { set_workspace_layout = { mode = "stack" } }
+    "hyper + R" = { set_workspace_layout = { mode = "scrolling" } }
+
     "hyper + Comma" = "toggle_stack"
     "hyper + Slash" = "toggle_orientation"
     "hyper + Equal" = "resize_window_grow"
