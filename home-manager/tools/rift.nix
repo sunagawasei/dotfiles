@@ -23,7 +23,7 @@ in
     hyper = "Ctrl + Alt"
     hyper_shift = "Ctrl + Alt + Shift"
 
-    # Development は WezTerm だけにする
+    # Main=ブラウザ・読み物・AIチャット / Development=WezTermだけ / Communication=Slack・Zoom・カレンダー / Utilities=設定・VPN・ツール類
     [[virtual_workspaces.app_rules]]
     app_id = "com.google.Chrome"
     workspace = "Main"
@@ -79,6 +79,47 @@ in
     [[virtual_workspaces.app_rules]]
     app_id = "org.pqrs.Karabiner-EventViewer"
     workspace = "Utilities"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "org.pqrs.Karabiner-Elements.Settings"
+    workspace = "Utilities"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.apple.Passwords"
+    workspace = "Utilities"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.apple.AppStore"
+    workspace = "Utilities"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.cisco.secureclient.gui"
+    workspace = "Utilities"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.fortinet.FortiClient"
+    workspace = "Utilities"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.openai.codex"
+    workspace = "Main"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.amazon.Lassen"
+    workspace = "Main"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.apple.iBooksX"
+    workspace = "Main"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.apple.iCal"
+    workspace = "Communication"
+
+    # Prompt Line は全面に出すオーバーレイなので、Rift の配置対象から外す
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.electron.prompt-line"
+    manage = false
 
     [keys]
     "hyper + H" = { move_focus = "left" }
