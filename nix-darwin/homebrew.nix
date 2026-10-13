@@ -52,7 +52,6 @@ in
 
     casks = [
       # ユーティリティ
-      "alt-tab"
       "azookey"
       "homerow"
       # Pkg 型 cask。未インストールだと activation の非対話 brew bundle が sudo で止まるため、
