@@ -16,6 +16,9 @@ in
     [settings.ui.menu_bar]
     enabled = true
 
+    [settings.ui.mission_control]
+    enabled = true
+
     [modifier_combinations]
     hyper = "Ctrl + Alt"
     hyper_shift = "Ctrl + Alt + Shift"
@@ -101,6 +104,8 @@ in
 
     "hyper + Period" = "next_window"
     "hyper_shift + Period" = "prev_window"
+
+    "hyper + Y" = "show_mission_control_all"
 
     "hyper + M" = "toggle_fullscreen"
     "hyper + Space" = "toggle_window_floating"
