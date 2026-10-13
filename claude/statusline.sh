@@ -490,12 +490,13 @@ build_bar() {
 }
 
 # BEGIN GENERATED COLORS: SEGMENTS
-# --- 1段目: モデル / コンテキスト使用率 / ディレクトリ / Gitブランチ ---
+# --- 1段目: モデル / コンテキスト使用率 / ディレクトリ / Gitブランチ / 月額クレジット使用率 ---
 row1=()
 row1+=("#0C1226|${C_MODEL}${MODEL}")
 row1+=("#141B34|${C_PCT}󰍛 ${pct}%")
 row1+=("#1A2340|${C_DIR}${DIR_NAME}")
 [ -n "$GIT_BRANCH" ] && row1+=("#0C1226|${C_GIT}${GIT_BRANCH}")
+[ -n "$spend_used_int" ] && row1+=("#141B34|${C_SPEND}${spend_bar_filled}${C_SPENDTRACK}${spend_bar_track}${C_SPEND} ${spend_used_int}%")
 
 # --- 2段目: busyマーカー / 5時間リミット / 週次リミット ---
 row2=()
@@ -507,9 +508,6 @@ if [ -n "$rate_used_int" ]; then
 fi
 if [ -n "$week_used_int" ]; then
   row2+=("#0C1226|${C_WEEK}Week ${week_bar_filled}${C_WEEKTRACK}${week_bar_track}${C_WEEK} ${week_used_int}%${week_remaining:+ ${week_remaining}}")
-fi
-if [ -n "$spend_used_int" ]; then
-  row2+=("#1A2340|${C_SPEND}${spend_bar_filled}${C_SPENDTRACK}${spend_bar_track}${C_SPEND} ${spend_used_int}%")
 fi
 
 # END GENERATED COLORS: SEGMENTS

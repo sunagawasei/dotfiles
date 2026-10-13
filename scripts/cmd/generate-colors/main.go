@@ -2394,12 +2394,13 @@ fi
 `
 
 const statuslineSegmentsTemplate = `# BEGIN GENERATED COLORS: SEGMENTS
-# --- 1段目: モデル / コンテキスト使用率 / ディレクトリ / Gitブランチ ---
+# --- 1段目: モデル / コンテキスト使用率 / ディレクトリ / Gitブランチ / 月額クレジット使用率 ---
 row1=()
 row1+=("{{core.darkest_bg}}|${C_MODEL}${MODEL}")
 row1+=("{{core.sunken_bg}}|${C_PCT}󰍛 ${pct}%")
 row1+=("{{core.background}}|${C_DIR}${DIR_NAME}")
 [ -n "$GIT_BRANCH" ] && row1+=("{{core.darkest_bg}}|${C_GIT}${GIT_BRANCH}")
+[ -n "$spend_used_int" ] && row1+=("{{core.sunken_bg}}|${C_SPEND}${spend_bar_filled}${C_SPENDTRACK}${spend_bar_track}${C_SPEND} ${spend_used_int}%")
 
 # --- 2段目: busyマーカー / 5時間リミット / 週次リミット ---
 row2=()
@@ -2411,9 +2412,6 @@ if [ -n "$rate_used_int" ]; then
 fi
 if [ -n "$week_used_int" ]; then
   row2+=("{{core.darkest_bg}}|${C_WEEK}Week ${week_bar_filled}${C_WEEKTRACK}${week_bar_track}${C_WEEK} ${week_used_int}%${week_remaining:+ ${week_remaining}}")
-fi
-if [ -n "$spend_used_int" ]; then
-  row2+=("{{core.background}}|${C_SPEND}${spend_bar_filled}${C_SPENDTRACK}${spend_bar_track}${C_SPEND} ${spend_used_int}%")
 fi
 
 # END GENERATED COLORS: SEGMENTS
