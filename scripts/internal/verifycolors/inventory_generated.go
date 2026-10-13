@@ -7077,7 +7077,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2388",
+		Source:     "scripts/cmd/generate-colors/main.go:2408",
 	},
 	{
 		ConsumerID: "statusline.busy.background.surface",
@@ -7086,7 +7086,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2388",
+		Source:     "scripts/cmd/generate-colors/main.go:2408",
 	},
 	{
 		ConsumerID: "statusline.busy.codex",
@@ -7095,7 +7095,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2387",
+		Source:     "scripts/cmd/generate-colors/main.go:2407",
 	},
 	{
 		ConsumerID: "statusline.busy.codex.surface",
@@ -7104,7 +7104,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2387",
+		Source:     "scripts/cmd/generate-colors/main.go:2407",
 	},
 	{
 		ConsumerID: "statusline.context.critical",
@@ -7113,7 +7113,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2380",
+		Source:     "scripts/cmd/generate-colors/main.go:2400",
 	},
 	{
 		ConsumerID: "statusline.context.safe",
@@ -7122,7 +7122,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2380",
+		Source:     "scripts/cmd/generate-colors/main.go:2400",
 	},
 	{
 		ConsumerID: "statusline.context.surface",
@@ -7131,7 +7131,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2380",
+		Source:     "scripts/cmd/generate-colors/main.go:2400",
 	},
 	{
 		ConsumerID: "statusline.context.warning",
@@ -7140,7 +7140,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2380",
+		Source:     "scripts/cmd/generate-colors/main.go:2400",
 	},
 	{
 		ConsumerID: "statusline.directory",
@@ -7149,7 +7149,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2381",
+		Source:     "scripts/cmd/generate-colors/main.go:2401",
 	},
 	{
 		ConsumerID: "statusline.directory.surface",
@@ -7158,7 +7158,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2381",
+		Source:     "scripts/cmd/generate-colors/main.go:2401",
 	},
 	{
 		ConsumerID: "statusline.git",
@@ -7167,7 +7167,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2382",
+		Source:     "scripts/cmd/generate-colors/main.go:2402",
 	},
 	{
 		ConsumerID: "statusline.git.surface",
@@ -7176,7 +7176,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2382",
+		Source:     "scripts/cmd/generate-colors/main.go:2402",
 	},
 	{
 		ConsumerID: "statusline.model",
@@ -7185,7 +7185,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2379",
+		Source:     "scripts/cmd/generate-colors/main.go:2399",
 	},
 	{
 		ConsumerID: "statusline.model.surface",
@@ -7194,7 +7194,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2379",
+		Source:     "scripts/cmd/generate-colors/main.go:2399",
 	},
 	{
 		ConsumerID: "statusline.rate.critical",
@@ -7203,7 +7203,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2390",
+		Source:     "scripts/cmd/generate-colors/main.go:2410",
 	},
 	{
 		ConsumerID: "statusline.rate.safe",
@@ -7212,7 +7212,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2390",
+		Source:     "scripts/cmd/generate-colors/main.go:2410",
 	},
 	{
 		ConsumerID: "statusline.rate.surface",
@@ -7221,7 +7221,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2390",
+		Source:     "scripts/cmd/generate-colors/main.go:2410",
 	},
 	{
 		ConsumerID: "statusline.rate.track",
@@ -7230,7 +7230,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2390",
+		Source:     "scripts/cmd/generate-colors/main.go:2410",
 	},
 	{
 		ConsumerID: "statusline.rate.warning",
@@ -7239,7 +7239,52 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2390",
+		Source:     "scripts/cmd/generate-colors/main.go:2410",
+	},
+	{
+		ConsumerID: "statusline.spend.critical",
+		Foreground: "purples.bright_purple",
+		Background: TokenBackground("core.background"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "scripts/cmd/generate-colors/main.go:2416",
+	},
+	{
+		ConsumerID: "statusline.spend.safe",
+		Foreground: "teals.mid_bright",
+		Background: TokenBackground("core.background"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "scripts/cmd/generate-colors/main.go:2416",
+	},
+	{
+		ConsumerID: "statusline.spend.surface",
+		Foreground: "core.background",
+		Background: AmbientBackground(),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "surface",
+		Source:     "scripts/cmd/generate-colors/main.go:2416",
+	},
+	{
+		ConsumerID: "statusline.spend.track",
+		Foreground: "core.panel_bg",
+		Background: TokenBackground("core.background"),
+		Class:      "report-only",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "surface",
+		Source:     "scripts/cmd/generate-colors/main.go:2416",
+	},
+	{
+		ConsumerID: "statusline.spend.warning",
+		Foreground: "purples.lavender",
+		Background: TokenBackground("core.background"),
+		Class:      "enforced",
+		Profiles:   []RenderProfile{"truecolor"},
+		Role:       "text",
+		Source:     "scripts/cmd/generate-colors/main.go:2416",
 	},
 	{
 		ConsumerID: "statusline.week.critical",
@@ -7248,7 +7293,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2393",
+		Source:     "scripts/cmd/generate-colors/main.go:2413",
 	},
 	{
 		ConsumerID: "statusline.week.safe",
@@ -7257,7 +7302,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2393",
+		Source:     "scripts/cmd/generate-colors/main.go:2413",
 	},
 	{
 		ConsumerID: "statusline.week.surface",
@@ -7266,7 +7311,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2393",
+		Source:     "scripts/cmd/generate-colors/main.go:2413",
 	},
 	{
 		ConsumerID: "statusline.week.track",
@@ -7275,7 +7320,7 @@ var generatedPairs = []PairSpec{
 		Class:      "report-only",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "surface",
-		Source:     "scripts/cmd/generate-colors/main.go:2393",
+		Source:     "scripts/cmd/generate-colors/main.go:2413",
 	},
 	{
 		ConsumerID: "statusline.week.warning",
@@ -7284,7 +7329,7 @@ var generatedPairs = []PairSpec{
 		Class:      "enforced",
 		Profiles:   []RenderProfile{"truecolor"},
 		Role:       "text",
-		Source:     "scripts/cmd/generate-colors/main.go:2393",
+		Source:     "scripts/cmd/generate-colors/main.go:2413",
 	},
 	{
 		ConsumerID: "vim.highlight.Boolean",

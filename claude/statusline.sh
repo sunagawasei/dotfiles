@@ -32,6 +32,18 @@ if [[ "$COMPACT_WINDOW" =~ ^[1-9][0-9]*$ ]]; then
   USED_PCT=$(printf '%s' "$input" | jq -r --argjson w "$COMPACT_WINDOW" '(.context_window.total_input_tokens // 0) * 100 / $w | floor | if . > 100 then 100 else . end' 2>/dev/null) || USED_PCT=0
 fi
 
+# 5h/週次の枠がstdinに無い従量課金座席では、Claude Codeが.claude.jsonへ保存する月額クレジット上限の使用率で代える
+SPEND_PCT=""
+SPEND_USD=""
+SPEND_FILE="${CLAUDE_CONFIG_DIR:-$HOME/.config/claude}/.claude.json"
+if [ -z "$RATE_USED" ] && [ -z "$WEEK_USED" ] && [ -r "$SPEND_FILE" ]; then
+  read -r SPEND_PCT SPEND_USD < <(jq -r '
+    .cachedUsageUtilization.utilization.spend // empty
+    | select(.enabled == true and .used.currency == "USD")
+    | "\(.percent) \(.used.amount_minor / pow(10; .used.exponent) | floor)"
+  ' "$SPEND_FILE" 2>/dev/null)
+fi
+
 # ディレクトリ名
 DIR_NAME="${DIR##*/}"
 [ -z "$DIR_NAME" ] && DIR_NAME="~"
@@ -432,6 +444,26 @@ if [[ "$WEEK_USED" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
   week_remaining=$FORMATTED_REMAINING
 fi
 
+# 月額クレジット上限の使用率とバー（5h/週次の枠が無い従量課金座席で代わりに出す）
+spend_used_int=""
+if [[ "$SPEND_PCT" =~ ^[0-9]+$ ]]; then
+  spend_used_int=$((10#$SPEND_PCT))
+  [ "$spend_used_int" -gt 100 ] && spend_used_int=100
+
+  if [ "$spend_used_int" -gt 75 ]; then
+    C_SPEND="\e[38;2;205;115;201m"   # #cd73c9 critical
+  elif [ "$spend_used_int" -gt 50 ]; then
+    C_SPEND="\e[38;2;208;212;240m"   # #D0D4F0 warning
+  else
+    C_SPEND="\e[38;2;146;191;217m"    # #92BFD9 safe
+  fi
+  C_SPENDTRACK="\e[38;2;51;46;86m"   # #332E56 track
+
+  build_meter "$spend_used_int" 8
+  spend_bar_filled=$METER_FILLED
+  spend_bar_track=$METER_TRACK
+fi
+
 # END GENERATED COLORS: ANSI
 # Powerlineバーを構築するヘルパー関数
 build_bar() {
@@ -480,6 +512,9 @@ if [ -n "$rate_used_int" ]; then
 fi
 if [ -n "$week_used_int" ]; then
   row2+=("#0C1226|${C_WEEK}Week ${week_bar_filled}${C_WEEKTRACK}${week_bar_track}${C_WEEK} ${week_used_int}%${week_remaining:+ ${week_remaining}}")
+fi
+if [ -n "$spend_used_int" ]; then
+  row2+=("#1A2340|${C_SPEND}Credit ${spend_bar_filled}${C_SPENDTRACK}${spend_bar_track}${C_SPEND} ${spend_used_int}%${SPEND_USD:+ \$${SPEND_USD}}")
 fi
 
 # END GENERATED COLORS: SEGMENTS

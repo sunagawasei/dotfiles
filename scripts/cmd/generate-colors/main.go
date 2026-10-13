@@ -2370,6 +2370,26 @@ if [[ "$WEEK_USED" =~ ^[0-9]+([.][0-9]+)?$ ]]; then
   week_remaining=$FORMATTED_REMAINING
 fi
 
+# 月額クレジット上限の使用率とバー（5h/週次の枠が無い従量課金座席で代わりに出す）
+spend_used_int=""
+if [[ "$SPEND_PCT" =~ ^[0-9]+$ ]]; then
+  spend_used_int=$((10#$SPEND_PCT))
+  [ "$spend_used_int" -gt 100 ] && spend_used_int=100
+
+  if [ "$spend_used_int" -gt 75 ]; then
+    C_SPEND="\e[38;2;{{rgb:purples.bright_purple}}m"   # {{lower:purples.bright_purple}} critical
+  elif [ "$spend_used_int" -gt 50 ]; then
+    C_SPEND="\e[38;2;{{rgb:purples.lavender}}m"   # {{purples.lavender}} warning
+  else
+    C_SPEND="\e[38;2;{{rgb:teals.mid_bright}}m"    # {{teals.mid_bright}} safe
+  fi
+  C_SPENDTRACK="\e[38;2;{{rgb:core.panel_bg}}m"   # {{core.panel_bg}} track
+
+  build_meter "$spend_used_int" 8
+  spend_bar_filled=$METER_FILLED
+  spend_bar_track=$METER_TRACK
+fi
+
 # END GENERATED COLORS: ANSI
 `
 
@@ -2391,6 +2411,9 @@ if [ -n "$rate_used_int" ]; then
 fi
 if [ -n "$week_used_int" ]; then
   row2+=("{{core.darkest_bg}}|${C_WEEK}Week ${week_bar_filled}${C_WEEKTRACK}${week_bar_track}${C_WEEK} ${week_used_int}%${week_remaining:+ ${week_remaining}}")
+fi
+if [ -n "$spend_used_int" ]; then
+  row2+=("{{core.background}}|${C_SPEND}Credit ${spend_bar_filled}${C_SPENDTRACK}${spend_bar_track}${C_SPEND} ${spend_used_int}%${SPEND_USD:+ \$${SPEND_USD}}")
 fi
 
 # END GENERATED COLORS: SEGMENTS
