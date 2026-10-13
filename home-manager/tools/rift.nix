@@ -30,6 +30,10 @@ in
     horizontal = 6
     vertical = 6
 
+    # 既定の true だと traditional から scrolling へ切り替えても各窓の幅を保ち、見た目が変わらない
+    [settings.layout.scrolling]
+    preserve_window_sizes = false
+
     [modifier_combinations]
     hyper = "Ctrl + Alt"
     hyper_shift = "Ctrl + Alt + Shift"
