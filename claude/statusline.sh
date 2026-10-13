@@ -328,6 +328,12 @@ L_CAP=$(printf '\356\202\266')   # U+E0B6 左丸キャップ
 R_CAP=$(printf '\356\202\264')   # U+E0B4 右丸キャップ
 SEG_SEP=$(printf '\356\202\260') # U+E0B0 右向き三角（セクション遷移）
 
+# セクション先頭のアイコン（Nerd Font Material Design）
+I_MODEL=$(printf '\363\260\247\221') # U+F09D1 brain
+I_DIR=$(printf '\363\260\211\213')   # U+F024B folder
+I_GIT=$(printf '\363\260\230\254')   # U+F062C source-branch
+I_SPEND=$(printf '\363\260\240\223') # U+F0813 wallet
+
 # hex→ANSIエスケープ文字列変換（printf '%b' で解釈される \e[...m 形式を返す）
 hex2bg() {
   local h="${1:1}"
@@ -492,11 +498,11 @@ build_bar() {
 # BEGIN GENERATED COLORS: SEGMENTS
 # --- 1段目: モデル / コンテキスト使用率 / ディレクトリ / Gitブランチ / 月額クレジット使用率 ---
 row1=()
-row1+=("#0C1226|${C_MODEL}${MODEL}")
+row1+=("#0C1226|${C_MODEL}${I_MODEL} ${MODEL}")
 row1+=("#141B34|${C_PCT}󰍛 ${pct}%")
-row1+=("#1A2340|${C_DIR}${DIR_NAME}")
-[ -n "$GIT_BRANCH" ] && row1+=("#0C1226|${C_GIT}${GIT_BRANCH}")
-[ -n "$spend_used_int" ] && row1+=("#141B34|${C_SPEND}${spend_bar_filled}${C_SPENDTRACK}${spend_bar_track}${C_SPEND} ${spend_used_int}%")
+row1+=("#1A2340|${C_DIR}${I_DIR} ${DIR_NAME}")
+[ -n "$GIT_BRANCH" ] && row1+=("#0C1226|${C_GIT}${I_GIT} ${GIT_BRANCH}")
+[ -n "$spend_used_int" ] && row1+=("#141B34|${C_SPEND}${I_SPEND} ${spend_bar_filled}${C_SPENDTRACK}${spend_bar_track}${C_SPEND} ${spend_used_int}%")
 
 # --- 2段目: busyマーカー / 5時間リミット / 週次リミット ---
 row2=()
