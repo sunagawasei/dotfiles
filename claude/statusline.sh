@@ -332,7 +332,7 @@ SEG_SEP=$(printf '\356\202\260') # U+E0B0 右向き三角（セクション遷�
 I_MODEL=$(printf '\363\260\247\221') # U+F09D1 brain
 I_DIR=$(printf '\363\260\211\213')   # U+F024B folder
 I_GIT=$(printf '\363\260\230\254')   # U+F062C source-branch
-I_SPEND=$(printf '\363\260\223\205') # U+F04C5 speedometer
+I_SPEND=$(printf '\363\260\270\227') # U+F0E17 calendar-month
 
 # hex→ANSIエスケープ文字列変換（printf '%b' で解釈される \e[...m 形式を返す）
 hex2bg() {
