@@ -1,6 +1,8 @@
-{ config, rift, ... }:
+{ config, pkgs, rift, ... }:
 let
   user = config.home.username;
+  # レイアウトを切り替えた後に枠の幅を再設定する。しないと、ゆっくり切り替えたとき枠が前のレイアウトの幅で残る
+  setLayout = mode: "${rift}/bin/rift-cli execute workspace set-layout ${mode}; sleep 0.5; ${pkgs.jankyborders}/bin/borders width=6.0";
 in
 {
   home.packages = [ rift ];
@@ -33,6 +35,9 @@ in
     # 既定の true だと traditional から scrolling へ切り替えても各窓の幅を保ち、見た目が変わらない
     [settings.layout.scrolling]
     preserve_window_sizes = false
+    # 既定の niri は alignment を無視して列を左に寄せるため、窓1個でも左寄せになる
+    focus_navigation_style = "anchored"
+    alignment = "center"
 
     [modifier_combinations]
     hyper = "Ctrl + Alt"
@@ -165,9 +170,9 @@ in
 
     "hyper + M" = "toggle_fullscreen"
     "hyper + Space" = "toggle_window_floating"
-    "hyper + T" = { set_workspace_layout = { mode = "traditional" } }
-    "hyper + S" = { set_workspace_layout = { mode = "stack" } }
-    "hyper + R" = { set_workspace_layout = { mode = "scrolling" } }
+    "hyper + T" = { exec = ["/bin/sh", "-c", "${setLayout "traditional"}"] }
+    "hyper + S" = { exec = ["/bin/sh", "-c", "${setLayout "stack"}"] }
+    "hyper + R" = { exec = ["/bin/sh", "-c", "${setLayout "scrolling"}"] }
 
     "hyper + Comma" = "toggle_stack"
     "hyper + Slash" = "toggle_orientation"
