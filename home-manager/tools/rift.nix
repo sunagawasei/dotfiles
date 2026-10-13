@@ -5,7 +5,8 @@ in
 {
   home.packages = [ rift ];
 
-  # 全操作を Hyper(Ctrl+Option+Cmd)+キーにする。wezterm/herdr/nvim/Claude Code はどれも使わない組み合わせ。
+  # 全操作を Ctrl+Option+キーにする(roBa は左下段の LCTRL と LALT で押せる)。wezterm/herdr/nvim/Claude Code はどれも使わない組み合わせ。
+  # 名前が hyper なのは [modifier_combinations] の定義名で、Cmd は含まない。
   # roBa は数字キーが NUM レイヤーにあるので、ワークスペースは右手の文字キー(U/I/O/P)に割り当てる。
   # [keys] は標準のキー割り当てを丸ごと置き換える。0.5.5 は [settings] が無いと起動時に panic する
   xdg.configFile."rift/config.toml".text = ''
@@ -16,12 +17,67 @@ in
     stack_offset = 0.0
 
     [modifier_combinations]
-    hyper = "Ctrl + Alt + Meta"
-    hyper_shift = "Ctrl + Alt + Meta + Shift"
+    hyper = "Ctrl + Alt"
+    hyper_shift = "Ctrl + Alt + Shift"
+
+    # Development は WezTerm だけにする
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.google.Chrome"
+    workspace = "Main"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.apple.Safari"
+    workspace = "Main"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "notion.id"
+    workspace = "Main"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.linear"
+    workspace = "Main"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.anthropic.claudefordesktop"
+    workspace = "Main"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.github.wez.wezterm"
+    workspace = "Development"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.tinyspeck.slackmacgap"
+    workspace = "Communication"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "us.zoom.xos"
+    workspace = "Communication"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.apple.systempreferences"
+    workspace = "Utilities"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "cc.ffitch.shottr"
+    workspace = "Utilities"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "org.keepassxc.keepassxc"
+    workspace = "Utilities"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.apple.ActivityMonitor"
+    workspace = "Utilities"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.microsoft.rdc.macos"
+    workspace = "Utilities"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "org.pqrs.Karabiner-EventViewer"
+    workspace = "Utilities"
 
     [keys]
-    "hyper + T" = "toggle_space_activated"
-
     "hyper + H" = { move_focus = "left" }
     "hyper + J" = { move_focus = "down" }
     "hyper + K" = { move_focus = "up" }
@@ -43,7 +99,10 @@ in
     "hyper_shift + O" = { move_window_to_workspace = 2 }
     "hyper_shift + P" = { move_window_to_workspace = 3 }
 
-    "hyper + F" = "toggle_fullscreen"
+    "hyper + Period" = "next_window"
+    "hyper_shift + Period" = "prev_window"
+
+    "hyper + M" = "toggle_fullscreen"
     "hyper + Space" = "toggle_window_floating"
     "hyper + Comma" = "toggle_stack"
     "hyper + Slash" = "toggle_orientation"
