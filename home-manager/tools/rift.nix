@@ -19,6 +19,17 @@ in
     [settings.ui.mission_control]
     enabled = true
 
+    # フォーカス枠(JankyBorders, 太さ6)は窓の外側に描かれるので、隙間を枠と同じ6にして4辺の太さを揃える
+    [settings.layout.gaps.outer]
+    top = 6
+    left = 6
+    bottom = 6
+    right = 6
+
+    [settings.layout.gaps.inner]
+    horizontal = 6
+    vertical = 6
+
     [modifier_combinations]
     hyper = "Ctrl + Alt"
     hyper_shift = "Ctrl + Alt + Shift"
