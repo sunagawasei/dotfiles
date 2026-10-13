@@ -16,9 +16,6 @@ in
     [settings.ui.menu_bar]
     enabled = true
 
-    [settings.layout.stack]
-    stack_offset = 0.0
-
     [modifier_combinations]
     hyper = "Ctrl + Alt"
     hyper_shift = "Ctrl + Alt + Shift"
