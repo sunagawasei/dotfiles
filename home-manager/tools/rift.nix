@@ -13,6 +13,9 @@ in
     [settings]
     default_disable = false
 
+    [settings.ui.menu_bar]
+    enabled = true
+
     [settings.layout.stack]
     stack_offset = 0.0
 
