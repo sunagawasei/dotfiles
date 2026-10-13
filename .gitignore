@@ -12,6 +12,7 @@ kot/
 configstore/
 karabiner/
 raycast/
+rift/
 
 # Homebrew（trust.json等の自動生成状態ファイル）
 homebrew/
