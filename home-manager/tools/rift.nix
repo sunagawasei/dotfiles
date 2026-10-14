@@ -178,8 +178,9 @@ in
 
     "hyper + Comma" = "toggle_stack"
     "hyper + Slash" = "toggle_orientation"
-    "hyper + Equal" = "resize_window_grow"
-    "hyper + Minus" = "resize_window_shrink"
+    # = は roBa の NUM レイヤーにありレイヤーキーを含め4キーになるので、ベースレイヤーの F/G に置く
+    "hyper + G" = "resize_window_grow"
+    "hyper + F" = "resize_window_shrink"
   '';
 
   # `rift service install` が書く plist と同じ内容。Nice=-20 は root でないと効かないので除く。
