@@ -37,9 +37,8 @@ in
     # 既定の true だと traditional から scrolling へ切り替えても各窓の幅を保ち、見た目が変わらない
     [settings.layout.scrolling]
     preserve_window_sizes = false
-    # 列幅を画面の使える幅いっぱいにする。上限の既定0.9のままだと1.0が0.9へ切り詰められる
-    column_width_ratio = 1.0
-    max_column_width_ratio = 1.0
+    # 列幅の既定0.7を、上限(max_column_width_ratio の既定0.9)まで広げる
+    column_width_ratio = 0.9
     # 既定の niri は alignment を無視して列を左に寄せるため、窓1個でも左寄せになる
     focus_navigation_style = "anchored"
     alignment = "center"
