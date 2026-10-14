@@ -14,6 +14,8 @@ in
   xdg.configFile."rift/config.toml".text = ''
     [settings]
     default_disable = false
+    # 既定の true だとマウスを載せただけで別の窓へフォーカスが移る
+    focus_follows_mouse = false
 
     [settings.ui.menu_bar]
     enabled = true
