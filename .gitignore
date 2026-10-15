@@ -231,6 +231,7 @@ claude/skills/*
 !claude/skills/ebook/
 !claude/skills/parallel-handoff/
 !claude/skills/eli10/
+!claude/skills/worklog/
 !claude/agents/
 claude/agents/*
 !claude/agents/commit.md
