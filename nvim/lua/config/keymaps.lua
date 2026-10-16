@@ -275,3 +275,6 @@ for _, spec in ipairs(unused_lazyvim_keys) do
     end
   end
 end
+
+-- 誤爆で全バッファを閉じて終了しないよう、LazyVim標準の Quit All を外す。
+pcall(vim.keymap.del, "n", "<leader>qq")
