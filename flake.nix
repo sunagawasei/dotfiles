@@ -21,6 +21,11 @@
       url = "github:modem-dev/hunk";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    # recall(claude-recall)など babarot のツールを、リリース済みバイナリのまま取り込む
+    babarot = {
+      url = "github:babarot/nur-packages";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs =
@@ -36,6 +41,7 @@
       gws-cli,
       herdr,
       hunk,
+      babarot,
       ...
     }:
     let
@@ -45,7 +51,7 @@
       # attr名はhostname。darwin-rebuildは--flakeでattrを省略すると
       # scutil --get LocalHostName で解決するため、PC交換時はここを改名する。
       darwinConfigurations."CA-20038442" = nix-darwin.lib.darwinSystem {
-        specialArgs = { inherit self nix-homebrew gws-cli herdr hunk nixpkgs-cursor nixpkgs-gh nixpkgs-rift; };
+        specialArgs = { inherit self nix-homebrew gws-cli herdr hunk babarot nixpkgs-cursor nixpkgs-gh nixpkgs-rift; };
         modules = [
           ./nix-darwin/configuration.nix
           home-manager.darwinModules.home-manager

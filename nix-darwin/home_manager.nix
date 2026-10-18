@@ -1,4 +1,4 @@
-{ nixpkgs-cursor, nixpkgs-gh, nixpkgs-rift, gws-cli, herdr, hunk, ... }:
+{ nixpkgs-cursor, nixpkgs-gh, nixpkgs-rift, gws-cli, herdr, hunk, babarot, ... }:
 let
   # cursor-cli だけ nixpkgs-unstable 追従。root の nixpkgs pin は動かさない
   cursorPkgs = import nixpkgs-cursor {
@@ -26,6 +26,7 @@ in
     cursor-cli = cursorCli;
     gh-cli = ghPkgs.gh;
     rift = riftPkgs.rift-wm;
+    claude-recall = babarot.packages.aarch64-darwin.claude-recall;
   };
   home-manager.users."s23159" = {
     imports = [

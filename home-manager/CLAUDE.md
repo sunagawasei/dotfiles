@@ -16,6 +16,7 @@ darwin-apply
 
 - `git.nix`: `programs.delta` は lazygit の pager 専用（`enableGitIntegration=false`）。git 本体の差分は `diff.tool`/`difftool.hunk` に回す
 - `tools/hunk.nix`: パッケージ本体は flake input `hunk` の `homeManagerModules.default` を `nix-darwin/home_manager.nix` で import して提供する（`home.packages` への直接追加はしない）。`enableGitIntegration=true` で `core.pager` は hunk 側、`enableClaudeIntegration=true` で `~/.claude/skills/hunk-review` を自動リンクする
+- `tools/claude-recall.nix`: パッケージは flake input `babarot`(babarot/nur-packages)から `nix-darwin/home_manager.nix` の `extraSpecialArgs` 経由で受ける。pluginは `~/.claude/skills/claude-recall` へリンクされ `claude-recall@skills-dir` として読まれる(MCP・SessionEnd import・modを含む)。`flake.lock` の更新は `nix flake update babarot`
 - `zsh.nix`: 最大モジュール。初期化順序の制御が入っているため下の「注意点」も参照
 
 ### パッケージ追加の判断基準
