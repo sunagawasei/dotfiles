@@ -1,6 +1,6 @@
 ---
 name: handoff
-description: ユーザーが「別workspaceを立ち上げて調査/対処させて」「新しいworkspaceでやらせて」のように言ったときに使う。Agent tool(本セッション内のサブエージェント)ではなく、herdr経由で独立した新規ターミナル+新規claude codeプロセスを起動して作業を委譲する。Requires HERDR_ENV=1.
+description: 別workspaceのClaudeへ調査や対処を委譲する。Herdrで独立したターミナルを作り、依頼の着弾を確認する。管理外のCodexからは接続先を確認し、新規workspaceだけを操作する。
 ---
 
 # 別workspaceへの委譲
@@ -9,7 +9,29 @@ description: ユーザーが「別workspaceを立ち上げて調査/対処させ
 
 ## 前提
 
-`test "${HERDR_ENV:-}" = 1` を確認する。満たさなければherdr管理下のpaneで動いていないので、その旨を伝えて停止する。CLIの正確な文法・落とし穴(長文プロンプトのペースト扱い・完了検知等)は `herdr` skill と `herdr` skillの `references/troubleshooting.md` が正本。このskillはそこへの「トリガーの翻訳」と典型手順のショートカットに留める。
+まず `test "${HERDR_ENV:-}" = 1` で呼び出し元の状態を確認する。
+満たす場合は通常の管理下からの委譲手順を使う。
+満たさなくても、ユーザーが今回の委譲を明示していれば、以下の「管理外からの新規workspace作成」を使える。
+`HERDR_ENV=1` を後付けして管理下と偽装しない。
+CLIの文法と入力の注意点は `herdr` skill と `herdr` skillの `references/troubleshooting.md` を参照する。
+
+### 管理外からの新規workspace作成
+
+Codexのツール実行環境にHerdrの環境変数が無い場合も、稼働サーバーを確認して委譲先を新しく作れる。
+この経路は、既存paneの内容確認や操作には使わない。
+
+1. `herdr session list --json` で候補と `running`、`socket_path` を取得する。
+   接続失敗はサンドボックス制限の可能性も調べ、停止中と即断しない。
+2. 明示された接続先があればそれを使う。
+   明示がなければ、稼働中が1件の場合だけその接続先を選ぶ。
+   複数ならセッション名を一問で尋ね、0件なら自動でサーバーを起動せず状況を伝える。
+3. 以降は取得した `HERDR_SOCKET_PATH` を各コマンドへ明示し、`herdr status server` で稼働と互換性を確認する。
+   接続先を設定ファイルへ恒久保存しない。
+4. 下記手順で `workspace create --no-focus` を使い、返されたworkspaceとpaneのIDだけを対象にする。
+   `--current`、対象省略、既存paneの参照、サーバー停止や再起動は行わない。
+   サンドボックス外の通常操作は環境の承認機能を使い、明示済みの委譲許可を重ねて尋ねない。
+5. 新規paneの `agent start` と `agent prompt`、着弾確認が終わったら既定の報告を行う。
+   起動失敗時は作成済みのIDと状態を残し、同じ依頼を別workspaceへ盲目的に再送しない。
 
 ## 追跡するかしないかを先に決める
 
@@ -21,9 +43,9 @@ description: ユーザーが「別workspaceを立ち上げて調査/対処させ
 ## 手順(両モード共通)
 
 1. 対象ディレクトリを決める。ユーザーが指定していなければ、依頼内容から推測するか確認する
-2. `herdr workspace create --cwd <対象ディレクトリ> --label <タスク内容が分かるラベル>` で新規workspaceを作る。レスポンスの `result.root_pane.pane_id` を控える
+2. `herdr workspace create --cwd <対象ディレクトリ> --label <タスク内容が分かるラベル> --no-focus` で新規workspaceを作る。ユーザーが切替を求めた場合だけ `--focus` を使う。レスポンスの `result.workspace` と `result.root_pane.pane_id` を控える
 3. `herdr agent start <name> --kind claude --pane <pane_id>` でclaude codeを起動する。`<name>` は英数字とハイフン/アンダースコアのみ、既存の生存agent名と重複しないこと(`herdr agent list` で確認できる)。起動後の `agent prompt`/`wait`/`read` の宛先は `<pane_id>` で指定する(`<name>` では `agent_not_found` になることがある。2026-10-09実例)
-4. `herdr agent prompt <name> "<依頼内容>" --wait --until working --timeout 15000` で依頼を送る。ここで待つのは**プロンプトの着弾確認だけ**で、進行の追跡ではない。投げっぱなしの場合もこの確認は行う。`agent_prompt_stalled` やtimeoutが返ったらプロンプトが届いていないので、`agent read` で状況を見て再送する
+4. `herdr agent prompt <pane_id> "<依頼内容>" --wait --until working --timeout 15000` で依頼を送る。ここで待つのは**プロンプトの着弾確認だけ**で、進行の追跡ではない。投げっぱなしの場合もこの確認は行う。`agent_prompt_stalled` やtimeoutは着弾未確認として扱い、作成したpaneを `agent read` で確認する。実行が始まっていれば再送しない
 
 ## 既定(追わない)
 

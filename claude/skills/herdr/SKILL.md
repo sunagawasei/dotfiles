@@ -1,6 +1,6 @@
 ---
 name: herdr
-description: "Control Herdr, a terminal multiplexer for coding agents. Use only when the user explicitly mentions Herdr or asks to use Herdr to inspect or control panes, tabs, workspaces, commands, or another agent. Do not use merely because a task could benefit from a background terminal, delegation, or parallel work. Requires HERDR_ENV=1."
+description: "Control Herdr when explicitly requested. Normal pane operations require HERDR_ENV=1. An explicitly requested handoff may create a new workspace from outside Herdr after verifying its server; never infer the focused pane."
 ---
 
 # Herdr
@@ -13,7 +13,11 @@ Before issuing any control command, verify that this agent is running inside a H
 test "${HERDR_ENV:-}" = 1
 ```
 
-If the check fails, say that you are not running inside Herdr and stop. Do not inspect or control the focused Herdr session from outside Herdr.
+If the check fails, do not inspect or control the focused pane from outside Herdr.
+For ordinary pane operations, say that you are not running inside Herdr and stop.
+For an explicitly requested handoff only, follow the `handoff` skill's external-entry procedure: discover running sessions, verify one explicit socket, and create a new workspace with `--no-focus`.
+Use only the workspace and pane IDs returned by that creation for starting Claude and confirming delivery.
+Do not set `HERDR_ENV=1` to bypass the check, use `--current`, or operate on existing panes through this exception.
 
 When the check passes, the `herdr` binary in `PATH` talks to the current session. Use it to inspect neighboring work, create terminal layout, start agents and commands, read output, and wait for state changes.
 
