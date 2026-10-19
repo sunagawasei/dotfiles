@@ -28,6 +28,9 @@ Codex も実設定 `codex/config.toml` は ignore 対象。変更後は `cd scri
 # Claude Code hooks（Goソース変更後は必ず両方）
 cd claude/hooks && go test ./... && go build -o . ./...
 
+# herdrのAlt+J/K/D/U(Codexスクロール)ヘルパー。Goソース変更後に再配置する(herdr/config.tomlが~/.local/bin/herdr-codex-scrollを呼ぶ)
+cd scripts && go test ./cmd/herdr-codex-scroll && go build -o ~/.local/bin/herdr-codex-scroll ./cmd/herdr-codex-scroll
+
 # nix-darwin / home-manager の反映（ユーザー・Claude共通。Claudeも実行できる）
 darwin-apply
 ```
