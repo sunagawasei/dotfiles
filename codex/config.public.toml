@@ -31,6 +31,7 @@ vim_mode_default = true
 
 [tui.keymap]
 [tui.keymap.chat]
+edit_queued_message = ['alt-q', 'shift-left', 'alt-up']
 next_permission_mode = 'ctrl-alt-p'
 
 [tui.keymap.composer]
