@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"reflect"
+	"strconv"
 	"strings"
 	"testing"
 )
@@ -10,6 +11,7 @@ import (
 type call struct{ args []string }
 
 type fake struct {
+	rows    int
 	agent   string
 	paneID  string // pane_id returned by pane get; defaults to the requested id
 	getErr  error
@@ -27,7 +29,7 @@ func (f *fake) run(bin string, args ...string) ([]byte, error) {
 		if id == "" {
 			id = args[2]
 		}
-		return []byte(`{"result":{"pane":{"pane_id":"` + id + `","agent":"` + f.agent + `"}}}`), nil
+		return []byte(`{"result":{"pane":{"pane_id":"` + id + `","agent":"` + f.agent + `","scroll":{"viewport_rows":` + strconv.Itoa(f.rows) + `}}}}`), nil
 	}
 	return nil, f.sendErr
 }
@@ -40,19 +42,21 @@ func TestRun(t *testing.T) {
 	cases := []struct {
 		name  string
 		agent string
+		rows  int
 		key   string
 		want  []string // the send call, after "/bin/herdr pane"
 	}{
-		{"codex alt+j sends one-line wheel down", "codex", "alt+j", []string{"send-text", "w1:p2", "\x1b[<65;1;1M"}},
-		{"codex alt+k sends one-line wheel up", "codex", "alt+k", []string{"send-text", "w1:p2", "\x1b[<64;1;1M"}},
-		{"codex alt+d sends PageDown", "codex", "alt+d", []string{"send-text", "w1:p2", "\x1b[6~"}},
-		{"codex alt+u sends PageUp", "codex", "alt+u", []string{"send-text", "w1:p2", "\x1b[5~"}},
-		{"claude alt+j passes through", "claude", "alt+j", []string{"send-keys", "w1:p2", "alt+j"}},
-		{"shell without agent alt+u passes through", "", "alt+u", []string{"send-keys", "w1:p2", "alt+u"}},
+		{"codex alt+j sends one-line wheel down a third of the way down", "codex", 58, "alt+j", []string{"send-text", "w1:p2", "\x1b[<65;5;19M"}},
+		{"codex alt+j in a short pane keeps the pointer off the top row", "codex", 6, "alt+j", []string{"send-text", "w1:p2", "\x1b[<65;5;3M"}},
+		{"codex alt+k sends one-line wheel up", "codex", 58, "alt+k", []string{"send-text", "w1:p2", "\x1b[<64;5;19M"}},
+		{"codex alt+d sends PageDown", "codex", 58, "alt+d", []string{"send-text", "w1:p2", "\x1b[6~"}},
+		{"codex alt+u sends PageUp", "codex", 58, "alt+u", []string{"send-text", "w1:p2", "\x1b[5~"}},
+		{"claude alt+j passes through", "claude", 58, "alt+j", []string{"send-keys", "w1:p2", "alt+j"}},
+		{"shell without agent alt+u passes through", "", 0, "alt+u", []string{"send-keys", "w1:p2", "alt+u"}},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			f := &fake{agent: tc.agent}
+			f := &fake{agent: tc.agent, rows: tc.rows}
 			if err := run([]string{tc.key}, env(baseEnv), f.run); err != nil {
 				t.Fatal(err)
 			}

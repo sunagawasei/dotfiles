@@ -16,14 +16,27 @@ import (
 
 const codexAgent = "codex"
 
-// codexInput is the raw input sent to a Codex pane for each Alt key.
+// wheelCol is the pointer column of a synthesized wheel event.
+const wheelCol = 5
+
+// codexInput returns the raw input sent to a Codex pane for each Alt key.
 // herdr's `pane send-keys` has no PageUp/PageDown name, so every key goes out
-// as raw bytes via `pane send-text`.
-var codexInput = map[string]string{
-	"alt+j": "\x1b[<65;1;1M", // SGR wheel down, one line
-	"alt+k": "\x1b[<64;1;1M", // SGR wheel up, one line
-	"alt+d": "\x1b[6~",       // PageDown
-	"alt+u": "\x1b[5~",       // PageUp
+// as raw bytes via `pane send-text`. Codex ignores wheel events outside its
+// transcript area, which excludes the top row and the composer at the bottom,
+// so the pointer sits a third of the way down.
+func codexInput(key string, viewportRows int) (string, bool) {
+	row := max(3, viewportRows/3)
+	switch key {
+	case "alt+j":
+		return fmt.Sprintf("\x1b[<65;%d;%dM", wheelCol, row), true // wheel down, one line
+	case "alt+k":
+		return fmt.Sprintf("\x1b[<64;%d;%dM", wheelCol, row), true // wheel up, one line
+	case "alt+d":
+		return "\x1b[6~", true // PageDown
+	case "alt+u":
+		return "\x1b[5~", true // PageUp
+	}
+	return "", false
 }
 
 type runner func(bin string, args ...string) ([]byte, error)
@@ -43,8 +56,7 @@ func run(args []string, getenv func(string) string, exe runner) error {
 		return fmt.Errorf("usage: herdr-codex-scroll <alt+j|alt+k|alt+d|alt+u>")
 	}
 	key := args[0]
-	input, ok := codexInput[key]
-	if !ok {
+	if _, ok := codexInput(key, 0); !ok {
 		return fmt.Errorf("unsupported key %q", key)
 	}
 	pane := getenv("HERDR_ACTIVE_PANE_ID")
@@ -65,6 +77,9 @@ func run(args []string, getenv func(string) string, exe runner) error {
 			Pane struct {
 				PaneID string `json:"pane_id"`
 				Agent  string `json:"agent"`
+				Scroll struct {
+					ViewportRows int `json:"viewport_rows"`
+				} `json:"scroll"`
 			} `json:"pane"`
 		} `json:"result"`
 	}
@@ -78,6 +93,7 @@ func run(args []string, getenv func(string) string, exe runner) error {
 	if resp.Result.Pane.Agent != codexAgent {
 		_, err = exe(bin, "pane", "send-keys", pane, key)
 	} else {
+		input, _ := codexInput(key, resp.Result.Pane.Scroll.ViewportRows)
 		_, err = exe(bin, "pane", "send-text", pane, input)
 	}
 	return err
