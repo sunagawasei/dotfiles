@@ -15,6 +15,35 @@ Claude Code と同様に、実設定はローカルに置き、公開用の設�
 共有スキルは Claude 側で公開対象にしている原本を追跡する。
 Codex が配置する `.system` スキルは Git 管理対象外。
 
+## プロジェクト単位の共有
+
+指示の原本は各プロジェクトの `CLAUDE.md`、`.claude/CLAUDE.md`、`CLAUDE.local.md`、`.claude/rules/` に置く。
+グローバルの `AGENTS.md` で、祖先と作業対象の階層にある原本を読むよう指示している。
+`project_doc_fallback_filenames` だけでは、同じ階層に `AGENTS.md` がある場合の `CLAUDE.md` や、Git ルートより上の共通指示は補えない。
+ルールの `paths` の判定と追加ファイルの読み込みはエージェントが行う。
+
+スキルは `.agents/skills -> ../.claude/skills` の相対リンクで共有する。
+新しいプロジェクトも Codex のタスク開始時に設定する。初回の入力前から候補に出したい場合は、先に次を実行する。
+
+```sh
+go -C ~/.config/scripts run ./cmd/share-project-skills /path/to/project
+```
+
+既存の `.agents/skills` が実ディレクトリなら、Claude 側の各スキルへのリンクだけを追加する。
+同名の別設定や別のディレクトリへのリンクは上書きせず、エラーとして報告する。
+原本の更新はそのまま反映される。実ディレクトリへ新しいスキルを追加した場合はコマンドを再実行する。
+リンクの削除や既存ファイルの変更は行わない。既存の `.agents/skills` が実ディレクトリなら、Codex 専用スキルも保持する。
+
+```sh
+# 配下のプロジェクトをまとめて設定する
+go -C ~/.config/scripts run ./cmd/share-project-skills --recursive /path/to/projects
+# 変更せずに検査する
+go -C ~/.config/scripts run ./cmd/share-project-skills --recursive --check /path/to/projects
+```
+
+`settings.json` の権限、hooks、MCP 接続設定、エージェント定義はツールごとに管理する。
+この共有は、Claude Code 専用の実行機能を Codex に追加するものではない。
+
 ## 初回セットアップ
 
 既存の `config.toml` が無い環境では、公開用設定をコピーする。
