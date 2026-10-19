@@ -1,25 +1,28 @@
 ---
 name: herdr
-description: "Control Herdr when explicitly requested. Normal pane operations require HERDR_ENV=1. An explicitly requested handoff may create a new workspace from outside Herdr after verifying its server; never infer the focused pane."
+description: "Control Herdr when explicitly requested. Resolve the requested workspace, pane, or agent from live CLI state; missing caller environment does not prevent an explicitly targeted report or operation."
 ---
 
 # Herdr
 
 Herdr organizes terminals into workspaces, tabs, and panes, recognizes coding agents running inside panes, and exposes the current session through the `herdr` CLI.
 
-Before issuing any control command, verify that this agent is running inside a Herdr-managed pane:
+Check whether the calling environment provides Herdr context:
 
 ```bash
 test "${HERDR_ENV:-}" = 1
 ```
 
-If the check fails, do not inspect or control the focused pane from outside Herdr.
-For ordinary pane operations, say that you are not running inside Herdr and stop.
-For an explicitly requested handoff only, follow the `handoff` skill's external-entry procedure: discover running sessions, verify one explicit socket, and create a new workspace with `--no-focus`.
-Use only the workspace and pane IDs returned by that creation for starting Claude and confirming delivery.
-Do not set `HERDR_ENV=1` to bypass the check, use `--current`, or operate on existing panes through this exception.
+`HERDR_ENV` identifies caller context, not CLI connectivity. If it is absent, do not assume that the CLI is unavailable or stop an explicitly requested report or operation. Never set `HERDR_ENV=1` to pretend that caller context exists.
 
-When the check passes, the `herdr` binary in `PATH` talks to the current session. Use it to inspect neighboring work, create terminal layout, start agents and commands, read output, and wait for state changes.
+For an explicit existing target:
+
+1. Confirm the CLI connection with `herdr status server`. If it returns a running, compatible server, use that connection. If the intended connection is unclear, inspect `herdr session list --json` and ask only when multiple running sessions remain plausible. Do not start a server merely to deliver a report.
+2. Resolve the target through `herdr workspace list` and `herdr agent list`. A user reference such as `ws:1` or `workspace 1` means the workspace's `number` field. Match that number to its returned `workspace_id`, then select the intended pane or agent in that workspace. Ask if the recipient remains ambiguous; never construct an opaque ID from a display number.
+3. Without caller context, pass the resolved target ID explicitly. Do not use `--current`, omit the target, or infer it from UI focus. A sandbox connection failure is not proof that the server is stopped; use the environment's normal approval mechanism when appropriate.
+4. For a requested report, use `herdr agent prompt <pane_id> "<message>"` and confirm delivery with a targeted `agent read`. Follow the recipient's subsequent work only when the user requested tracking.
+
+For a new-workspace handoff, follow the `handoff` skill's external-entry procedure. Use the workspace and pane IDs returned by creation for starting the agent and confirming delivery. Creating a new workspace and reporting to an existing one are separate tasks.
 
 ## Learn the current CLI
 
