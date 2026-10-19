@@ -28,6 +28,15 @@ cp -n config.public.toml config.toml
 必要なプロジェクトの信頼設定やアプリの接続設定は、その環境で追加する。
 `config.public.toml` は Codex が直接読み込むファイルではない。
 
+## 自動承認と開発用キャッシュ
+
+既定は `approval_policy = "on-request"`、`approvals_reviewer = "auto_review"`、`sandbox_mode = "workspace-write"`。
+設定を保存しても実行中のセッションの権限は自動では変わらないため、`/permissions` で Approve for me を選ぶか、Codex を起動し直す。
+
+Go の通常作業で毎回キャッシュへの書き込みがレビュー対象にならないよう、実設定の `[sandbox_workspace_write].writable_roots` に、そのマシンの `~/Library/Caches/go-build`、`~/Library/Caches/golangci-lint`、`~/go` を絶対パスで登録する。
+これらの個人パスは公開用設定へ出力しない。
+`.git` などの保護対象や Computer Use のアプリ承認は別の制約に従う。
+
 ## 設定変更時
 
 `config.toml` を編集したら、公開用設定を再生成する。
