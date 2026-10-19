@@ -22,6 +22,8 @@ herdr(ターミナルマルチプレクサ)は flake input のソースへロー
 
 settings.json は ignore 対象で repo に入らない。公開用は個人パス・社内識別子を除いた `claude/settings.public.json` を `cd scripts && go run ./cmd/publish-claude-settings` で再生成して commit する(settings.json を変えたら再生成。個人値が残ると出力せず失敗する)。
 
+Codex も実設定 `codex/config.toml` は ignore 対象。変更後は `cd scripts && go run ./cmd/publish-codex-settings` で `codex/config.public.toml` を再生成して commit する。公開対象のキーだけを抽出し、通知コマンド・環境変数の実値・MCP・プロジェクト一覧・アプリの状態は含めない。
+
 ```bash
 # Claude Code hooks（Goソース変更後は必ず両方）
 cd claude/hooks && go test ./... && go build -o . ./...

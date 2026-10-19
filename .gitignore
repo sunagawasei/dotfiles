@@ -121,8 +121,13 @@ yarn-error.log*
 # Worklog（個人プロジェクトタグ）
 worklog/
 
-# Codex設定（認証・セッション情報を含む）
-codex/
+# Codex（実設定・認証・セッションは除外し、公開用設定と共有リンクだけ追跡）
+codex/*
+!codex/AGENTS.md
+!codex/config.public.toml
+!codex/claude-rules.md
+!codex/skills
+!codex/README.md
 
 # Colima設定（コンテナランタイム環境固有）
 colima/
@@ -212,6 +217,7 @@ claude/hooks/*
 !claude/hooks/assign-pr-author.sh
 !claude/skills/
 claude/skills/*
+!claude/skills/context-loader/
 !claude/skills/commit/
 !claude/skills/issue-draft/
 !claude/skills/wrapup/
