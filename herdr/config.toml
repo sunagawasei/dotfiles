@@ -99,6 +99,27 @@ description = "gh-boardをpopupで開く（GitHub Projects v2）"
 width = "90%"
 height = "90%"
 
+# Codexの通常会話はAlt+J/K(1行)・Alt+D/U(半ページ)で動かす。Codex以外のpaneには元のAlt+キーをそのまま送る
+[[keys.command]]
+key = "alt+j"
+type = "shell"
+command = '"$HOME/.local/bin/herdr-codex-scroll" alt+j'
+
+[[keys.command]]
+key = "alt+k"
+type = "shell"
+command = '"$HOME/.local/bin/herdr-codex-scroll" alt+k'
+
+[[keys.command]]
+key = "alt+d"
+type = "shell"
+command = '"$HOME/.local/bin/herdr-codex-scroll" alt+d'
+
+[[keys.command]]
+key = "alt+u"
+type = "shell"
+command = '"$HOME/.local/bin/herdr-codex-scroll" alt+u'
+
 [experimental]
 # mdrollの大見出しはherdrペインではDECDHLでなく画像ラスタライズ経路になる。
 kitty_graphics = true

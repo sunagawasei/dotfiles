@@ -24,6 +24,8 @@ exclude = ['*KEY*', '*SECRET*', '*TOKEN*', '*PASSWORD*', '*CREDENTIAL*', '*PRIVA
 inherit = 'core'
 
 [tui]
+fullscreen_transcript = true
+mouse_scroll_speed = 1.0
 notifications = ['agent-turn-complete', 'approval-requested']
 status_line = ['model-with-reasoning', 'current-dir', 'model', 'reasoning', 'project-name', 'git-branch', 'pull-request-number', 'branch-changes', 'run-state', 'context-used', 'five-hour-limit', 'weekly-limit', 'used-tokens', 'total-input-tokens', 'total-output-tokens']
 status_line_use_colors = true
@@ -62,11 +64,12 @@ page_up = 'page-up'
 [tui.keymap.pager]
 close = 'q'
 close_transcript = 'ctrl-o'
-half_page_up = 'ctrl-u'
+half_page_down = ['page-down', 'ctrl-d', 'alt-d']
+half_page_up = ['page-up', 'ctrl-u', 'alt-u']
 jump_bottom = ['end', 'ctrl-end', 'shift-g', 'alt-shift-g']
 jump_top = ['home', 'ctrl-home', 'g', 'alt-g']
-page_down = ['page-down', 'ctrl-f', 'space', 'alt-d']
-page_up = ['page-up', 'ctrl-b', 'b', 'alt-u']
+page_down = ['ctrl-f', 'space']
+page_up = ['ctrl-b', 'b']
 scroll_down = ['down', 'j', 'ctrl-n', 'alt-j']
 scroll_up = ['up', 'k', 'ctrl-p', 'alt-k']
 
