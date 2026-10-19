@@ -96,6 +96,33 @@ export const viewOf = (lists: BoardList[], overlays: Overlay[], sessionId: strin
   return { lists: applyOverlays(scope.lists, overlays), scoped: scope.scoped }
 }
 
+// 帯に残す「直前に完了した1件」。データに完了時刻が無いので、poll で観測した「未完了→完了」の遷移で決める。
+// seen は一覧が消えても忘れない。復旧・再出現した既存の done を、新しい完了と取り違えないため
+export type DoneTracker = { scope: string; seen: Record<string, boolean>; last: string }
+export const newTracker = (scope = ''): DoneTracker => ({ scope, seen: {}, last: '' })
+export const taskKey = (list: string, id: string) => `${list}\u0000${id}`
+
+// scope は cwd とセッションID。変わったら(/cd・/clear)別の場所・別の会話なので観測し直す
+export const trackDone = (prev: DoneTracker, scope: string, lists: BoardList[]): DoneTracker => {
+  const base = prev.scope === scope ? prev : newTracker(scope)
+  const seen = { ...base.seen }
+  let completed = ''
+  for (const l of lists) {
+    for (const t of l.tasks) {
+      const k = taskKey(l.name, t.id)
+      const isDone = kindOf(t) === 'done'
+      if (seen[k] === false && isDone) completed = k
+      seen[k] = isDone
+    }
+  }
+  const last = completed !== '' ? completed : seen[base.last] === false ? '' : base.last
+  return { scope, seen, last }
+}
+
+// last が指す行。いま見えていない・完了でなくなっている行は返さない
+export const lastDoneTask = (lists: BoardList[], last: string) =>
+  last === '' ? undefined : lists.flatMap(l => l.tasks.map(t => ({ k: taskKey(l.name, t.id), t }))).find(x => x.k === last && kindOf(x.t) === 'done')?.t
+
 // 表示中の一覧のうち最も新しい更新時刻。書式が混在する(+0900 と Z)ので文字列でなく時刻で比べる
 export const latestUpdate = (lists: BoardList[]) => {
   const ts = lists.map(l => ({ at: l.updatedAt, ms: Date.parse(l.updatedAt) })).filter(x => !Number.isNaN(x.ms))
@@ -660,6 +687,20 @@ export const loadBoard = async ($: EngineInterface, root = '') => {
   return { sessionId, entryCount: entries.length, lists, overlays, brokenFiles, listTexts, overlayTexts }
 }
 
+// 読んだ一覧と観測の scope(cwd+セッションID)を対応させる。cwd を先に固定してその絶対パスで読み、
+// 読み終えた後に cwd が変わっていた・cwd かセッションIDが取れなかった poll は観測を進めず、別 scope の履歴に混ぜない
+export const readBoard = async ($: EngineInterface, prev: DoneTracker) => {
+  const cwd = await $.session.cwd().catch(() => '')
+  const data = await loadBoard($, cwd)
+  const after = await $.session.cwd().catch(() => '')
+  if (cwd === '' || cwd !== after || data.sessionId === '') return { data, tracker: prev, lastDone: '' }
+  // 画面と同じ(overlay 適用後の)status で遷移を見る
+  const tracker = trackDone(prev, `${cwd}\u0000${data.sessionId}`, viewOf(data.lists, data.overlays, data.sessionId).lists)
+  return { data, tracker, lastDone: tracker.last }
+}
+
+let tracker = newTracker()
+
 export const register: Register = on => {
   registerSidecar(on)
 
@@ -674,12 +715,14 @@ export const register: Register = on => {
       let board_: Board
       let key: string
       try {
-        const d = await loadBoard($)
-        key = boardKey(d.sessionId, d.listTexts, d.overlayTexts)
+        const r = await readBoard($, tracker)
+        const d = r.data
+        tracker = r.tracker
+        key = `${boardKey(d.sessionId, d.listTexts, d.overlayTexts)}\u0004${r.lastDone}`
         board_ =
           d.entryCount === 0
             ? { kind: 'none' }
-            : { kind: 'ok', lists: d.lists, overlays: d.overlays, brokenFiles: d.brokenFiles, sessionId: d.sessionId }
+            : { kind: 'ok', lists: d.lists, overlays: d.overlays, brokenFiles: d.brokenFiles, sessionId: d.sessionId, lastDone: r.lastDone }
       } catch {
         key = ''
         board_ = { kind: 'none' }
@@ -713,12 +756,15 @@ export const register: Register = on => {
     if (e.props.hasSurvey || b.kind !== 'ok' || !Array.isArray(b.lists)) return next(e)
 
     const { Box, Button, Text } = $.ui.resolve(e)
-    const tasks = allTasks(viewOf(b.lists, b.overlays, b.sessionId).lists)
+    const view = viewOf(b.lists, b.overlays, b.sessionId).lists
+    const tasks = allTasks(view)
     if (tasks.length === 0 && b.brokenFiles.length === 0) return next(e)
 
     const live = [...tasks.filter(t => kindOf(t) === 'active'), ...tasks.filter(t => kindOf(t) === 'open')]
     const rows = live.slice(0, COLLAPSED_ROWS)
     const omitted = live.length - rows.length
+    // 直前に完了した1件だけ、完了のまま残す(上位5件の枠には数えない)
+    const justDone = lastDoneTask(view, b.lastDone)
 
     return (
       <Box flexDirection="column">
@@ -728,6 +774,7 @@ export const register: Register = on => {
             <Button key="toggle" label=" ctrl+x t" plain dimColor action={TOGGLE_ACTION} onPress={() => togglePane($)} />
           </Box>
         </Box>
+        {justDone !== undefined && <Row Box={Box} Text={Text} t={justDone} />}
         {rows.map(t => (
           <Row Box={Box} Text={Text} t={t} />
         ))}

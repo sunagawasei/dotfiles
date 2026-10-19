@@ -27,6 +27,11 @@ import {
   toOverlay,
   viewOf,
   autoFile,
+  newTracker,
+  taskKey,
+  trackDone,
+  lastDoneTask,
+  readBoard,
 } from '../hooks/register'
 
 const t = (status: string) => ({ id: 'T1', title: 'x', status, ws: null })
@@ -572,5 +577,197 @@ test('commit・merge の印は、同じ id を持つ全ての手書き一覧を�
     await applyStatus($, { ids, status: 'done (commit abc1234)', basis: 'git commit abc1234', isExplicit: false })
     expect(fs.has(ovFile('a', 'T1'))).toBe(true)
     expect(fs.has(ovFile('b', 'T1'))).toBe(true)
+  }
+})
+
+// --- 帯に残す「直前に完了した1件」 ---
+
+const run = (steps: ReturnType<typeof mk>[][], scope = 'repo-1') =>
+  steps.reduce((t, lists) => trackDone(t, scope, lists), newTracker())
+const K = (list: string, id: string) => taskKey(list, id)
+
+test('初めて見る時点で done のタスクは、直前の完了にならない', async () => {
+  expect(run([[mk('a', '', [task('T1', 'done')])]]).last).toBe('')
+})
+
+test('未完了から done になったタスクが直前の完了になり、次の完了で入れ替わる', async () => {
+  const t = run([
+    [mk('a', '', [task('T1', 'implementing'), task('T2', 'implementing')])],
+    [mk('a', '', [task('T1', 'done'), task('T2', 'implementing')])],
+  ])
+  expect(t.last).toBe(K('a', 'T1'))
+  const next = trackDone(t, 'repo-1', [mk('a', '', [task('T1', 'done'), task('T2', 'merged')])])
+  expect(next.last).toBe(K('a', 'T2'))
+})
+
+test('別の一覧のタスクが完了しても、全体で1件だけ入れ替わる', async () => {
+  const t = run([
+    [mk('a', '', [task('T1', 'running')]), mk('b', '', [task('T1', 'running')])],
+    [mk('a', '', [task('T1', 'done')]), mk('b', '', [task('T1', 'running')])],
+    [mk('a', '', [task('T1', 'done')]), mk('b', '', [task('T1', 'done')])],
+  ])
+  expect(t.last).toBe(K('b', 'T1'))
+})
+
+test('同じ poll で複数が完了したら、一覧順で最後の1件が残る', async () => {
+  const t = run([
+    [mk('a', '', [task('T1', 'running'), task('T2', 'running')])],
+    [mk('a', '', [task('T1', 'done'), task('T2', 'done')])],
+  ])
+  expect(t.last).toBe(K('a', 'T2'))
+})
+
+test('過去の done を含む一覧が加わっても、直前の完了を奪わない', async () => {
+  const t = run([
+    [mk('a', '', [task('T1', 'running')])],
+    [mk('a', '', [task('T1', 'done')])],
+    [mk('a', '', [task('T1', 'done')]), mk('z', '', [task('T9', 'done')])],
+  ])
+  expect(t.last).toBe(K('a', 'T1'))
+})
+
+test('一覧が1回読めなくなって復旧しても、既存の done は直前の完了を奪わない', async () => {
+  const t = run([
+    [mk('a', '', [task('T1', 'running')]), mk('z', '', [task('T9', 'done')])],
+    [mk('a', '', [task('T1', 'done')])],
+    [mk('a', '', [task('T1', 'done')]), mk('z', '', [task('T9', 'done')])],
+  ])
+  expect(t.last).toBe(K('a', 'T1'))
+})
+
+test('手書き一覧の追加で auto 一覧が隠れ、削除で再出現しても、直前の完了を奪わない', async () => {
+  const auto = mk('auto.0f692c4e', 'session-0f692c4e', [task('T9', 'done')])
+  const hand = (s: string) => mk('a', '', [task('T1', s)])
+  // 表示元の切替(viewOf)を通した一覧を観測する
+  const seenBy = (raw: ReturnType<typeof mk>[][]) => run(raw.map(l => viewOf(l, [], SID).lists as ReturnType<typeof mk>[]))
+  const t = seenBy([[auto, hand('running')], [auto, hand('done')], [auto], [auto, hand('done')]])
+  expect(t.last).toBe(K('a', 'T1'))
+})
+
+test('done から merged への変化では入れ替えない', async () => {
+  const t = run([
+    [mk('a', '', [task('T1', 'running'), task('T2', 'running')])],
+    [mk('a', '', [task('T1', 'done'), task('T2', 'running')])],
+    [mk('a', '', [task('T1', 'merged'), task('T2', 'running')])],
+  ])
+  expect(t.last).toBe(K('a', 'T1'))
+})
+
+test('done から implementing へ戻したら解除し、再び done にしたら再び残る', async () => {
+  const steps = [
+    [mk('a', '', [task('T1', 'running')])],
+    [mk('a', '', [task('T1', 'done')])],
+    [mk('a', '', [task('T1', 'implementing')])],
+  ]
+  const t = run(steps)
+  expect(t.last).toBe('')
+  expect(trackDone(t, 'repo-1', [mk('a', '', [task('T1', 'done')])]).last).toBe(K('a', 'T1'))
+})
+
+test('cwd かセッションが変わったら観測し直し、前の完了は残さない', async () => {
+  const t = run([[mk('a', '', [task('T1', 'running')])], [mk('a', '', [task('T1', 'done')])]])
+  const same = [mk('a', '', [task('T1', 'done')])]
+  expect(trackDone(t, 'repo-2', same).last).toBe('')
+  expect(trackDone(t, 'repo-1', same).last).toBe(K('a', 'T1'))
+})
+
+test('空の状態から始めて、後から現れたタスクが完了すれば直前の完了になる', async () => {
+  const t = run([[], [mk('a', '', [task('T1', 'running')])], [mk('a', '', [task('T1', 'done')])]])
+  expect(t.last).toBe(K('a', 'T1'))
+})
+
+test('lastDoneTask は、いま見えていて完了のままの行だけを返す', async () => {
+  const lists = [mk('a', '', [task('T1', 'done'), task('T2', 'running')])]
+  expect(lastDoneTask(lists, K('a', 'T1'))?.id).toBe('T1')
+  expect(lastDoneTask(lists, K('a', 'T2'))).toBeUndefined()
+  expect(lastDoneTask(lists, K('b', 'T1'))).toBeUndefined()
+  expect(lastDoneTask(lists, '')).toBeUndefined()
+})
+
+// poll が使う readBoard: 読んだ一覧と観測の scope(cwd+セッションID)を対応させる
+const listSt = (...rows: [string, string][]) =>
+  JSON.stringify({ tasks: rows.map(([id, status]) => ({ id, title: `t-${id}`, status, ws: null })) })
+const repoFiles = (root: string, status: string) => ({ [`${root}/.claude/tasks/a.json`]: listSt(['T1', status]) })
+
+test('readBoard: running から done へ変わった poll で、直前の完了を返す', async () => {
+  const { $ } = fakeEnv(repoFiles('/r', 'running'))
+  const first = await readBoard($, newTracker())
+  expect(first.lastDone).toBe('')
+  const { $: $2 } = fakeEnv(repoFiles('/r', 'done'))
+  const second = await readBoard($2, first.tracker)
+  expect(second.lastDone).toBe(K('a', 'T1'))
+})
+
+test('readBoard: 読み込み中に /cd されたら、その poll は観測を進めない', async () => {
+  const { $ } = fakeEnv({ ...repoFiles('/a', 'running'), ...repoFiles('/b', 'done') })
+  const cwds = ['/a', '/b']
+  $.session.cwd = async () => cwds.shift() ?? '/b'
+  const first = await readBoard($, newTracker())
+  expect(first.tracker).toEqual(newTracker())
+  expect(first.lastDone).toBe('')
+  // 次の poll(移動先 /b)で、以前から done のタスクは完了に数えない
+  const second = await readBoard($, first.tracker)
+  expect(second.lastDone).toBe('')
+})
+
+test('readBoard: cwd の取得が1回失敗しても、それまでの直前の完了を失わない', async () => {
+  const { $ } = fakeEnv(repoFiles('/r', 'running'))
+  const t1 = (await readBoard($, newTracker())).tracker
+  const { $: $d } = fakeEnv(repoFiles('/r', 'done'))
+  const t2 = (await readBoard($d, t1)).tracker
+  expect(t2.last).toBe(K('a', 'T1'))
+  // 読み込みの後に cwd を取り直す呼び出しだけが失敗する
+  const calls: string[] = ['/r']
+  $d.session.cwd = async () => {
+    const c = calls.shift()
+    if (c === undefined) throw new Error('cwd unavailable')
+    return c
+  }
+  const failed = await readBoard($d, t2)
+  expect(failed.tracker).toBe(t2)
+  $d.session.cwd = async () => '/r'
+  expect((await readBoard($d, failed.tracker)).lastDone).toBe(K('a', 'T1'))
+})
+
+test('readBoard: 一覧が読めなくて reject した poll は観測を進めない', async () => {
+  const { $ } = fakeEnv({})
+  await expect(readBoard($, newTracker())).rejects.toThrow()
+})
+
+test('readBoard: 同じ内容の別 cwd へ移動したら、観測し直す(前の完了を残さない)', async () => {
+  const { $ } = fakeEnv(repoFiles('/a', 'running'))
+  $.session.cwd = async () => '/a'
+  const t1 = (await readBoard($, newTracker())).tracker
+  const { $: $a } = fakeEnv(repoFiles('/a', 'done'))
+  $a.session.cwd = async () => '/a'
+  const t2 = (await readBoard($a, t1)).tracker
+  expect(t2.last).toBe(K('a', 'T1'))
+  const { $: $b } = fakeEnv(repoFiles('/b', 'done'))
+  $b.session.cwd = async () => '/b'
+  expect((await readBoard($b, t2)).lastDone).toBe('')
+})
+
+test('readBoard: /clear でセッションIDが変わったら、観測し直す', async () => {
+  const { $ } = fakeEnv(repoFiles('/r', 'running'))
+  const t1 = (await readBoard($, newTracker())).tracker
+  const { $: $d } = fakeEnv(repoFiles('/r', 'done'))
+  const t2 = (await readBoard($d, t1)).tracker
+  expect(t2.last).toBe(K('a', 'T1'))
+  $d.session.id = async () => '99999999-aaaa-bbbb-cccc-dddddddddddd'
+  expect((await readBoard($d, t2)).lastDone).toBe('')
+})
+
+test('readBoard: セッションIDの取得が1回失敗しても(空文字でも)、それまでの直前の完了を失わない', async () => {
+  const { $ } = fakeEnv(repoFiles('/r', 'running'))
+  const t1 = (await readBoard($, newTracker())).tracker
+  const { $: $d } = fakeEnv(repoFiles('/r', 'done'))
+  const t2 = (await readBoard($d, t1)).tracker
+  expect(t2.last).toBe(K('a', 'T1'))
+  for (const broken of [async () => { throw new Error('no id') }, async () => '']) {
+    $d.session.id = broken
+    const failed = await readBoard($d, t2)
+    expect(failed.tracker).toBe(t2)
+    $d.session.id = async () => SID_FULL
+    expect((await readBoard($d, failed.tracker)).lastDone).toBe(K('a', 'T1'))
   }
 })

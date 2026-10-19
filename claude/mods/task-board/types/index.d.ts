@@ -12,7 +12,7 @@ export type Overlay = { list: string; id: string; status: string; prev: string; 
 
 export type Board =
   | { kind: 'none' }
-  | { kind: 'ok'; lists: BoardList[]; overlays: Overlay[]; brokenFiles: string[]; sessionId: string }
+  | { kind: 'ok'; lists: BoardList[]; overlays: Overlay[]; brokenFiles: string[]; sessionId: string; lastDone: string }
 
 declare module 'claude-code' {
   interface PluginState {
