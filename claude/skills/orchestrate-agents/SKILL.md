@@ -224,7 +224,7 @@ frontmatterの`model`/`effort`はそのまま実効値になる(同日実測で`
 - **本文は例外なくファイルに組み立てて `send.sh <team> <from> <to> --stdin < packet.txt`**。4番目の引数に直接書かない。本文にバッククォートが1つでもあるとコマンド置換が発火し、**その部分が欠落したまま送信が成功する**(2026-08-14に1セッションで3回。短文でも起きる)
 - 送信後は自分の送信文面をDBからgrepし、重要な文字列(コマンド名・設定値・file:line)が残っているか確認する
 - **既読フラグは生存判定にも沈黙判定にも使えない**(2026-08-14実証)。codex系workerはturn実行中に新規メッセージを読まないため、作業中のworker宛は未読が溜まって当然。逆に既読でも送信先を間違えていれば返信は来ない
-- **agmsg workerが無言のときの一次診断は bridge ログ(`run/<type>-bridge.<team>.<name>.log`)の mtime と最終行**。10分以上更新が無ければ異常を疑う。**ログのlifecycle行はbridge死亡時に凍るので、それだけでbusyと判断しない — `.meta`の`pid=`を`ps -p`で照合する**
+- **agmsg workerが無言のときの一次診断は bridge ログ(`run/<type>-bridge.<team>.<name>.log`)の mtime と最終行**。10分以上更新が無ければ異常を疑う。**ログのlifecycle行はbridge死亡時に凍るので、それだけでbusyと判断しない — `.meta`の`pid=`を`ps -p`で照合する**。**「返信がまだ無い」と報告する前にもログ末尾を読む** — workerがturnを完了して回答をログにだけ書き、`send.sh`を呼ばずに終わることがある(2026-10-20、codex-researchの回答がbridgeログにだけ残り、ユーザーに「返信来てるんじゃない？」と指摘された)
 - **worker側の送信先typoは silent fail する**(2026-08-14実例)。無言のときはteamを絞らず`from_agent`だけで横断検索する
 - Monitor通知は長い返信を切り詰める。全文はDBから読む
 - worker/subagentの出力そのものは転載せず、採用した内容と最終的な変更のみを報告する
