@@ -27,13 +27,14 @@ inherit = 'core'
 fullscreen_transcript = true
 mouse_scroll_speed = 1.0
 notifications = ['agent-turn-complete', 'approval-requested']
-status_line = ['model-with-reasoning', 'current-dir', 'model', 'reasoning', 'project-name', 'git-branch', 'pull-request-number', 'branch-changes', 'run-state', 'context-used', 'five-hour-limit', 'weekly-limit', 'used-tokens', 'total-input-tokens', 'total-output-tokens']
+status_line = ['model-with-reasoning', 'current-dir', 'git-branch', 'pull-request-number', 'run-state', 'context-used', 'five-hour-limit', 'weekly-limit']
 status_line_use_colors = true
 vim_mode_default = true
 
 [tui.keymap]
 [tui.keymap.chat]
 edit_queued_message = ['alt-q', 'shift-left', 'alt-up']
+interrupt_turn = []
 next_permission_mode = 'ctrl-alt-p'
 
 [tui.keymap.composer]
