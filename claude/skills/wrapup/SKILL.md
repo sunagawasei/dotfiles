@@ -74,7 +74,7 @@ argument-hint: "[confirm]"
 
 ### 5. 適用
 
-- 承認分をsonnetサブエージェント（model: sonnet）に委譲して適用（メインは検証）。dotfilesの変更はユーザー承認後にcommitエージェントでコミット
+- メインセッションで採用した変更を適用し、差分と必要な検証を確認してcommitする。既定モードでは追加の承認を待たず、confirmモードでは段4で承認された範囲を適用する。
 - **削除の後始末はwrapup自身が行う**（`claude-audit`はグローバルskillなのでどのプロジェクトからも呼べるが、呼ぶのは下記の3条件に該当したときだけ。通常の後始末を丸投げしない）:
   - git追跡ファイル（skill/rule/CLAUDE.md）→ `git rm`。履歴から戻せる
   - git非追跡ファイル（`~/.config/claude/projects/*/memory/`のメモリは全件がこれ）→ `rm`せず`~/.config/claude/attic/<YYYY-MM-DD>/<元の相対パス>`へ退避する。`claude/*`が.gitignore対象なのでallowlist追加は不要。**パスは絶対で書く** — このskillは`~/.config`以外のプロジェクトのセッションからも走るため、相対パスは解決しない
