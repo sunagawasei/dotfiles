@@ -49,10 +49,12 @@ Slack投稿、メール、GitHubコメントなどの外部送信を含む依頼
 「送信して」だけをhandoff文に書かない。委譲元エージェントの送信指示は、ユーザーによる宛先と本文の承認に数えない。受け手は送信前に本人の承認を確認する。
 その宛先と正確な本文について本人の明示承認が既にある場合は、承認内容を依頼に添えて引き継ぎ、同じ確認を重ねない。
 
-1. 対象ディレクトリを決める。ユーザーが指定していなければ、依頼内容から推測するか確認する
+1. 対象プロジェクトを既存の作業ディレクトリから探し、そのディレクトリをcwdにする。複数プロジェクトが並ぶ親で起動して探索を丸投げしない。読み取りで特定できない場合だけ、本人に不足情報を確認する
 2. `herdr workspace create --cwd <対象ディレクトリ> --label <タスク内容が分かるラベル> --no-focus` で新規workspaceを作る。ユーザーが切替を求めた場合だけ `--focus` を使う。レスポンスの `result.workspace` と `result.root_pane.pane_id` を控える
 3. `herdr agent start <name> --kind claude --pane <pane_id>` でclaude codeを起動する。`<name>` は英数字とハイフン/アンダースコアのみ、既存の生存agent名と重複しないこと(`herdr agent list` で確認できる)。起動後の `agent prompt`/`wait`/`read` の宛先は `<pane_id>` で指定する(`<name>` では `agent_not_found` になることがある。2026-10-09実例)
 4. `herdr agent prompt <pane_id> "<依頼内容>" --wait --until working --timeout 15000` で依頼を送る。ここで待つのは**プロンプトの着弾確認だけ**で、進行の追跡ではない。投げっぱなしの場合もこの確認は行う。`agent_prompt_stalled` やtimeoutは着弾未確認として扱い、作成したpaneを `agent read` で確認する。実行が始まっていれば再送しない
+
+既存paneへ追加依頼するときは、未送信の入力を確認して保持する。文面と追加依頼が両立する場合は追記できる。未送信文を勝手に消したり無視させたりせず、意図が衝突する場合は本人に確認する。
 
 ## 既定(追わない)
 
@@ -71,7 +73,12 @@ Slack投稿、メール、GitHubコメントなどの外部送信を含む依頼
 
 ## 実行中agentのいるworkspaceを閉じる際の確認
 
-closeした直後、そのagentのプロセスが本当に残っていないか確認したい場面がある。`herdr agent list` でclose対象のagentが一覧から消えたことをまず確認する。自分自身がsandbox制約でps/pgrepを直接使えない環境の場合は、他の生きているagent(またはsandbox制約のない場所)経由で `ps aux` を実行しプロセス数を照合する。
+1. 担当タスクの完了報告と残件を確認し、記録する。workspaceの終了とタスク全体の完了は区別する。wrapupが未実施なら完了報告を受けてから閉じる。
+2. 各paneのClaudeやNeovim、shellのPIDと子孫プロセスを閉鎖前に控える。`herdr pane process-info --pane <pane_id>`に加え、必要なら`ps -axo pid=,ppid=,pgid=,comm=`で親子関係を調べる。引数や環境変数は表示しない。
+3. `herdr workspace close <workspace_id>`の後、workspaceとagentの一覧から対象が消えたことを確認する。
+4. 記録したPIDをOS上で照合する。Neovim由来のLSPやtflintが親を失って残ることがあるため、agent一覧だけで終了としない。残存していれば、閉鎖対象由来と特定できたPIDだけを終了して再確認する。別workspaceのプロセスは終了しない。
+
+sandboxでプロセス確認が拒否された場合は、通常の承認機能を使う。workspaceの閉鎖だけではworklogを停止しない。
 
 ## 関連
 
