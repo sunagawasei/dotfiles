@@ -124,4 +124,4 @@ Anthropicプランの消費を抑える節約モード(段3と段9のfable-revie
 
 ## Playwright MCP
 
-- スクリーンショットは`filename`を指定せずに撮る。`--output-dir ~/.cache/playwright-mcp`が効くのは自動命名のファイルだけで、名前を付けると作業ディレクトリ直下に出てrepoに未追跡ファイルが残る
+- スクリーンショットは`filename`を指定せずに撮る。`--output-dir ~/.cache/playwright-mcp`が効くのは自動命名のファイルだけで、名前を付けると作業ディレクトリ直下に出てrepoに未追跡ファイルが残る。`browser_evaluate`/`browser_snapshot`の`filename`も書けるのは作業ディレクトリか`~/.cache/playwright-mcp`だけ(scratchpadは拒否)なので、`~/.cache/playwright-mcp/<名前>`を絶対パスで指定する
