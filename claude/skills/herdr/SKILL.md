@@ -19,6 +19,7 @@ For an explicit existing target:
 
 1. Confirm the CLI connection with `herdr status server`. If it returns a running, compatible server, use that connection. If the intended connection is unclear, inspect `herdr session list --json` and ask only when multiple running sessions remain plausible. Do not start a server merely to deliver a report.
 2. Resolve the target through `herdr workspace list` and `herdr agent list`. A user reference such as `ws:1` or `workspace 1` means the workspace's `number` field. Match that number to its returned `workspace_id`, then select the intended pane or agent in that workspace. Ask if the recipient remains ambiguous; never construct an opaque ID from a display number.
+   Display numbers can change after a workspace closes: the previous `ws:3` may become `ws:2`. Resolve each new numbered request from live state, using the label and cwd to identify the task; continue an already-resolved operation with its returned workspace and pane IDs.
 3. Without caller context, pass the resolved target ID explicitly. Do not use `--current`, omit the target, or infer it from UI focus. A sandbox connection failure is not proof that the server is stopped; use the environment's normal approval mechanism when appropriate.
 4. For a requested report, use `herdr agent prompt <pane_id> "<message>"` and confirm delivery with a targeted `agent read`. Follow the recipient's subsequent work only when the user requested tracking.
 
