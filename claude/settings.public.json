@@ -207,10 +207,13 @@
     ]
   },
   "language": "日本語",
-  "model": "opus",
+  "model": "opus[1m]",
   "modelSettings": {
     "claude-opus-5-5": {
       "effortLevel": "medium"
+    },
+    "claude-sonnet-5-5": {
+      "effortLevel": "high"
     }
   },
   "outputStyle": "Concise",
@@ -458,8 +461,8 @@
   },
   "skipAutoPermissionPrompt": true,
   "statusLine": {
-    "command": "~/.config/claude/statusline.sh",
-    "refreshInterval": 5,
+    "command": "~/.config/claude/statusline-cached.sh",
+    "refreshInterval": 15,
     "type": "command"
   },
   "syntaxHighlightingDisabled": false,
