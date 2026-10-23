@@ -461,8 +461,8 @@
   },
   "skipAutoPermissionPrompt": true,
   "statusLine": {
-    "command": "~/.config/claude/statusline-cached.sh",
-    "refreshInterval": 15,
+    "command": "~/.config/claude/statusline.sh",
+    "refreshInterval": 5,
     "type": "command"
   },
   "syntaxHighlightingDisabled": false,

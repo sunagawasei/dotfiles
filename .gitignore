@@ -190,7 +190,6 @@ claude/*
 claude/run/
 !claude/CLAUDE.md
 !claude/statusline.sh
-!claude/statusline-cached.sh
 !claude/settings.public.json
 !claude/keybindings.json
 !claude/themes/
