@@ -83,9 +83,9 @@ in
       # Docker認証ヘルパー
       export PATH=$PATH:${config.home.homeDirectory}/.config/cycloud/bin
 
-      # Go バイナリパス (ガード付き)
+      # go env の起動を避ける(exec が1回数秒かかる環境がある)。GOPATH 未設定なら既定値と同じ
       if command -v go &>/dev/null; then
-        export PATH="$PATH:$(go env GOPATH)/bin"
+        export PATH="$PATH:''${GOPATH:-$HOME/go}/bin"
       fi
 
       # mysql-client (keg-only)
@@ -96,8 +96,10 @@ in
 
       # claude CLI は CLAUDE_CODE_SSE_PORT に一致する lock を優先して選ぶ。
       # cwd 照合による取り違えは nvim 側(utils/claudecode_port.lua)で塞ぐ。
-      if [ -n "$HERDR_WORKSPACE_ID" ]; then
+      # 同じ workspace の子シェルでは再計算しない(cksum|cut の exec 2回を省く)
+      if [ -n "$HERDR_WORKSPACE_ID" ] && [ "$__SSE_PORT_WS" != "$HERDR_WORKSPACE_ID" ]; then
         export CLAUDE_CODE_SSE_PORT=$(( 10000 + $(printf '%s' "$HERDR_WORKSPACE_ID" | cksum | cut -d' ' -f1) % 39152 ))
+        export __SSE_PORT_WS="$HERDR_WORKSPACE_ID"
       fi
 
       # 人間にも AI にも届く設定(my.env)
