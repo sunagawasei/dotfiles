@@ -192,6 +192,10 @@ Use `--format ansi` when colors and terminal styling are evidence. Otherwise use
 
 After that failed read, ask the agent to write its complete response as Markdown in a temporary directory and reply only with the file path, then read the file directly. Use this only as a fallback; do not request file output in the initial prompt.
 
+## Stage text without submitting
+
+Inspect the target prompt and preserve any existing draft. In Claude Code with Vim bindings, confirm INSERT mode before using `pane send-text`; text sent in NORMAL mode is interpreted as commands and can lose its leading characters. Enter insert mode first when needed. Use `pane send-text` without Enter, then read the prompt again to verify the complete text remains unsent.
+
 ## Safety and coordination rules
 
 - Use `--no-focus` for background work unless the user asked to switch context.
