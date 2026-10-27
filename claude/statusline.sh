@@ -26,10 +26,11 @@ eval "$(printf '%s' "$input" | jq -r '
   @sh "TRANSCRIPT_PATH=\(.transcript_path // "")"
 ' 2>/dev/null)" 2>/dev/null
 
-# 組織が設定したauto-compact閾値(トークン)。あれば used_percentage の分母をモデルの実ウィンドウからこの閾値へ替える
-COMPACT_WINDOW=$(jq -r '.autoCompactWindow // empty' /Users/s23159/.config/claude/remote-settings.json 2>/dev/null)
-if [[ "$COMPACT_WINDOW" =~ ^[1-9][0-9]*$ ]]; then
-  USED_PCT=$(printf '%s' "$input" | jq -r --argjson w "$COMPACT_WINDOW" '(.context_window.total_input_tokens // 0) * 100 / $w | floor | if . > 100 then 100 else . end' 2>/dev/null) || USED_PCT=0
+# 実効auto-compact窓(トークン)。user settings.jsonのenvが組織値に勝つ。あれば used_percentage の分母をモデルの実ウィンドウから「窓-20K」(圧縮が走る位置)へ替える
+COMPACT_WINDOW=$(jq -r '.env.CLAUDE_CODE_AUTO_COMPACT_WINDOW // empty' /Users/s23159/.config/claude/settings.json 2>/dev/null)
+[[ "$COMPACT_WINDOW" =~ ^[1-9][0-9]*$ ]] || COMPACT_WINDOW=$(jq -r '.autoCompactWindow // empty' /Users/s23159/.config/claude/remote-settings.json 2>/dev/null)
+if [[ "$COMPACT_WINDOW" =~ ^[1-9][0-9]*$ ]] && [ "$COMPACT_WINDOW" -gt 20000 ]; then
+  USED_PCT=$(printf '%s' "$input" | jq -r --argjson w "$((COMPACT_WINDOW - 20000))" '(.context_window.total_input_tokens // 0) * 100 / $w | floor | if . > 100 then 100 else . end' 2>/dev/null) || USED_PCT=0
 fi
 
 # 5h/週次の枠がstdinに無い従量課金座席では、Claude Codeが.claude.jsonへ保存する月額クレジット上限の使用率で代える
