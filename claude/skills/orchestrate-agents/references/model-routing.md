@@ -26,3 +26,11 @@ codex-deepは常駐させず、必要時にspawnし終わったらdespawnする:
 - 重いモード（max/ultra）への自動エスカレーションはしない。gpt-5.6系のクレジット消費倍率が未公開のため、明示的に選んだ時だけ使う
 - gpt-5.6系はプレビュー段階。モデルIDが無効化・改名されたら該当configキー（実効config: `~/.agents/skills/agmsg/db/config.yaml`）を更新して戻す（振り分けの仕組み自体はモデル非依存）
 - **gpt-5.6-sol が bridge 経由で `400 "requires a newer version of Codex"` になる場合**: 原因はCLI版ではなく、app-server `initialize` の `clientInfo.name` に対する server-side gate（bridgeの既定名 `agmsg-codex-bridge` が sol の first-party allowlist に弾かれる）。per-worker キー `spawn.codex_client_name.<name>: codex_cli` を設定して first-party 名を名乗らせると解消する（既定は従来名のまま。sol を使う worker にのみ設定）。CLI を最新stableに上げても・再認証しても直らない（2026-07-10確認）。純正 `codex exec` は別API面のため通るので、exec成功をbridge成功の証拠にしないこと。
+
+## 休眠ロール
+
+グローバル`CLAUDE.md`には1行の要約だけを置き、詳細はここに置く(最終dispatch: manager/watcher 9/6、opus-review 9/9。agmsg DBの宛メッセージ数より)。
+
+- **opus-review**(Opus5・headless cursor): 平常時は使わない第2意見。高リスク変更で独立した第2の目が要るとメインが判断したときだけ起こす。findings-onlyでrepo不変。権限=cursor_readonly(Write/Shell deny。readはcredential denylist。projectが`~/.config`だと`gh`/`gcloud`/`cursor`/`codex`はworkspace内でdenyされない)。`claude-opus-5-thinking-high`をpinしており、init.modelの実測4回は`Claude Opus 5 300K High`のみで一致(1M側表示が出たら追記して`|`列挙する)
+- **manager / watcher**(headless codex): 実装レーンをcodex workerへ戻すときだけ使う。role fileとagmsg configは残してあるが、subagentレーンでは起動しない
+- **codex-impl**: 節約モードの段5の実装を担う(手順は`economy-mode.md`)。role fileはメイン直結へ変更済みで、managerからのpacketもwatcherへの完了報告も前提にしない。manager/watcherレーンを復帰させるにはrole fileを元へ戻す作業が要る
