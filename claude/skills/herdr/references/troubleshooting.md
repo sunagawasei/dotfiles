@@ -103,3 +103,9 @@ herdr pane run "$PANE" 'テスト指示（1行）' && sleep 2 && herdr pane send
 - blocked になった時点で「プロンプトが出る」という検証結果は確定している。**許可プロンプトへの応答（Yes 選択）をエージェントが send-keys で代行しない** — 権限ゲートの迂回にあたるため、続行が必要ならユーザーに判断を仰ぐ。検証だけならそのまま `pane close` してよい
 - **status 待ちは2フェーズ**: まず working への遷移（submit確認）、次に working からの離脱（結果）。両方を1つの until/while ループスクリプトにして background Bash で実行すると1通知で受けられる
 - 判定は `pane read` で実物を必ず確認する（「Ran 1 shell command」等の実行痕跡）。検証後は `pane close` で片付ける（セッションごと終了）
+
+## codex を初めてのcwdで agent start すると信頼確認で止まる（実践知見 2026-10-23）
+
+- `herdr agent start <name> --kind codex` は、codex が未信頼のフォルダだと「Trust this folder?」の選択画面で止まり、`agent_not_ready`(blocked during startup)を返す。保存される設定なので、選ぶ前にユーザーの了承を取る
+- 了承後は `herdr pane send-keys <pane> enter` だけを送り、`agent read` で画面が入力欄に変わったことを確かめてから依頼を送る。画面が古いまま見えても**選択肢の番号キーを追送しない**。番号は信頼確認を抜けた後の入力欄に届き、そのまま依頼として送信された(実例: 「1」+Enter が codex への依頼になった)
+- codex の入力欄は Vim モードのことがあり、`esc` は実行中の処理を止めず Insert→Normal に切り替わるだけだった。誤送信を止めたいときは esc に頼らず、訂正文を添えた依頼を送り直す

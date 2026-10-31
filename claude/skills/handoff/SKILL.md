@@ -52,6 +52,7 @@ Slack投稿、メール、GitHubコメントなどの外部送信を含む依頼
 1. 対象プロジェクトを既存の作業ディレクトリから探し、そのディレクトリをcwdにする。複数プロジェクトが並ぶ親で起動して探索を丸投げしない。読み取りで特定できない場合だけ、本人に不足情報を確認する
 2. `herdr workspace create --cwd <対象ディレクトリ> --label <タスク内容が分かるラベル> --no-focus` で新規workspaceを作る。ユーザーが切替を求めた場合だけ `--focus` を使う。レスポンスの `result.workspace` と `result.root_pane.pane_id` を控える
 3. `herdr agent start <name> --kind claude --pane <pane_id>` でclaude codeを起動する。`<name>` は英数字とハイフン/アンダースコアのみ、既存の生存agent名と重複しないこと(`herdr agent list` で確認できる)。起動後の `agent prompt`/`wait`/`read` の宛先は `<pane_id>` で指定する(`<name>` では `agent_not_found` になることがある。2026-10-09実例)
+   Remote Desktop などGUI操作が要る依頼は `--kind codex` で起動する。Claude の computer use は Team/Enterprise プランでは使えず(2026-10-23、デスクトップアプリの設定画面で確認)、codex は computer use で操作できた。初回cwdの codex は信頼確認で止まる(`herdr` skillの `references/troubleshooting.md`)
 4. `herdr agent prompt <pane_id> "<依頼内容>" --wait --until working --timeout 15000` で依頼を送る。ここで待つのは**プロンプトの着弾確認だけ**で、進行の追跡ではない。投げっぱなしの場合もこの確認は行う。`agent_prompt_stalled` やtimeoutは着弾未確認として扱い、作成したpaneを `agent read` で確認する。実行が始まっていれば再送しない
 
 既存paneへ追加依頼するときは、未送信の入力を確認して保持する。文面と追加依頼が両立する場合は追記できる。未送信文を勝手に消したり無視させたりせず、意図が衝突する場合は本人に確認する。
