@@ -26,6 +26,9 @@ zsh/.zcompcache/
 
 # helm（helm repo add が ~/.config/helm/ に自動生成）
 helm/
+
+# Composer（実行時に ~/.config/composer/ へ自動生成）
+composer/
 __pycache__/
 *.py[cod]
 *$py.class
