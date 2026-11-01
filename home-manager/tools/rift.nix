@@ -142,7 +142,7 @@ in
 
     # Prompt Line は全面に出すオーバーレイなので、Rift の配置対象から外す
     [[virtual_workspaces.app_rules]]
-    app_id = "com.electron.prompt-line"
+    app_id = "com.sunagawasei.prompt-line"
     manage = false
 
     [keys]
