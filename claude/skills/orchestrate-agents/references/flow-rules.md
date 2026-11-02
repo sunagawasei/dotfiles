@@ -37,7 +37,7 @@ Anthropicプランの消費を抑える節約モード(段5をcodex-implへ切�
 - **併走の目的は発見の多様性であり、判定の統計的検証(不一致率・閾値・判定不能率等)の道具にしない**。統合はメインが両トラックの結果を目視で比較し、食い違いは成果物に明記する運用を既定にする。定量的な検証機構を(自分であれ査読者であれ)提案したくなったら、対象規模(件数・システムの重要度)に見合うかを先に自問する(実例: 2026-09-16、issue triageの併走に不一致率3割の閾値を作り込もうとしてcodex査読が2巡連続でHighを出し、advisor()の指摘で目視比較まで簡素化)
 - 委譲中はcodex-researchの返却まで同じ対象領域のRead/Grep/Globを控える。安全・権限・緊急性で例外的に読む場合はその理由を記録する
 - workerのraw dumpをメインやユーザーへ転載せず、`decision / evidence(file:lineまたはURL) / unknown / next action`だけを受け取る。`[research]`は1トピック=1パケットに分ける
-- codex系への送信は非同期send既定(返信はagmsg Monitorの自動再開で受ける)。**ただしagent teamのteammateは、idle中に自分のMonitorの通知では起きない**(sunagawasei/agmsg#60)。teammateはforegroundの`until`ループで待ち、leadが中継する(`claude/skills/parallel-handoff/references/teammate-mode.md`)。送信前のensure-codex・パケット書式・Q&Aループ・検収ゲートの詳細: `claude/skills/orchestrate-agents/SKILL.md`
+- codex系への送信は非同期send既定(返信はagmsgdの通知で受ける)。**ただしagent teamのteammateは、idle中に自分の通知では起きない(agmsgdでも未確認)**(sunagawasei/agmsg#60)。teammateはforegroundの`until`ループで待ち、leadが中継する(`claude/skills/parallel-handoff/references/teammate-mode.md`)。送信前のensure-codex・パケット書式・Q&Aループ・検収ゲートの詳細: `claude/skills/orchestrate-agents/SKILL.md`
 - 同一model・同一課金プールへの委譲はコスト裁定が消えるため、往復の価値が無い作業はメインが直接行う(別プール=codex系・cursor系への委譲はこの制約を受けない)。**実装subagentはAnthropicプール内だが、メインOpus / subagent sonnetの単価差が裁定になる**。メイン自身がsonnetで動くセッションでは委譲しない
 
 ### 検収・レビュー運用

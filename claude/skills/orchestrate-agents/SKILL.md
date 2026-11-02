@@ -1,6 +1,6 @@
 ---
 name: orchestrate-agents
-description: 全タスク共通の単一委譲フロー(対話でのプラン起案→codexプラン査読→design-review指摘振り分け→ユーザー承認→メイン分割→実装subagent→メイン受け入れ検査→統合→codexコード査読→design-review指摘振り分け→commit)の運用手順。査読役へはagmsgの非同期send+Monitor自動再開、実装はClaude Code組み込みのAgent tool
+description: 全タスク共通の単一委譲フロー(対話でのプラン起案→codexプラン査読→design-review指摘振り分け→ユーザー承認→メイン分割→実装subagent→メイン受け入れ検査→統合→codexコード査読→design-review指摘振り分け→commit)の運用手順。査読役へはagmsgの非同期send+agmsgd通知で再開、実装はClaude Code組み込みのAgent tool
 ---
 
 # 単一委譲フロー
@@ -9,9 +9,8 @@ description: 全タスク共通の単一委譲フロー(対話でのプラン起
 
 ## 前提
 
-- このセッションのagmsg Monitor(`watch.sh ... --team s-<このセッションのUUID>`)がSessionStartから常駐している。**SessionStart時点でそのプロジェクトのteamが無いと常駐しない**(session-start.shは既存registrationから解決するため)。teamを作ったら`ps aux | grep 'watch.sh <このセッションのUUID>'`で確認し、無ければMonitorツールから`watch.sh <session_id> <project_path> <agent_type> <active_name> --team <team>`を自分で張る(pidfileは`run/watch.<session_id>.<n>.pid`)。**このとき自分(claude)もteamに登録されていない**: `ensure-codex.sh`等がteamを新規作成するとworkerだけが登録され、`send.sh`が`from agent 'claude' is not registered`で失敗する。`whoami.sh`の`teams=`はsession idから導出した表示で登録の証拠にならないので、teamの`config.json`で確認し、無ければ`join.sh <team> claude claude-code <project>`で登録する(2026-10-04実測)
-- **自前のpollingループでMonitorを代用しない**。history.sh/inbox.shを叩くループは(a)inbox.shが既読化して返信を消費する (b)宛先フィルタの正規表現が取りこぼす、の2つで壊れる。2026-09-01の実例: `(codex|fable-review|...) → main`のパターンが`codex-research → main`にマッチせず、返信到着に9時間気づかなかった。**このときMonitorプロセス自体は生きており、「Monitorが死んだ」という一次診断も誤りだった** — 無反応時はプロセス生死とフィルタの両方を疑う
-- **返信待ちの間はMonitorを張り直す**。SessionStart指示の「配信0件で期限切れなら再armしない」は、返信を待っていないときの話。workerへ送信して返信待ちなら、期限切れのたびに同じコマンドで張り直す(2026-09-29、0件expiry後にDB pollingで代用し「monitorを起動すれば済む話じゃない?」と指摘された)
+- このセッションの返信通知はagmsgdが配信する(Monitorは張らない)。通知は「New messages are waiting」の1行だけなので、本文は`inbox.sh`/`history.sh`で読む。`agmsg daemon status --all`で自seat(`s-<このセッションのUUID>/claude`)が`addressable`であることを確認し、`unaddressable`なら`actas-claim.sh <project> claude-code claude <session_id>`で通知先を記録する。agmsgdが止まっていたら`agmsg daemon start`。**team作成直後は自分(claude)もteamに登録されていない**: `ensure-codex.sh`等がteamを新規作成するとworkerだけが登録され、`send.sh`が`from agent 'claude' is not registered`で失敗する。`whoami.sh`の`teams=`はsession idから導出した表示で登録の証拠にならないので、teamの`config.json`で確認し、無ければ`join.sh <team> claude claude-code <project>`で登録する(2026-10-04実測)
+- **自前のpollingループで返信を待たない**。history.sh/inbox.shを叩くループは(a)inbox.shが既読化して返信を消費する (b)宛先フィルタの正規表現が取りこぼす、の2つで壊れる。返信はagmsgdの通知で受ける
 - **agmsg本体・設定(`db/config.yaml`・role file・scripts)の変更はこのセッションでせず、`/handoff`で別workspaceへ渡す**(2026-09-29 ユーザー指示)。worker追加の設定変更・driverの不具合修正とも同じ
 - 宛先workerのbridgeが稼働していること。遅延spawnは自動発火しない(下記「送信の実務」)
 - 送信は非同期`send`が既定。`ask --wait`は使わない(codexでask往復が機能しない実績)
@@ -222,7 +221,7 @@ frontmatterの`model`/`effort`はそのまま実効値になる(同日実測で`
 - **既読フラグは生存判定にも沈黙判定にも使えない**(2026-08-14実証)。codex系workerはturn実行中に新規メッセージを読まないため、作業中のworker宛は未読が溜まって当然。逆に既読でも送信先を間違えていれば返信は来ない
 - **agmsg workerが無言のときの一次診断は bridge ログ(`run/<type>-bridge.<team>.<name>.log`)の mtime と最終行**。10分以上更新が無ければ異常を疑う。**ログのlifecycle行はbridge死亡時に凍るので、それだけでbusyと判断しない — `.meta`の`pid=`を`ps -p`で照合する**。**「返信がまだ無い」と報告する前にもログ末尾を読む** — workerがturnを完了して回答をログにだけ書き、`send.sh`を呼ばずに終わることがある(2026-10-20、codex-researchの回答がbridgeログにだけ残り、ユーザーに「返信来てるんじゃない？」と指摘された)
 - **worker側の送信先typoは silent fail する**(2026-08-14実例)。無言のときはteamを絞らず`from_agent`だけで横断検索する
-- Monitor通知は長い返信を切り詰める。全文はDBから読む
+- agmsgd通知は本文を含まない。全文は`inbox.sh`か`history.sh`で読む
 - worker/subagentの出力そのものは転載せず、採用した内容と最終的な変更のみを報告する
 
 ## パケットの鉄則
