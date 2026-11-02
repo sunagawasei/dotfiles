@@ -1,6 +1,6 @@
 ---
 name: orchestrate-agents
-description: 全タスク共通の単一委譲フロー(対話でのプラン起案→codexプラン査読→fable-review指摘振り分け→ユーザー承認→メイン分割→実装subagent→メイン受け入れ検査→統合→codexコード査読→fable-review指摘振り分け→commit)の運用手順。査読役へはagmsgの非同期send+Monitor自動再開、実装はClaude Code組み込みのAgent tool
+description: 全タスク共通の単一委譲フロー(対話でのプラン起案→codexプラン査読→design-review指摘振り分け→ユーザー承認→メイン分割→実装subagent→メイン受け入れ検査→統合→codexコード査読→design-review指摘振り分け→commit)の運用手順。査読役へはagmsgの非同期send+Monitor自動再開、実装はClaude Code組み込みのAgent tool
 ---
 
 # 単一委譲フロー
@@ -40,27 +40,23 @@ packetには**5 field(疑う前提 / 反対案 / その帰結 / 未解決の問�
 
 承認依頼前の常時ゲート。書式は下記「[review]パケットの鉄則」。
 
-### 段3 fable-review(指摘の振り分け)
+### 段3 design-review(指摘の振り分け)
 
-**節約モードでは、この段の送付先だけが`design-review`(claude-code, opus)に替わる**。両方へは送らない。役割・確認事項・パケット書式は同じ。**以下に出てくる`fable-review`向けの設定値・起動コマンド・rollback手順はfable-review固有のもので、design-reviewには適用しない** — design-reviewの設定値と起動手順は`references/economy-mode.md`が正本。
-
-段2(codex)のfindingsとプランを`fable-review`へ送る。返るのは各findingの振り分け(採用/見送り/別タスク)。**この判断を最終とする**。**ユーザー承認の代替にしない**。
+段2(codex)のfindingsとプランを`design-review`(claude-code, `opus`alias=最新Opus)へ送る。返るのは各findingの振り分け(採用/見送り/別タスク)。**この判断を最終とする**。**ユーザー承認の代替にしない**。節約モードでも送付先は同じ(節約モードで替わるのは段5だけ)。fable-reviewは休眠ロール(`references/model-routing.md`)で、通常は起動しない。
 
 認証・秘密情報を含むプランは振り分け依頼前に該当部分をredactする。**redactすると振り分けが成立しない場合は段3を省き、メインが直接振り分ける**(段2への送信そのものは省略できない。段2は必須ゲート)。
 
 ```bash
-AGMSG_CLAUDE_PROBE_TIMEOUT=150 ~/.agents/skills/agmsg/scripts/ensure-headless.sh claude-code <path> fable-review
+AGMSG_CLAUDE_PROBE_TIMEOUT=150 ~/.agents/skills/agmsg/scripts/ensure-headless.sh claude-code <path> design-review
 ```
 
-**probe timeoutは既定30秒では足りない**(`_spawn.sh`の`AGMSG_CLAUDE_PROBE_TIMEOUT:-30`)。fableは30秒でprobeの全tool eventを出し切れず`rc=124`でfail-closedする(2026-08-29実測)。turn timeoutと違い**per-nameのconfigキーは存在せず、env varでのみ指定する**ため、起動は常に上記の環境変数込みの1行で行う。値は`$VAR`にせずリテラルで書く(troubleshooting.md項10)。失敗時の診断はtroubleshooting.md項14。
+**probe timeoutは既定30秒では足りない**(`_spawn.sh`の`AGMSG_CLAUDE_PROBE_TIMEOUT:-30`)。fableは30秒でprobeの全tool eventを出し切れず`rc=124`でfail-closedした(2026-08-29実測。opusでの所要は未測定のため150を維持する)。turn timeoutと違い**per-nameのconfigキーは存在せず、env varでのみ指定する**ため、起動は常に上記の環境変数込みの1行で行う。値は`$VAR`にせずリテラルで書く(troubleshooting.md項10)。失敗時の診断はtroubleshooting.md項14。
 
-driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.claude_reviewer: true`で担保。per-nameキーは存在しないためグローバルキーで運用する)。**repo writeはsandbox+spawn probeで強制されるが、repo read(project配下=`~/.config`全体+継承add-dir)はBash経由で開く**。credential path read・外部状態変更(認証済みCLIの変更系操作・network write)の禁止はrole file規約でのみ抑止し、sandboxは強制しない(強制境界ではないことを認識のうえ運用する選択)。**sandboxのwrite denyはrepoに限られ、agmsg message store/team registration/run状態はBashから技術的に書け、`$SKILL_DIR`全体(全team・全project分)がread可能** — これも規約でのみ抑止する残余リスクとして扱う。network egressは未検証(`not checked`)。モデルは`spawn.claude_model.fable-review: fable`(alias、自動追従)。effortは未指定(claude-codeのデフォルト)。claude-code driverにはcursorのようなmodel-audit機構が無く、実効モデルの動的な機械照合はできない。記録は静的設定値に留め、モデル自身への自己申告は検証証跡として扱わない(残存リスクとして記録するだけに留める)。
+driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.claude_reviewer: true`で担保。per-nameキーは存在しないためグローバルキーで運用する)。**repo writeはsandbox+spawn probeで強制されるが、repo read(project配下=`~/.config`全体+継承add-dir)はBash経由で開く**。credential path read・外部状態変更(認証済みCLIの変更系操作・network write)の禁止はrole file規約でのみ抑止し、sandboxは強制しない(強制境界ではないことを認識のうえ運用する選択)。**sandboxのwrite denyはrepoに限られ、agmsg message store/team registration/run状態はBashから技術的に書け、`$SKILL_DIR`全体(全team・全project分)がread可能** — これも規約でのみ抑止する残余リスクとして扱う。network egressは未検証(`not checked`)。モデルは`spawn.claude_model.design-review: opus`(alias、自動追従)。effortは未指定(claude-codeのデフォルト)。claude-code driverにはcursorのようなmodel-audit機構が無く、実効モデルの動的な機械照合はできない。記録は静的設定値に留め、モデル自身への自己申告は検証証跡として扱わない(残存リスクとして記録するだけに留める)。
 
-**turn timeoutの既定300秒では足りない**: `spawn.claude_turn_timeout.fable-review: 1800`で個別設定する(per-nameキーが存在する)。add-dir継承は`spawn.claude_inherit_add_dirs.fable-review: true`で明示する(グローバル既定はoff)。
+**turn timeoutの既定300秒では足りない**: `spawn.claude_turn_timeout.design-review: 1800`で個別設定する(per-nameキーが存在する)。add-dir継承は`spawn.claude_inherit_add_dirs.design-review: true`で明示する(グローバル既定はoff)。
 
-**layout差はreadiness照合では検出できない**: spawn前後で`spawn.claude_implementer.fable-review`が未設定(または`false`)であること、生成済みsettings.jsonのdenyWriteにprojectパスが含まれることを確認する。
-
-**rollback範囲は3点セット**: `git checkout`で戻るのはrole fileのみ。agmsgのspawn状態(despawn→旧cursor版`fable-review.cursor.md`で再spawn)とconfig(`spawn.claude_model.fable-review`等のkeyをcursor向け設定へ手動で戻す)は別途の操作が要る。3点いずれか1つの復旧漏れは新driverと旧configの不整合(dead-letterや誤ったlayoutでのspawn)を招くため、rollback時は3点を1セットで実行し、実行後に段3のreadiness照合(spawn世代を跨いだ返信実績の無効化含む)をやり直す。
+**layout差はreadiness照合では検出できない**: spawn前後で`spawn.claude_implementer.design-review`が未設定(または`false`)であること、生成済みsettings.jsonのdenyWriteにprojectパスが含まれることを確認する。
 
 **role fileの編集は稼働中workerに反映されない**: claude-code/cursor/codexいずれのdriverも`_spawn.sh`がspawn時にrole fileを`run/`配下へ`cp`し(`<type>-bridge.<team>.<name>.role`)、bridgeはそのスナップショットだけを毎ターン読む。`db/spawn-roles/<name>.<type>.md`(= `claude/agmsg-roles/`のsymlink先)を直接編集しても、稼働中のworkerはspawn時点の内容のまま動き続ける(意図的な設計: source側の編集/削除でlive workerを不意に変えないため)。role file変更を反映するには、その名前のworkerをdespawn→再spawnし、readiness照合(probe)をやり直す。
 
@@ -110,7 +106,7 @@ driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.c
 - findingのラベルは`[subtask:<id>]`(subagent作)・`[author:main]`(メイン作)・`[design-level]`(承認済み設計自体の欠陥。対応する単一hunkが無ければfile:line欄に`(design-level, no single hunk)`と明記)
 - **依存を変えるdiffのadvisory確認はメインの明示責務**。段9パケットの必須fieldに確認結果と根拠を含める(欠落時はcommit不可)
 - 段1〜11を通らない原子的編集の例外は、資格要件で認証・security boundary・課金・外部write・依存関係を変えないことが担保されるため脆弱性4観点の対象外
-- codexが返したfindingsへの対応可否(採用/見送り/別タスク)は、段3と同じくfable-review(節約モードではdesign-review)が振り分けて収束させる。手順は次々節「段9の指摘振り分け(fable-review)」
+- codexが返したfindingsへの対応可否(採用/見送り/別タスク)は、段3と同じくdesign-reviewが振り分けて収束させる。手順は次々節「段9の指摘振り分け(design-review)」
 
 ### 段9査読者フォールバックチェーン(codex応答不能時)
 
@@ -130,11 +126,11 @@ opus-reviewは2026-09-09にusage limitから復旧済み(probe実測)。ただ�
 
 **grok-reviewとgrok-researchは名前が1語しか違わないが権限が異なる別worker**: grok-review(査読役、private diff送付許容)とgrok-research(調査役、最小化義務でsecret・未公開コード断片禁止)を混同しない。`[review]`パケットの宛先は必ず`grok-review`。
 
-### 段9の指摘振り分け(fable-review)
+### 段9の指摘振り分け(design-review)
 
-**節約モードでは、この段の送付先だけが`design-review`(claude-code, opus)に替わる**。両方へは送らない。役割・確認事項・パケット書式は段3と同じ(readiness照合・起動コマンド・rollback手順も共通 — fable-reviewは1つのworkerが段3・段9両方のゲートを兼ねる)。**段9の主(codex)・フォールバック(grok-review)のどちらが出したfindingsでも、振り分け先は変わらずfable-review**。
+役割・確認事項・パケット書式は段3と同じ(readiness照合・起動コマンドも共通 — design-reviewは1つのworkerが段3・段9両方のゲートを兼ねる)。**段9の主(codex)・フォールバック(grok-review)のどちらが出したfindingsでも、振り分け先は変わらずdesign-review**。
 
-段9のfindings・対象diff(または該当file:line)・段8のauthor再分類マップ・承認済みプラン本文を`fable-review`へ送る。返るのは各findingの振り分け(採用/見送り/別タスク)。**この判断を最終とする**。
+段9のfindings・対象diff(または該当file:line)・段8のauthor再分類マップ・承認済みプラン本文を`design-review`へ送る。返るのは各findingの振り分け(採用/見送り/別タスク)。**この判断を最終とする**。
 
 - **採用**: codexが付けたラベル(`[subtask:<id>]`/`[author:main]`/`[design-level]`)に従い、段10の3経路で差し戻す
 - **見送り**: 対応せず、理由を段11の検収報告に記録する
@@ -188,7 +184,7 @@ frontmatterの`model`/`effort`はそのまま実効値になる(同日実測で`
 
 ## findingラベル
 
-ラベルはcodex(またはgrok-review)がfindingに付ける差し戻し先の分類で、対応可否(採用/見送り/別タスク)の判断は別軸。段9の後、fable-reviewが振り分けた**採用**のfindingだけが、このラベルに従って下表の宛先へ届く。
+ラベルはcodex(またはgrok-review)がfindingに付ける差し戻し先の分類で、対応可否(採用/見送り/別タスク)の判断は別軸。段9の後、design-reviewが振り分けた**採用**のfindingだけが、このラベルに従って下表の宛先へ届く。
 
 | ラベル | 出す | 受ける | 意味 |
 |---|---|---|---|
@@ -202,10 +198,10 @@ frontmatterの`model`/`effort`はそのまま実効値になる(同日実測で`
 
 - `[task:<id>]`はセッション内で一意。`[subtask:<id>]`はtask内で一意
 - 完了済み・破棄済みタスクのstale/duplicate messageは既読化して無視する
-- **agmsg相手のreadiness照合**は「名前がある」ではなく、各nameのregistrationが**期待typeでちょうど1件、かつ当該セッションで返信実績があること**(dead-letterはregistration照合だけでは検出できない)。**新規spawn直後で返信実績がまだ無い場合はtrivialなprobeパケットを1通送り、その応答到達をもって返信実績とする**。**respawn(despawn→再spawn)した場合、respawn前の返信実績は無効**として扱い、必ずrespawn後に新規probeを送り直す。対象はfable-review・codex(review役)、および実際にdispatchするcodex-research/grok-research/grok-review。**実装subagentはagmsgに乗らないのでこの照合の対象外**
+- **agmsg相手のreadiness照合**は「名前がある」ではなく、各nameのregistrationが**期待typeでちょうど1件、かつ当該セッションで返信実績があること**(dead-letterはregistration照合だけでは検出できない)。**新規spawn直後で返信実績がまだ無い場合はtrivialなprobeパケットを1通送り、その応答到達をもって返信実績とする**。**respawn(despawn→再spawn)した場合、respawn前の返信実績は無効**として扱い、必ずrespawn後に新規probeを送り直す。対象はdesign-review・codex(review役)、および実際にdispatchするcodex-research/grok-research/grok-review。**実装subagentはagmsgに乗らないのでこの照合の対象外**
 - 起動コマンド(モデル等のconfigはグローバル永続なのでコマンドのみ):
   - codex系(codex, codex-research): `ensure-codex.sh <project> <name>`
-  - claude-code系(fable-review): `AGMSG_CLAUDE_PROBE_TIMEOUT=150 ensure-headless.sh claude-code <project> fable-review`(既定30秒ではfableがprobeを出し切れずrc=124でfail-closedする。probe timeoutはper-nameのconfigキーが無くenv varのみ。model/effort/turn timeoutはper-nameのconfigキーで固定。`spawn.claude_turn_timeout.fable-review: 1800`を設定済み。段3参照)
+  - claude-code系(design-review): `AGMSG_CLAUDE_PROBE_TIMEOUT=150 ensure-headless.sh claude-code <project> design-review`(既定30秒ではfableがprobeを出し切れずrc=124でfail-closedした(2026-08-29実測)。probe timeoutはper-nameのconfigキーが無くenv varのみ。model/effort/turn timeoutはper-nameのconfigキーで固定。`spawn.claude_turn_timeout.design-review: 1800`を設定済み。段3参照)
   - cursor系(grok-review、codexフォールバック時のみ): `AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ensure-headless.sh cursor <project> grok-review`
   - cursor系(opus-review、第2意見が要るときのみ): `AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ensure-headless.sh cursor <project> opus-review`(既定180秒ではopus:highの査読が切れる)
   - cursor系(grok-research): `ensure-headless.sh cursor <project> <name>`
@@ -256,20 +252,20 @@ DO NOTを明記: git commit/push禁止・ファイルセット外の変更禁止
 - **「バグ/異常を発見した」系の断定は再現条件まで確認してから採用する**(2026-07-27実例: `kustomize build <base>/api`単体での「既知バグ」報告が、親overlayからのビルドでは正しく解決され実機も正常だった)。SCHEMA充足の検品(形式)とは別に、断定の再現性の検品(内容)が必要
 - **インクリメンタル調査**: 1トピック=1パケット。各単位を検品してから次へ
 
-### [review]パケット(codex / fable-review宛。段9のフォールバック時はcodexをgrok-reviewに読み替える)
+### [review]パケット(codex / design-review宛。段9のフォールバック時はcodexをgrok-reviewに読み替える)
 
 - いずれもread-only。findingsを返すだけで、**fixはメインが適用**する(subagent作hunkのfixはSendMessageで当該subagentへ差し戻す)
 - 自己完結パケット = `git diff`か対象`file:line`(プラン査読の場合はプラン本文) + 意図 + (ループ時)前回指摘→対応の対応表
 - **対象repoが`~/.config`配下でも継承add-dir(codexはworkspace-root)配下でもないとき(例: `~/poc/<別repo>`)、査読者・振り分け役はrepoを読めない。対象コードの全文(新規repoなら全ファイル)をパケットへ埋める**(2026-11-01、18ファイル約63KBを`send.sh --stdin`で送り、切断なく査読が返った)。`git diff`が使えない新規ファイルも同様。再査読では変更したファイルの全文だけを送ればよい
 - **段2(codex)のプラン査読packetは段1の5 field(疑う前提 / 反対案 / その帰結 / 未解決の問い / この種の指摘が生じうる経路の列挙)を必須fieldとして含む**。codexは欠落・空だけでなく**定型的で実質のない値**もfindingにする(「疑う前提: なし」「反対案: 現案維持」で通さない。該当なしには理由を要求する)。再送(反復査読)では「最初の未査読プラン」ではなく「前回findingsへの対応」として評価する
-- **段3(fable-review)の振り分けpacketは、段2findingsのfinding ID・見送りと別タスクは理由を一対一で列挙する**(認証・秘密情報を含むfindingは理由を`redacted(理由: 認証/秘密)`で代替可、packet不備に当たらない。redactedを使ったfindingは、内容(理由の具体)を平文開示せずfinding ID・重大度・解決状態(対応済み/未対応)を段4のユーザー承認時と段11の検収報告の両方に明記する。**認証・秘密情報を含むプランで振り分けが成立しない場合は段3を省き、メインが直接振り分ける**)。欠落は順序違反の可視化点として扱う
-- **段9(fable-review)の振り分けpacketは、段9findingsのfinding ID・見送りと別タスクは理由を一対一で列挙する**(redacted代替・開示ルールは段3と同じ)。段8のauthor再分類マップ・承認済みプラン本文・対象diff(または該当file:line)を同梱する。**認証・秘密情報を含むdiffで振り分けが成立しない場合はこの段を省き、メインが直接振り分ける**(段9のcodex査読そのものは省略できない)
+- **段3(design-review)の振り分けpacketは、段2findingsのfinding ID・見送りと別タスクは理由を一対一で列挙する**(認証・秘密情報を含むfindingは理由を`redacted(理由: 認証/秘密)`で代替可、packet不備に当たらない。redactedを使ったfindingは、内容(理由の具体)を平文開示せずfinding ID・重大度・解決状態(対応済み/未対応)を段4のユーザー承認時と段11の検収報告の両方に明記する。**認証・秘密情報を含むプランで振り分けが成立しない場合は段3を省き、メインが直接振り分ける**)。欠落は順序違反の可視化点として扱う
+- **段9(design-review)の振り分けpacketは、段9findingsのfinding ID・見送りと別タスクは理由を一対一で列挙する**(redacted代替・開示ルールは段3と同じ)。段8のauthor再分類マップ・承認済みプラン本文・対象diff(または該当file:line)を同梱する。**認証・秘密情報を含むdiffで振り分けが成立しない場合はこの段を省き、メインが直接振り分ける**(段9のcodex査読そのものは省略できない)
 - 出力形式: Findings / Required tests / Residual risk / Confidence。severity順・推測は明記・各findingにIDを付す
 - 段9では**codex(フォールバック中はgrok-review)**に、**subtask別のdiff identity・依存関係・subagentの検証結果**・**承認済みプラン本文**・**dependency advisoryの確認結果と根拠(メイン記入。欠落時はcommit不可)**と**段8のauthor再分類マップ(メイン作 / subagent作の2区分)**を渡す。**マップの用途はfindingの差し戻し先の判定で、査読対象は常に全hunk**(マップが無いとラベルを推測で付け、無実のsubtaskが差し戻される)
 
 ## レビュー収束条件
 
-指摘の反映(再修正)後の差分は再依頼しうるが、**1回で止めるな・延々と回すな**。段9のfindingsも段3と同じく、fable-review(節約モードはdesign-review)の振り分けを経て採用/見送り/別タスクが確定する。
+指摘の反映(再修正)後の差分は再依頼しうるが、**1回で止めるな・延々と回すな**。段9のfindingsも段3と同じく、design-reviewの振り分けを経て採用/見送り/別タスクが確定する。
 
 - 残るfindingsが Low / nit / 見送り(理由明記) / 別タスク(スコープ外)だけで、substantive(正しさ・設計・回帰)が無い
 - 全findingを 採用 / 見送り / 別タスク に振り分けて反映・判断済み

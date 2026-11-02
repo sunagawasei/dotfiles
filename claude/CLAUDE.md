@@ -65,9 +65,8 @@
 モデル指定はalias自動追従を正とし、固定model IDは書かない。**例外はcursor worker**: label監査があるので `spawn.cursor_model.<name>` / `cursor_model_label.<name>` にカタログ表示ではなくinit.modelの実測をpinする。同一IDが複数のinit.model表示を返す場合は `|` で列挙する(実例: `claude-opus-5-thinking-max` は `Claude Opus 5 1M Max Thinking` と `Claude Opus 5 300K Max`)。片方だけをpinするとdead-letterする。**grok-review(段9フォールバック・暫定運用)は`cursor-grok-4.6-xhigh`をpin**。2026-08-27に実spawnしてmodel-audit実測済み(`requested='cursor-grok-4.6-xhigh' reported='Cursor Grok 4.6 Extra High' fallback=false`。実測1回、既存grok-researchの実測とも一致。暫定・継続監視)。tier序列: fable > opus > sonnet > haiku。alias解決先・優先仕様: `claude/skills/orchestrate-agents/references/delegation-policy.md`
 
 - **メイン(本セッション)**: ユーザーとの対話でのプラン化・統合・検収(要件適合+diff査読+git log+test)・git。権限=**writeの承認・統合・commitの唯一の制御主体**
-- **fable-review(Fable・headless claude-code)**: codex査読(段2)指摘への対応可否収束(段3)と、codexコード査読(段9)指摘への対応可否収束を担当。独立した設計レビュー・コードレビューは行わない(指摘の振り分けだけを行う)。findings-onlyでrepo不変。権限=claude_reviewer(repo writeはsandbox+spawn probeで強制。repo readはproject(`~/.config`)配下と継承add-dir全体に開く。credential path read・外部状態変更の禁止は規約でのみ抑止しsandboxは強制しない)。**repo不変≠orchestration状態不変**: agmsg message store/team registration/run状態はsandboxのwrite denyの対象外で技術的に書け、`$SKILL_DIR`全体(全team・全projectの過去message含む)がread可能。busへの書き込み・他teamの履歴readはrole file規約でのみ抑止する残余リスク。network egressの実挙動は未検証(not checked)
-- **design-review(Opus5・headless claude-code)**: 節約モードでのfable-review相当。codex査読(段2)指摘への対応可否収束(段3)と、codexコード査読(段9)指摘への対応可否収束を担当。`spawn.claude_model.design-review: opus`。findings-onlyでrepo不変。権限はfable-reviewと同じclaude_reviewer layout。通常モードでは起動しない。手順の正本は`claude/skills/orchestrate-agents/references/economy-mode.md`
-- **休眠ロール(opus-review・manager/watcher・codex-impl)**: 平常時は起動しない。opus-reviewは高リスク変更でメインが第2意見を要すると判断したときだけ起こす。manager/watcherは実装レーンをcodex workerへ戻すときだけ、codex-implは節約モードの段5だけで使う。権限・pin・復帰手順: `claude/skills/orchestrate-agents/references/model-routing.md`「休眠ロール」
+- **design-review(Opus・headless claude-code)**: codex査読(段2)指摘への対応可否収束(段3)と、codexコード査読(段9)指摘への対応可否収束を担当。独立した設計レビュー・コードレビューは行わない(指摘の振り分けだけを行う)。findings-onlyでrepo不変。権限=claude_reviewer(repo writeはsandbox+spawn probeで強制。repo readはproject(`~/.config`)配下と継承add-dir全体に開く。credential path read・外部状態変更の禁止は規約でのみ抑止しsandboxは強制しない)。**repo不変≠orchestration状態不変**: agmsg message store/team registration/run状態はsandboxのwrite denyの対象外で技術的に書け、`$SKILL_DIR`全体(全team・全projectの過去message含む)がread可能。busへの書き込み・他teamの履歴readはrole file規約でのみ抑止する残余リスク。network egressの実挙動は未検証(not checked)。モデルは`spawn.claude_model.design-review: opus`(alias。最新Opusへ自動追従)。通常・節約の両モードで同じ。手順は`claude/skills/orchestrate-agents/SKILL.md`段3。fable-reviewは休眠(`model-routing.md`「休眠ロール」)
+- **休眠ロール(fable-review・opus-review・manager/watcher・codex-impl)**: 平常時は起動しない。fable-reviewは段3・段9の振り分けをdesign-review(opus)へ移して休眠。opus-reviewは高リスク変更でメインが第2意見を要すると判断したときだけ起こす。manager/watcherは実装レーンをcodex workerへ戻すときだけ、codex-implは節約モードの段5だけで使う。権限・pin・復帰手順: `claude/skills/orchestrate-agents/references/model-routing.md`「休眠ロール」
 - **grok-review(Grok4.6・headless cursor)**: codex(review役)応答不能時の段9フォールバック(暫定運用)。codex同等の役割(意図一致査読+脆弱性4観点)を代行する。実装がAnthropic側に寄った現構成では、cross-vendorの査読を保つ唯一の代替経路。findings-onlyでrepo不変。権限=cursor_readonly。トリガー・復帰・停止条件・waiver・fallback不能クラスの判定は`claude/skills/orchestrate-agents/SKILL.md`「段9査読者フォールバックチェーン」節が正本
 - **実装subagent(Claude Code組み込みAgent tool・`claude/agents/impl-worker.md`・sonnet)**: 承認済みsubtaskの**ファイルセットの範囲だけ**編集する。commit/push禁止。完了報告はメイン宛。親セッションの権限をそのまま継承するため、外部write・repo外read・機密情報readの禁止は**契約文でのみ抑止する**(強制境界は無い)。実行中にメインへ問い合わせることはできず、判断が要る場面では変更を加えず`question`として返す
 - **codex(review役)**: プラン査読(承認依頼前の常時ゲート)+段9のdiff査読。**意図一致査読と脆弱性4観点の両方を全hunk対象で担当する**(実装がAnthropic側に寄ったため、cross-vendorの査読はここ1本になる)。権限=read-only。起動はreviewer/research専用のCODEX_HOME(空execpolicy Rules・config.toml無し)を使い、対話用途の広いallow rule(`docker compose`等)を継承しない。networkはghのHTTPSホストのみを許すallowlistが有効なときだけ起動し、allow外ホスト・直接IP・allowlist不通のいずれかでは起動しない(`sunagawasei/agmsg#42`/`#43`)
@@ -78,14 +77,14 @@
 
 設計または実装判断を伴う依頼は、段1〜11のこのフローを通す。**委譲を始める前に`orchestrate-agents` skillを読む**(各段の手順・パケット書式・診断の正本)。段ごとの規則・安全の基準・検収運用の全文は`claude/skills/orchestrate-agents/references/flow-rules.md`。
 
-段の骨格: 1 プラン起案(対話) → 2 codexがプラン査読 → 3 fable-review(節約モードではdesign-review)が指摘を振り分け → 4 ユーザー承認 → 5 メインが分割し実装subagentへdispatch → 6 メインが受け入れ検査 → 7 全subtask通過 → 8 メインが統合・author再分類 → 9 codexが全hunkをコード査読(応答不能時はgrok-review) → 10 採用findingの差し戻し → 11 メインが検収→ユーザーのdiffチェック→commit。
+段の骨格: 1 プラン起案(対話) → 2 codexがプラン査読 → 3 design-reviewが指摘を振り分け → 4 ユーザー承認 → 5 メインが分割し実装subagentへdispatch → 6 メインが受け入れ検査 → 7 全subtask通過 → 8 メインが統合・author再分類 → 9 codexが全hunkをコード査読(応答不能時はgrok-review) → 10 採用findingの差し戻し → 11 メインが検収→ユーザーのdiffチェック→commit。
 
 常に守る不変条件(skillを読み損ねても落とさない):
 
 - プランは承認を求める前にcodex査読を通す。査読はユーザー承認の代替にしない
 - ユーザー承認の前に、実装subagentへdispatchを1件も出さない
 - 段9の査読対象は常に全hunk(意図一致+脆弱性4観点)。依存を変えるdiffのadvisory確認はメインの責務で、確認結果と根拠が無ければcommitしない
-- codexの指摘への対応可否(採用/見送り/別タスク)は、fable-review(節約モードではdesign-review)が振り分けて最終とする。認証・秘密情報を含む部分は振り分け依頼前にredactし、成立しなければメインが直接振り分ける
+- codexの指摘への対応可否(採用/見送り/別タスク)は、design-reviewが振り分けて最終とする。認証・秘密情報を含む部分は振り分け依頼前にredactし、成立しなければメインが直接振り分ける
 - 差し戻しはcodexのラベルに従う: `[subtask:<id>]`は当該subagent、`[author:main]`はメイン、`[design-level]`はtaskを終端して段1から再起動。同種の設計レベル指摘が2周続いたら個別修正を止め、列挙の軸を先に調べる
 - 検収では、メインが最終diffを固定し必須検証を自分で再実行する。査読は検収の代替ではない
 - 例外(原子的編集): 挙動・公開契約・認証・security boundary・課金・外部write・依存関係を変えず、変更対象と期待diffが一意で、diff単体の機械検証で正しさが確定する編集だけは、メインが自分で書いて段9のcodexゲートだけを通す
@@ -93,7 +92,7 @@
 - 秘密の実値(credential・token等)を含むpayloadは、cursor系・grok系の外部へ送らない
 - 同一model・同一課金プールへの委譲は、往復の価値が無い作業ならメインが直接行う。メイン自身がsonnetで動くセッションでは委譲しない
 - 実装レーンは既定でsubagent。teamは、サブタスク同士が作業中に情報をやり取りするときか、3人以上を共有タスクリストで並行させる規模のときだけ使う
-- 節約モードの手順は`claude/skills/orchestrate-agents/references/economy-mode.md`。段9の一次査読がcodexのままになる例外で、節約モードの中だけで成立する
+- 節約モード(段5だけメインが実装)の手順は`claude/skills/orchestrate-agents/references/economy-mode.md`。段9の一次査読がcodexのままになる例外で、節約モードの中だけで成立する
 
 ## スクリプト言語
 

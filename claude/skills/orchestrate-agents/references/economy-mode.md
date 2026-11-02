@@ -1,6 +1,6 @@
 # 節約モード
 
-Anthropicプランの消費を抑える運用。段3(プラン査読の指摘振り分け)は通常モードのfable-review(fable)からdesign-review(opus)へ、段5(実装)はimpl-worker(sonnet)からメインセッション自身へ、段9(diff査読)の指摘の振り分け(採用/見送り/別タスク。通常モードはfable-reviewが担当)はdesign-review(opus)へ、それぞれ担当を替える。委譲フローは段1〜11のまま1本で、担当者だけが入れ替わる。別フロー・別skillではない。
+Anthropicプランの消費を抑える運用。通常モードとの違いは段5(実装)だけで、impl-worker(sonnet)からメインセッション自身へ担当を替える。段3・段9の指摘振り分け(採用/見送り/別タスク)は通常モードでもdesign-review(opus)が担当するため、モードで変わらない。委譲フローは段1〜11のまま1本で、担当者だけが入れ替わる。別フロー・別skillではない。
 
 **段5をメインが自分で実装するため、段6(受け入れ検査)・段8(author再分類)は成立しない** — 実装主体と検査主体が同一になり、最初からauthor:mainとして段9へ進む。段9の査読はcodex(review役)のままで、メインが書いたコードをcodexが査読する構図はvendorが異なる(Anthropic/ChatGPT)ため、通常モードと同じ独立性を保つ。
 
@@ -9,10 +9,10 @@ Anthropicプランの消費を抑える運用。段3(プラン査読の指摘振
 | 段 | 通常モード | 節約モード | 課金プール(節約モード時) |
 |---|---|---|---|
 | 段2 プラン査読 | codex(review役) | codex(review役)(変更なし) | ChatGPT |
-| 段3 指摘の振り分け | fable-review (claude-code, fable) | design-review (claude-code, opus) | Anthropic |
+| 段3 指摘の振り分け | design-review (claude-code, opus) | design-review(変更なし) | Anthropic |
 | 段5 実装 | impl-worker (Agent tool, sonnet) | メインセッション自身(委譲しない) | メインの実行環境に準ずる |
 | 段9 diff査読 | codex(review役) | codex(review役)(変更なし) | ChatGPT |
-| 段9 指摘の振り分け | fable-review (claude-code, fable) | design-review (claude-code, opus) | Anthropic |
+| 段9 指摘の振り分け | design-review (claude-code, opus) | design-review(変更なし) | Anthropic |
 | 段10 修正の担当 | メインが振り分け(3経路。段9振り分けで採用されたfindingが対象) | メインが直す(実装主体が単一のため`[design-level]`以外の宛先は常にメイン自身) | メインの実行環境に準ずる |
 | メイン | Opus | 変更なし(実行環境は起動時にユーザーが選ぶ。固定しない) | 不定 |
 
@@ -26,7 +26,7 @@ Anthropicプランの消費を抑える運用。段3(プラン査読の指摘振
 
 `ensure-*`スクリプトは既存workerの生存確認を兼ねる(生きていれば再実行してもno-op)。
 
-### design-review(claude-code、段3・段9指摘の振り分け)
+### design-review(claude-code、段3・段9指摘の振り分け。通常モードでも同じ手順)
 
 ```bash
 AGMSG_CLAUDE_PROBE_TIMEOUT=150 ~/.agents/skills/agmsg/scripts/ensure-headless.sh claude-code <project> design-review
@@ -50,7 +50,7 @@ design-reviewが**採用**と判断した指摘は、メインが自分で直し
 
 ## 通常モードへ戻す
 
-使ったworkerをdespawnする。
+段5の担当を戻すだけでよい(impl-workerへdispatchする)。design-reviewは通常モードでも使うので、despawnは不要。spawn済みのworkerを片付けるときだけ次を使う。
 
 ```bash
 ~/.agents/skills/agmsg/scripts/despawn.sh <team> claude design-review
@@ -63,4 +63,4 @@ despawn前にin-flight dispatchを棚卸しする(同名workerを後から再spa
 - design-reviewが段3・段9の指摘振り分けの両方を兼ねる。同じ観点の見落としがある場合、両方の判断に影響しうる
 - メインが実装も検査も兼ねるため、通常モードの段6が想定する「申告外ファイルの突き合わせ」のような第三者チェックが働かない。段9のcodex査読が唯一の外部チェックになる
 - cursor経由・codex経由がAnthropicプランを消費しないという前提は未測定の推論
-- 段3・段9の指摘振り分けを担当するdesign-reviewはAnthropicプールのまま。Fableの半額になるだけで、プール自体は移らない
+- 段3・段9の指摘振り分けを担当するdesign-reviewはAnthropicプールのまま(通常モードでも同じ)

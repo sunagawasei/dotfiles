@@ -12,7 +12,7 @@ agmsg configのper-workerキー（`spawn.codex_model.<name>` / `spawn.codex_effo
 
 `manager` / `watcher` / `codex-impl` / `worker-1` / `worker-2` / `hard-worker-1` のconfigキーは残してあるが休眠。実装レーンをcodex workerへ戻すときだけ使う(当時の設定は`~/.agents/skills/agmsg/db/config.yaml`にそのまま残っている)。
 
-codex以外のワーカーは別driverなのでこの表の対象外(`fable-review`=claude-code・`fable`(alias、effort未指定)。claude-code workerにはmodel-audit機構が無く実効モデルの機械照合はできない。`opus-review`=cursor・`claude-opus-5-thinking-high`(effort=high、labelはinit.model実測`Claude Opus 5 300K High`で4回一致。1M側表示の有無は継続監視、出現したら`|`列挙してpin)。`grok-research`=cursor。cursor workerはmodel pinとlabel監査が必須。同一IDの表示揺れは `|` で列挙する)。
+codex以外のワーカーは別driverなのでこの表の対象外(`design-review`=claude-code・`opus`(alias、effort未指定)。claude-code workerにはmodel-audit機構が無く実効モデルの機械照合はできない。休眠の`fable-review`=claude-code・`fable`(alias)。`opus-review`=cursor・`claude-opus-5-thinking-high`(effort=high、labelはinit.model実測`Claude Opus 5 300K High`で4回一致。1M側表示の有無は継続監視、出現したら`|`列挙してpin)。`grok-research`=cursor。cursor workerはmodel pinとlabel監査が必須。同一IDの表示揺れは `|` で列挙する)。
 
 codex-deepは常駐させず、必要時にspawnし終わったらdespawnする:
 
@@ -31,6 +31,7 @@ codex-deepは常駐させず、必要時にspawnし終わったらdespawnする:
 
 グローバル`CLAUDE.md`には1行の要約だけを置き、詳細はここに置く(最終dispatch: manager/watcher 9/6、opus-review 9/9。agmsg DBの宛メッセージ数より)。
 
+- **fable-review**(Fable・headless claude-code): 2026-11-02に段3・段9の振り分けをdesign-reviewへ移して休眠。role file(`claude/agmsg-roles/fable-review.claude-code.md`)とagmsg config(`spawn.claude_model.fable-review: fable`・turn timeout・add-dir継承)は残してある。復帰は`AGMSG_CLAUDE_PROBE_TIMEOUT=150 ensure-headless.sh claude-code <project> fable-review`でspawnし、SKILL.md段3・段9の送付先を戻す
 - **opus-review**(Opus5・headless cursor): 平常時は使わない第2意見。高リスク変更で独立した第2の目が要るとメインが判断したときだけ起こす。findings-onlyでrepo不変。権限=cursor_readonly(Write/Shell deny。readはcredential denylist。projectが`~/.config`だと`gh`/`gcloud`/`cursor`/`codex`はworkspace内でdenyされない)。`claude-opus-5-thinking-high`をpinしており、init.modelの実測4回は`Claude Opus 5 300K High`のみで一致(1M側表示が出たら追記して`|`列挙する)
 - **manager / watcher**(headless codex): 実装レーンをcodex workerへ戻すときだけ使う。role fileとagmsg configは残してあるが、subagentレーンでは起動しない
 - **codex-impl**: 節約モードの段5の実装を担う(手順は`economy-mode.md`)。role fileはメイン直結へ変更済みで、managerからのpacketもwatcherへの完了報告も前提にしない。manager/watcherレーンを復帰させるにはrole fileを元へ戻す作業が要る
