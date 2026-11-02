@@ -76,9 +76,10 @@ in
       fi
 
       # Nix Home Manager（brew shellenv / path_helper より後に評価して優先させる）
-      if [ -e "$HOME/.nix-profile/bin" ]; then
-        export PATH="$HOME/.nix-profile/bin:$PATH"
-      fi
+      # useUserPackages=true の home.packages は ~/.nix-profile でなく /etc/profiles/per-user に入る
+      for p in "$HOME/.nix-profile/bin" "/etc/profiles/per-user/$USER/bin"; do
+        [ -d "$p" ] && export PATH="$p:$PATH"
+      done
 
       # Docker認証ヘルパー
       export PATH=$PATH:${config.home.homeDirectory}/.config/cycloud/bin
@@ -116,9 +117,9 @@ in
     # ---- .zprofile (profileExtra) ----
     profileExtra = ''
       # path_helper (/etc/zprofile) 後に Nix を再度先頭に置く
-      if [ -e "$HOME/.nix-profile/bin" ]; then
-        export PATH="$HOME/.nix-profile/bin:$PATH"
-      fi
+      for p in "$HOME/.nix-profile/bin" "/etc/profiles/per-user/$USER/bin"; do
+        [ -d "$p" ] && export PATH="$p:$PATH"
+      done
     '';
 
     # ---- .zshrc (initContent) ----

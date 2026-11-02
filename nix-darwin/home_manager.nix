@@ -1,4 +1,4 @@
-{ nixpkgs-cursor, nixpkgs-gh, nixpkgs-rift, gws-cli, herdr, hunk, babarot, ... }:
+{ nixpkgs-cursor, nixpkgs-gh, nixpkgs-rift, nixpkgs-stable, gws-cli, herdr, hunk, babarot, ... }:
 let
   # cursor-cli だけ nixpkgs-unstable 追従。root の nixpkgs pin は動かさない
   cursorPkgs = import nixpkgs-cursor {
@@ -9,6 +9,8 @@ let
   ghPkgs = import nixpkgs-gh { system = "aarch64-darwin"; };
   # rift-wm だけ nixpkgs-unstable 追従。root の nixpkgs pin(3/28)には rift-wm が無い
   riftPkgs = import nixpkgs-rift { system = "aarch64-darwin"; };
+  # cdk・oxfmt は nixpkgs の stable 版(26.05)を使う。root の nixpkgs pin は動かさない
+  stablePkgs = import nixpkgs-stable { system = "aarch64-darwin"; };
   # Esc/Ctrl+G で実行中ターンが止まらないようにする。CLI に設定が無いためバンドルを書き換える
   cursorCli = cursorPkgs.cursor-cli.overrideAttrs (old: {
     nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ cursorPkgs.perl ];
@@ -26,6 +28,8 @@ in
     cursor-cli = cursorCli;
     gh-cli = ghPkgs.gh;
     rift = riftPkgs.rift-wm;
+    aws-cdk-cli = stablePkgs.aws-cdk-cli;
+    oxfmt = stablePkgs.oxfmt;
     claude-recall = babarot.packages.aarch64-darwin.claude-recall;
   };
   home-manager.users."s23159" = {

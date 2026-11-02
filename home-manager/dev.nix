@@ -1,4 +1,4 @@
-{ pkgs, cursor-cli, ... }:
+{ pkgs, cursor-cli, aws-cdk-cli, oxfmt, ... }:
 {
   home.packages =
     (with pkgs; [
@@ -10,5 +10,7 @@
       jdk
     ])
     # nixpkgs 全体の pin を動かさずに cursor-agent だけ追従させるため pkgs 経由にしない
-    ++ [ cursor-cli ];
+    ++ [ cursor-cli ]
+    # cdk・oxfmt は stable channel 版。brew の node に依存しない
+    ++ [ aws-cdk-cli oxfmt ];
 }
