@@ -239,7 +239,7 @@ DO NOTを明記: git commit/push禁止・ファイルセット外の変更禁止
 
 **完了報告の必須field**: 結果種別(`done|blocked|question`) / 変更ファイル一覧(repo相対パス) / 検証(実行したコマンドと実際の出力)。`question`・`blocked`では何が決められないかと選択肢・各々の帰結。
 
-**外部情報が要る作業**: subagentはnetworkを使えるが、委譲先で叩けない外部CLI/APIについては**実出力サンプルをパケットに貼る**(2026-08-12 herdr-titleで確立)。推測で実装しfakeでテストすると**テストは全passするのに実機で動かない**。実例: `herdr tab list`のtabsは`result.tabs`配下だがworkerはトップレベルと推測し、`json.Unmarshal`が成功して空スライスを返し機能が黙って無効化された。併せて「認識できない形式はエラーにする(errなし空を返さない)」をテスト要件に含める。
+**外部情報が要る作業**: subagentはnetworkを使えるが、委譲先で叩けない外部CLI/APIについては**実出力サンプルをパケットに貼る**(2026-08-12 herdr-titleで確立)。推測で実装しfakeでテストすると**テストは全passするのに実機で動かない**。実例: `herdr tab list`のtabsは`result.tabs`配下だがworkerはトップレベルと推測し、`json.Unmarshal`が成功して空スライスを返し機能が黙って無効化された。併せて「認識できない形式はエラーにする(errなし空を返さない)」をテスト要件に含める。**サンプルとfixtureは、プログラムが実際に受け取るバイト列のまま採る**。ブラウザのDOMから書き出したHTML(outerHTML)は属性の引用符が二重引用符に揃えられ、サーバーが返す生のHTMLと一致しない。2026-11-02のzaim CLIでは、二重引用符の正規表現が全テストを通ったまま、実機で1件も読めなかった(生HTMLは単一引用符)。
 
 **環境依存failを含むテストスイート**は、委譲前にベースラインのfail一覧を採取して`baseline-failures.txt`に置き、ゲートを「対象モジュール全green+`comm -13 baseline after`で新規failゼロ」にする。**ベースラインのfailの原因調査はsubagentに指示しない**(2026-09-29、パケットに「修正前から落ちるテストの失敗理由を報告」と書いたところ、その調査で本題に入らなくなった)。**10分を超えるスイートはsubagentに流させず、メインがMonitorで流す** — subagentの`run_in_background`も600秒でkillされ、subagentは来ない完了通知を待ち続ける。
 
