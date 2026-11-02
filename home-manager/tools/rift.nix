@@ -207,4 +207,23 @@ in
       LimitLoadToSessionType = "Aqua";
     };
   };
+
+  # Rift は Chrome の起動通知を受け取れず、起動直後の窓をクリックされるまで管理しない。
+  # 新しい Chrome を検知して前面に出す。バイナリは scripts/cmd/rift-chrome-nudge を ~/.local/bin へビルドして置く
+  launchd.agents.rift-chrome-nudge = {
+    enable = true;
+    config = {
+      Label = "com.sunagawasei.rift-chrome-nudge";
+      ProgramArguments = [
+        "${config.home.homeDirectory}/.local/bin/rift-chrome-nudge"
+        "-rift-cli"
+        "${rift}/bin/rift-cli"
+      ];
+      EnvironmentVariables.PATH = "/usr/bin:/bin";
+      RunAtLoad = true;
+      KeepAlive = true;
+      StandardErrorPath = "/tmp/rift-chrome-nudge_${user}.err.log";
+      LimitLoadToSessionType = "Aqua";
+    };
+  };
 }
