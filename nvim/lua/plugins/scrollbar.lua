@@ -1,5 +1,7 @@
 return {
   "petertriho/nvim-scrollbar",
+  -- v2は11/16にmainへ置換され、v1のオプションをsetupが拒否するため固定する
+  branch = "v1",
   event = { "BufReadPost", "BufNewFile" },
   dependencies = {
     "lewis6991/gitsigns.nvim",
