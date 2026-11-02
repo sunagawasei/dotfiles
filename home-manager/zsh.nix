@@ -126,6 +126,11 @@ in
     # initExtra/initExtraFirst は deprecated → initContent + lib.mkOrder を使用
     initContent = lib.mkMerge [
       (lib.mkOrder 500 ''
+        # /etc/zshrc(nix-darwin)が .zprofile の後に brew shellenv で brew を先頭へ戻すため、Nix を再度先頭に置く
+        for p in "$HOME/.nix-profile/bin" "/etc/profiles/per-user/$USER/bin"; do
+          [ -d "$p" ] && export PATH="$p:$PATH"
+        done
+
         # AI のシェルは素の zsh のまま使う。エイリアス・プラグイン・プロンプトは人間だけ
         is_human || return 0
 
