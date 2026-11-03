@@ -9,7 +9,7 @@ description: 全タスク共通の単一委譲フロー(対話でのプラン起
 
 ## 前提
 
-- このセッションの返信通知はagmsgdが配信する(Monitorは張らない)。通知は「New messages are waiting」の1行だけなので、本文は`inbox.sh`/`history.sh`で読む。`agmsg daemon status --all`で自seat(`s-<このセッションのUUID>/claude`)が`addressable`であることを確認し、`unaddressable`なら`actas-claim.sh <project> claude-code claude <session_id>`で通知先を記録する。agmsgdが止まっていたら`agmsg daemon start`。**team作成直後は自分(claude)もteamに登録されていない**: `ensure-codex.sh`等がteamを新規作成するとworkerだけが登録され、`send.sh`が`from agent 'claude' is not registered`で失敗する。`whoami.sh`の`teams=`はsession idから導出した表示で登録の証拠にならないので、teamの`config.json`で確認し、無ければ`join.sh <team> claude claude-code <project>`で登録する(2026-10-04実測)
+- このセッションの返信通知はagmsgdが配信する(Monitorは張らない)。通知は「New messages are waiting」の1行だけなので、本文は`inbox.sh`/`history.sh`で読む。`agmsg daemon status --all`で自seat(`s-<このセッションのUUID>/claude`)が`addressable`であることを確認し、`unaddressable`なら`actas-claim.sh <project> claude-code claude <session_id>`で通知先を記録する。agmsgdが止まっていたら`agmsg daemon start`。**team作成直後は自分(claude)もteamに登録されていない**: `ensure-codex.sh`等がteamを新規作成するとworkerだけが登録され、`send.sh`が`from agent 'claude' is not registered`で失敗する。`whoami.sh`の`teams=`はsession idから導出した表示で登録の証拠にならないので、teamの`config.json`で確認し、無ければ`join.sh <team> claude claude-code <project>`で登録する(2026-10-04実測)。**join直後は通知先が未記録**: SessionStartはteam作成より前に走っているので、joinしただけでは自seatが`unaddressable (messaging_destination_missing)`のままで返信通知が届かない。join後に必ず上記の`actas-claim.sh`を実行し、`agmsg daemon status --all`で`addressable`を確認してから査読を送る(2026-11-03実測。`actas-claim.sh`は同projectで`claude`が登録済みの他teamのlockも取る)
 - **自前のpollingループで返信を待たない**。history.sh/inbox.shを叩くループは(a)inbox.shが既読化して返信を消費する (b)宛先フィルタの正規表現が取りこぼす、の2つで壊れる。返信はagmsgdの通知で受ける
 - **agmsg本体・設定(`db/config.yaml`・role file・scripts)の変更はこのセッションでせず、`/handoff`で別workspaceへ渡す**(2026-09-29 ユーザー指示)。worker追加の設定変更・driverの不具合修正とも同じ
 - 宛先workerのbridgeが稼働していること。遅延spawnは自動発火しない(下記「送信の実務」)
@@ -217,6 +217,7 @@ frontmatterの`model`/`effort`はそのまま実効値になる(同日実測で`
 - **`ensure-codex.sh`/`spawn.sh`は単独のsimple commandで呼ぶ**。セッションUUIDは`CLAUDE_CODE_SESSION_ID=<リテラルUUID>`と直書きする(シェル変数にするとsandbox除外が効かず、codexが自分のseatbeltを張れずspawnが失敗する)。for/`;`/`&&`/パイプ/コマンド置換の中に入れない
 - **`<from>` はメインセッションの登録名であって `main` ではない**。`main` を渡すと `from agent 'main' is not registered in team ...(registered: claude, ...)` で送信ごと失敗する。エラーメッセージが実際の登録名を列挙するので、そこから拾う(2026-09-18実測、登録名は `claude`)
 - **本文は例外なくファイルに組み立てて `send.sh <team> <from> <to> --stdin < packet.txt`**。4番目の引数に直接書かない。本文にバッククォートが1つでもあるとコマンド置換が発火し、**その部分が欠落したまま送信が成功する**(2026-08-14に1セッションで3回。短文でも起きる)
+- **履歴やログから抜き出した節を含むパケットは、送る前に各節のバイト数を確認する**。awk等の抽出が0バイトのまま送ると、受け手は欠落に気づけず訂正の往復が1回増える(2026-11-03、codex返信原文の節が空のまま段9の振り分け依頼を送った)
 - 送信後は自分の送信文面をDBからgrepし、重要な文字列(コマンド名・設定値・file:line)が残っているか確認する
 - **既読フラグは生存判定にも沈黙判定にも使えない**(2026-08-14実証)。codex系workerはturn実行中に新規メッセージを読まないため、作業中のworker宛は未読が溜まって当然。逆に既読でも送信先を間違えていれば返信は来ない
 - **agmsg workerが無言のときの一次診断は bridge ログ(`run/<type>-bridge.<team>.<name>.log`)の mtime と最終行**。10分以上更新が無ければ異常を疑う。**ログのlifecycle行はbridge死亡時に凍るので、それだけでbusyと判断しない — `.meta`の`pid=`を`ps -p`で照合する**。**「返信がまだ無い」と報告する前にもログ末尾を読む** — workerがturnを完了して回答をログにだけ書き、`send.sh`を呼ばずに終わることがある(2026-10-20、codex-researchの回答がbridgeログにだけ残り、ユーザーに「返信来てるんじゃない？」と指摘された)
