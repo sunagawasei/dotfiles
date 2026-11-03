@@ -11,12 +11,13 @@ import (
 type call struct{ args []string }
 
 type fake struct {
-	rows    int
-	agent   string
-	paneID  string // pane_id returned by pane get; defaults to the requested id
-	getErr  error
-	sendErr error
-	calls   []call
+	rows      int
+	agent     string
+	paneID    string // pane_id returned by pane get; defaults to the requested id
+	getErr    error
+	sendErr   error
+	scrollErr error
+	calls     []call
 }
 
 func (f *fake) run(bin string, args ...string) ([]byte, error) {
@@ -30,6 +31,9 @@ func (f *fake) run(bin string, args ...string) ([]byte, error) {
 			id = args[2]
 		}
 		return []byte(`{"result":{"pane":{"pane_id":"` + id + `","agent":"` + f.agent + `","scroll":{"viewport_rows":` + strconv.Itoa(f.rows) + `}}}}`), nil
+	}
+	if args[1] == "scroll" && f.scrollErr != nil {
+		return nil, f.scrollErr
 	}
 	return nil, f.sendErr
 }
@@ -53,6 +57,11 @@ func TestRun(t *testing.T) {
 		{"codex alt+u sends PageUp", "codex", 58, "alt+u", []string{"send-text", "w1:p2", "\x1b[5~"}},
 		{"claude alt+j passes through", "claude", 58, "alt+j", []string{"send-keys", "w1:p2", "alt+j"}},
 		{"shell without agent alt+u passes through", "", 0, "alt+u", []string{"send-keys", "w1:p2", "alt+u"}},
+		{"cursor alt+j scrolls one line toward the bottom", "cursor", 58, "alt+j", []string{"scroll", "w1:p2", "--direction", "down", "--lines", "1"}},
+		{"cursor alt+k scrolls one line toward older output", "cursor", 58, "alt+k", []string{"scroll", "w1:p2", "--direction", "up", "--lines", "1"}},
+		{"cursor alt+d scrolls one viewport toward the bottom", "cursor", 58, "alt+d", []string{"scroll", "w1:p2", "--direction", "down", "--lines", "58"}},
+		{"cursor alt+u scrolls one viewport toward older output", "cursor", 40, "alt+u", []string{"scroll", "w1:p2", "--direction", "up", "--lines", "40"}},
+		{"cursor page scroll uses one line when the viewport is unknown", "cursor", 0, "alt+d", []string{"scroll", "w1:p2", "--direction", "down", "--lines", "1"}},
 	}
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
@@ -119,5 +128,43 @@ func TestRunReportsSendFailure(t *testing.T) {
 	f := &fake{agent: "codex", sendErr: errors.New("boom")}
 	if err := run([]string{"alt+j"}, env(baseEnv), f.run); err == nil {
 		t.Fatal("want error")
+	}
+}
+
+func TestCursorScrollFallsBackToAltKey(t *testing.T) {
+	cases := []struct {
+		name string
+		err  error
+	}{
+		{"alternate screen", errors.New(`exit status 1: {"error":{"code":"alternate_screen","message":"pane is on the alternate screen"}}`)},
+		{"server without pane scroll", errors.New(`exit status 1: {"error":{"code":"invalid_request","message":"unknown variant pane.scroll"}}`)},
+		{"cli without pane scroll", errors.New("exit status 2: herdr pane commands:\n  herdr pane list")},
+	}
+	for _, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			f := &fake{agent: "cursor", rows: 20, scrollErr: tc.err}
+			if err := run([]string{"alt+j"}, env(baseEnv), f.run); err != nil {
+				t.Fatal(err)
+			}
+			if len(f.calls) != 3 {
+				t.Fatalf("calls = %v", f.calls)
+			}
+			want := []string{"/bin/herdr", "pane", "send-keys", "w1:p2", "alt+j"}
+			if !reflect.DeepEqual(f.calls[2].args, want) {
+				t.Fatalf("fallback = %q, want %q", f.calls[2].args, want)
+			}
+		})
+	}
+}
+
+func TestCursorScrollErrorIsNotPassedThrough(t *testing.T) {
+	f := &fake{agent: "cursor", scrollErr: errors.New(`{"error":{"code":"pane_not_found","message":"missing"}}`)}
+	if err := run([]string{"alt+k"}, env(baseEnv), f.run); err == nil {
+		t.Fatal("want error")
+	}
+	for _, c := range f.calls {
+		if len(c.args) > 2 && c.args[2] == "send-keys" {
+			t.Fatalf("passed the key through: %q", c.args)
+		}
 	}
 }

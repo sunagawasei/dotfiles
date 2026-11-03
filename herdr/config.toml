@@ -99,7 +99,8 @@ description = "gh-boardをpopupで開く（GitHub Projects v2）"
 width = "90%"
 height = "90%"
 
-# Codexの通常会話はAlt+J/K(1行)・Alt+D/U(半ページ)で動かす。Codex以外のpaneには元のAlt+キーをそのまま送る
+# Codexの通常会話はAlt+J/K(1行)・Alt+D/U(半ページ)。cursor-agentはホストscrollbackを
+# Alt+J/K(1行)・Alt+D/U(1ページ)で動かす。それ以外のpaneには元のAlt+キーをそのまま送る
 [[keys.command]]
 key = "alt+j"
 type = "shell"

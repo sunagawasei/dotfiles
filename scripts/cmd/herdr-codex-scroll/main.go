@@ -1,8 +1,8 @@
 // Command herdr-codex-scroll handles Alt+J/K/D/U pressed in a herdr pane.
-// For a Codex pane it sends a one-line wheel event or PageUp/PageDown, which
-// Codex's normal conversation view accepts; for any other pane it forwards the
-// original Alt key unchanged. The target is the pane id herdr passed at key
-// press time, never the currently focused pane.
+// Codex gets a one-line wheel event or PageUp/PageDown. Cursor's conversation
+// lives in the host scrollback, so those keys move that viewport (one line for
+// J/K, one page for D/U). Every other pane gets the original Alt key. The
+// target is the pane id herdr passed at key press time, never the focused pane.
 package main
 
 import (
@@ -12,9 +12,14 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strconv"
+	"strings"
 )
 
-const codexAgent = "codex"
+const (
+	codexAgent  = "codex"
+	cursorAgent = "cursor"
+)
 
 // wheelCol is the pointer column of a synthesized wheel event.
 const wheelCol = 5
@@ -37,6 +42,40 @@ func codexInput(key string, viewportRows int) (string, bool) {
 		return "\x1b[5~", true // PageUp
 	}
 	return "", false
+}
+
+// cursorScroll is the host-viewport movement for a cursor pane.
+// Up reveals older lines. A page is the pane height, matching Claude's full page.
+func cursorScroll(key string, viewportRows int) (direction string, lines int, ok bool) {
+	page := viewportRows
+	if page < 1 {
+		page = 1
+	}
+	switch key {
+	case "alt+j":
+		return "down", 1, true
+	case "alt+k":
+		return "up", 1, true
+	case "alt+d":
+		return "down", page, true
+	case "alt+u":
+		return "up", page, true
+	}
+	return "", 0, false
+}
+
+// passThroughScroll reports errors from `pane scroll` that mean the host
+// viewport was not moved, so the original Alt key should be delivered instead.
+// That covers the alternate screen, and a server or CLI that does not have
+// pane scroll yet.
+func passThroughScroll(err error) bool {
+	if err == nil {
+		return false
+	}
+	msg := err.Error()
+	return strings.Contains(msg, `"code":"alternate_screen"`) ||
+		strings.Contains(msg, "unknown variant") ||
+		strings.Contains(msg, "herdr pane commands:")
 }
 
 type runner func(bin string, args ...string) ([]byte, error)
@@ -90,11 +129,18 @@ func run(args []string, getenv func(string) string, exe runner) error {
 		return fmt.Errorf("pane get returned %q for %q", resp.Result.Pane.PaneID, pane)
 	}
 
-	if resp.Result.Pane.Agent != codexAgent {
-		_, err = exe(bin, "pane", "send-keys", pane, key)
-	} else {
+	switch resp.Result.Pane.Agent {
+	case codexAgent:
 		input, _ := codexInput(key, resp.Result.Pane.Scroll.ViewportRows)
 		_, err = exe(bin, "pane", "send-text", pane, input)
+	case cursorAgent:
+		direction, lines, _ := cursorScroll(key, resp.Result.Pane.Scroll.ViewportRows)
+		_, err = exe(bin, "pane", "scroll", pane, "--direction", direction, "--lines", strconv.Itoa(lines))
+		if passThroughScroll(err) {
+			_, err = exe(bin, "pane", "send-keys", pane, key)
+		}
+	default:
+		_, err = exe(bin, "pane", "send-keys", pane, key)
 	}
 	return err
 }

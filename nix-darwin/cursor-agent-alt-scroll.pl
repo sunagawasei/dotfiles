@@ -1,11 +1,11 @@
 #!/usr/bin/env perl
-# cursor-agent に Claude Code の Scroll と同じ Alt+J/K/U/D を足す。
+# 差分ビューア(alternate screen)だけが Alt+J/K/U/D を受け取る。
+# 通常会話は Herdr のホスト scrollback なので、herdr-codex-scroll が pane scroll で動かす。
 # Alt+J/K は 1 行、Alt+D/U は 1 ページ。CLI にキーバインド設定が無いためバンドルを書き換える。
-# Herdr は Codex 以外へ Alt キーをそのまま渡すので、受け側だけを変える。
 use strict;
 use warnings;
 
-# 会話ビューのスクロール。入力無効の return の直後、プロンプト中の矢印処理の前。
+# 差分ビューアのスクロール。入力無効の return の直後、プロンプト中の矢印処理の前。
 # プロンプトがアクティブでも j/k/u/d を文字入力にしない位置は下の入力欄側。
 my $scroll_re =
 qr/if\((\w+)\)return;if\((\w+)\)return\(0,\w+\.Po\)\((\w+),(\w+)\)\?void (\w+)\(-1\):\(0,\w+\.u\$\)\(\3,\4\)\?void \5\(1\):\4\.ctrl&&"f"===\3\?void \5\(Math\.max\(1,(\w+)-1\)\):\4\.ctrl&&"b"===\3\?void \5\(-Math\.max\(1,\6-1\)\):\4\.ctrl&&"d"===\3\?void \5\(Math\.max\(1,Math\.floor\(\6\/2\)\)\):\4\.ctrl&&"u"===\3\?void \5\(-Math\.max\(1,Math\.floor\(\6\/2\)\)\):void 0;/;
