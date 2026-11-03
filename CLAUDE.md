@@ -28,7 +28,8 @@ Codex も実設定 `codex/config.toml` は ignore 対象。変更後は `cd scri
 # Claude Code hooks（Goソース変更後は必ず両方）
 cd claude/hooks && go test ./... && go build -o . ./...
 
-# herdrのAlt+J/K/D/U(Codexスクロール)ヘルパー。Goソース変更後に再配置する(herdr/config.tomlが~/.local/bin/herdr-codex-scrollを呼ぶ)
+# herdrのAlt+J/K/D/U。Codexはwheel/Page、cursorはホストscrollbackをpane scroll、他はAlt透過。
+# Goソース変更後に再配置する(herdr/config.tomlが~/.local/bin/herdr-codex-scrollを呼ぶ)
 cd scripts && go test ./cmd/herdr-codex-scroll && go build -o ~/.local/bin/herdr-codex-scroll ./cmd/herdr-codex-scroll
 
 # Chromeの起動をRiftの管理下へ入れる常駐プログラム。Goソース変更後に再配置する(home-manager/tools/rift.nixのlaunchd agentが~/.local/bin/rift-chrome-nudgeを呼ぶ。再配置後はlaunchctl kickstart -k gui/$(id -u)/com.sunagawasei.rift-chrome-nudge)

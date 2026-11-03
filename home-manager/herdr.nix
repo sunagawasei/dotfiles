@@ -29,6 +29,8 @@ let
   # あるときだけ確認ダイアログを出す。判定対象はcloseが実際に消すworkspace全部(worktree group
   # なら全member)で、group closeはアイドルでも確認する。config `confirm_close_running_process`
   # を共有し、offにするとpaneは無確認・workspaceは常時確認になる。
+  # cursor-agentの会話履歴はホストscrollbackにある。Alt+J/K/U/Dは pane scroll APIで
+  # そのviewportを動かす(1行と1ページ)。Codexのwheel/Pageと、それ以外へのAlt透過は維持。
   # combined-frame-digestは個別機能ではなく、上記UIパッチ全部の合成描画を固定する
   # integration fixture。必ず最後に適用し、UIパッチを変えたらdigestを再生成する。
   # 並び順は開発branch v082-upgrade(専用worktreeで保持)のcommit順と一致させる。
@@ -42,6 +44,7 @@ let
     ./patches/herdr-confirm-close-leader-only.patch
     ./patches/herdr-dim-inactive-panes.patch
     ./patches/herdr-confirm-close-workspace-running-process.patch
+    ./patches/herdr-pane-scroll.patch
     ./patches/herdr-combined-frame-digest.patch
   ];
 in

@@ -17,7 +17,7 @@ herdrは flake input のソースへローカルパッチを当ててビルド�
 4. パッチファイルと`herdr.nix`を`git add`する(段0)。Nix flakeはgit追跡ファイルしか見ないため、未追跡だと"Path ... is not tracked by Git"でNix評価が失敗する。
 5. `darwin-rebuild build --flake ~/.config`で評価とビルドだけ先に検証する(sudo不要)。
 6. `darwin-apply`で適用する(段2)。
-7. herdr serverを再起動して新バイナリを有効化する(段3)。**全pane が終了する重大操作なので、ここはユーザーが実行する。** 適用後から再起動までの間は、herdrのCLIが`protocol_mismatch`で全て偽を返し、herdr依存のhookが止まる。
+7. herdr serverを再起動して新バイナリを有効化する(段3)。**全pane が終了する重大操作なので、ここはユーザーが実行する。** `PROTOCOL_VERSION` が上がった適用では、再起動まで CLI が `protocol_mismatch` で全て偽を返し、herdr 依存の hook が止まる。メソッド追加だけで版を上げていない場合、既存コマンドは旧 server と通話し続け、新しいメソッドだけが `invalid_request`（unknown variant）になる。
 
 手順2から手順7のどれか一つが欠けても稼働バイナリは変わらない。
 

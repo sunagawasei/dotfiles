@@ -11,11 +11,13 @@ let
   riftPkgs = import nixpkgs-rift { system = "aarch64-darwin"; };
   # cdk・oxfmt は nixpkgs の stable 版(26.05)を使う。root の nixpkgs pin は動かさない
   stablePkgs = import nixpkgs-stable { system = "aarch64-darwin"; };
-  # Esc/Ctrl+G で実行中ターンが止まらないようにする。CLI に設定が無いためバンドルを書き換える
+  # CLI に設定が無いためバンドルを書き換える。
+  # Esc/Ctrl+G では実行中ターンを止めない。Alt+J/K/U/D は Claude Code と同じスクロール。
   cursorCli = cursorPkgs.cursor-cli.overrideAttrs (old: {
     nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [ cursorPkgs.perl ];
     postPatch = (old.postPatch or "") + ''
       perl ${./cursor-agent-no-esc-abort.pl} *.js
+      perl ${./cursor-agent-alt-scroll.pl} *.js
     '';
   });
 in
