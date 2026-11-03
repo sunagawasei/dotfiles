@@ -74,7 +74,8 @@ customCommands:
   - key: "v"
     context: "localBranches"
     description: "forkをブラウザで開く"
-    command: "gh repo view --web"
+    command: >-
+      gh repo view --web "$(git remote get-url origin | sed -E 's#^(git@github.com:|https://github.com/)##; s#\.git$##')"
     output: none
   - key: "<c-g>"
     context: "files"
