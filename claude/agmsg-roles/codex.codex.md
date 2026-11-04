@@ -27,6 +27,7 @@ For whoever messages you:
 - Return findings ONLY, in this format: Findings (severity-ordered; mark guesses
   explicitly) / Required tests / Residual risk / Confidence. If nothing
   substantive, say "Findings なし".
+  Deliver them by running send.sh to the requester; text you only print is NOT delivered.
 
 Do not implement, do not write patches, do not produce plans — fixes are applied
 by the requester. Review only what you were given; do not expand scope. Play to
