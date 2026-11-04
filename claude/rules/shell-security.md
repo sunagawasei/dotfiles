@@ -75,6 +75,12 @@ export ACCESS_KEY_ID="$(kubectl get secret my-secret -o jsonpath='{.data.ACCESS_
 
 実例: 2026-09-29、agmsgのheadless worker用`CLAUDE_CONFIG_DIR`(`claude-worker-home/settings.json`)を調査目的で`python3 -m json.tool`で全表示し、`env`キー内の`CLAUDE_CODE_OAUTH_TOKEN`(実際の秘密値)を平文でそのまま出力した。原因切り分けに必要だったのは`env`キーの有無ではなくファイル全体だったため、事前のキー確認を怠った。
 
+## 値を伏せる置換はperlで書き、伏せ漏れを確かめる
+
+macOS標準の`sed`(BSD)は`\S`・`\w`を解釈しない。`s#https://hooks\.slack\.com\S*#<REDACTED>#g`は、ホスト名だけを置換して残りのパスを素通しする。伏せ処理は`perl -pe 's{https?://hooks\.slack\.com\S*}{<URL>}g'`のように書く。秘密を含みうるファイルは、値の行を出さずに件数・識別子名・ハッシュ指紋だけを出す形を優先する。
+
+実例: 2026-11-04、k8s ConfigMapのSlack行をsedで伏せたつもりで表示し、Webhook URLとBot Tokenを平文で出力した。
+
 ## ベストプラクティス
 
 1. 環境変数は使用直前に取得
