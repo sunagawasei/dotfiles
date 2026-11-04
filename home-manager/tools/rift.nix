@@ -47,7 +47,7 @@ in
     hyper = "Ctrl + Alt"
     hyper_shift = "Ctrl + Alt + Shift"
 
-    # Main=ブラウザ・読み物・AIチャット / Development=WezTermだけ / Communication=Slack・Zoom・カレンダー / Utilities=設定・VPN・ツール類
+    # Main=ブラウザ・読み物・AIチャット / Development=WezTermだけ / Communication=Slack・Zoom・カレンダー・メール / Utilities=設定・VPN・ツール類
     [[virtual_workspaces.app_rules]]
     app_id = "com.google.Chrome"
     workspace = "Main"
@@ -138,6 +138,10 @@ in
 
     [[virtual_workspaces.app_rules]]
     app_id = "com.apple.iCal"
+    workspace = "Communication"
+
+    [[virtual_workspaces.app_rules]]
+    app_id = "com.apple.mail"
     workspace = "Communication"
 
     # Prompt Line は全面に出すオーバーレイなので、Rift の配置対象から外す
