@@ -198,6 +198,7 @@ Inspect the target prompt and preserve any existing draft. In Claude Code with V
 
 ## Safety and coordination rules
 
+- Distinguish prompt suggestions from actual unsent user input. A suggestion is not an execution request. When the user identifies it as a suggestion, follow an explicit closure request without treating it as a draft that blocks closure; preserve actual unsent input.
 - Use `--no-focus` for background work unless the user asked to switch context.
 - Use `--current`, an explicit pane ID, or a unique agent name. Do not rely on another client's focused pane.
 - Parse IDs from JSON responses. Do not derive them from sidebar order or examples.
