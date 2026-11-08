@@ -101,46 +101,42 @@ argument-hint: "[confirm]"
   - git追跡ファイル（skill/rule/CLAUDE.md）→ `git rm`。履歴から戻せる
   - git非追跡ファイル（`~/.config/claude/projects/*/memory/`のメモリは全件がこれ）→ `rm`せず`~/.config/claude/attic/<YYYY-MM-DD>/<元の相対パス>`へ退避する。`claude/*`が.gitignore対象なのでallowlist追加は不要。**パスは絶対で書く** — このskillは`~/.config`以外のプロジェクトのセッションからも走るため、相対パスは解決しない
   - MEMORY.mdのインデックス行を削除する
-  - 退避前後で`[[link]]`の**組**（参照元ファイル, 対象名）を採り、**退避後にだけ現れる組が無い**ことを確認する。件数の一致では判定しない（既存の未解決1件を直して別の1件を増やしても件数は揃う）。減るのは正常なので増加側だけを見る:
+  - 退避前後で未解決の`[[link]]`の**組**（参照元ファイル, 対象名）を採り、**退避後にだけ現れる組が無い**ことを確認する。件数の一致では判定しない（既存の未解決1件を直して別の1件を増やしても件数は揃う）。減るのは正常なので増加側だけを見る:
 
     ```bash
-    cd <memory dir>; W=<scratchpad>/links.$$
-    pairs() { for f in *.md; do grep -o '\[\[[A-Za-z0-9_-]*\]\]' "$f" | tr -d '[]' | while read n; do [ -f "$n.md" ] || echo "$f|$n"; done; done | sort -u; }
-    pairs > $W.before   # 退避前
+    W=<scratchpad>/links.$$
+    memcheck pairs <memory dir> > $W.before   # 退避前
     # …退避…
-    pairs > $W.after; comm -13 $W.before $W.after   # 空であること
+    memcheck pairs <memory dir> > $W.after; comm -13 $W.before $W.after   # 空であること
     ```
 
-  - **増えた組が出たら参照元を張り替える**（退避したメモリを指していたリンクが宙に浮いた状態）。参照元ファイルごとに: 統合先メモリがあれば`[[統合先]]`へ置換、無ければリンク記法だけ外して本文は残す。置換後に`pairs`を採り直し、`comm -13`が空になるまで繰り返す
-- **適用後にMEMORY.mdの索引を全件照合する**。メモリの保存は「ファイル作成」と「索引追加」の2手に分かれており、片方だけ成功しても静かに通る。索引に無いファイルはrecallで拾われないため、書いた本人以外からは存在しないのと同じになる。このセッションが作ったものに限らず**dir全体**を対象にする。索引に無いファイルが見つかったら1行要約を書いて追加し、索引にあって実体が無い行は削除する:
+  - **増えた組が出たら参照元を張り替える**（退避したメモリを指していたリンクが宙に浮いた状態）。参照元ファイルごとに: 統合先メモリがあれば`[[統合先]]`へ置換、無ければリンク記法だけ外して本文は残す。置換後に`memcheck pairs`を採り直し、`comm -13`が空になるまで繰り返す
+- **適用後にMEMORY.mdの索引を`memcheck check`で全件照合する**。メモリの保存は「ファイル作成」と「索引追加」の2手に分かれており、片方だけ成功しても静かに通る。索引に無いファイルはrecallで拾われないため、書いた本人以外からは存在しないのと同じになる。このセッションが作ったものに限らず**dir全体**を対象にする。判定規則はすべて`memcheck`に実装してあり、`claude-audit`も同じものを呼ぶ:
 
   ```bash
-  cd <memory dir>
-  for f in *.md; do [ "$f" = MEMORY.md ] && continue
-    grep -qxF "$f" ARCHIVED 2>/dev/null && continue
-    grep -q "($f)" MEMORY.md || echo "NOT INDEXED: $f"; done
-  grep -o '^- \[[^]]*\](\([^)]*\))' MEMORY.md | sed 's/.*(\(.*\))/\1/' | while read n; do [ -f "$n" ] || echo "DANGLING: $n"; done
-  wc -l MEMORY.md; wc -c MEMORY.md   # 200行・25600バイトが上限
+  memcheck check <memory dir>
   ```
 
-- **索引の上限に達しているdirでは、NOT INDEXEDを漏れと断定しない**。MEMORY.mdは先頭200行または25KBの早い方までしかロードされず、超過分は黙って捨てられる。そのため索引が上限に近いdirでは、入りきらないメモリを**意図的に**索引から外していることがある。見分け方:
-  - **`ARCHIVED`（拡張子なし・1行1ファイル名）に載っていれば意図的**。上のスクリプトはこれをスキップする。意図的に索引から外したら、同時にこのファイルへ1行足す
-  - `ARCHIVED`が無く、かつMEMORY.mdが上限近傍（180行以上または23000バイト以上）なら、漏れと断定せず件数だけ報告して段6の未実施リストへ「`ARCHIVED`未整備のため未判定N件。整備するまでこのdirでは本物の索引漏れも同じ数に紛れて検出されない」と載せる
-  - `ARCHIVED`が抑止できるのは**実在ファイルのNOT INDEXEDだけ**。DANGLING・重複・未解決リンクは`ARCHIVED`に書かれていても通常どおり報告する
-- 索引へ行を足すときは`wc -l` < 200 かつ `wc -c` < 25600 の両方を確認する。超えるなら行を増やさず既存行へ統合する
+  - **終了コードで分ける**。0は要対応なし、1は下の行を読んで対応する。**3（対象が不正）と4（読取失敗）は照合できていない**。「索引は問題なし」とは扱わず、`claude-audit`も呼ばず、段6へ「memcheck検査不能: stderrの1行」と載せる。`command -v memcheck`が通らないときも同じ。配備は`cd ~/.config/scripts && go build -o ~/.local/bin/memcheck ./cmd/memcheck`
+  - `NOT_INDEXED <file>`: 1行要約を書いて索引へ追加する
+  - `DANGLING <file>`・`DUPLICATE <file>`: 実体が無い行は削除し、重複行は1行に統合する
+  - `NEAR_LIMIT`・`OVER_LIMIT`: 行を足さず既存行へ統合する。MEMORY.mdは先頭200行または25600バイトを超えた分が黙って捨てられる
+  - `UNDECIDED N`: 索引が上限近傍で`ARCHIVED`も無く、入りきらないメモリを意図的に外したのか漏れなのか区別できない。漏れと断定せず、段6へ「`ARCHIVED`未整備のため未判定N件。整備するまでこのdirでは本物の索引漏れも同じ数に紛れて検出されない」と載せる
+  - `UNRESOLVED <file>|<name>`: 既存の未解決リンク。情報であって対応は要らない。増えたかどうかは上の`memcheck pairs`の前後比較で見る
+  - **`ARCHIVED`**（拡張子なし・1行1ファイル名）は、索引から**意図的に**外したメモリの一覧。意図的に外したら、同時にこのファイルへ1行足す。`ARCHIVED`が抑止するのは実在ファイルの`NOT_INDEXED`だけで、`DANGLING`・`DUPLICATE`・未解決リンクは載っていても通常どおり出る
+- 索引へ行を足したあとに`memcheck check`をもう一度かけ、`NEAR_LIMIT`・`OVER_LIMIT`が出ないことを確認する
 - **索引を縮めるときは行を消さず、説明(` — `以降)を短くするか落とす**。タイトルとリンクは残す。次の3点を守る:
   - 文字数での機械的な切り詰めは使わない。「09-29」のような途中で切れた断片が残るため、手で書き直す
   - 説明に埋まった`(xxx.md)`の参照は落とさない。そのメモリへの唯一の入口のことがある
   - 適用前後でリンク先ファイル名の集合が一致することを確認する: `diff <(grep -o '([A-Za-z0-9_.-]*\.md)' 旧 | sort) <(grep -o '([A-Za-z0-9_.-]*\.md)' 新 | sort)`
 - **`claude-audit`を呼ぶ条件**（いずれか1つ該当）:
   - 段4のメモリ削除候補が3件以上（対象memory dirがあるとき）
-  - NOT INDEXED/DANGLINGが合計1件以上。ただし`ARCHIVED`登録分と上記の「未判定」分は数に入れない（入れると、意図的な索引外しがあるdirで毎回起動して同じ報告が返る）
-  - MEMORY.mdが上限近傍（180行以上または23000バイト以上）
+  - `memcheck check`が終了コード1を返した（`NOT_INDEXED`・`DANGLING`・`DUPLICATE`・`NEAR_LIMIT`・`OVER_LIMIT`のいずれか。`UNDECIDED`と`UNRESOLVED`だけでは1にならないので、意図的な索引外しがあるdirで毎回起動して同じ報告が返ることはない）
   - 上の張り替えをしても`comm -13`が空にならない
 - **呼び方**: 上の照合まで終えてから、Skill toolで`claude-audit`を`memory <対象memory dirの絶対パス>`付きで起動する（`--confirm`を付けるかはモード表に従う）。返る区分は`修正した / attic退避した / 未対応 / invalid target`で、`未対応`は段6の未実施リストへ載せる
   - Skill toolから起動できなかった場合（toolが無い・skill名が解決できない・`skillOverrides`で無効化されている・起動時エラーで**変更が1件も入っていない**）は、`~/.config/claude/skills/claude-audit/SKILL.md`（絶対パス。他プロジェクトのセッションでは相対パスが解決しない）を読んで`memory`モードの手順をその場で実行する
   - 起動はしたが結果区分が返らず、変更が入った**または入ったか分からない**場合は**その場の再実行をしない**。二重適用になるため、段6へ「claude-audit途中終了・要手動確認」として載せる（変更ゼロを積極的に確認できないときはこちらに倒す）
-- **`claude-audit`から戻ったら、上の索引照合・`pairs`の照合・`wc -l`/`wc -c`をもう一度通してから段6へ進む**。auditがMEMORY.mdやリンクを変えているため、呼ぶ前の確認結果は無効になっている。**再検証が通らなければcommitへ進まず、そこで止めてユーザーへ報告する**
+- **`claude-audit`から戻ったら、`memcheck check`と`memcheck pairs`の前後比較をもう一度通してから段6へ進む**。auditがMEMORY.mdやリンクを変えているため、呼ぶ前の確認結果は無効になっている。**再検証が通らなければcommitへ進まず、そこで止めてユーザーへ報告する**
 
 ### 6. やり残し総点検
 

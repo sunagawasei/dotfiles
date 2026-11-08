@@ -65,20 +65,17 @@ argument-hint: "[memory <絶対dir> ... [--confirm]]"
 - 班の「編集した」報告は鵜呑みにしない。**全報告をgrep/存在確認で実物スポットチェック**する(2026-07-04に「修正したと報告したが未適用」の実例)
 - 削除の根拠(「グローバルruleと重複」等)は、引用元の記述が実在するか自分で確認する
 - ステップ2の追加検証: 行数再測定、移設先ファイルの存在確認、移設元への参照残存・内容欠落がないか確認
-- メモリ整合性スイープを機械実行:
+- メモリ整合性スイープを機械実行する。判定規則(索引と実体の突き合わせ・`ARCHIVED`の扱い・上限判定・未解決リンク)は`memcheck`が持ち、`/wrapup`も同じものを呼ぶ。ここに規則を複製しない:
 
 ```bash
-cd ~/.config/claude/projects && for d in ./*/memory; do cd "$d" 2>/dev/null || continue
-  for f in *.md; do [ "$f" = MEMORY.md ] && continue
-    grep -qxF "$f" ARCHIVED 2>/dev/null && continue
-    grep -q "($f)" MEMORY.md || echo "$d unindexed:$f"; done
-  for n in $(grep -ho '\[\[[a-zA-Z0-9_-]*\]\]' *.md 2>/dev/null | tr -d '[]' | sort -u); do [ -f "$n.md" ] || echo "$d unresolved:[[$n]]"; done
-  cd ~/.config/claude/projects; done
+for d in ~/.config/claude/projects/*/memory; do echo "## $d"; memcheck check "$d"; echo "exit=$?"; done
 ```
 
-`ARCHIVED`(拡張子なし・1行1ファイル名)は、索引の上限に達したため**意図的に索引から外した**メモリの一覧。上のスクリプトはここに載る名前のNOT INDEXEDを抑止する。抑止できるのは実在ファイルのNOT INDEXEDだけで、DANGLING・重複・未解決リンクは`ARCHIVED`に書かれていても通常どおり報告する。`ARCHIVED`が無いdirでMEMORY.mdが上限近傍(180行以上または23000バイト以上)なら、NOT INDEXEDを漏れと断定せず件数の報告に留める。
+  - 終了コード1は要対応、0は要対応なし。**3（対象が不正）と4（読取失敗）は検査できていない**ので、問題なしとは扱わず「検査不能」と報告する。`memory`が空のdir（`MEMORY.md`が無い）は3になる
+  - 出力行の意味と対応は`/wrapup`段5の`memcheck check`の項と同じ。`UNDECIDED`は漏れと断定せず件数の報告に留める
+  - `memcheck`が無いときは`cd ~/.config/scripts && go build -o ~/.local/bin/memcheck ./cmd/memcheck`で配備する
 
-索引へ行を足すときは`wc -l` < 200 かつ `wc -c` < 25600 の両方を確認する。超えるなら行を増やさず既存行へ統合する(超過分は毎セッション黙って捨てられる)。
+索引へ行を足したあとに`memcheck check`をもう一度かけ、`NEAR_LIMIT`・`OVER_LIMIT`が出ないことを確認する。超えるなら行を増やさず既存行へ統合する(超過分は毎セッション黙って捨てられる)。
 
 ### 4. ユーザー判断と適用
 
