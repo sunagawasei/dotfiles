@@ -35,6 +35,9 @@ cd scripts && go test ./cmd/herdr-codex-scroll && go build -o ~/.local/bin/herdr
 # wrapup skillが使う、recallアーカイブからユーザー発言を取り出すCLI。Goソース変更後に再配置する(skillが~/.local/bin/wrapup-recallを呼ぶ)
 cd scripts && go build -o ~/.local/bin/wrapup-recall ./cmd/wrapup-recall
 
+# メモリdirのMEMORY.md索引と実体の整合を検査するCLI。wrapupとclaude-auditが呼ぶ。Goソース変更後に再配置する
+cd scripts && go build -o ~/.local/bin/memcheck ./cmd/memcheck
+
 # Chromeの起動をRiftの管理下へ入れる常駐プログラム。Goソース変更後に再配置する(home-manager/tools/rift.nixのlaunchd agentが~/.local/bin/rift-chrome-nudgeを呼ぶ。再配置後はlaunchctl kickstart -k gui/$(id -u)/com.sunagawasei.rift-chrome-nudge)
 cd scripts && go build -o ~/.local/bin/rift-chrome-nudge ./cmd/rift-chrome-nudge
 
