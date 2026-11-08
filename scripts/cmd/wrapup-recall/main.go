@@ -32,8 +32,13 @@ const (
 	pastLineRunes = 200
 )
 
-// Harness-injected user turns that carry no utterance of the user.
-var skipPrefixes = []string{"<", "[Request interrupted", "This session is being", "[task:", "Caveat"}
+// Harness-injected user turns that carry no utterance of the user. A bare "<"
+// is not here: text the user pastes arrives as <pasted_content>, and XML or
+// HTML the user types starts with "<" too.
+var skipPrefixes = []string{
+	"<command-", "<local-command-", "<system-reminder", "<task-notification",
+	"[Request interrupted", "This session is being", "[task:", "Caveat",
+}
 
 var errEmptyCurrent = errors.New("the current session has no user utterance (recall import may not have picked it up)")
 
@@ -46,7 +51,9 @@ type message struct {
 }
 
 type exported struct {
-	Messages []message `json:"messages"`
+	// A pointer tells a missing or null field (a format change) from an
+	// empty list, which is a session without messages.
+	Messages *[]message `json:"messages"`
 }
 
 type session struct {
@@ -120,7 +127,10 @@ func exportMessages(rc runner, id string) ([]message, error) {
 	if err := json.Unmarshal(out, &e); err != nil {
 		return nil, fmt.Errorf("recall export %s: unexpected output: %w", id, err)
 	}
-	return e.Messages, nil
+	if e.Messages == nil {
+		return nil, fmt.Errorf("recall export %s: no messages field", id)
+	}
+	return *e.Messages, nil
 }
 
 func printCurrent(rc runner, id string, w io.Writer) error {

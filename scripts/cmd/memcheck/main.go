@@ -91,6 +91,19 @@ func validateTarget(dir, home string) (string, error) {
 	return real, nil
 }
 
+// isFile reports whether path is a regular file, following symlinks. A
+// directory or a broken symlink is not a memory, as with the shell's [ -f ].
+func isFile(path string) (bool, error) {
+	fi, err := os.Stat(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return false, nil
+	}
+	if err != nil {
+		return false, err
+	}
+	return fi.Mode().IsRegular(), nil
+}
+
 func memoryFiles(dir string) ([]string, error) {
 	entries, err := os.ReadDir(dir)
 	if err != nil {
@@ -98,7 +111,15 @@ func memoryFiles(dir string) ([]string, error) {
 	}
 	var names []string
 	for _, e := range entries {
-		if !e.IsDir() && strings.HasSuffix(e.Name(), ".md") {
+		if !strings.HasSuffix(e.Name(), ".md") {
+			continue
+		}
+		ok, err := isFile(filepath.Join(dir, e.Name()))
+		if err != nil {
+			return nil, err
+		}
+		// A directory or a broken symlink named *.md is not a memory.
+		if ok {
 			names = append(names, e.Name())
 		}
 	}
@@ -151,13 +172,12 @@ func check(dir string) (report, error) {
 		if seen[m[1]] == 2 {
 			r.Duplicate = append(r.Duplicate, m[1])
 		}
-		if _, err := os.Stat(filepath.Join(dir, m[1])); err != nil {
-			if !errors.Is(err, os.ErrNotExist) {
-				return r, err
-			}
-			if !slices.Contains(r.Dangling, m[1]) {
-				r.Dangling = append(r.Dangling, m[1])
-			}
+		ok, err := isFile(filepath.Join(dir, m[1]))
+		if err != nil {
+			return r, err
+		}
+		if !ok && !slices.Contains(r.Dangling, m[1]) {
+			r.Dangling = append(r.Dangling, m[1])
 		}
 	}
 
@@ -176,10 +196,11 @@ func unresolved(dir string, files []string) ([]string, error) {
 			return nil, err
 		}
 		for _, m := range wikiLink.FindAllStringSubmatch(string(data), -1) {
-			if _, err := os.Stat(filepath.Join(dir, m[1]+".md")); err != nil {
-				if !errors.Is(err, os.ErrNotExist) {
-					return nil, err
-				}
+			ok, err := isFile(filepath.Join(dir, m[1]+".md"))
+			if err != nil {
+				return nil, err
+			}
+			if !ok {
 				set[f+"|"+m[1]] = true
 			}
 		}
