@@ -105,10 +105,12 @@ argument-hint: "[confirm]"
 
     ```bash
     W=<scratchpad>/links.$$
-    memcheck pairs <memory dir> > $W.before   # 退避前
+    memcheck pairs <memory dir> > $W.before || echo "検査不能: 退避しない"   # 退避前
     # …退避…
-    memcheck pairs <memory dir> > $W.after; comm -13 $W.before $W.after   # 空であること
+    memcheck pairs <memory dir> > $W.after && comm -13 $W.before $W.after || echo "検査不能"   # 空であること
     ```
+
+    **`memcheck pairs`の終了コードが0でない出力は、空でも「増えた組なし」と読まない**。退避前の取得が失敗したら退避に進まない。退避後の取得が失敗したら、削除を終えたまま`commit`へ進まず、終了報告を「中断」にする
 
   - **増えた組が出たら参照元を張り替える**（退避したメモリを指していたリンクが宙に浮いた状態）。参照元ファイルごとに: 統合先メモリがあれば`[[統合先]]`へ置換、無ければリンク記法だけ外して本文は残す。置換後に`memcheck pairs`を採り直し、`comm -13`が空になるまで繰り返す
 - **適用後にMEMORY.mdの索引を`memcheck check`で全件照合する**。メモリの保存は「ファイル作成」と「索引追加」の2手に分かれており、片方だけ成功しても静かに通る。索引に無いファイルはrecallで拾われないため、書いた本人以外からは存在しないのと同じになる。このセッションが作ったものに限らず**dir全体**を対象にする。判定規則はすべて`memcheck`に実装してあり、`claude-audit`も同じものを呼ぶ:
@@ -117,7 +119,7 @@ argument-hint: "[confirm]"
   memcheck check <memory dir>
   ```
 
-  - **終了コードで分ける**。0は要対応なし、1は下の行を読んで対応する。**3（対象が不正）と4（読取失敗）は照合できていない**。「索引は問題なし」とは扱わず、`claude-audit`も呼ばず、段6へ「memcheck検査不能: stderrの1行」と載せる。`command -v memcheck`が通らないときも同じ。配備は`cd ~/.config/scripts && go build -o ~/.local/bin/memcheck ./cmd/memcheck`
+  - **終了コードで分ける**。0は要対応なし、1は下の行を読んで対応する。**3（対象が不正）と4（読取失敗）は照合できていない**。「索引は問題なし」とは扱わず、`claude-audit`も呼ばず、段6へ「memcheck検査不能: stderrの1行」と載せる。`command -v memcheck`が通らないときも同じ。**このセッションでメモリを削除・退避していたときは、削除後のリンク安全性を確認できていないので、`commit`へ進まず終了報告を「中断」にする**。配備は`cd ~/.config/scripts && go build -o ~/.local/bin/memcheck ./cmd/memcheck`
   - `NOT_INDEXED <file>`: 1行要約を書いて索引へ追加する
   - `DANGLING <file>`・`DUPLICATE <file>`: 実体が無い行は削除し、重複行は1行に統合する
   - `NEAR_LIMIT`・`OVER_LIMIT`: 行を足さず既存行へ統合する。MEMORY.mdは先頭200行または25600バイトを超えた分が黙って捨てられる
@@ -131,12 +133,12 @@ argument-hint: "[confirm]"
   - 適用前後でリンク先ファイル名の集合が一致することを確認する: `diff <(grep -o '([A-Za-z0-9_.-]*\.md)' 旧 | sort) <(grep -o '([A-Za-z0-9_.-]*\.md)' 新 | sort)`
 - **`claude-audit`を呼ぶ条件**（いずれか1つ該当）:
   - 段4のメモリ削除候補が3件以上（対象memory dirがあるとき）
-  - `memcheck check`が終了コード1を返した（`NOT_INDEXED`・`DANGLING`・`DUPLICATE`・`NEAR_LIMIT`・`OVER_LIMIT`のいずれか。`UNDECIDED`と`UNRESOLVED`だけでは1にならないので、意図的な索引外しがあるdirで毎回起動して同じ報告が返ることはない）
+  - `memcheck check`が終了コード1を返した（`NOT_INDEXED`・`DANGLING`・`DUPLICATE`・`NEAR_LIMIT`・`OVER_LIMIT`のいずれか）。**`NEAR_LIMIT`は独立した起動理由**で、索引を縮めるのが目的。索引を縮めないまま上限近傍が続く間は、`ARCHIVED`の有無にかかわらず毎回の`/wrapup`で起動する。`UNDECIDED`と`UNRESOLVED`だけでは起動しない
   - 上の張り替えをしても`comm -13`が空にならない
 - **呼び方**: 上の照合まで終えてから、Skill toolで`claude-audit`を`memory <対象memory dirの絶対パス>`付きで起動する（`--confirm`を付けるかはモード表に従う）。返る区分は`修正した / attic退避した / 未対応 / invalid target`で、`未対応`は段6の未実施リストへ載せる
   - Skill toolから起動できなかった場合（toolが無い・skill名が解決できない・`skillOverrides`で無効化されている・起動時エラーで**変更が1件も入っていない**）は、`~/.config/claude/skills/claude-audit/SKILL.md`（絶対パス。他プロジェクトのセッションでは相対パスが解決しない）を読んで`memory`モードの手順をその場で実行する
   - 起動はしたが結果区分が返らず、変更が入った**または入ったか分からない**場合は**その場の再実行をしない**。二重適用になるため、段6へ「claude-audit途中終了・要手動確認」として載せる（変更ゼロを積極的に確認できないときはこちらに倒す）
-- **`claude-audit`から戻ったら、`memcheck check`と`memcheck pairs`の前後比較をもう一度通してから段6へ進む**。auditがMEMORY.mdやリンクを変えているため、呼ぶ前の確認結果は無効になっている。**再検証が通らなければcommitへ進まず、そこで止めてユーザーへ報告する**
+- **`claude-audit`から戻ったら、`memcheck check`と`memcheck pairs`の前後比較をもう一度通してから段6へ進む**。auditがMEMORY.mdやリンクを変えているため、呼ぶ前の確認結果は無効になっている。**再検証が通らない、または検査不能（`memcheck`が3・4）ならcommitへ進まず、そこで止めてユーザーへ報告する**
 
 ### 6. やり残し総点検
 
@@ -156,12 +158,12 @@ argument-hint: "[confirm]"
 
   | 状態 | 条件 | 書き方の例 |
   |---|---|---|
-  | 完了 | 検証が通り、commit済みで、未実施リストが空 | 「完了。還元3件・削除1件、commit abc1234」 |
-  | 完了(残件あり) | commit済みで、未実施リストか要手動確認が残る | 「完了(残件2件)。還元3件、commit abc1234」 |
-  | 変更なし | 還元候補が無く、取得失敗・照合なしも無い | 「変更なし。還元候補は0件」 |
-  | 中断 | 検証失敗・`claude-audit`途中終了・再検証が通らない等でcommitしていない | 「中断。索引の再検証が通らず、commitしていない」 |
+  | 完了 | 適用すべき変更をすべて適用し、検証が通り、残件が無い | 「完了。還元3件・削除1件、commit abc1234」「完了。メモリ2件を更新、commitなし（メモリはgit追跡外）」 |
+  | 変更なし | このセッションで何も変更していない（還元候補が0件、または`confirm`で全候補を却下） | 「変更なし。還元候補は0件」 |
+  | 中断 | 検証失敗・`claude-audit`途中終了・再検証が通らない・検査不能のまま削除済み、のいずれかで適用を途中で止めた | 「中断。索引の再検証が通らず、commitしていない」 |
 
-- `wrapup-recall`の取得失敗・未導入・照合なしがあったときは、「変更なし」を使わず残件に数える
+- 残件があるときは、「完了」「変更なし」の後ろに件数を添える（「完了(残件2件)」「変更なし(残件1件)」）。`wrapup-recall`の取得失敗・未導入・照合なしは残件に数える。「recall未導入で候補が0件」は「変更なし(残件1件)」になる
+- commitの書き方: git追跡ファイル（skill/rule/CLAUDE.md/CLI）を変えたときは`commit <hash>`。git追跡外のメモリだけを変えたときは「commitなし（メモリはgit追跡外）」。実在しないcommitは書かない
 - 次の行に、残件の件名を1行ずつ書く。無ければ「残件なし」と書く。中断のときは、止まった理由とユーザーに必要な操作を1行で書く
 - 候補一覧の詳細・再発の指摘・根拠は1通目に積まない。ユーザーが求めたときか合図の後に出す。ただし中断と要手動確認は、1通目に必ず入れる
 
