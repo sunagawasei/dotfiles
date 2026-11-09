@@ -102,3 +102,4 @@
 ## Playwright MCP
 
 - スクリーンショットは`filename`を指定せずに撮る。`--output-dir ~/.cache/playwright-mcp`が効くのは自動命名のファイルだけで、名前を付けると作業ディレクトリ直下に出てrepoに未追跡ファイルが残る。`browser_evaluate`/`browser_snapshot`の`filename`も書けるのは作業ディレクトリか`~/.cache/playwright-mcp`だけ(scratchpadは拒否)なので、`~/.cache/playwright-mcp/<名前>`を絶対パスで指定する
+- 秘密値(Webhook URL・トークン等)が表示されるページは`browser_run_code_unsafe`だけで操作し、必要な文言だけを返させる。`browser_navigate`/`browser_click`は遷移後のページ全体のsnapshotを`~/.cache/playwright-mcp/page-*.yml`へ自動保存するが、`browser_run_code_unsafe`は保存しない(2026-11-09実測)
