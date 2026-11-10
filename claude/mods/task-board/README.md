@@ -76,7 +76,7 @@ mod が `mcp__task-board__task_set(id, status, note?, list?)` を登録する。
 
 ### commit・PR merge の印(`# task:T2`)
 
-Bash コマンド末尾にシェルのコメント `# task:T2`(複数なら `# task:T2,T3`)を付けると、成功したとき該当タスクが変わる。コメントなのでコミットメッセージには残らない。commit agent など、`task_set` を呼ばない場面向け。
+Bash コマンド末尾にシェルのコメント `# task:T2`(複数なら `# task:T2,T3`)を付けると、成功したとき該当タスクが変わる。コメントなのでコミットメッセージには残らない。`task_set` を呼ばない場面(コマンドだけで完了を伝えたいとき)向け。
 
 - `git commit` の出力に `[main abc1234]` が出たとき: `done (commit abc1234)`
 - `gh pr merge` の出力に merged が出たとき: `merged`
