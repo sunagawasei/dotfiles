@@ -13,7 +13,7 @@ description: 全タスク共通の単一委譲フロー(対話でのプラン起
 - **自前のpollingループで返信を待たない**。history.sh/inbox.shを叩くループは(a)inbox.shが既読化して返信を消費する (b)宛先フィルタの正規表現が取りこぼす、の2つで壊れる。返信はagmsgdの通知で受ける
 - **agmsg本体・設定(`db/config.yaml`・role file・scripts)の変更はこのセッションでせず、`/handoff`で別workspaceへ渡す**(2026-09-29 ユーザー指示)。worker追加の設定変更・driverの不具合修正とも同じ
 - 宛先workerのbridgeが稼働していること。遅延spawnは自動発火しない(下記「送信の実務」)
-- 送信は非同期`send`が既定。`ask --wait`は使わない(codexでask往復が機能しない実績)
+- 送信は非同期`send`のみ。askも`--wait`も無い(v1.7.0で`--wait`削除)。送ったらターンを終え、返信はagmsgdの通知で受ける
 
 ## フロー
 
