@@ -179,7 +179,7 @@ opus-reviewは2026-09-09にusage limitから復旧済み(probe実測)。ただ�
 
 subagent・teammateとも、実効値は`claude/projects/<project-slug>/<session>/subagents/agent-<name>-<id>.jsonl`に残る。`"model"`と`"effort"`をgrepする。メインのtranscriptには`isSidechain`レコードとして現れないので、そちらを探しても見つからない(2026-09-06実測)。
 
-frontmatterの`model`/`effort`はそのまま実効値になる(同日実測で`claude-sonnet-5`・当時のfrontmatterは`effort: xhigh`。現在はeffort未指定でデフォルト)。`CLAUDE_CODE_SUBAGENT_MODEL`との優先順位は、両方がsonnetのため未判別。**frontmatterで`model`を変えた定義を追加したら、初回dispatch後にこのファイルで実効値を必ず確認する**。
+frontmatterの`model`/`effort`がそのまま実効値になる(`impl-worker`は`sonnet`・`effort: medium`。`medium`で足りない難しいsubtaskだけ`high`へ上げる)。`CLAUDE_CODE_SUBAGENT_MODEL`は既定値を決めるだけで、frontmatterの`model`が優先する(v2.1.251〜)。**frontmatterを変えた定義を追加・変更したら、初回dispatch後にこのファイルで実効値を必ず確認する**。
 
 ## findingラベル
 

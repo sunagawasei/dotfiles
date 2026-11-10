@@ -245,3 +245,4 @@ claude/skills/*
 claude/agents/*
 !claude/agents/commit.md
 !claude/agents/impl-worker.md
+!claude/agents/scan.md
