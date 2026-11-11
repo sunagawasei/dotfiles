@@ -8,6 +8,7 @@
 codex/.tmp/
 codex/vendor_imports/
 codex/sessions/
+codex/archived_sessions/
 codex/cache/
 codex/plugins/
 codex/computer-use/
