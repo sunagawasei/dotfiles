@@ -4,5 +4,6 @@ Bashツールのコマンドはzshで動く。bashの癖で書くと、エラー
 
 - unquoted `$VAR` は単語分割されない。`A="--profile x"; aws $A ...` は `--profile x` を1引数で渡して失敗する。オプションやパスの組は配列 (`A=(--profile x); aws "${A[@]}"`) にするか、コマンドに直接書く
 - コマンドを変数に入れて `$N args` で呼ばない。関数で包む
+- `=` で始まる語はコマンドパスに展開される。区切り表示の `echo == x` は `= not found` で止まるので、`echo "== x"` と引用するか `--` を使う
 
 他のzshの罠(`"$VAR:path"` の修飾子解釈・`$status` 予約変数など)は `~/.config` プロジェクトのメモリ `reference_zsh_colon_modifier_pitfall.md` にある。
