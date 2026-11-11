@@ -82,7 +82,7 @@ driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.c
 
 完了報告を受けたら、メインが次を確認する。
 
-- **申告と実体の突き合わせ**: 完了報告の変更ファイル一覧と`git diff --stat`を比較する。**申告外のパスに差分があれば、そのsubagentの逸脱として差し戻す**。並列時は「誰の変更か」を集約diffから復元できないため、説明のつかない差分が1つでもあればゲートを止める
+- **申告と実体の突き合わせ**: 完了報告の変更ファイル一覧と`git diff --stat`を比較する。**申告外のパスに差分があれば、そのsubagentの逸脱として差し戻す**。並列時は「誰の変更か」を集約diffから復元できないため、説明のつかない差分が1つでもあればゲートを止める。**stage状態の変化はユーザーの操作のことがある**(diffを読みながら`git add`する)。subagentの逸脱と書く前に、内容が査読済みdiffと一致するかを照合し、誰の操作かは断定しない(2026-11-11、ユーザーのaddをsubagentの逸脱と報告した)
 - **検証の再現**: 報告された検証コマンドを1-2本スポット再実行する。「検証したと報告したが未実施」はこの環境では他に検出手段が無い(2026-07-04前例)
 - **git mutationの検出**: dispatch前後で`git rev-parse HEAD`・`git show-ref`・`git status --porcelain`を比較する。`git log`だけでは既存commitのpushや`gh`経由のremote mutationは検出できない(remote mutationは事後検知できない残存リスク)
 
