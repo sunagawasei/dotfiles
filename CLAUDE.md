@@ -32,7 +32,7 @@ cd claude/hooks && go test ./... && go build -o . ./...
 # Goソース変更後に再配置する(herdr/config.tomlが~/.local/bin/herdr-codex-scrollを呼ぶ)
 cd scripts && go test ./cmd/herdr-codex-scroll && go build -o ~/.local/bin/herdr-codex-scroll ./cmd/herdr-codex-scroll
 
-# wrapup skillが使う、recallアーカイブからユーザー発言を取り出すCLI。Goソース変更後に再配置する(skillが~/.local/bin/wrapup-recallを呼ぶ)
+# wrapup skillが使う、現在のセッションのユーザー発言を取り出すCLI(Claude Codeはrecallアーカイブ、Codexはrolloutファイル)。Goソース変更後に再配置する(skillが~/.local/bin/wrapup-recallを呼ぶ)
 cd scripts && go build -o ~/.local/bin/wrapup-recall ./cmd/wrapup-recall
 
 # メモリdirのMEMORY.md索引と実体の整合を検査するCLI。wrapupとclaude-auditが呼ぶ。Goソース変更後に再配置する

@@ -36,6 +36,7 @@ argument-hint: "[confirm]"
   wrapup-recall current
   ```
 
+  - 取得元は実行中のエージェントで決まる。Claude Codeは`$CLAUDE_CODE_SESSION_ID`でrecallアーカイブから、Codexは`$CODEX_THREAD_ID`(無ければ`$CODEX_SESSION_ID`)で`$CODEX_HOME/sessions`と`archived_sessions`のrolloutファイルから取る。Codexではrecallを使わないので、終了コード3は出ない。Codexのrolloutは1スレッドが複数ファイルに分かれることがあり、全ファイルを時刻順に統合する。forkが親から再生した発言は含めない
   - 発言を1件ずつ読み、「訂正 / 指示 / 質問 / 好みの表明」のどれかを判断する。形式知にする価値があるものだけを下の(a)〜(g)の候補にする。質問と単発の指示は候補にしない
   - 終了コードで分ける。**どの場合も、取得できなかったことを「候補なし」として扱わない**。0以外では文脈に残る発言だけで進め、報告の冒頭に下の文言を書く:
 
@@ -43,8 +44,8 @@ argument-hint: "[confirm]"
   |---|---|---|
   | 0 | 取得できた | （なし。出力を読む） |
   | 3 | `recall`が未導入 | 「recall未導入: 文脈に残る発言のみ」 |
-  | 4 | `recall`の取得に失敗（import/export失敗・出力不正・現在セッションの発言が0件） | 「取得失敗: stderrの1行」 |
-  | 5 | `$CLAUDE_CODE_SESSION_ID`が空 | 「セッションID不明: 文脈に残る発言のみ」 |
+  | 4 | 取得に失敗（recallのimport/export失敗・出力不正、Codexのrollout未発見・読取失敗・JSONL破損、現在セッションの発言が0件） | 「取得失敗: stderrの1行」 |
+  | 5 | セッションIDが決まらない（`$CLAUDE_CODE_SESSION_ID`も`$CODEX_THREAD_ID`/`$CODEX_SESSION_ID`も空、または両系統が同時に設定されていて現在のセッションを判別できない） | 「セッションID不明: 文脈に残る発言のみ」 |
   | 2 | `wrapup-recall`の引数の誤り（このskillの書き間違い） | 「wrapup-recallの呼び出し誤り: stderrの1行」 |
 
   - `command -v wrapup-recall`が通らないときは未配備として「wrapup-recall未配備: 文脈に残る発言のみ」と書く。配備は`cd ~/.config/scripts && go build -o ~/.local/bin/wrapup-recall ./cmd/wrapup-recall`
