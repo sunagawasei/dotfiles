@@ -1,10 +1,20 @@
-{ ... }:
+{ pkgs, git-base, ... }:
 let
   colors = import ./colors.nix;
 in
 {
   programs.git = {
     enable = true;
+
+    # nixpkgs-unstableのgitは2.56.0。2026-11-10公開のセキュリティ修正(2.56.1)がnixpkgsに入るまでの暫定。
+    # nixpkgsが2.56.1以上を配るようになったらこのoverrideを外す。
+    package = git-base.overrideAttrs (old: rec {
+      version = "2.56.1";
+      src = pkgs.fetchurl {
+        url = "https://www.kernel.org/pub/software/scm/git/git-${version}.tar.xz";
+        hash = "sha256-8LC/iSZLm9LhxkA2PnUpZDmJ2nYoFgBHPFB0XNNKYH8=";
+      };
+    });
 
     lfs.enable = true;
 
