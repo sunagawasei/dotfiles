@@ -174,6 +174,12 @@ return {
   keys = {
     -- LazyVimデフォルトのgit diff pickerを無効化（diffview.nvimを使用）
     { "<leader>gd", false },
+    -- state=all は limit=500 だと gh が snacks の10秒timeoutを超えて一覧が空になる
+    {
+      "<leader>gP",
+      function() Snacks.picker.gh_pr({ state = "all", limit = 100 }) end,
+      desc = "GitHub Pull Requests (all, latest 100)",
+    },
   },
   config = function(_, opts)
     require("snacks").setup(opts)
