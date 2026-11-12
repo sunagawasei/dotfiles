@@ -100,6 +100,11 @@
 
 新規スクリプト・CLIツールは基本Goで書く。
 
+## Computer Use and Herdr
+
+- CUA の browser一覧で `The browser access host is unavailable` が出ても、Chrome全体が操作不能とは判断しない。`cua.getApp("com.google.Chrome")` でnative app経路も確認し、browser接続とnative app接続を分けて報告する。
+- Herdrで `ws4` など番号指定のworkspaceを扱うときは、`workspace list` の `number` と `workspace_id` を対応づける。`wR4` のようなIDを番号4と解釈しない。paneを作る前に対象workspaceのlayoutを確認し、focused/current workspaceが依頼先と違えば明示IDを使う。
+
 ## Playwright MCP
 
 - スクリーンショットは`filename`を指定せずに撮る。`--output-dir ~/.cache/playwright-mcp`が効くのは自動命名のファイルだけで、名前を付けると作業ディレクトリ直下に出てrepoに未追跡ファイルが残る。`browser_evaluate`/`browser_snapshot`の`filename`も書けるのは作業ディレクトリか`~/.cache/playwright-mcp`だけ(scratchpadは拒否)なので、`~/.cache/playwright-mcp/<名前>`を絶対パスで指定する
