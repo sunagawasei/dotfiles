@@ -55,7 +55,7 @@
 
 ## 操作の安全規約
 
-- 不可逆・破壊的操作(リソース削除・データ破棄等)は、影響範囲評価をユーザー提示前にcodex査読へ通す。「他へ影響しない」の判定根拠(依存参照・共有リソース・削除順序・残骸)を査読対象に含める
+- 不可逆・破壊的操作(リソース削除・データ破棄等)は、影響範囲評価をユーザー提示前にcodex査読へ通す。「他へ影響しない」の判定根拠(依存参照・共有リソース・削除順序・残骸)を査読対象に含める。実行案を選択肢として出す時点でもう提示にあたるので、査読はその前に済ませる。本人が以前に決めた実施条件(例: 発行者の合意後に失効)が未充足なら、その選択肢の帰結に書く(2026-11-13、未充足を書かずに削除案を出し「無効化してもいい状態だった？」と問われた)
 - 秘密情報はファイル編集時だけでなく、提案・実行するコマンドの標準出力にも出さない(詳細: `claude/rules/shell-security.md`)
 - commit直前にdiffレビューを通す。既定は変更をunstagedのまま提示し、承認後にadd+commitする
 - ファイル編集の直前に作業ブランチを確認する(直近の`git checkout`/`git branch --show-current`の出力で判断)。調査・確認のため一時的にmain(または既定ブランチ)へ切り替えた直後は、そのまま切り替え忘れて編集を始めやすい
@@ -109,4 +109,4 @@
 
 - スクリーンショットは`filename`を指定せずに撮る。`--output-dir ~/.cache/playwright-mcp`が効くのは自動命名のファイルだけで、名前を付けると作業ディレクトリ直下に出てrepoに未追跡ファイルが残る。`browser_evaluate`/`browser_snapshot`の`filename`も書けるのは作業ディレクトリか`~/.cache/playwright-mcp`だけ(scratchpadは拒否)なので、`~/.cache/playwright-mcp/<名前>`を絶対パスで指定する
 - 秘密値(Webhook URL・トークン等)が表示されるページは`browser_run_code_unsafe`だけで操作し、必要な文言だけを返させる。`browser_navigate`/`browser_click`は遷移後のページ全体のsnapshotを`~/.cache/playwright-mcp/page-*.yml`へ自動保存するが、`browser_run_code_unsafe`は保存しない(2026-11-09実測)
-- ブラウザでの再ログインを繰り返す前に、本人のChromeの既存セッションへ接続できるか確認する。Playwrightでは[公式のattach手順](https://playwright.dev/agent-cli/commands/attach)を調べ、許可された接続を利用する。一時プロファイルを毎回起動する運用を既定にしない。本人のChromeにはPlaywright拡張が入っているので、まず `npx @playwright/cli attach --extension=chrome` で接続する(許可画面で本人がタブを選ぶ)。このCLIは操作ごとのsnapshotをcwdの `.playwright-cli/` へ書くため、scratchpadから `--raw run-code` で必要な値だけ返させ、終了後に `detach` して残骸を消す。リモートデバッグの有効化は影響を説明して承認を受け、作業後は元の設定へ戻して接続終了を確認する。
+- ブラウザでの再ログインを繰り返す前に、本人のChromeの既存セッションへ接続できるか確認する。Playwrightでは[公式のattach手順](https://playwright.dev/agent-cli/commands/attach)を調べ、許可された接続を利用する。一時プロファイルを毎回起動する運用を既定にしない。まず `npx @playwright/cli attach --extension=chrome` で接続する(許可画面で本人がタブを選ぶ)。拡張が無いと `Playwright Extension not found` で失敗する(2026-11-13は未導入)ので、そのときはClaude in Chromeを使う。このCLIは操作ごとのsnapshotをcwdの `.playwright-cli/` へ書くため、scratchpadから `--raw run-code` で必要な値だけ返させ、終了後に `detach` して残骸を消す。リモートデバッグの有効化は影響を説明して承認を受け、作業後は元の設定へ戻して接続終了を確認する。
