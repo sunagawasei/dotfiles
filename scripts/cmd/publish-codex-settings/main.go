@@ -26,7 +26,7 @@ var publicFields = map[string][]string{
 		"raw_output_mode", "animations", "theme", "show_tooltips", "mouse_scroll_speed",
 	},
 	"history":  {"persistence", "max_bytes"},
-	"features": {"js_repl", "terminal_resize_reflow", "multi_agent"},
+	"features": {"js_repl", "terminal_resize_reflow", "multi_agent", "default_mode_request_user_input"},
 }
 
 func main() {

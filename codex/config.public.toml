@@ -10,6 +10,7 @@ service_tier = 'default'
 web_search = 'live'
 
 [features]
+default_mode_request_user_input = true
 js_repl = false
 terminal_resize_reflow = true
 
