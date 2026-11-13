@@ -213,7 +213,7 @@ frontmatterの`model`/`effort`がそのまま実効値になる(`impl-worker`は
 
 ## 送信の実務
 
-- **codex系宛は必ず先に** `~/.agents/skills/agmsg/scripts/ensure-codex.sh <project> [worker名]`(起動済みならno-op)。怠ると依頼は未読のままDBに滞留し返信が来ない(2026-07-05実例)
+- **codex系宛は必ず先に** `~/.agents/skills/agmsg/scripts/ensure-codex.sh <project> [worker名]`(起動済みならno-op。`<project>`は絶対パスで渡す。`server_rack`のような名前だけだと`project path does not exist`で失敗する)。怠ると依頼は未読のままDBに滞留し返信が来ない(2026-07-05実例)
 - **`ensure-codex.sh`/`spawn.sh`は単独のsimple commandで呼ぶ**。セッションUUIDは`CLAUDE_CODE_SESSION_ID=<リテラルUUID>`と直書きする(シェル変数にするとsandbox除外が効かず、codexが自分のseatbeltを張れずspawnが失敗する)。for/`;`/`&&`/パイプ/コマンド置換の中に入れない
 - **`<from>` はメインセッションの登録名であって `main` ではない**。`main` を渡すと `from agent 'main' is not registered in team ...(registered: claude, ...)` で送信ごと失敗する。エラーメッセージが実際の登録名を列挙するので、そこから拾う(2026-09-18実測、登録名は `claude`)
 - **本文は例外なくファイルに組み立てて `send.sh <team> <from> <to> --stdin < packet.txt`**。4番目の引数に直接書かない。本文にバッククォートが1つでもあるとコマンド置換が発火し、**その部分が欠落したまま送信が成功する**(2026-08-14に1セッションで3回。短文でも起きる)
