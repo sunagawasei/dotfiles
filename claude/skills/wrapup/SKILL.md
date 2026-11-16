@@ -2,6 +2,7 @@
 name: wrapup
 description: セッション終了時に、セッションに残った暗黙知(ユーザーの好み・判断基準・進め方・環境の癖・自分の失敗)を形式知(skill/rule/メモリ/CLAUDE.md/hook/設定)へ変換し、無効化された既存資産を削除し、やり残しを総点検するワークフロー
 argument-hint: "[confirm]"
+model: sonnet
 ---
 
 # セッションの収穫（学びの還元と総点検）

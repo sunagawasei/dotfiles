@@ -242,6 +242,7 @@ claude/skills/*
 !claude/skills/ebook/
 !claude/skills/parallel-handoff/
 !claude/skills/eli10/
+!claude/skills/slack-draft/
 !claude/agents/
 claude/agents/*
 !claude/agents/impl-worker.md

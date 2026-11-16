@@ -21,9 +21,11 @@
 - 成果物の分量は「網羅性」ではなく「読む人が判断に使う分」で決める。表や箇条書きで抜けなく書こうとすると、1項目ずつは短くても全体が読まれない長さになる。削減を求められたら、各項目を圧縮するのではなく**項目そのものを落とす**
 - Slackスレッド・issue等の外部ソースを読んで説明するときは、複数箇所を1つの筋にまとめても各主張の出典(チャンネル名・発言者・日時)を添える。原文に無い自分の言い換え・推測はそう明示して原文と区別する
 - 簡潔にするよう求められたときに削るのは詳細であって前提ではない。何の話か・どの画面のどの表示かの前提を落とすと、短くなっても伝わらない
-- Slackの進捗報告・依頼への返信の下書きは、本人が送る形に合わせる。手順を渡す返信はコマンドと前提の一言だけにし、失敗時の挙動・後片付け・次の依頼の箇条は足さない。コマンドは相手が見慣れた形(`read -rs` ではなく `export A="..."`)で書く。対象名(repo名など)を1行目に置き、その下を環境・対象ごとの見出し行(例: 「prd 側」「dev 側」)で分け、各見出しの下を箇条書きにする。PRのURLは各見出しの最初の箇条にそのまま貼る。箇条は「適用済み。」「PR起票までが完了です。」のような短い言い切りにし、地の文の段落にしない。チャンネル名パターンなどの識別子は `code` で囲む。検証方法の注記・判断の理由・関連して済ませた作業・相手への依頼・発行日などの細部は入れない。完了報告なら各見出しの下はPRのURLだけでよい。分類ごとの状態と方針を並べる共有では、Slackの見出し(`#`)とテーブルを使い、「確認したいこと」のような質問だけの節を別に立てない。見た目は本人へのDMに送って確かめてから本番の宛先へ回す。`slack_send_message_draft` は見出し・テーブルを解釈しないので、見出しを使う投稿を下書きツールで作らない
+- Slackの進捗報告・依頼への返信・状況共有の下書きは `slack-draft` skill の書式に従う。`slack_send_message_draft` は見出し・テーブルを解釈しないので、見出しを使う投稿を下書きツールで作らない
 
 ## 対話・確認の規約
+
+- Slackは原則として下書きで止める。送信前に宛先・本文・添付範囲を提示し、本人から別途明確な送信指示を受けた場合のみ送信する。
 
 - handoffの委譲先は原則Claude Codeとし、呼出元がCodexでも `--kind claude` で起動する。本人がその依頼で別のエージェントを指定した場合だけ、その指定を優先する。過去の別依頼での「Codexで」という指定は新しいhandoffへ持ち越さず、指定のない依頼はClaude Codeで起動する。手順は正本 `~/.config/claude/skills/handoff/SKILL.md` を参照する。
 
@@ -68,14 +70,7 @@
 
 モデル指定はalias自動追従を正とし、固定model IDは書かない。**例外はcursor worker**: label監査があるので `spawn.cursor_model.<name>` / `cursor_model_label.<name>` にカタログ表示ではなくinit.modelの実測をpinする。同一IDが複数のinit.model表示を返す場合は `|` で列挙する(実例: `claude-opus-5-thinking-max` は `Claude Opus 5 1M Max Thinking` と `Claude Opus 5 300K Max`)。片方だけをpinするとdead-letterする。**grok-review(段9フォールバック・暫定運用)は`cursor-grok-4.6-xhigh`をpin**。2026-08-27に実spawnしてmodel-audit実測済み(`requested='cursor-grok-4.6-xhigh' reported='Cursor Grok 4.6 Extra High' fallback=false`。実測1回、既存grok-researchの実測とも一致。暫定・継続監視)。tier序列: fable > opus > sonnet > haiku。alias解決先・優先仕様: `claude/skills/orchestrate-agents/references/delegation-policy.md`
 
-- **メイン(本セッション)**: ユーザーとの対話でのプラン化・統合・検収(要件適合+diff査読+git log+test)・git。権限=**writeの承認・統合・commitの唯一の制御主体**
-- **design-review(Opus・headless claude-code)**: codex査読(段2)指摘への対応可否収束(段3)と、codexコード査読(段9)指摘への対応可否収束を担当。独立した設計レビュー・コードレビューは行わない(指摘の振り分けだけを行う)。findings-onlyでrepo不変。権限=claude_reviewer(repo writeはsandbox+spawn probeで強制。repo readはproject(`~/.config`)配下と継承add-dir全体に開く。credential path read・外部状態変更の禁止は規約でのみ抑止しsandboxは強制しない)。**repo不変≠orchestration状態不変**: agmsg message store/team registration/run状態はsandboxのwrite denyの対象外で技術的に書け、`$SKILL_DIR`全体(全team・全projectの過去message含む)がread可能。busへの書き込み・他teamの履歴readはrole file規約でのみ抑止する残余リスク。network egressの実挙動は未検証(not checked)。モデルは`spawn.claude_model.design-review: opus`(alias。最新Opusへ自動追従)。通常・節約の両モードで同じ。手順は`claude/skills/orchestrate-agents/SKILL.md`段3。fable-reviewは休眠(`model-routing.md`「休眠ロール」)
-- **休眠ロール(fable-review・opus-review・manager/watcher・codex-impl)**: 平常時は起動しない。fable-reviewは段3・段9の振り分けをdesign-review(opus)へ移して休眠。opus-reviewは高リスク変更でメインが第2意見を要すると判断したときだけ起こす。manager/watcherは実装レーンをcodex workerへ戻すときだけ、codex-implは節約モードの段5だけで使う。権限・pin・復帰手順: `claude/skills/orchestrate-agents/references/model-routing.md`「休眠ロール」
-- **grok-review(Grok4.6・headless cursor)**: codex(review役)応答不能時の段9フォールバック(暫定運用)。codex同等の役割(意図一致査読+脆弱性4観点)を代行する。実装がAnthropic側に寄った現構成では、cross-vendorの査読を保つ唯一の代替経路。findings-onlyでrepo不変。権限=cursor_readonly。トリガー・復帰・停止条件・waiver・fallback不能クラスの判定は`claude/skills/orchestrate-agents/SKILL.md`「段9査読者フォールバックチェーン」節が正本
-- **実装subagent(Claude Code組み込みAgent tool・`claude/agents/impl-worker.md`・sonnet)**: 承認済みsubtaskの**ファイルセットの範囲だけ**編集する。commit/push禁止。完了報告はメイン宛。親セッションの権限をそのまま継承するため、外部write・repo外read・機密情報readの禁止は**契約文でのみ抑止する**(強制境界は無い)。実行中にメインへ問い合わせることはできず、判断が要る場面では変更を加えず`question`として返す
-- **codex(review役)**: プラン査読(承認依頼前の常時ゲート)+段9のdiff査読。**意図一致査読と脆弱性4観点の両方を全hunk対象で担当する**(実装がAnthropic側に寄ったため、cross-vendorの査読はここ1本になる)。権限=read-only。起動はreviewer/research専用のCODEX_HOME(空execpolicy Rules・config.toml無し)を使い、対話用途の広いallow rule(`docker compose`等)を継承しない。networkはghのHTTPSホストのみを許すallowlistが有効なときだけ起動し、allow外ホスト・直接IP・allowlist不通のいずれかでは起動しない(`sunagawasei/agmsg#42`/`#43`)
-- **codex-research**: コードベース内・外部ソース読解の横断調査。file:line一覧・構造化データを返す。パッチは作らない。権限=read-only運用。起動時の隔離は上のcodex(review役)と同一(同じlauncher・同じ専用CODEX_HOMEを使うため)
-- **grok-research(Grok4.6・headless cursor)**: 公開情報とredacted packetに限った第二の調査経路。権限=read-only
+- ロール(メイン / design-review(opus) / codex(review役)・codex-research / grok-review・grok-research / 実装subagent=impl-worker / 休眠ロール)ごとの権限境界・隔離・pinは `claude/skills/orchestrate-agents/references/roles.md`。委譲を始める前にそこも読む
 
 ### フロー(全タスク共通・これ1本)
 
@@ -105,7 +100,7 @@
 ## Computer Use and Herdr
 
 - CUA の browser一覧で `The browser access host is unavailable` が出ても、Chrome全体が操作不能とは判断しない。`cua.getApp("com.google.Chrome")` でnative app経路も確認し、browser接続とnative app接続を分けて報告する。
-- Herdrで `ws4` など番号指定のworkspaceを扱うときは、`workspace list` の `number` と `workspace_id` を対応づける。`wR4` のようなIDを番号4と解釈しない。paneを作る前に対象workspaceのlayoutを確認し、focused/current workspaceが依頼先と違えば明示IDを使う。
+- ユーザーが `ws2` や「workspace:2」と言ったら、聞き返す前に `herdr workspace list` で `number` 2 の `workspace_id` を引き、`pane read` で中身を読んで答える(2026-11-12、`ws2はどうして…`に「見当たらない」と返して聞き返した)。Herdrで `ws4` など番号指定のworkspaceを扱うときは、`workspace list` の `number` と `workspace_id` を対応づける。`wR4` のようなIDを番号4と解釈しない。paneを作る前に対象workspaceのlayoutを確認し、focused/current workspaceが依頼先と違えば明示IDを使う。
 
 ## Playwright MCP
 

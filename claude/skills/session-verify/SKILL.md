@@ -1,6 +1,6 @@
 ---
 name: session-verify
-description: 過去セッションで導入した変更・設定・修正が現在も機能しているかを裏取り調査する。Usage: /session-verify <session-id> [観点]
+description: "過去セッションで導入した変更・設定・修正が現在も機能しているかを裏取り調査する。Usage: /session-verify <session-id> [観点]"
 ---
 
 # セッション裏取り調査

@@ -457,6 +457,8 @@
     }
   },
   "skillOverrides": {
+    "ebook": "off",
+    "eli10": "off",
     "session-verify": "off",
     "split-commits": "off"
   },
