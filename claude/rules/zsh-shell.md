@@ -6,4 +6,7 @@ Bashツールのコマンドはzshで動く。bashの癖で書くと、エラー
 - コマンドを変数に入れて `$N args` で呼ばない。関数で包む
 - `=` で始まる語はコマンドパスに展開される。区切り表示の `echo == x` は `= not found` で止まるので、`echo "== x"` と引用するか `--` を使う
 
+- `path`・`status`・`cdpath`・`fpath` を変数名に使わない(ループ変数・`read` の受け先・`local` を含む)。`path` は `PATH` と連動する配列で、代入すると以降のコマンドが黙って見つからなくなる。`status` は読み取り専用
+- `$c:r...` のように変数の直後に `:` と英字が続く形は修飾子として解釈される。`"${c}:roles/..."` と書く
+
 他のzshの罠(`"$VAR:path"` の修飾子解釈・`$status` 予約変数など)は `~/.config` プロジェクトのメモリ `reference_zsh_colon_modifier_pitfall.md` にある。
