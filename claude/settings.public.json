@@ -1,6 +1,6 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-settings.json",
-  "advisorModel": "fable",
+  "advisorModel": "opus",
   "attribution": {
     "pr": ""
   },
@@ -207,7 +207,7 @@
     ]
   },
   "language": "日本語",
-  "model": "opus",
+  "model": "sonnet",
   "modelSettings": {
     "claude-opus-5-5": {
       "effortLevel": "medium"
