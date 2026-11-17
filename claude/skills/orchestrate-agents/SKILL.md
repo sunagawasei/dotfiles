@@ -41,21 +41,17 @@ packetには**5 field(疑う前提 / 反対案 / その帰結 / 未解決の問�
 
 ### 段3 design-review(指摘の振り分け)
 
-段2(codex)のfindingsとプランを`design-review`(claude-code, `opus`alias=最新Opus)へ送る。返るのは各findingの振り分け(採用/見送り/別タスク)。**この判断を最終とする**。**ユーザー承認の代替にしない**。節約モードでも送付先は同じ(節約モードで替わるのは段5だけ)。fable-reviewは休眠ロール(`references/model-routing.md`)で、通常は起動しない。
+段2(codex)のfindingsとプランを`design-review`(cursor, `claude-opus-5-5-medium`)へ送る。返るのは各findingの振り分け(採用/見送り/別タスク)。**この判断を最終とする**。**ユーザー承認の代替にしない**。節約モードでも送付先は同じ(節約モードで替わるのは段5だけ)。fable-reviewは休眠ロール(`references/model-routing.md`)で、通常は起動しない。
 
 認証・秘密情報を含むプランは振り分け依頼前に該当部分をredactする。**redactすると振り分けが成立しない場合は段3を省き、メインが直接振り分ける**(段2への送信そのものは省略できない。段2は必須ゲート)。
 
 ```bash
-AGMSG_CLAUDE_PROBE_TIMEOUT=150 ~/.agents/skills/agmsg/scripts/ensure-headless.sh claude-code <path> design-review
+AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ~/.agents/skills/agmsg/scripts/ensure-headless.sh cursor <path> design-review
 ```
 
-**probe timeoutは既定30秒では足りない**(`_spawn.sh`の`AGMSG_CLAUDE_PROBE_TIMEOUT:-30`)。fableは30秒でprobeの全tool eventを出し切れず`rc=124`でfail-closedした(2026-08-29実測。opusでの所要は未測定のため150を維持する)。turn timeoutと違い**per-nameのconfigキーは存在せず、env varでのみ指定する**ため、起動は常に上記の環境変数込みの1行で行う。値は`$VAR`にせずリテラルで書く(troubleshooting.md項10)。失敗時の診断はtroubleshooting.md項14。
+driverはcursor。モデルは`spawn.cursor_model.design-review: claude-opus-5-5-medium`、label監査は`spawn.cursor_model_label.design-review: Claude Opus 5.5 300K Medium`でpinする(2026-11-17実測: `cursor-agent`直叩き3回と、bridge経由のmodel-auditが`reported='Claude Opus 5.5 300K Medium' fallback=false`で一致)。カタログ表示は`Claude Opus 5.5 1M`だが実測で1M側は出ていない。`model label mismatch`でdead-letterしたら`|`列挙して再spawnする(troubleshooting.md項13)。Anthropicのclaude-code枠ではなくCursorチーム枠を消費する。
 
-driverはclaude-code。read-onlyはreviewer layout(グローバル既定`spawn.claude_reviewer: true`で担保。per-nameキーは存在しないためグローバルキーで運用する)。**repo writeはsandbox+spawn probeで強制されるが、repo read(project配下=`~/.config`全体+継承add-dir)はBash経由で開く**。credential path read・外部状態変更(認証済みCLIの変更系操作・network write)の禁止はrole file規約でのみ抑止し、sandboxは強制しない(強制境界ではないことを認識のうえ運用する選択)。**sandboxのwrite denyはrepoに限られ、agmsg message store/team registration/run状態はBashから技術的に書け、`$SKILL_DIR`全体(全team・全project分)がread可能** — これも規約でのみ抑止する残余リスクとして扱う。network egressは未検証(`not checked`)。モデルは`spawn.claude_model.design-review: opus`(alias、自動追従)。effortは未指定(claude-codeのデフォルト)。claude-code driverにはcursorのようなmodel-audit機構が無く、実効モデルの動的な機械照合はできない。記録は静的設定値に留め、モデル自身への自己申告は検証証跡として扱わない(残存リスクとして記録するだけに留める)。
-
-**turn timeoutの既定300秒では足りない**: `spawn.claude_turn_timeout.design-review: 1800`で個別設定する(per-nameキーが存在する)。add-dir継承は`spawn.claude_inherit_add_dirs.design-review: true`で明示する(グローバル既定はoff)。
-
-**layout差はreadiness照合では検出できない**: spawn前後で`spawn.claude_implementer.design-review`が未設定(または`false`)であること、生成済みsettings.jsonのdenyWriteにprojectパスが含まれることを確認する。
+read-onlyはcursor_readonly権限(Write/Shell deny、readはcredential denylist)。shellもagmsg操作もできず、返信はbridgeが届ける。**readはproject(`~/.config`)配下全体に開き、`gh`/`gcloud`/`cursor`/`codex`の設定dirはworkspace内でdenyされない**。credential pathのreadと外部状態変更の禁止はrole file規約でのみ抑止し、sandboxは強制しない。**cursor harness経由なので、秘密の実値を含むpayloadは送らない**(認証・秘密情報の部分はredactし、成立しなければメインが直接振り分ける)。turn timeoutは既定180秒では足りないため、起動コマンドの`AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800`で延ばす。
 
 **role fileの編集は稼働中workerに反映されない**: claude-code/cursor/codexいずれのdriverも`_spawn.sh`がspawn時にrole fileを`run/`配下へ`cp`し(`<type>-bridge.<team>.<name>.role`)、bridgeはそのスナップショットだけを毎ターン読む。`db/spawn-roles/<name>.<type>.md`(= `claude/agmsg-roles/`のsymlink先)を直接編集しても、稼働中のworkerはspawn時点の内容のまま動き続ける(意図的な設計: source側の編集/削除でlive workerを不意に変えないため)。role file変更を反映するには、その名前のworkerをdespawn→再spawnし、readiness照合(probe)をやり直す。
 
@@ -200,7 +196,7 @@ frontmatterの`model`/`effort`がそのまま実効値になる(`impl-worker`は
 - **agmsg相手のreadiness照合**は「名前がある」ではなく、各nameのregistrationが**期待typeでちょうど1件、かつ当該セッションで返信実績があること**(dead-letterはregistration照合だけでは検出できない)。**新規spawn直後で返信実績がまだ無い場合はtrivialなprobeパケットを1通送り、その応答到達をもって返信実績とする**。**respawn(despawn→再spawn)した場合、respawn前の返信実績は無効**として扱い、必ずrespawn後に新規probeを送り直す。対象はdesign-review・codex(review役)、および実際にdispatchするcodex-research/grok-research/grok-review。**実装subagentはagmsgに乗らないのでこの照合の対象外**
 - 起動コマンド(モデル等のconfigはグローバル永続なのでコマンドのみ):
   - codex系(codex, codex-research): `ensure-codex.sh <project> <name>`
-  - claude-code系(design-review): `AGMSG_CLAUDE_PROBE_TIMEOUT=150 ensure-headless.sh claude-code <project> design-review`(既定30秒ではfableがprobeを出し切れずrc=124でfail-closedした(2026-08-29実測)。probe timeoutはper-nameのconfigキーが無くenv varのみ。model/effort/turn timeoutはper-nameのconfigキーで固定。`spawn.claude_turn_timeout.design-review: 1800`を設定済み。段3参照)
+  - cursor系(design-review): `AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ensure-headless.sh cursor <project> design-review`(既定180秒では査読が切れる。model/labelはper-nameのconfigキーで固定。段3参照)
   - cursor系(grok-review、codexフォールバック時のみ): `AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ensure-headless.sh cursor <project> grok-review`
   - cursor系(opus-review、第2意見が要るときのみ): `AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ensure-headless.sh cursor <project> opus-review`(既定180秒ではopus:highの査読が切れる)
   - cursor系(grok-research): `ensure-headless.sh cursor <project> <name>`

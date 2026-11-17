@@ -70,7 +70,7 @@
 
 モデル指定はalias自動追従を正とし、固定model IDは書かない。**例外はcursor worker**: label監査があるので `spawn.cursor_model.<name>` / `cursor_model_label.<name>` にカタログ表示ではなくinit.modelの実測をpinする。同一IDが複数のinit.model表示を返す場合は `|` で列挙する(実例: `claude-opus-5-thinking-max` は `Claude Opus 5 1M Max Thinking` と `Claude Opus 5 300K Max`)。片方だけをpinするとdead-letterする。**grok-review(段9フォールバック・暫定運用)は`cursor-grok-4.6-xhigh`をpin**。2026-08-27に実spawnしてmodel-audit実測済み(`requested='cursor-grok-4.6-xhigh' reported='Cursor Grok 4.6 Extra High' fallback=false`。実測1回、既存grok-researchの実測とも一致。暫定・継続監視)。tier序列: fable > opus > sonnet > haiku。alias解決先・優先仕様: `claude/skills/orchestrate-agents/references/delegation-policy.md`
 
-- ロール(メイン / design-review(opus) / codex(review役)・codex-research / grok-review・grok-research / 実装subagent=impl-worker / 休眠ロール)ごとの権限境界・隔離・pinは `claude/skills/orchestrate-agents/references/roles.md`。委譲を始める前にそこも読む
+- ロール(メイン / design-review(cursor・Opus 5.5) / codex(review役)・codex-research / grok-review・grok-research / 実装subagent=impl-worker / 休眠ロール)ごとの権限境界・隔離・pinは `claude/skills/orchestrate-agents/references/roles.md`。委譲を始める前にそこも読む
 
 ### フロー(全タスク共通・これ1本)
 
