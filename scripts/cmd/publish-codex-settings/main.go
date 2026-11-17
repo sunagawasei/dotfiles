@@ -27,6 +27,7 @@ var publicFields = map[string][]string{
 	},
 	"history":  {"persistence", "max_bytes"},
 	"features": {"js_repl", "terminal_resize_reflow", "multi_agent", "default_mode_request_user_input"},
+	"agents":   {"default_subagent_model"},
 }
 
 func main() {
@@ -89,6 +90,18 @@ func publicize(raw []byte, home string) ([]byte, error) {
 		}
 		if section != "" && len(target) != 0 {
 			pub[section] = target
+		}
+	}
+	if features, ok := doc["features"].(map[string]any); ok {
+		if multiAgent, ok := features["multi_agent_v2"].(map[string]any); ok {
+			if expose, ok := multiAgent["expose_spawn_agent_model_overrides"].(bool); ok {
+				if pub["features"] == nil {
+					pub["features"] = make(map[string]any)
+				}
+				pub["features"].(map[string]any)["multi_agent_v2"] = map[string]any{
+					"expose_spawn_agent_model_overrides": expose,
+				}
+			}
 		}
 	}
 	if tui, ok := doc["tui"].(map[string]any); ok {

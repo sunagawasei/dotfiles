@@ -9,10 +9,16 @@ sandbox_mode = 'workspace-write'
 service_tier = 'default'
 web_search = 'live'
 
+[agents]
+default_subagent_model = 'gpt-6-luna'
+
 [features]
 default_mode_request_user_input = true
 js_repl = false
 terminal_resize_reflow = true
+
+[features.multi_agent_v2]
+expose_spawn_agent_model_overrides = false
 
 [history]
 persistence = 'save-all'
