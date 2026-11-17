@@ -12,6 +12,7 @@ LazyVim extraは`lua/config/lazy.lua`の`{ import = "lazyvim.plugins.extras.*" }
 
 ## 踏んだ罠
 
+- pipeline.nvimはローカルの`.github/workflows/`が無いとGitHub Actionsを認識しない。GitHub上に実行履歴があっても一覧は表示されない。
 - Terraform lint(terraform_validate)は`lua/plugins/terraform.lua`で無効化してある
 - k8s manifestのスキーマ補完は未対応。SchemaStoreはfileMatchベースで素のmanifestを拾わないため、per-bufferでのスキーマ切替が要る
 - **spec の `keys` に `{ lhs, "" }` (rhs空文字) を書くとプラグインがロードできなくなる**。lazy.nvimはこれを`M.is_nop`と判定してloader callbackを張らないため、そのキーはただのnopマッピングになる。グループラベル目的で書くのは構わないが、それが唯一のトリガーだと`:Lazy load`以外に起動経路が無くなる
