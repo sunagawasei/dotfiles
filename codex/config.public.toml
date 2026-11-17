@@ -34,7 +34,7 @@ inherit = 'core'
 fullscreen_transcript = true
 mouse_scroll_speed = 1.0
 notifications = ['agent-turn-complete', 'approval-requested']
-status_line = ['model-with-reasoning', 'current-dir', 'git-branch', 'pull-request-number', 'run-state', 'context-used', 'five-hour-limit', 'weekly-limit']
+status_line = ['model-with-reasoning', 'current-dir', 'git-branch', 'pull-request-number', 'context-used', 'five-hour-limit', 'weekly-limit']
 status_line_use_colors = true
 vim_mode_default = true
 
