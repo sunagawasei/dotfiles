@@ -27,7 +27,7 @@ Codexのツール実行環境にHerdrの環境変数が無い場合も、稼働�
    複数ならセッション名を一問で尋ね、0件なら自動でサーバーを起動せず状況を伝える。
 3. 以降は取得した `HERDR_SOCKET_PATH` を各コマンドへ明示し、`herdr status server` で稼働と互換性を確認する。
    接続先を設定ファイルへ恒久保存しない。
-4. 下記手順で `workspace create --no-focus` を使い、返されたworkspaceとpaneのIDだけを対象にする。
+4. 下記手順で新規workspaceを作り、返されたworkspaceとpaneのIDだけを対象にする。
    `--current`、対象省略、既存paneの参照、サーバー停止や再起動は行わない。
    サンドボックス外の通常操作は環境の承認機能を使い、明示済みの委譲許可を重ねて尋ねない。
 5. 新規paneの `agent start` と `agent prompt`、着弾確認が終わったら既定の報告を行う。
@@ -50,6 +50,7 @@ Slack投稿、メール、GitHubコメントなどの外部送信を含む依頼
 その宛先と正確な本文について本人の明示承認が既にある場合は、承認内容を依頼に添えて引き継ぎ、同じ確認を重ねない。
 
 1. 対象プロジェクトを既存の作業ディレクトリから探し、そのディレクトリをcwdにする。複数プロジェクトが並ぶ親で起動して探索を丸投げしない。読み取りで特定できない場合だけ、本人に不足情報を確認する
+   同じリポジトリで独立した変更を複数のworkspaceに委譲するときは、タスクごとのworktreeを優先する。次の手順のworkspace作成に代えて `herdr worktree create --cwd <対象リポジトリ> --branch <タスクのブランチ> --base <確認済みの基点> --no-focus` を使い、返されたworkspaceとpaneに引き継ぐ。Herdrのサイドバーでは親リポジトリの下にまとまる
 2. `herdr workspace create --cwd <対象ディレクトリ> --label <タスク内容が分かるラベル> --no-focus` で新規workspaceを作る。ユーザーが切替を求めた場合だけ `--focus` を使う。レスポンスの `result.workspace` と `result.root_pane.pane_id` を控える
 3. `herdr agent start <name> --kind claude --pane <pane_id>` でclaude codeを起動する。`<name>` は英数字とハイフン/アンダースコアのみ、既存の生存agent名と重複しないこと(`herdr agent list` で確認できる)。起動後の `agent prompt`/`wait`/`read` の宛先は `<pane_id>` で指定する(`<name>` では `agent_not_found` になることがある。2026-10-09実例)
    Remote Desktop などGUI操作が要る依頼は `--kind codex` で起動する。Claude の computer use は Team/Enterprise プランでは使えず(2026-10-23、デスクトップアプリの設定画面で確認)、codex は computer use で操作できた。初回cwdの codex は信頼確認で止まる(`herdr` skillの `references/troubleshooting.md`)
