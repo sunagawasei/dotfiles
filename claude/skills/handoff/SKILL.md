@@ -71,7 +71,7 @@ Slack投稿、メール、GitHubコメントなどの外部送信を含む依頼
 
 ## workspaceを閉じる
 
-作業が完了し不要になったworkspaceは、ユーザーの明示的な指示があれば `herdr workspace close <workspace_id>` で閉じる。自分が作成した以外のworkspaceは閉じない(`herdr` skillの規約と同じ)
+ユーザーが担当workspaceを閉じるよう指示している場合は、作業完了時に加えて、その日の作業を終えるときも、担当ごとにwrapupしてから `herdr workspace close <workspace_id>` で閉じる。未完了の担当は安全な区切りで停止し、差分・検証結果・次の再開地点を記録する。worktreeと証跡は保全する。対象はこのセッションが作成した担当workspaceとする。
 
 ## 実行中agentのいるworkspaceを閉じる際の確認
 
