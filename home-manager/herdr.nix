@@ -45,6 +45,7 @@ let
     ./patches/herdr-dim-inactive-panes.patch
     ./patches/herdr-confirm-close-workspace-running-process.patch
     ./patches/herdr-pane-scroll.patch
+    ./patches/herdr-sidebar-visible-workspace-numbers.patch
     ./patches/herdr-combined-frame-digest.patch
   ];
 in

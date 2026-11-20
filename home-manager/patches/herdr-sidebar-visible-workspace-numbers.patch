@@ -1,0 +1,164 @@
+diff --git a/src/app/state.rs b/src/app/state.rs
+index 94d99457..5898f3ef 100644
+--- a/src/app/state.rs
++++ b/src/app/state.rs
+@@ -650,6 +650,7 @@ impl Palette {
+ #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+ pub struct WorkspaceCardArea {
+     pub ws_idx: usize,
++    pub visible_position: usize,
+     pub rect: Rect,
+     pub indented: bool,
+ }
+diff --git a/src/ui/sidebar.rs b/src/ui/sidebar.rs
+index d91d45c1..83ad8776 100644
+--- a/src/ui/sidebar.rs
++++ b/src/ui/sidebar.rs
+@@ -690,6 +690,7 @@ pub(crate) fn compute_workspace_list_areas(
+                 }
+                 cards.push(crate::app::state::WorkspaceCardArea {
+                     ws_idx: *ws_idx,
++                    visible_position: entry_idx,
+                     rect: Rect::new(body.x, row_y, body.width, row_height),
+                     indented: *indented,
+                 });
+@@ -1280,7 +1281,7 @@ fn render_workspace_list(
+             Style::default().fg(p.subtext0)
+         };
+ 
+-        let number = format!("{} ", i + 1);
++        let number = format!("{} ", card.visible_position + 1);
+         let number_width = display_width(&number);
+         let number_style = if selected {
+             Style::default().fg(p.overlay1)
+@@ -1300,16 +1301,8 @@ fn render_workspace_list(
+         let parent_group = (!card.indented)
+             .then(|| workspace_parent_group_state(app, i))
+             .flatten();
+-        let is_last_child = card.indented
+-            && entries
+-                .iter()
+-                .position(|entry| {
+-                    matches!(
+-                        entry,
+-                        WorkspaceListEntry::Workspace { ws_idx, .. } if *ws_idx == i
+-                    )
+-                })
+-                .is_none_or(|entry_idx| !next_entry_is_indented_workspace(&entries, entry_idx));
++        let is_last_child =
++            card.indented && !next_entry_is_indented_workspace(&entries, card.visible_position);
+         let (display_state, display_seen) = parent_group
+             .as_ref()
+             .filter(|(_, collapsed)| *collapsed)
+@@ -2683,6 +2676,7 @@ rows = [[{ token = "git_status", fg = "#123456" }]]
+         app.mode = Mode::Terminal;
+         app.view.workspace_card_areas = vec![crate::app::state::WorkspaceCardArea {
+             ws_idx: 0,
++            visible_position: 0,
+             rect: Rect::new(0, 1, 15, 2),
+             indented: false,
+         }];
+@@ -2707,6 +2701,7 @@ rows = [[{ token = "git_status", fg = "#123456" }]]
+         app.sidebar_spaces.row_gap = 0;
+         app.view.workspace_card_areas = vec![crate::app::state::WorkspaceCardArea {
+             ws_idx: 9,
++            visible_position: 9,
+             rect: Rect::new(0, 2, 14, 1),
+             indented: false,
+         }];
+@@ -2747,6 +2742,95 @@ rows = [[{ token = "git_status", fg = "#123456" }]]
+         ws
+     }
+ 
++    #[test]
++    fn expanded_sidebar_workspace_numbers_match_digit_shortcuts() {
++        use crate::input::TerminalKey;
++        use crossterm::event::{KeyCode, KeyModifiers};
++
++        let config: crate::config::Config =
++            toml::from_str("[keys]\nswitch_workspace = \"prefix+1..9\"\n").unwrap();
++        let mut app = crate::app::App::new(
++            &config,
++            true,
++            None,
++            tokio::sync::mpsc::unbounded_channel().1,
++            crate::api::EventHub::default(),
++        );
++        app.state.workspaces = vec![
++            workspace_with_worktree_space("main", Some("repo-key"), "/repo/herdr"),
++            Workspace::test_new("notes"),
++            workspace_with_worktree_space("issue", Some("repo-key"), "/repo/herdr-issue"),
++            Workspace::test_new("scratch"),
++            workspace_with_worktree_space("review", Some("repo-key"), "/repo/herdr-review"),
++        ];
++        app.state.ensure_test_terminals();
++
++        for (collapsed, active, scroll, expected) in [
++            (false, 0, 0, &[0, 2, 4, 1, 3][..]),
++            (true, 0, 0, &[0, 1, 3][..]),
++            (true, 4, 0, &[0, 4, 1, 3][..]),
++            (false, 0, 1, &[2, 4, 1, 3][..]),
++        ] {
++            if collapsed {
++                app.state.collapsed_space_keys.insert("repo-key".into());
++            } else {
++                app.state.collapsed_space_keys.remove("repo-key");
++            }
++
++            let area = Rect::new(0, 0, 30, 30);
++            for mode in [Mode::Prefix, Mode::Navigate] {
++                app.state.mode = mode;
++                app.state.active = Some(active);
++                app.state.selected = active;
++                app.state.workspace_scroll = scroll;
++                let cards = compute_workspace_card_areas(&app.state, area);
++                assert_eq!(
++                    cards.iter().map(|card| card.ws_idx).collect::<Vec<_>>(),
++                    expected
++                );
++                app.state.view.workspace_card_areas = cards.clone();
++                let list_area = workspace_list_rect(area, app.state.sidebar_section_split);
++                let mut terminal =
++                    Terminal::new(TestBackend::new(area.width, area.height)).unwrap();
++                terminal
++                    .draw(|frame| {
++                        render_workspace_list(
++                            &app.state,
++                            &app.terminal_runtimes,
++                            frame,
++                            list_area,
++                            mode == Mode::Navigate,
++                        )
++                    })
++                    .unwrap();
++
++                for (position, card) in cards.iter().enumerate() {
++                    let digit = terminal.backend().buffer()[(card.rect.x, card.rect.y)]
++                        .symbol()
++                        .chars()
++                        .next()
++                        .unwrap();
++                    app.state.mode = mode;
++                    app.state.active = Some(active);
++                    app.state.selected = active;
++                    let key = TerminalKey::new(KeyCode::Char(digit), KeyModifiers::empty());
++                    if mode == Mode::Prefix {
++                        app.handle_prefix_key(key);
++                    } else {
++                        app.handle_navigate_key(key);
++                    }
++                    assert_eq!(
++                        app.state.active,
++                        Some(card.ws_idx),
++                        "digit {digit}, {mode:?}"
++                    );
++                    assert_eq!(app.state.mode, Mode::Terminal);
++                    assert_eq!(digit.to_digit(10), Some((scroll + position + 1) as u32));
++                }
++            }
++        }
++    }
++
+     fn workspace_with_git_space(name: &str, key: &str) -> crate::workspace::Workspace {
+         let mut ws = crate::workspace::Workspace::test_new(name);
+         ws.cached_git_space = Some(crate::workspace::GitSpaceMetadata {
