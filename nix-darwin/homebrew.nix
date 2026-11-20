@@ -43,6 +43,11 @@ in
       "perman-aws-vault" # perman/tap
       # nixpkgs で問題があるもの
       "aws-cdk" # nodePackages 版が不安定
+      # nixpkgs から削除済み。cask copilot-cli (GitHub) が bin/copilot を使うため link しない
+      {
+        name = "copilot";
+        link = false;
+      }
       "mysql-client" # nixpkgs にスタンドアロン版なし
       "datadog-labs/pack/pup" # Datadog CLI
       "oauth2l" # macOS 認証統合
