@@ -1,6 +1,6 @@
 ---
 name: orchestrate-agents
-description: 全タスク共通の単一委譲フロー(対話でのプラン起案→codexプラン査読→finding-triage指摘振り分け→ユーザー承認→メイン分割→実装subagent→メイン受け入れ検査→統合→codexコード査読→finding-triage指摘振り分け→commit)の運用手順。査読役へはagmsgの非同期send+agmsgd通知で再開、実装はClaude Code組み込みのAgent tool
+description: 全タスク共通の単一委譲フロー(対話でのプラン起案→codex-reviewとfinding-triageの査読ループ(プラン)→ユーザー承認→メイン分割→実装subagent→メイン受け入れ検査→統合→codex-reviewとfinding-triageの査読ループ(コード)→commit)の運用手順。査読役へはagmsgの非同期send+agmsgd通知で再開、実装はClaude Code組み込みのAgent tool
 ---
 
 # 単一委譲フロー
@@ -9,7 +9,7 @@ description: 全タスク共通の単一委譲フロー(対話でのプラン起
 
 ## 前提
 
-- このセッションの返信通知はagmsgdが配信する(Monitorは張らない)。通知は「New messages are waiting」の1行だけなので、本文は`inbox.sh`/`history.sh`で読む。`agmsg daemon status --all`で自seat(`s-<このセッションのUUID>/claude`)が`addressable`であることを確認し、`unaddressable`なら`actas-claim.sh <project> claude-code claude <session_id>`で通知先を記録する。agmsgdが止まっていたら`agmsg daemon start`。**team作成直後は自分(claude)もteamに登録されていない**: `ensure-codex.sh`等がteamを新規作成するとworkerだけが登録され、`send.sh`が`from agent 'claude' is not registered`で失敗する。`whoami.sh`の`teams=`はsession idから導出した表示で登録の証拠にならないので、teamの`config.json`で確認し、無ければ`join.sh <team> claude claude-code <project>`で登録する(2026-10-04実測)。**projectにagmsgのSessionStart hookが無いと**(`delivery.sh status claude-code <project>`の`SessionStart entries`が0。他ツールのhookだけでも同じ)、session開始時の自動登録も通知先記録も行われないので、`join.sh`と`actas-claim.sh`の両方が必須(2026-11-10 secumo-vpnで実測。hookは`agmsg delivery agmsgd --type claude-code --project <project>`で入る)。**join直後は通知先が未記録**: SessionStartはteam作成より前に走っているので、joinしただけでは自seatが`unaddressable (messaging_destination_missing)`のままで返信通知が届かない。join後に必ず上記の`actas-claim.sh`を実行し、`agmsg daemon status --all`で`addressable`を確認してから査読を送る(2026-11-03実測。`actas-claim.sh`は同projectで`claude`が登録済みの他teamのlockも取る)。**claim直後の`status`は最大5秒古い**: daemonは5秒周期で観測するので、`join.sh`・`actas-claim.sh`・`daemon status --all`を1コマンドで連ねると`unaddressable (role_session_missing)`が出る。これで通知不可と判断してポーリングへ切り替えない。claim後は聞き返さず、`addressable`と判明するまで自動で取り直す: `for i in 1 2 3 4 5 6; do agmsg daemon status --all | grep -q "<team>/claude: last daemon observation: addressable" && break; sleep 3; done`を実行し(sleepで止まるなら`run_in_background`)、約18秒たっても`unaddressable`のままのときだけ理由(`reason`)に応じて対処する(2026-11-12 cinder-prometheusで実測。実際は5秒後に`addressable`になり、pushが届いた)。**`actas-claim.sh`が「no active remote binding; connect or pull it first」と出しても、`agmsg daemon status --all`が`addressable`なら返信通知は届く**。`remote.sh sync start`は要らない(2026-11-08実測)。**`actas-claim.sh`が`status=held team=<他セッションのteam>`で拒否されたら**、同projectの別セッションが`claude`の通知先を保持している。横取りせず、返信は`history.sh <team> codex N`の出力に`codex → claude`の行が現れるまで待つ`run_in_background`の`until`ループで受ける(自分の送信文も同じ出力に出るので、`Findings`等の本文の語で待たない。2026-11-11 server_rackで実測。agmsg側の修正は別workspaceで対応中)
+- このセッションの返信通知はagmsgdが配信する(Monitorは張らない)。通知は「New messages are waiting」の1行だけなので、本文は`inbox.sh`/`history.sh`で読む。`agmsg daemon status --all`で自seat(`s-<このセッションのUUID>/claude`)が`addressable`であることを確認し、`unaddressable`なら`actas-claim.sh <project> claude-code claude <session_id>`で通知先を記録する。agmsgdが止まっていたら`agmsg daemon start`。**team作成直後は自分(claude)もteamに登録されていない**: `ensure-codex.sh`等がteamを新規作成するとworkerだけが登録され、`send.sh`が`from agent 'claude' is not registered`で失敗する。`whoami.sh`の`teams=`はsession idから導出した表示で登録の証拠にならないので、teamの`config.json`で確認し、無ければ`join.sh <team> claude claude-code <project>`で登録する(2026-10-04実測)。**projectにagmsgのSessionStart hookが無いと**(`delivery.sh status claude-code <project>`の`SessionStart entries`が0。他ツールのhookだけでも同じ)、session開始時の自動登録も通知先記録も行われないので、`join.sh`と`actas-claim.sh`の両方が必須(2026-11-10 secumo-vpnで実測。hookは`agmsg delivery agmsgd --type claude-code --project <project>`で入る)。**join直後は通知先が未記録**: SessionStartはteam作成より前に走っているので、joinしただけでは自seatが`unaddressable (messaging_destination_missing)`のままで返信通知が届かない。join後に必ず上記の`actas-claim.sh`を実行し、`agmsg daemon status --all`で`addressable`を確認してから査読を送る(2026-11-03実測。`actas-claim.sh`は同projectで`claude`が登録済みの他teamのlockも取る)。**claim直後の`status`は最大5秒古い**: daemonは5秒周期で観測するので、`join.sh`・`actas-claim.sh`・`daemon status --all`を1コマンドで連ねると`unaddressable (role_session_missing)`が出る。これで通知不可と判断してポーリングへ切り替えない。claim後は聞き返さず、`addressable`と判明するまで自動で取り直す: `for i in 1 2 3 4 5 6; do agmsg daemon status --all | grep -q "<team>/claude: last daemon observation: addressable" && break; sleep 3; done`を実行し(sleepで止まるなら`run_in_background`)、約18秒たっても`unaddressable`のままのときだけ理由(`reason`)に応じて対処する(2026-11-12 cinder-prometheusで実測。実際は5秒後に`addressable`になり、pushが届いた)。**`actas-claim.sh`が「no active remote binding; connect or pull it first」と出しても、`agmsg daemon status --all`が`addressable`なら返信通知は届く**。`remote.sh sync start`は要らない(2026-11-08実測)。**`actas-claim.sh`が`status=held team=<他セッションのteam>`で拒否されたら**、同projectの別セッションが`claude`の通知先を保持している。横取りせず、返信は`history.sh <team> finding-triage N`の出力に`finding-triage → claude`の行(ループ省略時は`codex-review → claude`)が現れるまで待つ`run_in_background`の`until`ループで受ける(自分の送信文も同じ出力に出るので、`Findings`等の本文の語で待たない。2026-11-11 server_rackで実測。agmsg側の修正は別workspaceで対応中)
 - **自前のpollingループで返信を待たない**。history.sh/inbox.shを叩くループは(a)inbox.shが既読化して返信を消費する (b)宛先フィルタの正規表現が取りこぼす、の2つで壊れる。返信はagmsgdの通知で受ける
 - **agmsg本体・設定(`db/config.yaml`・role file・scripts)の変更はこのセッションでせず、`/handoff`で別workspaceへ渡す**(2026-09-29 ユーザー指示)。worker追加の設定変更・driverの不具合修正とも同じ
 - 宛先workerのbridgeが稼働していること。遅延spawnは自動発火しない(下記「送信の実務」)
@@ -22,28 +22,28 @@ description: 全タスク共通の単一委譲フロー(対話でのプラン起
 メインがユーザーとの対話でプラン案を起案する。**この段より前に第三者のチャレンジは無い**ので、疑いはメインが自分で言語化する。プランの確定は段4のユーザー承認で、段1は起案まで。
 
 - 段2へ渡すpacketには**5 field(疑う前提 / 反対案 / その帰結 / 未解決の問い / この種の指摘が生じうる経路の列挙)を必須**で載せる。「該当なし」と書くなら理由も書く
-- codex(review役)はこの5 fieldの**欠落・空・定型的で実質のない値**をfindingとして返す。自己申告の空洞化に対する検査主体はここだけなので、形だけ埋めて通さない
+- codex-reviewはこの5 fieldの**欠落・空・定型的で実質のない値**をfindingとして返す。自己申告の空洞化に対する検査主体はここだけなので、形だけ埋めて通さない
 - 対話は依頼者のフレームに錨を下ろしやすい。**問題設定自体を疑う**役はメインと段2の両方が負う
 - **実装契約(shell scriptのexit code分類・retry方式・認証呼び出し方式等)を散文で書いていないか自己点検する**。書いていたら削り、プラン本文は「変更ファイル一覧+目的」「時系列」「受入テスト一覧」の3点に絞る。実装契約はコードで確定させ段9(実コード査読)に委ねる
 - **ユーザーと対話中に実行する apply 等の失敗時の復旧手順も、プランで事前に確定させない**。書くのは検出条件(postcondition・完了ゲート)までで、復旧は「失敗したらその時点の state と実物を見てユーザーと判断する」の1行にする。復旧手順は未検証の API 挙動に依存し、書くたびに査読で新しい漏れが出る(2026-10-09、Terraform の apply プランで2巡続いた)
 
-### 段2 codex(review役)のプラン査読
+### 段2 codex-reviewのプラン査読
 
-メインがプランをcodex(review役)へ送る。**節約モードでも送付先は変わらない**(段2は常にcodex)。
+メインがプランを`codex-review`へ送る。**同じ内容を`finding-triage`へも送り、段2と段3は査読ループとして回る**(手順は後述「査読ループ」)。**節約モードでも送付先は変わらない**(段2は常にcodex-review)。
 
-packetには**5 field(疑う前提 / 反対案 / その帰結 / 未解決の問い / この種の指摘が生じうる経路の列挙)を必須**で載せる。「該当なし」と書くなら理由も書く。codexは欠落・空・**定型的で実質のない値**もfindingにする(「疑う前提: なし」「反対案: 現案維持」で通さない。該当なしには理由を要求する)。再送(反復査読)では「最初の未査読プラン」ではなく「前回findingsへの対応」として評価する。
+packetには**5 field(疑う前提 / 反対案 / その帰結 / 未解決の問い / この種の指摘が生じうる経路の列挙)を必須**で載せる。「該当なし」と書くなら理由も書く。codex-reviewは欠落・空・**定型的で実質のない値**もfindingにする(「疑う前提: なし」「反対案: 現案維持」で通さない。該当なしには理由を要求する)。再送(反復査読)では「最初の未査読プラン」ではなく「前回findingsへの対応」として評価する。
 
-**workerのturnは完走したがagmsg配送だけ失敗した場合に限り、bridgeログからの代替を認める**。代替として有効なのは、(a)**現行taskと同一teamの**bridgeログでcodex自身が送信したエントリ(team一致・送信者一致)、(b)現行の段2査読依頼のdispatch時刻(agmsg message storeのtimestamp)より後、(c)codexの直近respawnより後(runログのspawn時刻。respawnが一度も無い場合はcodex初回spawn時刻より後)、(d)完了形式を備え内容が現行プランの査読であること、の4条件をすべて満たすentryだけ。**この4条件は規約レベルの信頼に依る照合であって、bridgeが強制する境界ではない**。**条件を満たすentryがログに無ければ代替の出番はなく、troubleshooting.mdの診断→解消できなければユーザーへ報告して指示を仰ぐ経路一本になる**(段3の先行送信で回避しない)。段2の返信前に段3(振り分け依頼)へ送らない。
+**workerのturnは完走したがagmsg配送だけ失敗した場合に限り、bridgeログからの代替を認める**。代替として有効なのは、(a)**現行taskと同一teamの**bridgeログでcodex-review自身が送信したエントリ(team一致・送信者一致)、(b)現行の段2査読依頼のdispatch時刻(agmsg message storeのtimestamp)より後、(c)codex-reviewの直近respawnより後(runログのspawn時刻。respawnが一度も無い場合はcodex-review初回spawn時刻より後)、(d)完了形式を備え内容が現行プランの査読であること、の4条件をすべて満たすentryだけ。**この4条件は規約レベルの信頼に依る照合であって、bridgeが強制する境界ではない**。**条件を満たすentryがログに無ければ代替の出番はなく、troubleshooting.mdの診断→解消できなければユーザーへ報告して指示を仰ぐ経路一本になる**。
 
 出力形式: Findings / Required tests / Residual risk / Confidence。severity順・推測は明記・各findingにIDを付す。findingsゼロの場合もこの形式で明示する。
 
 承認依頼前の常時ゲート。書式は下記「[review]パケットの鉄則」。
 
-### 段3 finding-triage(指摘の振り分け)
+### 段3 finding-triage(査読ループの調停役)
 
-段2(codex)のfindingsとプランを`finding-triage`(claude-code, `haiku`)へ送る。返るのは各findingの振り分け(採用/見送り/別タスク)。**この判断を最終とする**。**ユーザー承認の代替にしない**。節約モードでも送付先は同じ(節約モードで替わるのは段5だけ)。
+`finding-triage`(claude-code, `haiku`)は、codex-reviewのfindingsを採用/見送り/別タスクに振り分け、codex-reviewとのループを収束させて最終結果だけをメインへ返す。**この判断を最終とする**。**ユーザー承認の代替にしない**。節約モードでも同じ(節約モードで替わるのは段5だけ)。
 
-認証・秘密情報を含むプランは振り分け依頼前に該当部分をredactする。**redactすると振り分けが成立しない場合は段3を省き、メインが直接振り分ける**(段2への送信そのものは省略できない。段2は必須ゲート)。
+認証・秘密情報を含むプランは送信前に該当部分をredactする。**redactすると振り分けが成立しない場合は段3を省き**、`[loop]`ヘッダ無しでcodex-reviewだけへ送って、メインが直接振り分ける(段2への送信そのものは省略できない。段2は必須ゲート)。
 
 ```bash
 ~/.agents/skills/agmsg/scripts/ensure-headless.sh claude-code <path> finding-triage
@@ -51,9 +51,33 @@ packetには**5 field(疑う前提 / 反対案 / その帰結 / 未解決の問�
 
 driverはclaude-code。モデルは`spawn.claude_model.finding-triage: haiku`(alias自動追従。固定model IDは書かない)、turn timeoutは`spawn.claude_turn_timeout.finding-triage: 1800`で延ばす(既定では査読が切れる)。Anthropicのclaude-code枠をhaikuで消費する。
 
-read-onlyはclaude-code sandboxがrepoへのwriteを拒否することで担保する。readはproject(`~/.config`)と継承add-dirに開き、credential pathのreadと外部状態変更の禁止、agmsg message storeへの直接書き込み禁止はrole file規約でのみ抑止する(sandboxは強制しない)。認証・秘密情報の部分は振り分け依頼前にredactし、成立しなければメインが直接振り分ける。
+read-onlyはclaude-code sandboxがrepoへのwriteを拒否することで担保する。readはproject(`~/.config`)と継承add-dirに開き、credential pathのreadと外部状態変更の禁止、agmsg message storeへの直接書き込み禁止はrole file規約でのみ抑止する(sandboxは強制しない)。
 
-**role fileの編集は稼働中workerに反映されない**: claude-code/cursor/codexいずれのdriverも`_spawn.sh`がspawn時にrole fileを`run/`配下へ`cp`し(`<type>-bridge.<team>.<name>.role`)、bridgeはそのスナップショットだけを毎ターン読む。`db/spawn-roles/<name>.<type>.md`(= `claude/agmsg-roles/`のsymlink先)を直接編集しても、稼働中のworkerはspawn時点の内容のまま動き続ける(意図的な設計: source側の編集/削除でlive workerを不意に変えないため)。role file変更を反映するには、その名前のworkerをdespawn→再spawnし、readiness照合(probe)をやり直す。
+**role fileの編集は稼働中workerに反映されない**: claude-code/codexいずれのdriverも`_spawn.sh`がspawn時にrole fileを`run/`配下へ`cp`し(`<type>-bridge.<team>.<name>.role`)、bridgeはそのスナップショットだけを毎ターン読む。`db/spawn-roles/<name>.<type>.md`(= `claude/agmsg-roles/`のsymlink先)を直接編集しても、稼働中のworkerはspawn時点の内容のまま動き続ける(意図的な設計: source側の編集/削除でlive workerを不意に変えないため)。role file変更を反映するには、その名前のworkerをdespawn→再spawnし、readiness照合(probe)をやり直す。
+
+### 査読ループ(codex-review↔finding-triage。段2・段3と段9で共通)
+
+codex-reviewの査読とfinding-triageの振り分けは、メインを介さずworker同士で回す。メインが受け取るのはfinding-triageの最終結果1通だけ。
+
+**メインの送信(段2はプラン、段9はdiff。文脈packetを先に送る)**
+
+| 宛先 | packet | 中身 |
+|---|---|---|
+| finding-triage | 文脈packet(先頭に`[loop-context]`) | プラン本文(段9は承認済みプラン+対象diffまたはfile:line+段8のauthor再分類マップ)。「codex-reviewのfindingsを待ち、ループの調停役を務める。最終結果はclaudeへ送る」 |
+| codex-review | 査読packet(先頭に`[loop]`) | 査読対象(5 fieldや再分類マップなど従来の[review]パケット一式)。「findingsの送り先はfinding-triage」 |
+
+**ラウンド(`[round k/3]`をfinding-triageが全メッセージに付けて数える)**
+
+1. codex-review→finding-triage: findings(ID・severity・差し戻しラベル付き)
+2. finding-triage→codex-review: **Medium以上**の各findingを採用/見送り/別タスクに振り分け、理由を添える。**Low以下はfinding-triageが落としてよく(迷ったら落とす)、メインへ返さない**
+3. codex-review→finding-triage: 振り分けた各findingに「異議なし」か「異議(根拠)」を返す
+4. 異議のあるfindingだけをfinding-triageが再判定し、手順2へ戻る
+
+**収束**: Medium以上の全findingでcodex-reviewの異議が無くなったとき、または3往復(手順2〜3を3回)に達したとき。finding-triageが最終表(finding・振り分け・理由)を`claude`へ送る。3往復で合意しなかったfindingは、codex-reviewの主張とfinding-triageの主張を両論併記し、メインが決める。
+
+**メインの待ち方**: finding-triageの最終送信の通知だけを待つ。ループ中の往復は見ない。長時間無言のときは、codex-review・finding-triage両方のbridgeログと`.meta`のpidを確認する(「送信の実務」)。**両者はお互い宛にsend.shで送るので、どちらかがrespawn直後で返信実績が無い、またはdead-letterだと、ループが黙って止まる**。
+
+**収束後の扱い**(段9の差し戻し・段10): **採用**はcodex-reviewが付けたラベルに従って差し戻す。**見送り**は理由を段11の検収報告に記録する。**別タスク**は今回のtaskを終端せず新規`[task:<id>]`として扱う(`[design-level]`+採用の「task中止→新task発行」とは別物)。
 
 ### 段4 ユーザー承認
 
@@ -63,7 +87,7 @@ read-onlyはclaude-code sandboxがrepoへのwriteを拒否することで担保�
 
 メインが承認済みプランをサブタスクへ分割し、実装subagent(`claude/agents/impl-worker.md`・sonnet)へdispatchする。
 
-**節約モードでは、この段をメイン自身が実装する**(dispatchしない)。段9の査読者はcodexのまま(同一vendor査読になる受容済みの例外)。**以下に出てくるAgent tool固有の記述は通常モードの話で、節約モードでは段6・段8が成立しない**。手順と切替条件は`references/economy-mode.md`が正本。
+**節約モードでは、この段をメイン自身が実装する**(dispatchしない)。段9の査読者はcodex-reviewのまま(同一vendor査読になる受容済みの例外)。**以下に出てくるAgent tool固有の記述は通常モードの話で、節約モードでは段6・段8が成立しない**。手順と切替条件は`references/economy-mode.md`が正本。
 
 **並列で走らせるときの2条件**(どちらも守れないなら直列にする):
 
@@ -94,45 +118,23 @@ read-onlyはclaude-code sandboxがrepoへのwriteを拒否することで担保�
 
 ### 段9 コード査読ゲート
 
-**codex(review役)が全hunkを査読する** — 意図一致・正しさと、脆弱性4観点(認証/認可境界・secret出力・外部write・dependency advisory)の両方。
+**codex-reviewが全hunkを査読する** — 意図一致・正しさと、脆弱性4観点(認証/認可境界・secret出力・外部write・dependency advisory)の両方。findingsの振り分けも段2・段3と同じ査読ループで回す(前節)。
 
-- 実装がAnthropic側(メイン・実装subagent)に寄ったため、cross-vendorの査読はcodex1本になる。**これは「独立した2つの査読」ではなく「Anthropic authorに対する単一のcross-vendorゲート」**であり、観点の独立性は作られない。高リスク変更で第2の目が要るとメインが判断したときは、grok-reviewを第2意見として使う
+- 実装がAnthropic側(メイン・実装subagent)に寄ったため、cross-vendorの査読はcodex-review1本になる。**これは「独立した2つの査読」ではなく「Anthropic authorに対する単一のcross-vendorゲート」**であり、観点の独立性は作られない。高リスク変更で第2の目が要るとメインが判断したときは、ユーザーに確認する
 - 段8のauthor再分類マップを渡す。**マップの用途は差し戻し先の判定で、査読対象は常に全hunk**
 - findingのラベルは`[subtask:<id>]`(subagent作)・`[author:main]`(メイン作)・`[design-level]`(承認済み設計自体の欠陥。対応する単一hunkが無ければfile:line欄に`(design-level, no single hunk)`と明記)
 - **依存を変えるdiffのadvisory確認はメインの明示責務**。段9パケットの必須fieldに確認結果と根拠を含める(欠落時はcommit不可)
 - 段1〜11を通らない原子的編集の例外は、資格要件で認証・security boundary・課金・外部write・依存関係を変えないことが担保されるため脆弱性4観点の対象外
-- codexが返したfindingsへの対応可否(採用/見送り/別タスク)は、段3と同じくfinding-triageが振り分けて収束させる。手順は次々節「段9の指摘振り分け(finding-triage)」
+- 認証・秘密情報を含むdiffは送信前に該当部分をredactする。**redactすると振り分けが成立しない場合はfinding-triageを省き**、`[loop]`ヘッダ無しでcodex-reviewだけへ送ってメインが直接振り分ける(段9のcodex-review査読そのものは省略できない)
 
-### 段9査読者フォールバックチェーン(codex応答不能時)
+### 段9査読者が応答不能のとき
 
-1. **主**: codex(review役)
-2. **フォールバック**: grok-review(cursor・config key `spawn.cursor_model.grok-review: cursor-grok-4.6-xhigh`、暫定運用)。codex同等の役割(意図一致査読+脆弱性4観点)を代行する
-   - **grok-reviewのreadiness照合は常に厳格基準**: 期待token受信・エラー応答でない・pinしたmodel identityが一致、の3点。初回spawn時に不成功ならgrok-reviewは使用不能と判定し項4へ。復帰判定時に不成功なら主は未復旧と判定しフォールバックを継続する
-   - role file(`grok-review.cursor.md`)にreadiness probeへの応答例外を記載済み
-   - **レビュー本体の成功基準**: 「[review]パケットの鉄則」の出力形式(Findings/Required tests/Residual risk/Confidence。clean reviewはFindingsなしを含む)を主が返すこと。返さない場合はspawn/probe時エラー・usage-limit応答・timeout・無応答・部分応答・形式不正・異常終了のいずれであってもすべて不成功とみなしフォールバックへ切替。**切替時は部分査読を継ぎ足さず段9を最初からやり直す**(遅着した主の応答とフォールバック応答を二重採用しない)
-   - **停止条件**: grok-reviewの誤陰性・査読形式不良を1件でも観測した時点でフォールバックを停止する。停止状態はセッションをまたいで有効とし(このファイルまたはCLAUDE.mdへの追記で記録)、定義した再有効化手順(ユーザー承認を得て本節を書き換える)以外では再開しない
-   - **運用実績**: 2026-09-02のtheme-b2タスクで4巡(Medium 2件→Low 1件→Low 1件→findingsなし)。全findingが一次情報で裏取りでき誤陰性・誤検出はゼロ、未実行項目はinferenceと明記して区別していた。停止条件に該当せず暫定運用を継続する
-3. **フォールバック不能クラス**: 最終outbound payload全体(diff本文+補足説明+ログ+添付コンテキスト)に秘密の実値(credential・token等)が含まれると判断される場合、grok-review(cursor系)は対象外。機械的secret scannerは実装せず、メインの目視確認に依る(誤判定は残存リスクとして受容)。この場合はcodex単独で、codexも不能なら項4
-4. **段9ブロック**: 主・フォールバック双方が使用不能な場合。段9を無言スキップせずタスクをブロックしてユーザーに報告する。**ユーザーの明示的waiverがある場合のみ例外**とし、waiverは3条件を満たす: (a)対象diffをrepository identity・base tree・commit対象の完全なstaged treeを含むfingerprintに固定し、commit直前に再照合する (b)「段9成功」ではなく「段9未実施・ユーザーwaiver」として検収記録に残す (c)waiver後に対象diffが変更されたら旧waiverは無効・再承認必須
-
-外部送信の安全境界: cursor harness経由の査読役(grok-review)へは、ユーザーが受容したデータ境界としてprivate diff送付を許容する(2026-08-27ユーザー確認済み)。調査役(grok-research等)への最小化義務(未公開コード断片を含めない)とは別軸。ユーザーが受容を撤回した時点で即時無効。
-
-**grok-reviewとgrok-researchは名前が1語しか違わないが権限が異なる別worker**: grok-review(査読役、private diff送付許容)とgrok-research(調査役、最小化義務でsecret・未公開コード断片禁止)を混同しない。`[review]`パケットの宛先は必ず`grok-review`。
-
-### 段9の指摘振り分け(finding-triage)
-
-役割・確認事項・パケット書式は段3と同じ(readiness照合・起動コマンドも共通 — finding-triageは1つのworkerが段3・段9両方のゲートを兼ねる)。**段9の主(codex)・フォールバック(grok-review)のどちらが出したfindingsでも、振り分け先は変わらずfinding-triage**。
-
-段9のfindings・対象diff(または該当file:line)・段8のauthor再分類マップ・承認済みプラン本文を`finding-triage`へ送る。返るのは各findingの振り分け(採用/見送り/別タスク)。**この判断を最終とする**。
-
-- **採用**: codexが付けたラベル(`[subtask:<id>]`/`[author:main]`/`[design-level]`)に従い、段10の3経路で差し戻す
-- **見送り**: 対応せず、理由を段11の検収報告に記録する
-- **別タスク**: 今回のtaskを終端せず、新規`[task:<id>]`として別途扱う。`[design-level]`ラベルの採用時に発生する「task中止→新task発行」(段10第3経路)とは別物 — 別タスクは今回のスコープ外への先送り、`[design-level]`+採用は今回の承認済み設計自体の欠陥
-- 認証・秘密情報を含むdiffは振り分け依頼前に該当部分をredactする。**redactすると振り分けが成立しない場合はこの段を省き、メインが直接振り分ける**(段9のcodex査読そのものは省略できない)
+1. **不成功の判定**: 「[review]パケットの鉄則」の出力形式(Findings/Required tests/Residual risk/Confidence。clean reviewはFindingsなしを含む)をcodex-reviewが返さないとき。spawn/probe時エラー・usage-limit応答・timeout・無応答・部分応答・形式不正・異常終了のいずれであっても不成功とみなす。**復旧後は部分査読を継ぎ足さず段9を最初からやり直す**(遅着した旧応答と新しい応答を二重採用しない)
+2. **段9ブロック**: 段9を無言スキップせず、タスクをブロックしてユーザーに報告する。**ユーザーの明示的waiverがある場合のみ例外**とし、waiverは3条件を満たす: (a)対象diffをrepository identity・base tree・commit対象の完全なstaged treeを含むfingerprintに固定し、commit直前に再照合する (b)「段9成功」ではなく「段9未実施・ユーザーwaiver」として検収記録に残す (c)waiver後に対象diffが変更されたら旧waiverは無効・再承認必須
 
 ### 段10 差し戻し(3経路)
 
-段9で**採用**と振り分けられたfindingを、codexが付けたラベルに従って次の3経路のいずれかへ差し戻す(**見送り**・**別タスク**の扱いは前節「段9の指摘振り分け」を参照)。
+段9で**採用**と振り分けられたfindingを、codex-reviewが付けたラベルに従って次の3経路のいずれかへ差し戻す(**見送り**・**別タスク**の扱いは「査読ループ」の収束後の扱いを参照)。
 
 - **subagent作のfinding**(`[subtask:<id>]`ラベル) → `SendMessage`で当該subagentへ差し戻す。**完了済みのsubagentも名前かagentIdで再開でき、前ターンの文脈を保持している**(2026-09-06実測。パケットに書いた識別子と、前ターンにしか出ていないコマンド出力の両方を答えられた)。**セッションを跨いで文脈が失われている場合は新規spawnし、findingに加えて元のsubtaskパケット(ゴール・制約・ファイルセット)を同梱する**(findingだけ渡すと、設計意図を知らないagentがその行だけ直す)
 - **メイン作hunkのfinding**(`[author:main]`ラベル) → メインが直して段9へ再投入
@@ -177,13 +179,13 @@ frontmatterの`model`/`effort`がそのまま実効値になる(`impl-worker`は
 
 ## findingラベル
 
-ラベルはcodex(またはgrok-review)がfindingに付ける差し戻し先の分類で、対応可否(採用/見送り/別タスク)の判断は別軸。段9の後、finding-triageが振り分けた**採用**のfindingだけが、このラベルに従って下表の宛先へ届く。
+ラベルはcodex-reviewがfindingに付ける差し戻し先の分類で、対応可否(採用/見送り/別タスク)の判断は別軸。段9の後、finding-triageが振り分けた**採用**のfindingだけが、このラベルに従って下表の宛先へ届く。
 
 | ラベル | 出す | 受ける | 意味 |
 |---|---|---|---|
-| `[subtask:<id>]` | codex / grok-review | メイン | subagent作hunkのfinding。SendMessageで当該subagentへ差し戻す |
-| `[author:main]` | codex / grok-review | メイン | メイン作hunkのfinding。メインが直す |
-| `[design-level]` | codex / grok-review | メイン | 承認済み設計自体の欠陥。file:lineが無い場合は`(design-level, no single hunk)`と明記。段10の第3経路(task中止→新task発行)へ |
+| `[subtask:<id>]` | codex-review | メイン | subagent作hunkのfinding。SendMessageで当該subagentへ差し戻す |
+| `[author:main]` | codex-review | メイン | メイン作hunkのfinding。メインが直す |
+| `[design-level]` | codex-review | メイン | 承認済み設計自体の欠陥。file:lineが無い場合は`(design-level, no single hunk)`と明記。段10の第3経路(task中止→新task発行)へ |
 
 完了サイクルは**段5のdispatch(またはreopen時の再dispatch)で開き**、段11の検収完了・段10の差し戻し・taskの中止のいずれか1つで閉じる。段7は境界ではなくサイクル内のマイルストーン。
 
@@ -191,12 +193,10 @@ frontmatterの`model`/`effort`がそのまま実効値になる(`impl-worker`は
 
 - `[task:<id>]`はセッション内で一意。`[subtask:<id>]`はtask内で一意
 - 完了済み・破棄済みタスクのstale/duplicate messageは既読化して無視する
-- **agmsg相手のreadiness照合**は「名前がある」ではなく、各nameのregistrationが**期待typeでちょうど1件、かつ当該セッションで返信実績があること**(dead-letterはregistration照合だけでは検出できない)。**新規spawn直後で返信実績がまだ無い場合はtrivialなprobeパケットを1通送り、その応答到達をもって返信実績とする**。**respawn(despawn→再spawn)した場合、respawn前の返信実績は無効**として扱い、必ずrespawn後に新規probeを送り直す。対象はfinding-triage・codex(review役)、および実際にdispatchするcodex-research/grok-research/grok-review。**実装subagentはagmsgに乗らないのでこの照合の対象外**
+- **agmsg相手のreadiness照合**は「名前がある」ではなく、各nameのregistrationが**期待typeでちょうど1件、かつ当該セッションで返信実績があること**(dead-letterはregistration照合だけでは検出できない)。**新規spawn直後で返信実績がまだ無い場合はtrivialなprobeパケットを1通送り、その応答到達をもって返信実績とする**。**respawn(despawn→再spawn)した場合、respawn前の返信実績は無効**として扱い、必ずrespawn後に新規probeを送り直す。対象はfinding-triageとcodex-review(査読ループで互いに送信するため両方)、および実際にdispatchするcodex-research。**実装subagentはagmsgに乗らないのでこの照合の対象外**
 - 起動コマンド(モデル等のconfigはグローバル永続なのでコマンドのみ):
-  - codex系(codex, codex-research): `ensure-codex.sh <project> <name>`
+  - codex系(codex-review, codex-research): `ensure-codex.sh <project> <name>`
   - claude-code系(finding-triage): `ensure-headless.sh claude-code <project> finding-triage`(model・timeoutはper-nameのconfigキーで固定。段3参照)
-  - cursor系(grok-review、codexフォールバック時のみ): `AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ensure-headless.sh cursor <project> grok-review`
-  - cursor系(grok-research): `ensure-headless.sh cursor <project> <name>`
   - role fileは`db/spawn-roles/<name>.<type>.md`の規約名で自動解決される
 - SessionEnd teardownでsession teamのheadless worker全員が回収される。次セッションでは必要roleをspawnし直す(config永続なので同モデルで立つ)
 - **despawn前にin-flight dispatchを棚卸しする**。同名workerを後から再spawnすると旧dispatchが再駆動される(2026-08-01実例)
@@ -236,35 +236,34 @@ DO NOTを明記: git commit/push禁止・ファイルセット外の変更禁止
 
 **環境依存failを含むテストスイート**は、委譲前にベースラインのfail一覧を採取して`baseline-failures.txt`に置き、ゲートを「対象モジュール全green+`comm -13 baseline after`で新規failゼロ」にする。**ベースラインのfailの原因調査はsubagentに指示しない**(2026-09-29、パケットに「修正前から落ちるテストの失敗理由を報告」と書いたところ、その調査で本題に入らなくなった)。**10分を超えるスイートはsubagentに流させず、メインがMonitorで流す** — subagentの`run_in_background`も600秒でkillされ、subagentは来ない完了通知を待ち続ける。
 
-### [research]パケット(codex-research / grok-research宛)
+### [research]パケット(codex-research宛)
 
 - codex-researchは調査専任(reviewer layout: repoはread、書けるのはagmsg配下のみ。**networkは全開**)。返すのはfile:line一覧や構造化データだけで、**パッチは作らせない**
 - 自己完結パケット = GOAL / CONSTRAINTS / SCOPE / SCHEMA(期待する出力の構造) / 検品観点 / DO NOT write files・DO NOT パッチ生成
-- **grok-researchの併走は公開情報かredacted packetで閉じる問いに限る**。認証・秘密情報・金銭・不可逆操作を扱う調査、security boundary・データ喪失・課金・広範囲migrationの採否を決める調査は出さない(判定基準の正本はグローバル`CLAUDE.md`)。判定はdispatch前に行い根拠を`[task:<id>]`へ記録し、先行結論をblindに渡さない
 - 返答は**検品**する。SCHEMA未充足・情報不足は「◯件中◯件で△△が不足」と対象を具体に指摘して差し戻す
 - **「バグ/異常を発見した」系の断定は再現条件まで確認してから採用する**(2026-07-27実例: `kustomize build <base>/api`単体での「既知バグ」報告が、親overlayからのビルドでは正しく解決され実機も正常だった)。SCHEMA充足の検品(形式)とは別に、断定の再現性の検品(内容)が必要
 - **インクリメンタル調査**: 1トピック=1パケット。各単位を検品してから次へ
 
-### [review]パケット(codex / finding-triage宛。段9のフォールバック時はcodexをgrok-reviewに読み替える)
+### [review]パケット(codex-review / finding-triage宛。段2・段9とも査読ループで送る)
 
 - いずれもread-only。findingsを返すだけで、**fixはメインが適用**する(subagent作hunkのfixはSendMessageで当該subagentへ差し戻す)
 - 自己完結パケット = `git diff`か対象`file:line`(プラン査読の場合はプラン本文) + 意図 + (ループ時)前回指摘→対応の対応表
 - **対象repoが`~/.config`配下でも継承add-dir(codexはworkspace-root)配下でもないとき(例: `~/poc/<別repo>`)、査読者・振り分け役はrepoを読めない。対象コードの全文(新規repoなら全ファイル)をパケットへ埋める**(2026-11-01、18ファイル約63KBを`send.sh --stdin`で送り、切断なく査読が返った)。`git diff`が使えない新規ファイルも同様。再査読では変更したファイルの全文だけを送ればよい
-- **段2(codex)のプラン査読packetは段1の5 field(疑う前提 / 反対案 / その帰結 / 未解決の問い / この種の指摘が生じうる経路の列挙)を必須fieldとして含む**。codexは欠落・空だけでなく**定型的で実質のない値**もfindingにする(「疑う前提: なし」「反対案: 現案維持」で通さない。該当なしには理由を要求する)。再送(反復査読)では「最初の未査読プラン」ではなく「前回findingsへの対応」として評価する
-- **段3(finding-triage)の振り分けpacketは、段2findingsのfinding ID・見送りと別タスクは理由を一対一で列挙する**(認証・秘密情報を含むfindingは理由を`redacted(理由: 認証/秘密)`で代替可、packet不備に当たらない。redactedを使ったfindingは、内容(理由の具体)を平文開示せずfinding ID・重大度・解決状態(対応済み/未対応)を段4のユーザー承認時と段11の検収報告の両方に明記する。**認証・秘密情報を含むプランで振り分けが成立しない場合は段3を省き、メインが直接振り分ける**)。欠落は順序違反の可視化点として扱う
-- **段9(finding-triage)の振り分けpacketは、段9findingsのfinding ID・見送りと別タスクは理由を一対一で列挙する**(redacted代替・開示ルールは段3と同じ)。段8のauthor再分類マップ・承認済みプラン本文・対象diff(または該当file:line)を同梱する。**認証・秘密情報を含むdiffで振り分けが成立しない場合はこの段を省き、メインが直接振り分ける**(段9のcodex査読そのものは省略できない)
+- **段2(codex-review)のプラン査読packetは段1の5 field(疑う前提 / 反対案 / その帰結 / 未解決の問い / この種の指摘が生じうる経路の列挙)を必須fieldとして含む**。codex-reviewは欠落・空だけでなく**定型的で実質のない値**もfindingにする(「疑う前提: なし」「反対案: 現案維持」で通さない。該当なしには理由を要求する)。再送(反復査読)では「最初の未査読プラン」ではなく「前回findingsへの対応」として評価する
+- **finding-triageが最終結果としてclaudeへ送る振り分け表は、finding ID・振り分け・理由を一対一で列挙する**(見送りと別タスクは理由を必須とする。認証・秘密情報を含むfindingは理由を`redacted(理由: 認証/秘密)`で代替可、表の不備に当たらない。redactedを使ったfindingは、内容(理由の具体)を平文開示せずfinding ID・重大度・解決状態(対応済み/未対応)を段4のユーザー承認時と段11の検収報告の両方に明記する)。未合意のfindingは両論併記になっていること
+- **文脈packet(`[loop-context]`)は査読packetより先に送る**。finding-triageはcodex-reviewのfindingsが届いた時点でプラン・diff・再分類マップを持っている必要がある。段9の文脈packetには段8のauthor再分類マップ・承認済みプラン本文・対象diff(または該当file:line)を同梱する
 - 出力形式: Findings / Required tests / Residual risk / Confidence。severity順・推測は明記・各findingにIDを付す
-- 段9では**codex(フォールバック中はgrok-review)**に、**subtask別のdiff identity・依存関係・subagentの検証結果**・**承認済みプラン本文**・**dependency advisoryの確認結果と根拠(メイン記入。欠落時はcommit不可)**と**段8のauthor再分類マップ(メイン作 / subagent作の2区分)**を渡す。**マップの用途はfindingの差し戻し先の判定で、査読対象は常に全hunk**(マップが無いとラベルを推測で付け、無実のsubtaskが差し戻される)
+- 段9では**codex-review**に、**subtask別のdiff identity・依存関係・subagentの検証結果**・**承認済みプラン本文**・**dependency advisoryの確認結果と根拠(メイン記入。欠落時はcommit不可)**と**段8のauthor再分類マップ(メイン作 / subagent作の2区分)**を渡す。**マップの用途はfindingの差し戻し先の判定で、査読対象は常に全hunk**(マップが無いとラベルを推測で付け、無実のsubtaskが差し戻される)
 
 ## レビュー収束条件
 
-指摘の反映(再修正)後の差分は再依頼しうるが、**1回で止めるな・延々と回すな**。段9のfindingsも段3と同じく、finding-triageの振り分けを経て採用/見送り/別タスクが確定する。
+指摘の反映(再修正)後の差分は再依頼しうるが、**1回で止めるな・延々と回すな**。段9のfindingsも段2と同じく、査読ループ(codex-review↔finding-triage)を経て採用/見送り/別タスクが確定する。査読ループの3往復はこの再依頼の巡数とは別で、1回の査読の中で振り分けを収束させる上限である。
 
 - 残るfindingsが Low / nit / 見送り(理由明記) / 別タスク(スコープ外)だけで、substantive(正しさ・設計・回帰)が無い
 - 全findingを 採用 / 見送り / 別タスク に振り分けて反映・判断済み
 - **再依頼はsubstantiveなfindingが残っている巡だけ**(新規か前巡からの再掲かを問わない)。その巡のfindingsにsubstantiveが1件も無くなった時点で終わりにする(節冒頭の収束条件と同じ判定)。巡数そのものに上限は置かない(上限を置くと、毎巡実際の欠陥が出ている査読を途中で捨てることになる)。強制的な打ち切りは下の「同一箇所の反復」だけで、打ち切る対象もその箇所に限る
 - 各巡で「前回指摘→対応」の対応表をパケットに含める。無返信のときは無限に待たず、bridgeログからfindingsを読んで内容ベースで収束判断する
-- **同じ箇所で3巡以上続くときは、修正が「一般化した」つもりの決め打ちになっていないか疑う**。2026-09-01の実例: DST時刻の扱いで「spring-forwardの1時間を拒否」→「fall-backの1時間を両方受理」→「移行幅を仮定せずoffsetから導出」と3巡し、すべて『1時間の移行しか無い』という同じ暗黙の定数が原因だった。修正のたびに「この定数・刻み幅・件数の仮定はどこから来たか」を1行で言語化し、言語化できなければまだ一般化できていない。2026-09-07の実例(プラン査読・6巡): Neovimでファイルを開く先のウィンドウ選択で「閉じる対象をAへ」→「A+Bへ」→「A+B+Cへ」と3巡し、すべて『特定のウィンドウ集合を閉じれば残るのは普通のウィンドウ』という同じ決め打ちが原因だった。集合を広げる方向に保証は無く、「閉じた結果を推測せず、開く直前に開き先を明示的に決める」が正しい一般化だった。運用は次のとおり。ここでの「同一箇所」はfile:lineの一致ではなく、**同じ設計判断・同じ暗黙の仮定**を指す。(i)同一箇所のsubstantiveなfindingが3巡目に持ち越されたら、その巡のパケットに共通原因の言語化を1段落で必須にする(前巡の指摘への対応表だけを送らない)。(ii)4巡目にも同じ箇所が残るなら、言語化できていないということなので、**その箇所だけを別タスク化して打ち切る**。同じ巡に他の箇所のfindingがあれば、そちらは通常どおり再依頼を続ける(変更全体のゲートは止めない)。(iii)巡ごとに別々の箇所へ独立したfindingが出ている場合はこの規則の対象外で、存在しない共通原因を作らない。**共通原因の言語化に迷う、または対象の規模感を見失っている疑いがあるときはこの時点で`advisor()`を呼ぶと効果的**(2026-09-15実例: 単一AWSアカウント内のIAM分離を3巡重ねたプラン査読で、advisor()が「単一の信頼領域向けに作られた基盤へ多重テナントの壁を後付けし続けている」という共通原因と、対象システムの規模に見合わない設計を続けている可能性を同時に指摘し、4巡目を送る前に描き直せた)。**「同じ暗黙の仮定」ではなく「有限個の別経路を1つずつ見落としていた」場合は、経路を全部列挙し切れば収束する**(打ち切りではなく完了で終わる)。2026-09-16の実例(コード査読・IAM role権限境界のテスト、5巡): NagSuppressionsの抑制範囲(Low)→Statement配列の部分一致(Medium)→同じRoleへの第2Policy resource(Medium)→AWS::IAM::ManagedPolicy経由の権限付与(Medium)と4巡連続で指摘が続いたが、これは同じ思い込みの言い換えではなく「IAMがroleへ権限を付与しうる経路(trust policy・role自身のinline/managed policy・単独Policy resource・単独ManagedPolicy resource)を1つずつ見落としていた」だけだった。4巡目のパケットで残りの経路を全部列挙してテストに固定し、収束条件(「この軸でさらに指摘が出たら別task化する」)を明記して送ったところ、5巡目でFindingsなしに収束した。**指摘が「まだ書いていないコードの実装詳細」(shell scriptのexit code分類・retry方式・認証呼び出し方式等)に向いている場合は、上記2パターンとは別に扱う**: プランの中でこれらを散文で完全に仕様化しようとすると、書き直すたびに新しい実装ディテールの漏れが見つかり続ける。これは暗黙の仮定でも経路の見落としでもなく、「実装をコードでなく散文で仕様化しようとしていること」自体が原因(2026-09-16実例: CD workflowのプラン査読で、ECSサービス安定性確認scriptの契約を4巡書き直したが毎回新しい欠落が見つかり、advisor()が2回とも同じ趣旨を指摘した)。対処: プラン本文を「変更ファイル一覧+目的」「時系列」「受入テスト一覧」の3点に絞り、exit code分類・retry回数等の実装契約はコードで確定させて段9(実コード査読)に委ねる
+- **同じ箇所で3巡以上続くときは、修正が「一般化した」つもりの決め打ちになっていないか疑う**。2026-09-01の実例: DST時刻の扱いで「spring-forwardの1時間を拒否」→「fall-backの1時間を両方受理」→「移行幅を仮定せずoffsetから導出」と3巡し、すべて『1時間の移行しか無い』という同じ暗黙の定数が原因だった。修正のたびに「この定数・刻み幅・件数の仮定はどこから来たか」を1行で言語化し、言語化できなければまだ一般化できていない。2026-09-07の実例(プラン査読・6巡): Neovimでファイルを開く先のウィンドウ選択で「閉じる対象をAへ」→「A+Bへ」→「A+B+Cへ」と3巡し、すべて『特定のウィンドウ集合を閉じれば残るのは普通のウィンドウ』という同じ決め打ちが原因だった。集合を広げる方向に保証は無く、「閉じた結果を推測せず、開く直前に開き先を明示的に決める」が正しい一般化だった。運用は次のとおり。ここでの「同一箇所」はfile:lineの一致ではなく、**同じ設計判断・同じ暗黙の仮定**を指す。(i)同一箇所のsubstantiveなfindingが3巡目に持ち越されたら、その巡のパケットに共通原因の言語化を1段落で必須にする(前巡の指摘への対応表だけを送らない)。(ii)4巡目にも同じ箇所が残るなら、言語化できていないということなので、**その箇所だけを別タスク化して打ち切る**。同じ巡に他の箇所のfindingがあれば、そちらは通常どおり再依頼を続ける(変更全体のゲートは止めない)。(iii)巡ごとに別々の箇所へ独立したfindingが出ている場合はこの規則の対象外で、存在しない共通原因を作らない。**共通原因の言語化に迷う、または対象の規模感を見失っている疑いがあるときはこの時点でcodex-researchに相談すると効果的**(2026-09-15実例: 単一AWSアカウント内のIAM分離を3巡重ねたプラン査読で、advisor()が「単一の信頼領域向けに作られた基盤へ多重テナントの壁を後付けし続けている」という共通原因と、対象システムの規模に見合わない設計を続けている可能性を同時に指摘し、4巡目を送る前に描き直せた)。**「同じ暗黙の仮定」ではなく「有限個の別経路を1つずつ見落としていた」場合は、経路を全部列挙し切れば収束する**(打ち切りではなく完了で終わる)。2026-09-16の実例(コード査読・IAM role権限境界のテスト、5巡): NagSuppressionsの抑制範囲(Low)→Statement配列の部分一致(Medium)→同じRoleへの第2Policy resource(Medium)→AWS::IAM::ManagedPolicy経由の権限付与(Medium)と4巡連続で指摘が続いたが、これは同じ思い込みの言い換えではなく「IAMがroleへ権限を付与しうる経路(trust policy・role自身のinline/managed policy・単独Policy resource・単独ManagedPolicy resource)を1つずつ見落としていた」だけだった。4巡目のパケットで残りの経路を全部列挙してテストに固定し、収束条件(「この軸でさらに指摘が出たら別task化する」)を明記して送ったところ、5巡目でFindingsなしに収束した。**指摘が「まだ書いていないコードの実装詳細」(shell scriptのexit code分類・retry方式・認証呼び出し方式等)に向いている場合は、上記2パターンとは別に扱う**: プランの中でこれらを散文で完全に仕様化しようとすると、書き直すたびに新しい実装ディテールの漏れが見つかり続ける。これは暗黙の仮定でも経路の見落としでもなく、「実装をコードでなく散文で仕様化しようとしていること」自体が原因(2026-09-16実例: CD workflowのプラン査読で、ECSサービス安定性確認scriptの契約を4巡書き直したが毎回新しい欠落が見つかり、advisor()が2回とも同じ趣旨を指摘した)。対処: プラン本文を「変更ファイル一覧+目的」「時系列」「受入テスト一覧」の3点に絞り、exit code分類・retry回数等の実装契約はコードで確定させて段9(実コード査読)に委ねる
 
 ## 返信が来ない時の診断
 

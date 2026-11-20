@@ -4,20 +4,20 @@ agmsg configのper-workerキー（`spawn.codex_model.<name>` / `spawn.codex_effo
 
 | 段 | 宛先ワーカー | モデル/effort |
 |---|---|---|
-| 段2のプラン査読・段9のコード査読 | codex | gpt-5.6-sol / xhigh |
+| 段2のプラン査読・段9のコード査読(査読ループ) | codex-review | `sol` / high(configの`codex_model.codex-review`・`codex_effort.codex-review`) |
 | 調査・大量列挙 | codex-research | gpt-5.6-sol / xhigh(遅いと感じたら `spawn.codex_effort.codex-research: high` へ下げる) |
 | 大規模・設計横断の節目レビュー | codex-deep(一時spawn→使い捨て) | gpt-5.6-sol / max |
 
 実装は組み込みsubagent(`claude/agents/impl-worker.md`・sonnet)が担うのでこの表の対象外。frontmatterの`model`/`effort`がそのまま実効値になる(2026-09-06実測)。
 
 
-codex以外のワーカーは別driverなのでこの表の対象外(`finding-triage`=claude-code・`haiku`(alias自動追従)。`grok-research`・`grok-review`=cursor。cursor workerはmodel pinとlabel監査が必須。同一IDの表示揺れは `|` で列挙する)。
+codex以外のワーカーは別driverなのでこの表の対象外(`finding-triage`=claude-code・`haiku`(alias自動追従)。モデルは`spawn.claude_model.finding-triage`で決まる)。
 
 codex-deepは常駐させず、必要時にspawnし終わったらdespawnする:
 
 ```bash
 ~/.agents/skills/agmsg/scripts/spawn.sh codex codex-deep --team <team> --project <project> \
-  --role-file ~/.agents/skills/agmsg/db/spawn-roles/codex.codex.md   # review役を流用
+  --role-file ~/.agents/skills/agmsg/db/spawn-roles/codex-review.codex.md   # review役を流用
 # 使用後: ~/.agents/skills/agmsg/scripts/despawn.sh <team> claude codex-deep
 ```
 

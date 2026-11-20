@@ -69,30 +69,30 @@
 
 メイン=起案者(プラン化・統合・検収・安全判断・統括)。実働は下記の各役へ委譲し、メインは指揮・検証・判断に徹する。委譲フローは1本だけで、第二の形態は持たない。
 
-モデル指定はalias自動追従を正とし、固定model IDは書かない。**例外はcursor worker**: label監査があるので `spawn.cursor_model.<name>` / `cursor_model_label.<name>` にカタログ表示ではなくinit.modelの実測をpinする。同一IDが複数のinit.model表示を返す場合は `|` で列挙する(実例: `claude-opus-5-thinking-max` は `Claude Opus 5 1M Max Thinking` と `Claude Opus 5 300K Max`)。片方だけをpinするとdead-letterする。**grok-review(段9フォールバック・暫定運用)は`cursor-grok-4.6-xhigh`をpin**。2026-08-27に実spawnしてmodel-audit実測済み(`requested='cursor-grok-4.6-xhigh' reported='Cursor Grok 4.6 Extra High' fallback=false`。実測1回、既存grok-researchの実測とも一致。暫定・継続監視)。tier序列: fable > opus > sonnet > haiku。alias解決先・優先仕様: `claude/skills/orchestrate-agents/references/delegation-policy.md`
+モデル指定はalias自動追従を正とし、固定model IDは書かない。tier序列: fable > opus > sonnet > haiku。alias解決先・優先仕様: `claude/skills/orchestrate-agents/references/delegation-policy.md`
 
-- ロール(メイン / finding-triage(claude-code・haiku。codexの指摘の振り分け) / codex(review役)・codex-research / grok-review・grok-research / 実装subagent=impl-worker)ごとの権限境界・隔離・pinは `claude/skills/orchestrate-agents/references/roles.md`。委譲を始める前にそこも読む
+- ロール(メイン / codex-review(プラン・コードの査読) / finding-triage(claude-code・haiku。codex-reviewとの査読ループの調停役) / codex-research(調査) / 実装subagent=impl-worker)ごとの権限境界・隔離・pinは `claude/skills/orchestrate-agents/references/roles.md`。委譲を始める前にそこも読む
 
 ### フロー(全タスク共通・これ1本)
 
 設計または実装判断を伴う依頼は、段1〜11のこのフローを通す。**委譲を始める前に`orchestrate-agents` skillを読む**(各段の手順・パケット書式・診断の正本)。段ごとの規則・安全の基準・検収運用の全文は`claude/skills/orchestrate-agents/references/flow-rules.md`。
 
-段の骨格: 1 プラン起案(対話) → 2 codexがプラン査読 → 3 finding-triageが指摘を振り分け → 4 ユーザー承認 → 5 メインが分割し実装subagentへdispatch → 6 メインが受け入れ検査 → 7 全subtask通過 → 8 メインが統合・author再分類 → 9 codexが全hunkをコード査読(応答不能時はgrok-review) → 10 採用findingの差し戻し → 11 メインが検収→ユーザーのdiffチェック→commit。
+段の骨格: 1 プラン起案(対話) → 2・3 codex-reviewがプランを査読し、finding-triageが指摘を振り分ける(2者のループ。メインを介さず、収束した結果だけがメインへ戻る) → 4 ユーザー承認 → 5 メインが分割し実装subagentへdispatch → 6 メインが受け入れ検査 → 7 全subtask通過 → 8 メインが統合・author再分類 → 9 codex-reviewが全hunkをコード査読し、finding-triageと同じループで振り分ける(応答不能時は段9をブロックしてユーザーへ報告) → 10 採用findingの差し戻し → 11 メインが検収→ユーザーのdiffチェック→commit。
 
 常に守る不変条件(skillを読み損ねても落とさない):
 
-- プランは承認を求める前にcodex査読を通す。査読はユーザー承認の代替にしない
+- プランは承認を求める前にcodex-review査読を通す。査読はユーザー承認の代替にしない
 - ユーザー承認の前に、実装subagentへdispatchを1件も出さない
 - 段9の査読対象は常に全hunk(意図一致+脆弱性4観点)。依存を変えるdiffのadvisory確認はメインの責務で、確認結果と根拠が無ければcommitしない
-- codexの指摘への対応可否(採用/見送り/別タスク)は、finding-triageが振り分けて最終とする。認証・秘密情報を含む部分は振り分け依頼前にredactし、成立しなければメインが直接振り分ける
-- 差し戻しはcodexのラベルに従う: `[subtask:<id>]`は当該subagent、`[author:main]`はメイン、`[design-level]`はtaskを終端して段1から再起動。同種の設計レベル指摘が2周続いたら個別修正を止め、列挙の軸を先に調べる
+- codex-reviewの指摘のうちMedium以上の対応可否(採用/見送り/別タスク)は、finding-triageがcodex-reviewとのループ(最長3往復)で収束させ、その結果を最終とする。メインが受け取るのは最終結果だけで、3往復で合意しないfindingは両論併記で返りメインが決める。Low以下はfinding-triageが落としてよい。認証・秘密情報を含む部分は送信前にredactし、成立しなければfinding-triageを省いてメインが直接振り分ける
+- 差し戻しはcodex-reviewのラベルに従う: `[subtask:<id>]`は当該subagent、`[author:main]`はメイン、`[design-level]`はtaskを終端して段1から再起動。同種の設計レベル指摘が2周続いたら個別修正を止め、列挙の軸を先に調べる
 - 検収では、メインが最終diffを固定し必須検証を自分で再実行する。査読は検収の代替ではない
-- 例外(原子的編集): 挙動・公開契約・認証・security boundary・課金・外部write・依存関係を変えず、変更対象と期待diffが一意で、diff単体の機械検証で正しさが確定する編集だけは、メインが自分で書いて段9のcodexゲートだけを通す
+- 例外(原子的編集): 挙動・公開契約・認証・security boundary・課金・外部write・依存関係を変えず、変更対象と期待diffが一意で、diff単体の機械検証で正しさが確定する編集だけは、メインが自分で書いて段9のcodex-reviewゲートだけを通す
 - GitHub Issue・PR・commentの作成/変更は、ユーザーの明示指示があるときだけ行う
-- 秘密の実値(credential・token等)を含むpayloadは、cursor系・grok系の外部へ送らない
+- 秘密の実値(credential・token等)を含むpayloadは、外部workerへ送らない
 - 同一model・同一課金プールへの委譲は、往復の価値が無い作業ならメインが直接行う。メイン自身がsonnetで動くセッションでは委譲しない
 - 実装レーンは既定でsubagent。teamは、サブタスク同士が作業中に情報をやり取りするときか、3人以上を共有タスクリストで並行させる規模のときだけ使う
-- 節約モード(段5だけメインが実装)の手順は`claude/skills/orchestrate-agents/references/economy-mode.md`。段9の一次査読がcodexのままになる例外で、節約モードの中だけで成立する
+- 節約モード(段5だけメインが実装)の手順は`claude/skills/orchestrate-agents/references/economy-mode.md`。段9の一次査読がcodex-reviewのままになる例外で、節約モードの中だけで成立する
 
 ## スクリプト言語
 

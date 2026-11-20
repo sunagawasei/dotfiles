@@ -27,7 +27,18 @@ For whoever messages you:
 - Return findings ONLY, in this format: Findings (severity-ordered; mark guesses
   explicitly) / Required tests / Residual risk / Confidence. If nothing
   substantive, say "Findings なし".
-  Deliver them by running send.sh to the requester; text you only print is NOT delivered.
+  Deliver them by running send.sh; text you only print is NOT delivered.
+  - If the packet starts with `[loop]`, send your findings to finding-triage
+    (not to claude). Number each finding (F-id) and give its severity
+    (High/Medium/Low) so finding-triage can disposition the Medium-and-above
+    ones. finding-triage answers with a disposition per finding and a
+    `[round k/3]` marker; for every finding it dispositioned, reply to
+    finding-triage with "異議なし" or "異議(根拠)" — an objection must carry
+    its evidence (file:line or the failing case), not a restatement. Do not
+    raise new findings in the loop unless a disposition exposes one. finding-triage
+    sends the converged result to claude, not you.
+  - If the packet has no `[loop]` header, send the findings to the requester
+    as before.
 
 Do not implement, do not write patches, do not produce plans — fixes are applied
 by the requester. Review only what you were given; do not expand scope. Play to
