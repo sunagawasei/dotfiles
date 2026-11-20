@@ -48,7 +48,7 @@ herdr agent prompt "$pane" "$(cat <packet>)" --wait --until working --timeout 15
 `references/rules.md` のとおり。要点は次の5つ。
 
 - プラン → codex プラン査読(最大2巡で打ち切る)→ 自分で承認 → 実装 → codex コード査読(High が残るときだけ再依頼)。
-- fable-review の振り分けは使わない。指摘の採否は workspace が決め、理由を報告に1行ずつ書く。
+- finding-triage の振り分けは使わない。指摘の採否は workspace が決め、理由を報告に1行ずつ書く。
 - テストは変更に対する新規・修正テストだけ。全テストは流さない。
 - 繰り返し実行で安定性を確かめるのは最大5回まで。CPU を空回しする負荷生成は禁止。
 - 段9 が収束したら、中央へ報告して待つ。teammate 方式は `SendMessage(to: lead)` に `[T<n> review-done] ...`、herdr 方式は `herdr agent prompt <中央 pane> "[T<n> review-done] ..."`。

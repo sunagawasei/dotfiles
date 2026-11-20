@@ -1,6 +1,6 @@
 # 節約モード
 
-Anthropicプランの消費を抑える運用。通常モードとの違いは段5(実装)だけで、impl-worker(sonnet)からメインセッション自身へ担当を替える。段3・段9の指摘振り分け(採用/見送り/別タスク)は通常モードでもdesign-review(opus)が担当するため、モードで変わらない。委譲フローは段1〜11のまま1本で、担当者だけが入れ替わる。別フロー・別skillではない。
+Anthropicプランの消費を抑える運用。通常モードとの違いは段5(実装)だけで、impl-worker(sonnet)からメインセッション自身へ担当を替える。段3・段9の指摘振り分け(採用/見送り/別タスク)は通常モードでもfinding-triage(haiku)が担当するため、モードで変わらない。委譲フローは段1〜11のまま1本で、担当者だけが入れ替わる。別フロー・別skillではない。
 
 **段5をメインが自分で実装するため、段6(受け入れ検査)・段8(author再分類)は成立しない** — 実装主体と検査主体が同一になり、最初からauthor:mainとして段9へ進む。段9の査読はcodex(review役)のままで、メインが書いたコードをcodexが査読する構図はvendorが異なる(Anthropic/ChatGPT)ため、通常モードと同じ独立性を保つ。
 
@@ -9,10 +9,10 @@ Anthropicプランの消費を抑える運用。通常モードとの違いは�
 | 段 | 通常モード | 節約モード | 課金プール(節約モード時) |
 |---|---|---|---|
 | 段2 プラン査読 | codex(review役) | codex(review役)(変更なし) | ChatGPT |
-| 段3 指摘の振り分け | design-review (cursor, Opus 5.5 medium) | design-review(変更なし) | Cursor |
+| 段3 指摘の振り分け | finding-triage (claude-code, haiku) | finding-triage(変更なし) | Anthropic(haiku) |
 | 段5 実装 | impl-worker (Agent tool, sonnet) | メインセッション自身(委譲しない) | メインの実行環境に準ずる |
 | 段9 diff査読 | codex(review役) | codex(review役)(変更なし) | ChatGPT |
-| 段9 指摘の振り分け | design-review (cursor, Opus 5.5 medium) | design-review(変更なし) | Cursor |
+| 段9 指摘の振り分け | finding-triage (claude-code, haiku) | finding-triage(変更なし) | Anthropic(haiku) |
 | 段10 修正の担当 | メインが振り分け(3経路。段9振り分けで採用されたfindingが対象) | メインが直す(実装主体が単一のため`[design-level]`以外の宛先は常にメイン自身) | メインの実行環境に準ずる |
 | メイン | Opus | 変更なし(実行環境は起動時にユーザーが選ぶ。固定しない) | 不定 |
 
@@ -26,17 +26,17 @@ Anthropicプランの消費を抑える運用。通常モードとの違いは�
 
 `ensure-*`スクリプトは既存workerの生存確認を兼ねる(生きていれば再実行してもno-op)。
 
-### design-review(cursor、段3・段9指摘の振り分け。通常モードでも同じ手順)
+### finding-triage(claude-code、段3・段9指摘の振り分け。通常モードでも同じ手順)
 
 ```bash
-AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800 ~/.agents/skills/agmsg/scripts/ensure-headless.sh cursor <project> design-review
+~/.agents/skills/agmsg/scripts/ensure-headless.sh claude-code <project> finding-triage
 ```
 
-config設定済み: `spawn.cursor_model.design-review: claude-opus-5-5-medium` / `spawn.cursor_model_label.design-review: Claude Opus 5.5 300K Medium`。turn timeoutは既定180秒では足りないため、上の`AGMSG_CURSOR_BRIDGE_TURN_TIMEOUT=1800`で延ばす(値はリテラルで書く。troubleshooting.md項10)。read-onlyはcursor_readonly権限で担保する(SKILL.md段3節)。
+config設定済み: `spawn.claude_model.finding-triage: haiku` / `spawn.claude_turn_timeout.finding-triage: 1800`。read-onlyはsandboxのrepo write拒否で担保する(SKILL.md段3節)。
 
 ### readiness照合
 
-design-reviewはagmsg経由でdispatchする相手なので、SKILL.mdの通常規約をそのまま適用する: registrationが期待typeでちょうど1件あること、かつ当該spawn世代以降の返信実績があること。`ensure-*`はsession team不在でもexit 0のno-opになるため、exit codeだけを準備完了の証拠にしない。
+finding-triageはagmsg経由でdispatchする相手なので、SKILL.mdの通常規約をそのまま適用する: registrationが期待typeでちょうど1件あること、かつ当該spawn世代以降の返信実績があること。`ensure-*`はsession team不在でもexit 0のno-opになるため、exit codeだけを準備完了の証拠にしない。
 
 ### role fileの世代
 
@@ -44,21 +44,21 @@ role fileはspawn時に`run/`配下へコピーされ、稼働中のworkerには
 
 ## 段10
 
-design-reviewが**採用**と判断した指摘は、メインが自分で直して段9へ再投入する(実装主体が単一のため、通常モードの`[subtask:<id>]`/`[author:main]`の2経路は発生せず、`[design-level]`ラベルでない限り宛先は常にメイン自身)。`[design-level]`ラベルで採用された指摘は通常モードと同じく該当taskを終端し、新規`[task:<id>]`を発行して段1から再起動する。design-reviewが**見送り**と判断した指摘は、理由を記録してcommitに進む。**別タスク**と判断された指摘は、今回のtaskを終端せず新規`[task:<id>]`として別途扱う。
+finding-triageが**採用**と判断した指摘は、メインが自分で直して段9へ再投入する(実装主体が単一のため、通常モードの`[subtask:<id>]`/`[author:main]`の2経路は発生せず、`[design-level]`ラベルでない限り宛先は常にメイン自身)。`[design-level]`ラベルで採用された指摘は通常モードと同じく該当taskを終端し、新規`[task:<id>]`を発行して段1から再起動する。finding-triageが**見送り**と判断した指摘は、理由を記録してcommitに進む。**別タスク**と判断された指摘は、今回のtaskを終端せず新規`[task:<id>]`として別途扱う。
 
 ## 通常モードへ戻す
 
-段5の担当を戻すだけでよい(impl-workerへdispatchする)。design-reviewは通常モードでも使うので、despawnは不要。spawn済みのworkerを片付けるときだけ次を使う。
+段5の担当を戻すだけでよい(impl-workerへdispatchする)。finding-triageは通常モードでも使うので、despawnは不要。spawn済みのworkerを片付けるときだけ次を使う。
 
 ```bash
-~/.agents/skills/agmsg/scripts/despawn.sh <team> claude design-review(headless起動でplacement recordが無く失敗したら、`run/cursor-bridge.<team>.design-review.pid`のbridgeをidle確認のうえkillする)
+~/.agents/skills/agmsg/scripts/despawn.sh <team> claude finding-triage(headless起動でplacement recordが無く失敗したら、`run/`配下の`finding-triage`のbridge pidをidle確認のうえkillする)
 ```
 
 despawn前にin-flight dispatchを棚卸しする(同名workerを後から再spawnすると旧dispatchが再駆動される。SKILL.md「共通の不変条件」節)。SessionEnd teardownでもsession teamのheadless worker全員が回収される。
 
 ## 残存リスク
 
-- design-reviewが段3・段9の指摘振り分けの両方を兼ねる。同じ観点の見落としがある場合、両方の判断に影響しうる
+- finding-triageが段3・段9の指摘振り分けの両方を兼ねる。同じ観点の見落としがある場合、両方の判断に影響しうる
 - メインが実装も検査も兼ねるため、通常モードの段6が想定する「申告外ファイルの突き合わせ」のような第三者チェックが働かない。段9のcodex査読が唯一の外部チェックになる
-- cursor経由・codex経由がAnthropicプランを消費しないという前提は未測定の推論
-- 段3・段9の指摘振り分けを担当するdesign-reviewはCursorチーム枠を消費する(通常モードでも同じ)。ClaudeのOpusだがAnthropicのclaude-code枠は使わない
+- codex経由がAnthropicプランを消費しないという前提は未測定の推論
+- 段3・段9の指摘振り分けを担当するfinding-triageはAnthropicのclaude-code枠をhaikuで消費する(通常モードでも同じ)

@@ -36,6 +36,7 @@
 - タスク群の終了報告前にセッション全体を振り返り、途中の約束・保留・サブエージェント報告のスコープ外指摘の未実施を洗い出す。総点検は `claude/skills/wrapup/SKILL.md`
 - 実質的な技術回答(技術主張・設計判断・調査結果)はcodexに裏どりさせてから出す。**委譲フロー段1の対話で、未検証と明示した仮説・選択肢の列挙(「未確認だが」「要検証」等を付したもの)は対象外**。断定として出す技術主張は、それが最終プランに残るか採否にかかわらず本規約の対象のまま(「後で段2/3で査読される」を理由に段1で裏取りなしの断定を出さない)。デバッグで修正を2回外した/根本原因未確定なら推測反復を止め、診断データを添えてcodex-researchに相談する
 - プラン(実装・検証計画)は**承認を求める前に**必ずcodex査読を通す。段1の対話でのプラン案の起案・すり合わせは査読前でよい。承認を求める場では査読を反映したプランだけを示し、「指摘→対応」対応表は出さない(求められたときだけ示す)。査読者との未解消の見解相違は上記の開示規約どおり示す。**例外は使い捨て環境での探索的な検証**(結果を成果物にせず、失敗しても実機で直せるもの)。事前の計画作り込みと査読ゲートを求めず、実機で回して問題が出たら都度直す。検証で得た結論をもとに成果物を書く段は通常どおり査読を通す
+- `advisor` ツールは使わない(`advisorModel` は無効化済み)。方針の確認・詰まったとき・完了前の確認など、advisor に聞く場面はcodex(codex-research)に聞く
 - 複数の独立した質問には一気に答えず、1問ずつ答えて相手の合図を待って次へ進む。**1つの質問への返信にも、その答え以外を積まない** — 関連する判断材料・次の提案・補足の列挙は、答えを返して相手の反応を見てから出す。この規約は質問への回答だけでなく**説明・解説の単位にも適用する**。ユーザーが「1セクションずつ」「1個ずつ」と求めたら、その単位を守る。**一度圧縮して触れた話題を「説明済み」として飛ばさない** — 要求された単位での説明をまだしていないなら、改めてその単位で説明する
 - ステップ分割を求められたら、**1メッセージ=1ステップ**で区切り、次へ進む合図を待つ。複数ステップを1メッセージにまとめない
 - 説明は**粒度の大きい方から小さい方へ**進める。「1個ずつ」と求められても、いきなり個別のフィールドや行の詳細から入らない。まず全体の構造・分類を示し、そこから降りる。「情報をまとめて」と頼まれた状況整理も同じで、1通目は全体を3つ前後の分類に分けて各1行だけ示し、表や個別の詳細は合図を待って分類ごとに出す。前回の続きの状況確認も同じで、進捗や結論より先に「何がどこでどう動いているか」(関係するホスト・処理の流れ)を示す
@@ -70,20 +71,20 @@
 
 モデル指定はalias自動追従を正とし、固定model IDは書かない。**例外はcursor worker**: label監査があるので `spawn.cursor_model.<name>` / `cursor_model_label.<name>` にカタログ表示ではなくinit.modelの実測をpinする。同一IDが複数のinit.model表示を返す場合は `|` で列挙する(実例: `claude-opus-5-thinking-max` は `Claude Opus 5 1M Max Thinking` と `Claude Opus 5 300K Max`)。片方だけをpinするとdead-letterする。**grok-review(段9フォールバック・暫定運用)は`cursor-grok-4.6-xhigh`をpin**。2026-08-27に実spawnしてmodel-audit実測済み(`requested='cursor-grok-4.6-xhigh' reported='Cursor Grok 4.6 Extra High' fallback=false`。実測1回、既存grok-researchの実測とも一致。暫定・継続監視)。tier序列: fable > opus > sonnet > haiku。alias解決先・優先仕様: `claude/skills/orchestrate-agents/references/delegation-policy.md`
 
-- ロール(メイン / design-review(cursor・Opus 5.5) / codex(review役)・codex-research / grok-review・grok-research / 実装subagent=impl-worker / 休眠ロール)ごとの権限境界・隔離・pinは `claude/skills/orchestrate-agents/references/roles.md`。委譲を始める前にそこも読む
+- ロール(メイン / finding-triage(claude-code・haiku。codexの指摘の振り分け) / codex(review役)・codex-research / grok-review・grok-research / 実装subagent=impl-worker)ごとの権限境界・隔離・pinは `claude/skills/orchestrate-agents/references/roles.md`。委譲を始める前にそこも読む
 
 ### フロー(全タスク共通・これ1本)
 
 設計または実装判断を伴う依頼は、段1〜11のこのフローを通す。**委譲を始める前に`orchestrate-agents` skillを読む**(各段の手順・パケット書式・診断の正本)。段ごとの規則・安全の基準・検収運用の全文は`claude/skills/orchestrate-agents/references/flow-rules.md`。
 
-段の骨格: 1 プラン起案(対話) → 2 codexがプラン査読 → 3 design-reviewが指摘を振り分け → 4 ユーザー承認 → 5 メインが分割し実装subagentへdispatch → 6 メインが受け入れ検査 → 7 全subtask通過 → 8 メインが統合・author再分類 → 9 codexが全hunkをコード査読(応答不能時はgrok-review) → 10 採用findingの差し戻し → 11 メインが検収→ユーザーのdiffチェック→commit。
+段の骨格: 1 プラン起案(対話) → 2 codexがプラン査読 → 3 finding-triageが指摘を振り分け → 4 ユーザー承認 → 5 メインが分割し実装subagentへdispatch → 6 メインが受け入れ検査 → 7 全subtask通過 → 8 メインが統合・author再分類 → 9 codexが全hunkをコード査読(応答不能時はgrok-review) → 10 採用findingの差し戻し → 11 メインが検収→ユーザーのdiffチェック→commit。
 
 常に守る不変条件(skillを読み損ねても落とさない):
 
 - プランは承認を求める前にcodex査読を通す。査読はユーザー承認の代替にしない
 - ユーザー承認の前に、実装subagentへdispatchを1件も出さない
 - 段9の査読対象は常に全hunk(意図一致+脆弱性4観点)。依存を変えるdiffのadvisory確認はメインの責務で、確認結果と根拠が無ければcommitしない
-- codexの指摘への対応可否(採用/見送り/別タスク)は、design-reviewが振り分けて最終とする。認証・秘密情報を含む部分は振り分け依頼前にredactし、成立しなければメインが直接振り分ける
+- codexの指摘への対応可否(採用/見送り/別タスク)は、finding-triageが振り分けて最終とする。認証・秘密情報を含む部分は振り分け依頼前にredactし、成立しなければメインが直接振り分ける
 - 差し戻しはcodexのラベルに従う: `[subtask:<id>]`は当該subagent、`[author:main]`はメイン、`[design-level]`はtaskを終端して段1から再起動。同種の設計レベル指摘が2周続いたら個別修正を止め、列挙の軸を先に調べる
 - 検収では、メインが最終diffを固定し必須検証を自分で再実行する。査読は検収の代替ではない
 - 例外(原子的編集): 挙動・公開契約・認証・security boundary・課金・外部write・依存関係を変えず、変更対象と期待diffが一意で、diff単体の機械検証で正しさが確定する編集だけは、メインが自分で書いて段9のcodexゲートだけを通す
